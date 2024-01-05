@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "bd-app"
+version = "0.1.0"
+description = ""
+authors = ["Hendrik Huyskens <hendrik.huyskens@rl-institut.de>"]
+readme = "README.md"
+packages = [{include = "bd_app"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
