@@ -1,0 +1,188 @@
+{
+  "name": "Building dialogue results",
+  "title": "",
+  "id": "",
+  "description": "",
+  "language": [],
+  "subject": [],
+  "keywords": [],
+  "publicationDate": "",
+  "context": {
+    "homepage": "",
+    "documentation": "",
+    "sourceCode": "",
+    "contact": "",
+    "grantNo": "",
+    "fundingAgency": "",
+    "fundingAgencyLogo": "",
+    "publisherLogo": ""
+  },
+  "spatial": {
+    "location": "",
+    "extent": "",
+    "resolution": ""
+  },
+  "temporal": {
+    "referenceDate": "",
+    "timeseries": []
+  },
+  "sources": [],
+  "licenses": [],
+  "contributors": [],
+  "resources": [
+    {
+      "profile": "tabular-data-resource",
+      "name": "Parameters",
+      "path": "berlin/parameters.csv",
+      "format": "csv",
+      "encoding": "UTF-8",
+      "schema": {
+        "fields": [
+          {
+            "name": "id",
+            "description": "",
+            "type": "integer",
+            "isAbout": [],
+            "valueReference": [],
+            "unit": ""
+          },
+          {
+            "name": "efficiency_class",
+            "description": "",
+            "type": "string",
+            "isAbout": [],
+            "valueReference": [],
+            "unit": ""
+          },
+          {
+            "name": "residents",
+            "description": "",
+            "type": "integer",
+            "isAbout": [],
+            "valueReference": [],
+            "unit": ""
+          },
+          {
+            "name": "living_area",
+            "description": "",
+            "type": "float",
+            "isAbout": [],
+            "valueReference": [],
+            "unit": "square meter"
+          },
+          {
+            "name": "heat_demand",
+            "description": "",
+            "type": "integer",
+            "isAbout": [],
+            "valueReference": [],
+            "unit": "kWh"
+          },
+          {
+            "name": "electricity_demand",
+            "description": "",
+            "type": "integer",
+            "isAbout": [],
+            "valueReference": [],
+            "unit": "kWh"
+          }
+        ],
+        "primaryKey": [
+          "id"
+        ],
+        "foreignKeys": []
+      },
+      "dialect": {
+        "delimiter": "",
+        "decimalSeparator": ""
+      }
+    },
+    {
+      "profile": "tabular-data-resource",
+      "name": "Results",
+      "path": "berlin/results.csv",
+      "format": "csv",
+      "encoding": "UTF-8",
+      "schema": {
+        "fields": [
+          {
+            "name": "id",
+            "description": "",
+            "type": "integer",
+            "isAbout": [],
+            "valueReference": [],
+            "unit": ""
+          },
+          {
+            "name": "lcoe",
+            "description": "",
+            "type": "float",
+            "isAbout": [],
+            "valueReference": [],
+            "unit": "Euro/kWh"
+          },
+          {
+            "name": "investment",
+            "description": "",
+            "type": "float",
+            "isAbout": [],
+            "valueReference": [],
+            "unit": "Euro"
+          },
+          {
+            "name": "amortisation_time",
+            "description": "",
+            "type": "float",
+            "isAbout": [],
+            "valueReference": [],
+            "unit": "a"
+          }
+        ],
+        "primaryKey": [
+          "id"
+        ],
+        "foreignKeys": [
+          {
+            "fields": [
+              "id"
+            ],
+            "reference": {
+              "resource": "parameters",
+              "fields": [
+                "id"
+              ]
+            }
+          }
+        ]
+      },
+      "dialect": {
+        "delimiter": "",
+        "decimalSeparator": ""
+      }
+    }
+  ],
+  "@id": "",
+  "@context": "",
+  "review": {
+    "path": "",
+    "badge": ""
+  },
+  "metaMetadata": {
+    "metadataVersion": "oemetadata_v1.5.1",
+    "metadataLicense": {
+      "name": "CC0-1.0",
+      "title": "Creative Commons Zero v1.0 Universal",
+      "path": "https://creativecommons.org/publicdomain/zero/1.0/"
+    }
+  },
+  "_comment": {
+    "metadata": "Metadata documentation and explanation (https://github.com/OpenEnergyPlatform/oemetadata)",
+    "dates": "Dates and time must follow the ISO8601 including time zone (YYYY-MM-DD or YYYY-MM-DDThh:mm:ss±hh)",
+    "units": "Use a space between numbers and units (100 m)",
+    "languages": "Languages must follow the IETF (BCP47) format (en-GB, en-US, de-DE)",
+    "licenses": "License name must follow the SPDX License List (https://spdx.org/licenses/)",
+    "review": "Following the OEP Data Review (https://github.com/OpenEnergyPlatform/data-preprocessing/blob/master/data-review/manual/review_manual.md)",
+    "null": "If not applicable use: null",
+    "todo": "If a value is not yet available, use: todo"
+  }
+}
