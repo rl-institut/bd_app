@@ -82,6 +82,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "building_dialouge_webapp.users",
+    "building_dialouge_webapp.heat",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
