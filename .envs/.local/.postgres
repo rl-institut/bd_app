@@ -3,5 +3,7 @@
 POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
 POSTGRES_DB=building_dialouge_webapp
-POSTGRES_USER=ncTVtiySsMCEeVhNushOChFwEDNszSHb
+POSTGRES_USER=bd_user
 POSTGRES_PASSWORD=GWzBcADhGhvhY0VRQvm9dD2LTMnEIplVmzNjAEkZNoF2T87leMSiRHiSReK2hlmC
+
+DATABASE_URL=postgis://bd_user:GWzBcADhGhvhY0VRQvm9dD2LTMnEIplVmzNjAEkZNoF2T87leMSiRHiSReK2hlmC@localhost:5432/building_dialouge_webapp
