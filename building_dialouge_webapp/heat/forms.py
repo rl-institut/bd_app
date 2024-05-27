@@ -11,6 +11,7 @@ class ElectricityConsumptionForm(forms.Form):
             ("4", "4"),
             ("5", "5"),
         ],
+        widget=forms.Select(attrs={"class": "form-select"}),
     )
     net_electricity_consumption1 = forms.IntegerField(
         label="Netto strom Verbrauch genau:",
@@ -26,13 +27,14 @@ class ElectricityConsumptionForm(forms.Form):
             ("low_consumption", "wenig"),
         ],
         required=False,
+        widget=forms.Select(attrs={"class": "form-select"}),
     )
 
 
 class ElectricityGenerationForm(forms.Form):
     pv_owned = forms.BooleanField(
         label="Haben Sie eine PV-Anlage?",
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input form-switch"}),
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
     )
     instlled_pv_power = forms.IntegerField(
         label="Wie groß ist die installierte Leistung?",
@@ -48,7 +50,7 @@ class ElectricityGenerationForm(forms.Form):
             ("south", "Süden"),
             ("west", "Westen"),
         ],
-        widget=forms.RadioSelect(attrs={"class": "form-control"}),
+        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
     )
     roof_angle = forms.ChoiceField(
         label="Welchen Winkel hat das Dach?",
@@ -56,7 +58,7 @@ class ElectricityGenerationForm(forms.Form):
             ("north", "Flach"),
             ("east", "Schräg"),
         ],
-        widget=forms.RadioSelect(attrs={"class": "form-control"}),
+        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
     )
 
 
@@ -85,7 +87,7 @@ class HeatGenerationForm(forms.Form):
 
     solar_thermal_system = forms.BooleanField(
         label="Haben Sie eine Solarthermieanlage?",
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input form-switch"}),
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
     )
     collector_surface = forms.IntegerField(
         label="Kollektorfläche",
@@ -100,7 +102,7 @@ class HeatGenerationForm(forms.Form):
             ("south", "Süden"),
             ("west", "Westen"),
         ],
-        widget=forms.RadioSelect(attrs={"class": "form-control"}),
+        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
     )
     roof_angle = forms.ChoiceField(
         label="Welchen Winkel hat das Dach?",
@@ -108,7 +110,7 @@ class HeatGenerationForm(forms.Form):
             ("north", "Flach"),
             ("east", "Schräg"),
         ],
-        widget=forms.RadioSelect(attrs={"class": "form-control"}),
+        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
     )
 
 
@@ -127,20 +129,21 @@ class HeatConsumptionForm(forms.Form):
             ("low_consumption", "wenig"),
         ],
         required=False,
+        widget=forms.Select(attrs={"class": "form-select"}),
     )
 
 
 class HeatStorageForm(forms.Form):
     buffer_storage_owned = forms.BooleanField(
         label="Ist ein Pufferspeicher vorhanden?",
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input form-switch"}),
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
     )
 
 
 class ElectricityStorageForm(forms.Form):
     battery_owned = forms.BooleanField(
         label="Ist eine Batterie vorhanden?",
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input form-switch"}),
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
     )
     storage_max_capacity = forms.CharField(
         widget=forms.HiddenInput(),

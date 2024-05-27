@@ -8,8 +8,10 @@
   <form method="post">
     {% csrf_token %}
     {% for form in form_instances %}
-      {{ form.as_p }}
-      <hr />
+      <div>
+        {{ form.as_p }}
+        <hr />
+      </div>
     {% endfor %}
     <button type="submit">Save All</button>
   </form>
