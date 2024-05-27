@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <!-- evt für den switch notwendig
+        <div class="form-check form-switch">
+        {{ form.normalize.label_tag }} {{ form.normalize }}
+    </div> -->
+  <form method="post">
+    {% csrf_token %}
+    {% for form in form_instances %}
+      {{ form.as_p }}
+      <hr />
+    {% endfor %}
+    <button type="submit">Save All</button>
+  </form>
+{% endblock content %}
