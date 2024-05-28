@@ -1,18 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <!-- evt für den switch notwendig
-        <div class="form-check form-switch">
-        {{ form.normalize.label_tag }} {{ form.normalize }}
-    </div> -->
-  <form method="post">
+  <form method="post" action="{% url 'heat:forms' %}">
     {% csrf_token %}
     {% for form in form_instances %}
-      <div>
+      <div class="mb-3">
         {{ form.as_p }}
         <hr />
       </div>
     {% endfor %}
-    <button type="submit">Save All</button>
+    <button type="submit" class="btn btn-primary">Save All</button>
   </form>
 {% endblock content %}
