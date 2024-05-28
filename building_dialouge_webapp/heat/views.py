@@ -5,9 +5,10 @@ from django.shortcuts import render
 from .forms import *  # noqa: F403
 
 
-def load_all_forms(request):
+def handle_forms(request):
     """
-    This view renders a list which contains all the forms for the app.
+    This view renders a list which contains all the forms for the app (GET)
+    or it gets all the responses from the submits and validates the forms (POST).
 
     Parameters:
     - request: HttpRequest object representing the client's request.
@@ -15,6 +16,8 @@ def load_all_forms(request):
     Returns:
     - HttpResponse object containing the rendered template with the list
         of form instances.
+    - HttpResponse object indicating successful form processing if all
+        forms are valid.
     """
     form_classes = [
         f
