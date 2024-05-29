@@ -65,7 +65,7 @@ class ElectricityGenerationForm(forms.Form):
             ("south", "Süden"),
             ("west", "Westen"),
         ],
-        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
+        widget=forms.RadioSelect,
     )
     roof_angle = forms.ChoiceField(
         label="Welchen Winkel hat das Dach?",
@@ -73,7 +73,7 @@ class ElectricityGenerationForm(forms.Form):
             ("north", "Flach"),
             ("east", "Schräg"),
         ],
-        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
+        widget=forms.RadioSelect,
     )
 
     def clean(self):
@@ -111,7 +111,7 @@ class HeatGenerationForm(forms.Form):
             ("brine", "Sole"),
             ("no_heat_pump", "keine Wärmepumpe"),
         ],
-        widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
+        widget=forms.CheckboxSelectMultiple,
     )
 
     def clean(self):
@@ -149,8 +149,7 @@ class HeatGenerationForm2(forms.Form):
             ("south", "Süden"),
             ("west", "Westen"),
         ],
-        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
-        required=False,
+        widget=forms.RadioSelect,
     )
     roof_angle = forms.ChoiceField(
         label="Welchen Winkel hat das Dach?",
@@ -158,7 +157,7 @@ class HeatGenerationForm2(forms.Form):
             ("north", "Flach"),
             ("east", "Schräg"),
         ],
-        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
+        widget=forms.RadioSelect,
     )
 
     def clean(self):
