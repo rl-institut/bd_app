@@ -1,8 +1,13 @@
-from django import forms
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from .forms import *  # noqa: F403
+from .forms import ElectricityConsumptionForm
+from .forms import ElectricityGenerationForm
+from .forms import ElectricityStorageForm
+from .forms import HeatConsumptionForm
+from .forms import HeatGenerationForm
+from .forms import HeatGenerationForm2
+from .forms import HeatStorageForm
 
 
 def handle_forms(request):
@@ -20,9 +25,13 @@ def handle_forms(request):
         forms are valid.
     """
     form_classes = [
-        f
-        for f in globals().values()
-        if isinstance(f, type) and issubclass(f, forms.Form)
+        ElectricityConsumptionForm,
+        ElectricityGenerationForm,
+        ElectricityStorageForm,
+        HeatGenerationForm,
+        HeatGenerationForm2,
+        HeatConsumptionForm,
+        HeatStorageForm,
     ]
 
     if request.method == "POST":
