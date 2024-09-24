@@ -26,6 +26,7 @@
       <!-- This file stores project-specific CSS -->
       {% compress css %}
         <link href="{% static 'css/project.css' %}" rel="stylesheet" />
+        <link href="{% static 'css/tailwind.css' %}" rel="stylesheet" />
       {% endcompress %}
     {% endblock css %}
     <!-- Le javascript
@@ -111,7 +112,7 @@
         {% endif %}
         {% block main %}
           {% block content %}
-            <p>Use this document as a way to quick start any new project.</p>
+            <div class="block text-gray-700">Use this document as a way to quick start any new project.</div>
           {% endblock content %}
         {% endblock main %}
       </div>
