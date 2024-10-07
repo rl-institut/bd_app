@@ -317,5 +317,10 @@ SOCIALACCOUNT_FORMS = {
 INSTALLED_APPS += ["compressor"]
 STATICFILES_FINDERS += ["compressor.finders.CompressorFinder"]
 
+# django-libsass
+# ------------------------------------------------------------------------------
+COMPRESS_PRECOMPILERS = [("text/x-scss", "django_libsass.SassCompiler")]
+COMPRESS_CACHEABLE_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
+
 # Your stuff...
 # ------------------------------------------------------------------------------
