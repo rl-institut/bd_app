@@ -49,7 +49,7 @@
   </head>
   <body class="{% block bodyclass %}{% endblock bodyclass %} d-flex flex-column h-100">
     {% block body %}
-      <div class="mb-1 flex-shrink-0">
+      <div class="flex-shrink-0">
         <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom">
           <div class="container-fluid px-4">
             <button class="navbar-toggler navbar-toggler-right"
@@ -81,7 +81,7 @@
           </div>
         </nav>
       </div>
-      <div class="container">
+      <main class="h-100">
         {% if messages %}
           {% for message in messages %}
             <div class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }}{% endif %}">
@@ -95,10 +95,52 @@
         {% endif %}
         {% block main %}
           {% block content %}
-            <div class="block text-gray-700">Use this document as a way to quick start any new project.</div>
+            <div class="d-flex flex-row justify-content-between h-100">
+              <section class="sidebar border-end px-4 py-3 h-100">
+                <div>
+                  <a href="">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                    </svg>
+                    Abbrechen
+                  </a>
+                </div>
+                <div class="sidebar-nav pt-4">
+                  <ul class="ps-0">
+                    <li class="sidebar-nav__category visited"><a href="">1. Verbrauchsanalyse</a></li>
+                    <li class="sidebar-nav__step visited"><a href="">Gebäudeart</a></li>
+                    <li class="sidebar-nav__step visited"><a href="">Angaben zu Gebäude</a></li>
+                    <li class="sidebar-nav__step active"><a href="">Keller</a></li>
+                    <li class="sidebar-nav__step"><a href="">Heizung & Warmwasser</a></li>
+                    <li class="sidebar-nav__step"><a href="">Verbrauchseingabe</a></li>
+                    <li class="sidebar-nav__step"><a href="">Verbrauchsergebnis</a></li>
+                  </ul>
+                  <ul class="ps-0">
+                    <li class="sidebar-nav__category"><a href="">2. Bestandsanalyse</a></li>
+                    <li class="sidebar-nav__step"><a href="">Dach</a></li>
+                    <li class="sidebar-nav__step"><a href="">Fenster</a></li>
+                    <li class="sidebar-nav__step"><a href="">Fassade</a></li>
+                    <li class="sidebar-nav__step"><a href="">Heizung</a></li>
+                    <li class="sidebar-nav__step"><a href="">PV-Anlage</a></li>
+                    <li class="sidebar-nav__step"><a href="">Lüftungsanlage</a></li>
+                  </ul>
+                  <ul class="ps-0">
+                    <li class="sidebar-nav__category"><a href="">3. Sanierung</a></li>
+                    <li class="sidebar-nav__step"><a href="">Sanierungswunsch</a></li>
+                    <li class="sidebar-nav__step"><a href="">Förderung</a></li>
+                  </ul>
+                  <ul class="ps-0">
+                    <li class="sidebar-nav__category"><a href="">4. Ergebnisse</a></li>
+                  </ul>
+                </div>
+              </section>
+              <section class="h-100 flex-grow-1">
+
+              </section>
+            </div>
           {% endblock content %}
         {% endblock main %}
-      </div>
+          </main>
       <footer class="footer mt-auto py-2 bg-white border-top">
         <div class="container-fluid d-flex justify-content-end px-4">
           <ul>

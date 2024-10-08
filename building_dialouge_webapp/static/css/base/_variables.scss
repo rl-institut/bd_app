@@ -29,6 +29,9 @@ $secondary-color: $blue-800;
 $body-color: $grey-900;
 $color-white: #ffffff;
 
+// Breakpoints
+$breakpoint-lg: 992px;
+
 // Typography
 $font-size-2xl: 2rem;
 $font-size-xl: 1.5rem;
@@ -37,7 +40,7 @@ $font-size-md: 1rem;
 $font-size-sm: 0.875rem;
 $font-size-xs: 0.75rem;
 
-$font-weight-bold: 700;
+$font-weight-bold: 600;
 $font-weight-regular: 400;
 $font-weight-light: 300;
 

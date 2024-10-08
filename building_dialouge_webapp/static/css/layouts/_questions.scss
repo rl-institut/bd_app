@@ -1,0 +1,64 @@
+@import '../base/variables';
+
+@mixin sidebar-items {
+  a {
+    color: $grey-400;
+    pointer-events: none;
+  }
+
+  &.visited a {
+    color: $body-color;
+    pointer-events: auto;
+  }
+
+  &.active a {
+    color: $body-color;
+    font-weight: $font-weight-bold;
+    pointer-events: auto;
+  }
+}
+
+main .sidebar {
+  width: 18rem;
+  height: 100%;
+  background-color: $color-white;
+
+  a {
+    color: $body-color;
+    text-decoration: none;
+
+    &:hover,
+    &:active {
+      color: $grey-500;
+    }
+  }
+
+  &__category {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+  }
+
+  .sidebar-nav {
+    ul {
+      list-style: none;
+    }
+
+    ul li {
+      padding-bottom: 0.5rem;
+    }
+
+    &__category {
+      font-weight: $font-weight-bold;
+      text-decoration: underline;
+      @include sidebar-items;
+    }
+
+    &__step {
+      @include sidebar-items;
+    }
+  }
+}
+
+main .questions {
+  flex: 1;
+}
