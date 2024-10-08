@@ -1,0 +1,12 @@
+@import '../base/variables';
+
+nav.navbar {
+  .navbar-brand {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+  }
+
+  .navbar-collapse {
+    flex-grow: 0;
+  }
+}
