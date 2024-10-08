@@ -18,10 +18,28 @@
   }
 }
 
+@mixin step-item($step-item-padding) {
+  display: flex;
+  flex-direction: row;
+
+  .main {
+    background-color: $color-white;
+    padding: $step-item-padding;
+    flex: 1;
+  }
+
+  .help {
+    background-color: $grey-100;
+    height: auto;
+    width: 28rem;
+  }
+}
+
 main .sidebar {
   width: 18rem;
   height: 100%;
   background-color: $color-white;
+  overflow-y: auto;
 
   a {
     color: $body-color;
@@ -59,6 +77,27 @@ main .sidebar {
   }
 }
 
-main .questions {
-  flex: 1;
+main .step-title {
+  @include step-item(4rem 4rem 1.5rem);
+
+  h1 {
+    font-size: $font-size-2xl;
+  }
+}
+
+main .step-text {
+  @include step-item(0 4rem 1.5rem);
+}
+
+main .step-question {
+  @include step-item(0 4rem 1.5rem);
+
+  .help {
+    padding: 0 2rem 1.5rem;
+    height: auto;
+
+    span {
+      font-weight: $font-weight-bold;
+    }
+  }
 }
