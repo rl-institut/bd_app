@@ -2,7 +2,7 @@
 
 <!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="{{ LANGUAGE_CODE }}" class="h-100">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
@@ -47,9 +47,9 @@
       {% endcompress %}
     {% endblock javascript %}
   </head>
-  <body class="{% block bodyclass %}{% endblock bodyclass %}">
+  <body class="{% block bodyclass %}{% endblock bodyclass %} d-flex flex-column h-100">
     {% block body %}
-      <div class="mb-1">
+      <div class="mb-1 flex-shrink-0">
         <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom">
           <div class="container-fluid px-4">
             <button class="navbar-toggler navbar-toggler-right"
@@ -99,6 +99,14 @@
           {% endblock content %}
         {% endblock main %}
       </div>
+      <footer class="footer mt-auto py-2 bg-white border-top">
+        <div class="container-fluid d-flex justify-content-end px-4">
+          <ul>
+            <li class="ps-3"><a href="">Impressum</a></li>
+            <li class="ps-3"><a href="">Datenschutz</a></li>
+          </ul>
+        </div>
+      </footer>
     {% endblock body %}
     <!-- /container -->
     {% block modal %}
