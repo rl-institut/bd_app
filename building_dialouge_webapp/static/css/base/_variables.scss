@@ -1,4 +1,17 @@
-/* Primary & Neutral palette */
+// Primary palette
+$blue-050: #eff7ff;
+$blue-100: #dcecfd;
+$blue-200: #c1dffc;
+$blue-300: #96ccfa;
+$blue-400: #65aff5;
+$blue-500: #418ff0;
+$blue-600: #2a71e5;
+$blue-700: #235dd2;
+$blue-800: #224bab;
+$blue-900: #214387;
+$blue-950: #192a52;
+
+/* Secondary & Neutral palette */
 $grey-050: #fafafa;
 $grey-100: #f5f5f5;
 $grey-200: #e5e5e5;
@@ -10,19 +23,6 @@ $grey-700: #404040;
 $grey-800: #262626;
 $grey-900: #171717;
 $grey-950: #0a0a0a;
-
-// Secondary palette
-$blue-050: #f2f6fc;
-$blue-100: #e2eaf7;
-$blue-200: #ccdbf1;
-$blue-300: #a8c4e8;
-$blue-400: #7fa5db;
-$blue-500: #6087d1;
-$blue-600: #4c6ec4;
-$blue-700: #4059ad;
-$blue-800: #3b4c92;
-$blue-900: #334275;
-$blue-950: #232b48;
 
 $primary-color: $grey-900;
 $secondary-color: $blue-800;
