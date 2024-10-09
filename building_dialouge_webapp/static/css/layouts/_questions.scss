@@ -37,14 +37,15 @@
 
     @media screen and (min-width: $breakpoint-md) {
       display: block;
+      width: 20rem;
     }
 
     @media screen and (min-width: $breakpoint-2xl) {
-      width: 32rem
+      width: 32rem;
     }
 
     @media screen and (min-width: $breakpoint-3xl) {
-      width: 40rem
+      width: 40rem;
     }
   }
 }
@@ -56,7 +57,7 @@ main .sidebar {
   overflow-y: auto;
   display: none;
 
-  @media screen and (min-width: $breakpoint-md) {
+  @media screen and (min-width: $breakpoint-lg) {
     display: block;
   }
 
@@ -133,13 +134,14 @@ main .step-question {
 
   @media screen and (min-width: $breakpoint-md) {
     display: block;
+    width: 20rem;
   }
 
   @media screen and (min-width: $breakpoint-2xl) {
-    width: 32rem
+    width: 32rem;
   }
 
   @media screen and (min-width: $breakpoint-3xl) {
-    width: 40rem
+    width: 40rem;
   }
 }
