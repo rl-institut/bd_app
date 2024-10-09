@@ -81,7 +81,7 @@
           </div>
         </nav>
       </div>
-      <main class="main-view">
+      <main class="main-view flex-grow-1">
         {% if messages %}
           {% for message in messages %}
             <div class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }}{% endif %}">
@@ -134,7 +134,7 @@
                   </ul>
                 </div>
               </section>
-              <section class="position-relative h-100 flex-grow-1">
+              <section class="position-relative h-100 flex-grow-1 pb-5">
                 <div class="help-background"></div>
                 <div class="step-title">
                   <div class="main">

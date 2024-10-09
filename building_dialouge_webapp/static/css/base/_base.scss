@@ -3,9 +3,4 @@
 body {
   font-family: Roboto, system-ui, 'Open Sans', 'Helvetica Neue', sans-serif;
   color: $body-color;
-
-  main.main-view {
-    height: inherit;
-    height: -webkit-fill-available;
-  }
 }
