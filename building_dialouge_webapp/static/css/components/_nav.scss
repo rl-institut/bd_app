@@ -1,0 +1,42 @@
+@import '../base/variables';
+
+@mixin nav-links {
+  color: $body-color;
+  text-decoration: none;
+
+  &:hover,
+  &:active {
+    color: $grey-500;
+  }
+}
+
+nav.navbar {
+  .navbar-brand {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+  }
+
+  .navbar-collapse {
+    flex-grow: 0;
+  }
+
+  a {
+    @include nav-links;
+  }
+}
+
+footer {
+  z-index: 99;
+  
+  .footer {
+    ul {
+      display: flex;
+      list-style: none;
+      margin-bottom: 0;
+    }
+  
+    a {
+      @include nav-links;
+    } 
+  }
+}
