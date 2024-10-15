@@ -1,4 +1,53 @@
+from crispy_bootstrap5.bootstrap5 import Switch
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout
 from django import forms
+
+from .models import Roof
+
+
+class RoofTypeForm(forms.ModelForm):
+    class Meta:
+        model = Roof
+        fields = ["roof_type"]
+        widgets = {
+            "roof_type": forms.RadioSelect(
+                choices=[
+                    ("flachdach", "Flachdach"),
+                    ("satteldach", "Satteldach"),
+                    ("walmdach", "Walmdach"),
+                ],
+            ),
+        }
+
+
+class RoofDetailsForm(forms.ModelForm):
+    class Meta:
+        model = Roof
+        fields = ["roof_area", "roof_orientation", "number_roof_windows"]
+
+
+class RoofUsageForm(forms.ModelForm):
+    class Meta:
+        model = Roof
+        fields = ["roof_usage"]
+
+
+class RoofInsulationForm(forms.ModelForm):
+    class Meta:
+        model = Roof
+        fields = ["roof_insulation_exists"]
+        widgets = {
+            "roof_insulation_exists": forms.RadioSelect(
+                choices=[
+                    (True, "Yes"),
+                    (False, "No"),
+                ],
+            ),
+        }
+
+
+# old forms, not sure if we're gonna need them for the new forms
 
 
 class ElectricityConsumptionForm(forms.Form):
@@ -48,7 +97,6 @@ class ElectricityConsumptionForm(forms.Form):
 class ElectricityGenerationForm(forms.Form):
     pv_owned = forms.BooleanField(
         label="Haben Sie eine PV-Anlage?",
-        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
         required=False,
     )
     installed_pv_power = forms.IntegerField(
@@ -75,6 +123,16 @@ class ElectricityGenerationForm(forms.Form):
         ],
         widget=forms.RadioSelect,
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Switch("pv_owned"),
+            "installed_pv_power",
+            "roof_cardinal_direction",
+            "roof_angle",
+        )
 
     def clean(self):
         cleaned_data = super().clean()
