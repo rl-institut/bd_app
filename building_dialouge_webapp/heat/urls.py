@@ -4,6 +4,8 @@ from . import views
 
 app_name = "heat"
 
+
 urlpatterns = [
     path("forms/", views.handle_forms, name="forms"),
+    # BPMN Views
 ]

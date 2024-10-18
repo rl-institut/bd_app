@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-  <form method="post" action="{% url 'heat:forms' %}">
+  <form method="post">
     {% csrf_token %}
     {% for form in form_instances %}
       <div class="mb-3">
@@ -11,6 +11,6 @@
         <hr />
       </div>
     {% endfor %}
-    <button type="submit" class="btn btn-primary">Save All</button>
+    <button type="submit">Next</button>
   </form>
 {% endblock content %}
