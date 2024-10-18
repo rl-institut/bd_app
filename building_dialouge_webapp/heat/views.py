@@ -45,8 +45,6 @@ def handle_forms(request):
         HeatStorageForm,
     ]
 
-    roof = Roof.objects.create()  # noqa: F841
-
     if request.method == "POST":
         form_instances = [f(request.POST) for f in form_classes]
         all_valid = all(form.is_valid() for form in form_instances)
@@ -130,16 +128,13 @@ def roof_usage_view(request):
     return render(request, "pages/roof_usage_form.html", {"form": form})
 
 
-class RoofTypeView(TaskSuccessUrlMixin, generic.CreateView):
+class RoofTypeView(TaskSuccessUrlMixin, generic.FormView):
     model = Roof
     form_class = RoofTypeForm
     template_name = "pages/roof_type_form.html"
 
     def form_valid(self, form):
-        self.object = form.save()
-
-        self.request.activation.process.artifact = self.object
-
+        self.request.activation.process.roof_type = form.cleaned_data["roof_type"]
         self.request.activation.execute()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -157,7 +152,7 @@ class RoofInsulationView(TaskSuccessUrlMixin, generic.UpdateView):
 
         self.request.activation.process.artifact = self.object
 
-        self.request.activation.execute()
+        self.request.activation
         return HttpResponseRedirect(self.get_success_url())
 
 

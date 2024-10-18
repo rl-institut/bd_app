@@ -7,9 +7,29 @@ from django.urls import path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
 
+from viewflow.urls import Application, Site
+
+from building_dialouge_webapp.heat.flows import RoofProcessFlow, RoofViewset
+
+
+site = Site(
+    title="ACME Corp",
+    viewsets=[
+        Application(
+            title="Sample App",
+            icon="people",
+            app_name="heat",
+            viewsets=[
+                RoofViewset(RoofProcessFlow),
+            ],
+        ),
+    ],
+)
+
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
-    path("", include("building_dialouge_webapp.heat.urls", namespace="heat")),
+    # path("", include("building_dialouge_webapp.heat.urls", namespace="heat")),
+    path("", site.urls),
     path(
         "about/",
         TemplateView.as_view(template_name="pages/about.html"),

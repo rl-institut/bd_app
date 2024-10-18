@@ -79,6 +79,7 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount",
     "django_celery_beat",
     "viewflow",
+    "viewflow.workflow",
 ]
 
 LOCAL_APPS = [
@@ -141,6 +142,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "users.middleware.AlwaysAuthenticateMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 ]
 

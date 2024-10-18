@@ -1,4 +1,5 @@
 from django.db import models
+from viewflow.jsonstore import CharField
 from viewflow.workflow.models import Process
 
 
@@ -29,12 +30,13 @@ class Roof(models.Model):
 class RoofProcess(Process):
     """
     This model extends the base viewflow `Process` model.
-
     """
 
+    roof_type_chosen = CharField()
+
     class Meta:
-        proxy = True
         verbose_name_plural = "Roof process"
+        proxy = True
 
     def is_flat_roof(self):
         try:

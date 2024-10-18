@@ -1,5 +1,6 @@
+from typing import Any
+
 from viewflow import this
-from viewflow.workflow import act
 from viewflow.workflow import flow
 
 from . import views
@@ -14,9 +15,9 @@ class RoofProcessFlow(flow.Flow):
 
     # Split the flow based on roof_type selected
     split_roof_type = (
-        flow.If(act.process.is_flat_roof)
-        .Then(this.roof_insulation)
-        .Else(this.roof_details)
+        flow.Switch()
+        .Case(this.roof_insulation, lambda act: act.process.roof_type == "Flachdach")
+        .Default(this.roof_details)
     )
 
     roof_insulation = flow.View(views.RoofInsulationView.as_view()).Next(this.end)
@@ -26,3 +27,11 @@ class RoofProcessFlow(flow.Flow):
     roof_usage = flow.View(views.RoofUsageView.as_view()).Next(this.roof_insulation)
 
     end = flow.End()
+
+    def has_view_permission(self, user: Any, obj: Any | None = None) -> bool:
+        return True
+
+
+class RoofViewset(flow.FlowViewset):
+    def has_view_permission(self, user, obj=None):
+        return True
