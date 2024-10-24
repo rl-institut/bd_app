@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <form hx-post="{% url 'heat:roof' %}" hx-target="#choice_of_type">
+  <form hx-post="{% url 'heat:roof' %}"
+        hx-target="#choice_of_type"
+        hx-trigger="change">
     {% csrf_token %}
     <div class="mb-3">
       {{ roof_type_form.as_p }}
       <hr />
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
   </form>
   <div id="choice_of_type"></div>
   <div id="placeholder_roof_details"></div>
   <div id="placeholder_roof_insulation"></div>
+  <button type="submit" class="btn btn-primary">Weiter</button>
 {% endblock content %}
