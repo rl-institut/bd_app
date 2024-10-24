@@ -1,0 +1,8 @@
+<form hx-post="{% url 'heat:roof' %}">
+  {% csrf_token %}
+  <div class="mb-3">
+    {{ roof_insulation_form.as_p }}
+    <hr />
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>

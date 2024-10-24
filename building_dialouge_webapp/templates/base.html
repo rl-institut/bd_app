@@ -42,6 +42,7 @@
       <!-- place project specific Javascript in this file -->
       {% compress js %}
         <script defer src="{% static 'js/project.js' %}"></script>
+        <script src="https://unpkg.com/htmx.org@2.0.3"></script>
       {% endcompress %}
     {% endblock javascript %}
   </head>

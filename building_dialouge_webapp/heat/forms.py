@@ -1,6 +1,52 @@
 from django import forms
 
 
+class RoofTypeForm(forms.Form):
+    roof_type = forms.ChoiceField(
+        label="roof_type",
+        choices=[
+            ("flachdach", "Flachdach"),
+            ("satteldach", "Satteldach"),
+            ("walmdach", "Walmdach"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class RoofDetailsForm(forms.Form):
+    roof_area = forms.IntegerField(
+        label="roof_area",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+    roof_orientation = forms.ChoiceField(
+        label="In welcher Richtung ist ihr Dach ausgerichtet?",
+        choices=[
+            ("n", "N"),
+            ("no", "NO"),
+            ("o", "O"),
+            ("so", "SO"),
+            ("sw", "SW"),
+            ("s", "S"),
+            ("w", "W"),
+            ("nw", "NW"),
+        ],
+        widget=forms.RadioSelect,
+    )
+    number_roof_windows = forms.IntegerField(
+        label="number_of_roofs",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+
+
+class RoofInsulationForm(forms.Form):
+    roof_insulation_exists = forms.ChoiceField(
+        label="roof_insulation_exists",
+        choices=[(True, "Yes"), (False, "No")],
+    )
+
+
 class ElectricityConsumptionForm(forms.Form):
     household_members = forms.ChoiceField(
         label="Wie viele Personen leben in ihrem Haushalt?",
