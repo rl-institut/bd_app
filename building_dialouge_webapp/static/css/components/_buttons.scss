@@ -1,0 +1,44 @@
+@import '../base/variables';
+
+.btn {
+  border-radius: 100px !important;
+
+  &.btn-primary {
+    background-color: $blue-600;
+    color: $color-white;
+    border: 1px solid $blue-600;
+
+    &:hover,
+    &:active {
+      background-color: $blue-800;
+      color: $color-white;
+      border: 1px solid $blue-800;
+    }
+  }
+
+  &.btn-secondary {
+    background-color: $grey-800;
+    color: $color-white;
+    border: 1px solid $grey-800;
+
+    &:hover,
+    &:active {
+      background-color: $grey-950;
+      color: $color-white;
+      border: 1px solid $grey-950;
+    }
+  }
+
+  &.btn-light {
+    background-color: $blue-050;
+    color: $blue-900;
+    border: 1px solid $blue-050;
+
+    &:hover,
+    &:active {
+      background-color: $blue-100;
+      color: $blue-800;
+      border: 1px solid $blue-100;
+    }
+  }
+}

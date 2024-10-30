@@ -47,6 +47,18 @@ class RoofInsulationForm(forms.Form):
     )
 
 
+class WindowAreaForm(forms.Form):
+    window_area = forms.ChoiceField(
+        label="roof_type",
+        choices=[
+            ("niedrig", "Niedrig"),
+            ("mittel", "Mittel"),
+            ("hoch", "Hoch"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
 class ElectricityConsumptionForm(forms.Form):
     household_members = forms.ChoiceField(
         label="Wie viele Personen leben in ihrem Haushalt?",

@@ -1,0 +1,52 @@
+// Primary palette
+$blue-050: #eff7ff;
+$blue-100: #dcecfd;
+$blue-200: #c1dffc;
+$blue-300: #96ccfa;
+$blue-400: #65aff5;
+$blue-500: #418ff0;
+$blue-600: #2a71e5;
+$blue-700: #235dd2;
+$blue-800: #224bab;
+$blue-900: #214387;
+$blue-950: #192a52;
+
+/* Secondary & Neutral palette */
+$grey-050: #fafafa;
+$grey-100: #f5f5f5;
+$grey-200: #e5e5e5;
+$grey-300: #d4d4d4;
+$grey-400: #a3a3a3;
+$grey-500: #737373;
+$grey-600: #525252;
+$grey-700: #404040;
+$grey-800: #262626;
+$grey-900: #171717;
+$grey-950: #0a0a0a;
+
+$primary-color: $grey-900;
+$secondary-color: $blue-800;
+$body-color: $grey-900;
+$color-white: #ffffff;
+
+// Breakpoints
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+$breakpoint-2xl: 1400px;
+$breakpoint-3xl: 1600px;
+
+// Typography
+$font-size-2xl: 2rem;
+$font-size-xl: 1.5rem;
+$font-size-lg: 1.25rem;
+$font-size-md: 1rem;
+$font-size-sm: 0.875rem;
+$font-size-xs: 0.75rem;
+
+$font-weight-bold: 600;
+$font-weight-regular: 400;
+$font-weight-light: 300;
+
+// Border
+$border-color: $grey-400;

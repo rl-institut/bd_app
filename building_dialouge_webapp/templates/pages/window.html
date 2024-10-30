@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <form hx-post="{% url 'heat:window' %}"
+        hx-target="#placeholder_window_type"
+        hx-trigger="change">
+    {% csrf_token %}
+    <div class="mb-3">
+      {{ window_area_form.as_p }}
+      <hr />
+    </div>
+  </form>
+  <div id="placeholder_window_type"></div>
+  <a href="{% url 'heat:roof' %}" class="btn btn-primary" class>Back</a>
+  <button type="submit" class="btn btn-primary">Weiter</button>
+{% endblock content %}

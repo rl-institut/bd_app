@@ -78,6 +78,7 @@ THIRD_PARTY_APPS = [
     "allauth.mfa",
     "allauth.socialaccount",
     "django_celery_beat",
+    "django_htmx",
 ]
 
 LOCAL_APPS = [
@@ -141,6 +142,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
 ]
 
 # STATIC
@@ -316,6 +318,11 @@ SOCIALACCOUNT_FORMS = {
 # https://django-compressor.readthedocs.io/en/latest/quickstart/#installation
 INSTALLED_APPS += ["compressor"]
 STATICFILES_FINDERS += ["compressor.finders.CompressorFinder"]
+
+# django-libsass
+# ------------------------------------------------------------------------------
+COMPRESS_PRECOMPILERS = [("text/x-scss", "django_libsass.SassCompiler")]
+COMPRESS_CACHEABLE_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 
 # Your stuff...
 # ------------------------------------------------------------------------------

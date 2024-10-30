@@ -11,6 +11,7 @@ from .forms import HeatStorageForm
 from .forms import RoofDetailsForm
 from .forms import RoofInsulationForm
 from .forms import RoofTypeForm
+from .forms import WindowAreaForm
 
 
 def handle_forms(request):
@@ -57,6 +58,18 @@ def handle_forms(request):
     return render(request, "pages/heat_forms.html", context)
 
 
+def put_step_in_session(request, name_session_list, current_step):
+    """
+    Handles the saving of a step in the session.
+    returns: form_step_list, the list with all steps used in this view
+    """
+    form_step_list = request.session.get(name_session_list, [])
+    form_step_list.append(current_step)
+    request.session[name_session_list] = form_step_list
+
+    return form_step_list
+
+
 roof_form_steps = {
     "roof_type": ["pages/roof.html", "roof_type_form", RoofTypeForm],
     "roof_insulation": [
@@ -83,33 +96,71 @@ def roof_view(request):
     Returns:
     - render, with the fitting partial and form
     """
-    if request.method != "POST":
-        form_step = put_step_in_session(request, "roof_step", "roof_type")
+    compare_dict = {}  # noqa: F841
+
+    if request.method == "GET":
+        # del request.session["form_input"] # noqa: ERA001
+        if request.session.get("form_input", []) == []:
+            partial_name, template_variable, form_class = roof_form_steps["roof_type"]
+            print("empty session")  # noqa: T201
+
     if request.method == "POST":
+        request_dict = request.POST.dict()
+        session_dict = request.session.get("form_input", [])  # noqa: F841
+        print(request_dict)  # noqa: T201
         if request.POST.get("roof_type") == "flachdach":
-            form_step = put_step_in_session(request, "roof_step", "roof_insulation")
+            form = RoofTypeForm(request.POST)
+            if form.is_valid():
+                form_input = form.cleaned_data
+                request.session["form_input"] = form_input
+            partial_name, template_variable, form_class = roof_form_steps[
+                "roof_insulation"
+            ]
 
         elif (
             request.POST.get("roof_type") == "satteldach"
             or request.POST.get("roof_type") == "walmdach"
         ):
-            form_step = put_step_in_session(request, "roof_step", "roof_details")
+            form = RoofTypeForm(request.POST)
+            if form.is_valid():
+                form_input = form.cleaned_data
+                request.session["form_input"] = form_input
+            partial_name, template_variable, form_class = roof_form_steps[
+                "roof_details"
+            ]
 
         else:
-            form_step = put_step_in_session(request, "roof_step", "roof_insulation")
+            form = RoofDetailsForm(request.POST)
+            if form.is_valid():
+                form_input = form.cleaned_data
+                request.session["form_input"] = form_input
+            partial_name, template_variable, form_class = roof_form_steps[
+                "roof_insulation"
+            ]
 
-    partial_name, template_variable, form_class = roof_form_steps[form_step[-1]]
+    print(request.session["form_input"])  # noqa: T201
     form_instance = form_class()
     return render(request, partial_name, {template_variable: form_instance})
 
 
-def put_step_in_session(request, name_session_list, current_step):
-    """
-    Handles the saving of a step in the session.
-    returns: form_step_list, the list with all steps used in this view
-    """
-    form_step_list = request.session.get(name_session_list, [])
-    form_step_list.append(current_step)
-    request.session["roof_step"] = form_step_list
+window_form_steps = {
+    "window_area": ["pages/window.html", "window_area_form", WindowAreaForm],
+}
 
-    return form_step_list
+
+def window_view(request):
+    """
+    This view renders the first window-page load with its forms (GET)
+    or it renders partials with the next forms depending on the input (POST).
+
+    Parameters:
+    - request: HttpRequest object representing the client's request.
+
+    Returns:
+    - render, with the fitting partial and form
+    """
+    form_step = put_step_in_session(request, "window_step", "window_area")
+
+    partial_name, template_variable, form_class = window_form_steps[form_step[-1]]
+    form_instance = form_class()
+    return render(request, partial_name, {template_variable: form_instance})
