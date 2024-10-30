@@ -20,3 +20,4 @@ crispy-bootstrap5==2024.2  # https://github.com/django-crispy-forms/crispy-boots
 django-compressor==4.4  # https://github.com/django-compressor/django-compressor
 django-redis==5.4.0  # https://github.com/jazzband/django-redis
 django-libsass==0.9
+django-htmx==1.21.0
