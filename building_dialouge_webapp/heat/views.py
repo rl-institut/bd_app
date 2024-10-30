@@ -58,18 +58,6 @@ def handle_forms(request):
     return render(request, "pages/heat_forms.html", context)
 
 
-def put_step_in_session(request, name_session_list, current_step):
-    """
-    Handles the saving of a step in the session.
-    returns: form_step_list, the list with all steps used in this view
-    """
-    form_step_list = request.session.get(name_session_list, [])
-    form_step_list.append(current_step)
-    request.session[name_session_list] = form_step_list
-
-    return form_step_list
-
-
 roof_form_steps = {
     "roof_type": ["pages/roof.html", "roof_type_form", RoofTypeForm],
     "roof_insulation": [
@@ -96,35 +84,33 @@ def roof_view(request):
     Returns:
     - render, with the fitting partial and form
     """
-    compare_dict = {}  # noqa: F841
 
     if request.method == "GET":
-        # del request.session["form_input"] # noqa: ERA001
-        if request.session.get("form_input", []) == []:
-            partial_name, template_variable, form_class = roof_form_steps["roof_type"]
-            print("empty session")  # noqa: T201
+        partial_name, template_variable, form_class = roof_form_steps["roof_type"]
 
     if request.method == "POST":
         request_dict = request.POST.dict()
-        session_dict = request.session.get("form_input", [])  # noqa: F841
-        print(request_dict)  # noqa: T201
-        if request.POST.get("roof_type") == "flachdach":
+        session_dict = request.session.get("all_user_answers", {})
+        compare_dict = session_dict | request_dict
+
+        if "flachdach" in compare_dict.values():
             form = RoofTypeForm(request.POST)
             if form.is_valid():
                 form_input = form.cleaned_data
-                request.session["form_input"] = form_input
+                session_dict.update(form_input)
+                request.session["all_user_answers"] = session_dict
             partial_name, template_variable, form_class = roof_form_steps[
                 "roof_insulation"
             ]
 
         elif (
-            request.POST.get("roof_type") == "satteldach"
-            or request.POST.get("roof_type") == "walmdach"
-        ):
+            "satteldach" in compare_dict.values() or "walmdach" in compare_dict.values()
+        ) and "roof_area" not in compare_dict:
             form = RoofTypeForm(request.POST)
             if form.is_valid():
                 form_input = form.cleaned_data
-                request.session["form_input"] = form_input
+                session_dict.update(form_input)
+                request.session["all_user_answers"] = session_dict
             partial_name, template_variable, form_class = roof_form_steps[
                 "roof_details"
             ]
@@ -133,12 +119,12 @@ def roof_view(request):
             form = RoofDetailsForm(request.POST)
             if form.is_valid():
                 form_input = form.cleaned_data
-                request.session["form_input"] = form_input
+                session_dict.update(form_input)
+                request.session["all_user_answers"] = session_dict
             partial_name, template_variable, form_class = roof_form_steps[
                 "roof_insulation"
             ]
 
-    print(request.session["form_input"])  # noqa: T201
     form_instance = form_class()
     return render(request, partial_name, {template_variable: form_instance})
 
@@ -159,8 +145,7 @@ def window_view(request):
     Returns:
     - render, with the fitting partial and form
     """
-    form_step = put_step_in_session(request, "window_step", "window_area")
 
-    partial_name, template_variable, form_class = window_form_steps[form_step[-1]]
+    partial_name, template_variable, form_class = window_form_steps["window_area"]
     form_instance = form_class()
     return render(request, partial_name, {template_variable: form_instance})
