@@ -60,20 +60,20 @@ def handle_forms(request):
 
 roof_form_steps = {
     "roof_type": ["pages/roof.html", "roof_type_form", RoofTypeForm],
-    "roof_insulation": [
-        "partials/roof_insulation_partial.html",
-        "roof_insulation_form",
-        RoofInsulationForm,
-    ],
     "roof_details": [
         "partials/roof_details_partial.html",
         "roof_details_form",
         RoofDetailsForm,
     ],
+    "roof_insulation": [
+        "partials/roof_insulation_partial.html",
+        "roof_insulation_form",
+        RoofInsulationForm,
+    ],
 }
 
 
-def roof_view(request):
+def roof_view(request):  # noqa: C901
     """
     This view renders the first roof-page load with its forms (GET)
     or it renders partials with the next forms depending on the input (POST).
@@ -84,13 +84,59 @@ def roof_view(request):
     Returns:
     - render, with the fitting partial and form
     """
-
+    session_dict = request.session.get("all_user_answers", {})
     if request.method == "GET":
+        # needed for simulating a fresh start of the view,
+        # don't use when testing reloading input data
+        request.session.pop("all_user_answers", None)
+        if request.session.get("all_user_answers", {}):
+            forms_to_render = []
+
+            for step, (
+                partial_name,
+                template_variable,
+                form_class,
+            ) in roof_form_steps.items():
+                form_fields = form_class().fields.keys()
+
+                # Check if all fields in this form already have data in the session
+                if all(field in session_dict for field in form_fields):
+                    initial_data = {field: session_dict[field] for field in form_fields}
+                    form = form_class(initial=initial_data)
+                    with open(  # noqa: PTH123
+                        "building_dialouge_webapp/templates/" + partial_name,
+                    ) as file:
+                        partial_as_string = file.read()
+                    forms_to_render.append(
+                        (step, partial_as_string, template_variable, form),
+                    )
+                else:
+                    # If any missing, render this form next without initial data
+                    form = form_class()
+                    with open(  # noqa: PTH123
+                        "building_dialouge_webapp/templates/" + partial_name,
+                    ) as file:
+                        partial_as_string = file.read()
+                    forms_to_render.append(
+                        (step, partial_as_string, template_variable, form),
+                    )
+                    break
+            context = {
+                **{
+                    template_variable: form
+                    for _, _, template_variable, form in forms_to_render
+                },
+                **{
+                    partial_name: partial_as_string
+                    for partial_name, partial_as_string, _, _ in forms_to_render
+                },
+            }
+            return render(request, "pages/roof.html", context)
+
         partial_name, template_variable, form_class = roof_form_steps["roof_type"]
 
-    if request.method == "POST":
+    if request.htmx:
         request_dict = request.POST.dict()
-        session_dict = request.session.get("all_user_answers", {})
         compare_dict = session_dict | request_dict
 
         if "flachdach" in compare_dict.values():
@@ -114,7 +160,7 @@ def roof_view(request):
             partial_name, template_variable, form_class = roof_form_steps[
                 "roof_details"
             ]
-
+            form_instance = form_class()
         else:
             form = RoofDetailsForm(request.POST)
             if form.is_valid():

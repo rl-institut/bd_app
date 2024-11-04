@@ -11,7 +11,7 @@
     </div>
   </form>
   <div id="choice_of_type"></div>
-  <div id="placeholder_roof_details"></div>
-  <div id="placeholder_roof_insulation"></div>
+  {{ roof_details | safe }}
+  {{ roof_insulation | safe }}
   <a href="{% url 'heat:window' %}" class="btn btn-primary" class>Weiter</a>
 {% endblock content %}
