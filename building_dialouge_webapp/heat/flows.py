@@ -176,6 +176,18 @@ class TemplateState(State):
 
 
 class FormState(TemplateState):
+    """
+    Represents a state with a form within a flow, handling storage, and
+    change detection of individual form field values in the session.
+
+    Attributes:
+        flow (Flow): The flow instance to which this state belongs.
+        target_id (str): The identifier for the HTML target associated with this state.
+        form_class (type[Form]): Form class associated with the current state.
+        template_name (str | None): Optional template name for rendering the form.
+        label (str, optional): An optional label for the state.
+    """
+
     def __init__(  # noqa: PLR0913
         self,
         flow: "Flow",
@@ -188,6 +200,7 @@ class FormState(TemplateState):
         self.form_class = form_class
 
     def render(self) -> str:
+        """Renders the form with data from the session if available; otherwise, renders a blank form."""
         status = self.check_state()
         data = None if status == StateStatus.New else self.flow.request.session.get("django_htmx_flow", {})
         context = self.get_context_data()
@@ -201,6 +214,26 @@ class FormState(TemplateState):
             )
         context["form"] = self.form_class(data)
         return get_template(self.template_name).render(context)
+
+    def store_state(self):
+        """Stores each form field's input value to the session."""
+        if self.flow.request.method == "POST":
+            session_data = self.flow.request.session.get("django_htmx_flow", {})
+            form_instance = self.form_class(self.flow.request.POST)
+            if form_instance.is_valid():
+                form_data = form_instance.cleaned_data
+                for field_name, value in form_data.items():
+                    session_data[field_name] = value
+                self.flow.request.session["django_htmx_flow"] = session_data
+
+    def remove_state(self):
+        """Removes each form field's stored value from the session."""
+        session_data = self.flow.request.session.get("django_htmx_flow", {})
+        form_instance = self.form_class()
+        for field in form_instance.fields:
+            if field in session_data:
+                del session_data[field]
+        self.flow.request.session["django_htmx_flow"] = session_data
 
 
 class Transition:
