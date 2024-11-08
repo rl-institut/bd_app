@@ -1,6 +1,51 @@
 from django import forms
 
 
+class RoofTypeForm(forms.Form):
+    roof_type = forms.ChoiceField(
+        label="roof_type",
+        choices=[
+            ("flachdach", "Flachdach"),
+            ("satteldach", "Satteldach"),
+            ("walmdach", "Walmdach"),
+            ("other", "Andere Dachform"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class RoofDetailsForm(forms.Form):
+    roof_area = forms.IntegerField(
+        label="roof_area",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    roof_orientation = forms.ChoiceField(
+        label="In welcher Richtung ist ihr Dach ausgerichtet?",
+        choices=[
+            ("n", "N"),
+            ("no", "NO"),
+            ("o", "O"),
+            ("so", "SO"),
+            ("sw", "SW"),
+            ("s", "S"),
+            ("w", "W"),
+            ("nw", "NW"),
+        ],
+        widget=forms.RadioSelect,
+    )
+    number_roof_windows = forms.IntegerField(
+        label="number_of_windows",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+
+class RoofInsulationForm(forms.Form):
+    roof_insulation_exists = forms.ChoiceField(
+        label="roof_insulation_exists",
+        choices=[(True, "Yes"), (False, "No")],
+    )
+
+
 class ElectricityConsumptionForm(forms.Form):
     household_members = forms.ChoiceField(
         label="Wie viele Personen leben in ihrem Haushalt?",
@@ -178,10 +223,7 @@ class HeatGenerationForm2(forms.Form):
                     "Dieses Feld ausfüllen, wenn Solarthermieanlage vorhanden.",
                 )
         elif collector_surface or collector_cardinal_direction:
-            error_message = (
-                "Kollektorfläche und Ausrichtung auslassen, "
-                "wenn keine Solarthermieanlage vorhanden."
-            )
+            error_message = "Kollektorfläche und Ausrichtung auslassen, wenn keine Solarthermieanlage vorhanden."
             raise forms.ValidationError(error_message)
 
         return cleaned_data

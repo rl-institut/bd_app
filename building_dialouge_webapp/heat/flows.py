@@ -4,9 +4,7 @@ from enum import IntEnum
 from typing import Any
 from typing import Optional
 
-from django.forms import ChoiceField
 from django.forms import Form
-from django.forms import IntegerField
 from django.http import HttpResponse
 from django.template import Template
 from django.template.context_processors import csrf
@@ -14,20 +12,7 @@ from django.template.loader import get_template
 from django.views.generic import TemplateView
 from django_htmx.http import retarget
 
-
-class RoofTypeForm(Form):
-    roof_type = ChoiceField(
-        label="Dachform",
-        choices=(
-            ("flat", "Flachdach"),
-            ("spitz", "Spitzdach"),
-            ("other", "Andere Dachform"),
-        ),
-    )
-
-
-class RoofAreaForm(Form):
-    roof_area = IntegerField(label="Dachfläche")
+from . import forms
 
 
 class FlowError(Exception):
@@ -287,10 +272,22 @@ class RoofFlow(Flow):
         self.start = FormState(
             self,
             target_id="roof_type",
-            form_class=RoofTypeForm,
+            form_class=forms.RoofTypeForm,
         ).transition(
-            Switch("roof_type").case("flat", "flat_roof").case("spitz", "spitz").default("other"),
+            Switch("roof_type")
+            .case("flachdach", "flat_roof")
+            .case("satteldach", "sattel")
+            .case("walmdach", "walm")
+            .default("other"),
         )
-        self.flat_roof = FormState(self, target_id="roof_area", form_class=RoofAreaForm)
-        self.spitz = State(self, target_id="spitz", response="Spitzdach!")
-        self.other = State(self, target_id="other", response="Anderes Dach")
+
+        self.flat_roof = FormState(self, target_id="roof_insulation", form_class=forms.RoofInsulationForm)
+        self.sattel = State(self, target_id="sattel", response="Sattel Dach")
+        self.walm = State(self, target_id="walm", response="Walm Dach")
+        self.other = FormState(self, target_id="roof_details", form_class=forms.RoofDetailsForm).transition(
+            Next("roof_insulation"),
+        )
+
+        self.roof_details = State(self, target_id="roof_details", response="details")
+        self.roof_insulation = State(self, target_id="roof_insulation", response="insulation")
+        self.end = EndState(self)
