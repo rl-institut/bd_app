@@ -58,8 +58,8 @@ class State:
         return self
 
     def next(self) -> Optional["State"]:
+        """Determines the next state by following the current transition."""
         if self._transition is None:
-            """Determines the next state by following the current transition."""
             return EndState(self.flow)
         return self._transition.follow(self)
 
@@ -75,22 +75,26 @@ class State:
         """Saves the current state's input value to the session if the request method is POST."""
         if self.flow.request.method == "POST":
             value = self.flow.request.POST[self.target_id]
-            self.flow.request.session[self.target_id] = value
+            session_data = self.flow.request.session.get("django_htmx_flow", {})
+            session_data[self.target_id] = value
+            self.flow.request.session["django_htmx_flow"] = session_data
 
     def remove_state(self):
         """Removes the current state's value from the session if it exists."""
-        if self.target_id in self.flow.request.session:
-            del self.flow.request.session[self.target_id]
+        session_data = self.flow.request.session.get("django_htmx_flow", {})
+        if self.target_id in session_data:
+            del session_data[self.target_id]
+            self.flow.request.session["django_htmx_flow"] = session_data
 
     def check_state(self) -> StateStatus:
         """Checks the status of the current state based on the session and POST data."""
-        if self.target_id not in self.flow.request.POST and self.target_id not in self.flow.request.session:
+        session_data = self.flow.request.session.get("django_htmx_flow", {})
+        if self.target_id not in self.flow.request.POST and self.target_id not in session_data:
             return StateStatus.New
-        if self.target_id in self.flow.request.POST and self.target_id not in self.flow.request.session:
+        if self.target_id in self.flow.request.POST and self.target_id not in session_data:
             return StateStatus.Set
-        if (
-            self.target_id in self.flow.request.POST
-            and self.flow.request.POST[self.target_id] != self.flow.request.session[self.target_id]
+        if self.target_id in self.flow.request.POST and self.flow.request.POST[self.target_id] != session_data.get(
+            self.target_id,
         ):
             return StateStatus.Changed
         return StateStatus.Unchanged
@@ -185,7 +189,7 @@ class FormState(TemplateState):
 
     def render(self) -> str:
         status = self.check_state()
-        data = None if status == StateStatus.New else self.flow.request.session
+        data = None if status == StateStatus.New else self.flow.request.session.get("django_htmx_flow", {})
         context = self.get_context_data()
         if self.template_name is None:
             csrf_token = csrf(self.flow.request)["csrf_token"]
@@ -250,10 +254,11 @@ class Switch(Transition):
 
     def default_switch_fct(self, state: "State") -> Any:
         key = self.lookup if isinstance(self.lookup, str) else state.target_id
-        if key in self.flow.request.session:
-            return self.flow.request.session[key]
-        if key in self.flow.request.POST:
-            return self.flow.request.POST[key]
+        session_data = self.flow.request.session.get("django_htmx_flow", {})
+        if key in session_data:
+            return session_data[key]
+        if key in session_data:
+            return session_data[key]
         error_msg = f"Could not find lookup {key=} in request or session."
         raise FlowError(error_msg)
 
