@@ -235,6 +235,22 @@ class FormState(TemplateState):
                 del session_data[field]
         self.flow.request.session["django_htmx_flow"] = session_data
 
+    def check_state(self) -> StateStatus:
+        """Checks the state status using all form fields."""
+        session_data = self.flow.request.session.get("django_htmx_flow", {})
+        form_fields = self.form_class().fields
+
+        if all(field not in self.flow.request.POST and field not in session_data for field in form_fields):
+            return StateStatus.New
+        if any(field in self.flow.request.POST and field not in session_data for field in form_fields):
+            return StateStatus.Set
+        if any(
+            field in self.flow.request.POST and self.flow.request.POST[field] != session_data.get(field)
+            for field in form_fields
+        ):
+            return StateStatus.Changed
+        return StateStatus.Unchanged
+
 
 class Transition:
     def __init__(self):
