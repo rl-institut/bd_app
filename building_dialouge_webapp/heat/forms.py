@@ -39,6 +39,33 @@ class RoofDetailsForm(forms.Form):
     )
 
 
+class RoofUsageNowForm(forms.Form):
+    roof_usage_now = forms.ChoiceField(
+        label="roof_usage_now",
+        choices=[
+            ("all_used", "Vollständig genutzt/beheizt"),
+            ("part_used", "Teilweise genutzt/beheizt"),
+            ("not_used", "Nicht genutzt/beheizt"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class RoofUsageFutureForm(forms.Form):
+    roof_usage_planned = forms.ChoiceField(
+        label="roof_usage_planned",
+        choices=[
+            ("all_used", "Keine Nutzung/Beheizung"),
+            ("part_used", "Ausbauen und Nutzen"),
+        ],
+        widget=forms.RadioSelect,
+    )
+    roof_usage_share = forms.IntegerField(
+        label="roof_usage_share",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+
 class RoofInsulationForm(forms.Form):
     roof_insulation_exists = forms.ChoiceField(
         label="roof_insulation_exists",

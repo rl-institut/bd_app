@@ -351,13 +351,51 @@ class RoofFlow(Flow):
             .default("other"),
         )
 
-        self.flat_roof = FormState(self, target_id="roof_insulation", form_class=forms.RoofInsulationForm)
-        self.sattel = State(self, target_id="sattel", response="Sattel Dach")
-        self.walm = State(self, target_id="walm", response="Walm Dach")
-        self.other = FormState(self, target_id="roof_details", form_class=forms.RoofDetailsForm).transition(
-            Next("roof_insulation"),
+        # roof_type results going directly to Insulation
+        self.flat_roof = FormState(self, target_id="roof_insulation", form_class=forms.RoofInsulationForm).transition(
+            Next("end"),
         )
-
-        self.roof_details = State(self, target_id="roof_details", response="details")
-        self.roof_insulation = State(self, target_id="roof_insulation", response="insulation")
+        # roof_type results going to roof_details and roof_usage
+        self.sattel = FormState(self, target_id="roof_details", form_class=forms.RoofDetailsForm).transition(
+            Next("roof_usage_now"),
+        )
+        self.walm = FormState(self, target_id="roof_details", form_class=forms.RoofDetailsForm).transition(
+            Next("roof_usage_now"),
+        )
+        self.other = FormState(self, target_id="roof_details", form_class=forms.RoofDetailsForm).transition(
+            Next("roof_usage_now"),
+        )
+        self.roof_usage_now = FormState(
+            self,
+            target_id="roof_usage_now",
+            form_class=forms.RoofUsageNowForm,
+        ).transition(
+            Switch("roof_usage_now")
+            .case("all_used", "all_used")
+            .case("part_used", "part_used")
+            .case("not_used", "not_used"),
+        )
+        # roof_usage results going directly to Insulation
+        self.all_used = FormState(self, target_id="roof_insulation", form_class=forms.RoofInsulationForm).transition(
+            Next("end"),
+        )
+        # roof_usage results going to future usage
+        self.part_used = FormState(
+            self,
+            target_id="roof_usage_future",
+            form_class=forms.RoofUsageFutureForm,
+        ).transition(Next("roof_insulation"))
+        self.not_used = FormState(
+            self,
+            target_id="roof_usage_future",
+            form_class=forms.RoofUsageFutureForm,
+        ).transition(Next("roof_insulation"))
+        # last Form is Insulation
+        self.roof_insulation = FormState(
+            self,
+            target_id="roof_insulation",
+            form_class=forms.RoofInsulationForm,
+        ).transition(
+            Next("end"),
+        )
         self.end = EndState(self)
