@@ -27,6 +27,16 @@ class StateStatus(IntEnum):
 
 
 class State:
+    """
+    Represents a state in a flow, handling transitions, rendering responses and managing state in session.
+
+    Attributes:
+        flow (Flow): The flow instance to which this state belongs.
+        target_id (str): The identifier for the HTML target associated with this state.
+        response (str): The HTML response for the current state.
+        label (str, optional): An optional label for the state.
+    """
+
     def __init__(
         self,
         flow: "Flow",
@@ -42,12 +52,14 @@ class State:
         super().__init__()
 
     def transition(self, transition: "Transition") -> "State":
+        """Assigns a transition to the state and sets the flow context."""
         transition.flow = self.flow
         self._transition = transition
         return self
 
     def next(self) -> Optional["State"]:
         if self._transition is None:
+            """Determines the next state by following the current transition."""
             return EndState(self.flow)
         return self._transition.follow(self)
 
@@ -60,15 +72,18 @@ class State:
         return f'<div id="{self.target_id}" hx-swap-oob="innerHTML"></div>'
 
     def store_state(self):
+        """Saves the current state's input value to the session if the request method is POST."""
         if self.flow.request.method == "POST":
             value = self.flow.request.POST[self.target_id]
             self.flow.request.session[self.target_id] = value
 
     def remove_state(self):
+        """Removes the current state's value from the session if it exists."""
         if self.target_id in self.flow.request.session:
             del self.flow.request.session[self.target_id]
 
     def check_state(self) -> StateStatus:
+        """Checks the status of the current state based on the session and POST data."""
         if self.target_id not in self.flow.request.POST and self.target_id not in self.flow.request.session:
             return StateStatus.New
         if self.target_id in self.flow.request.POST and self.target_id not in self.flow.request.session:
@@ -81,6 +96,7 @@ class State:
         return StateStatus.Unchanged
 
     def set(self) -> dict[str, str]:
+        """Sets or updates the state using check_state()."""
         status = self.check_state()
         if status == StateStatus.New:
             return {self.target_id: self.render()}
@@ -111,7 +127,7 @@ class State:
         raise FlowError(error_msg)
 
     def reset(self):
-        """Reset current state and following."""
+        """Reset current state and following state."""
         following_node = self.next()
         self.remove_state()
         following_states = {} if following_node is None else following_node.reset()
