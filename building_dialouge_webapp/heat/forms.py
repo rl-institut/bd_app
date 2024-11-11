@@ -61,8 +61,10 @@ class RoofUsageFutureForm(forms.Form):
         widget=forms.RadioSelect,
     )
     roof_usage_share = forms.IntegerField(
-        label="roof_usage_share",
+        label="roof_usage_share in %",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+        max_value=100,
+        min_value=0,
     )
 
 
