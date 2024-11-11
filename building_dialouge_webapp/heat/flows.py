@@ -306,8 +306,8 @@ class Switch(Transition):
         session_data = self.flow.request.session.get("django_htmx_flow", {})
         if key in session_data:
             return session_data[key]
-        if key in session_data:
-            return session_data[key]
+        if key in self.flow.request.POST:
+            return self.flow.request.POST[key]
         error_msg = f"Could not find lookup {key=} in request or session."
         raise FlowError(error_msg)
 
@@ -344,11 +344,7 @@ class RoofFlow(Flow):
             target_id="roof_type",
             form_class=forms.RoofTypeForm,
         ).transition(
-            Switch("roof_type")
-            .case("flachdach", "flat_roof")
-            .case("satteldach", "sattel")
-            .case("walmdach", "walm")
-            .default("other"),
+            Switch("roof_type").case("flachdach", "flat_roof").default("other_roof_type"),
         )
 
         # roof_type results going directly to Insulation
@@ -356,13 +352,7 @@ class RoofFlow(Flow):
             Next("end"),
         )
         # roof_type results going to roof_details and roof_usage
-        self.sattel = FormState(self, target_id="roof_details", form_class=forms.RoofDetailsForm).transition(
-            Next("roof_usage_now"),
-        )
-        self.walm = FormState(self, target_id="roof_details", form_class=forms.RoofDetailsForm).transition(
-            Next("roof_usage_now"),
-        )
-        self.other = FormState(self, target_id="roof_details", form_class=forms.RoofDetailsForm).transition(
+        self.other_roof_type = FormState(self, target_id="roof_details", form_class=forms.RoofDetailsForm).transition(
             Next("roof_usage_now"),
         )
         self.roof_usage_now = FormState(
@@ -370,22 +360,14 @@ class RoofFlow(Flow):
             target_id="roof_usage_now",
             form_class=forms.RoofUsageNowForm,
         ).transition(
-            Switch("roof_usage_now")
-            .case("all_used", "all_used")
-            .case("part_used", "part_used")
-            .case("not_used", "not_used"),
+            Switch("roof_usage_now").case("all_used", "all_used").default("not_all_used"),
         )
         # roof_usage results going directly to Insulation
         self.all_used = FormState(self, target_id="roof_insulation", form_class=forms.RoofInsulationForm).transition(
             Next("end"),
         )
         # roof_usage results going to future usage
-        self.part_used = FormState(
-            self,
-            target_id="roof_usage_future",
-            form_class=forms.RoofUsageFutureForm,
-        ).transition(Next("roof_insulation"))
-        self.not_used = FormState(
+        self.not_all_used = FormState(
             self,
             target_id="roof_usage_future",
             form_class=forms.RoofUsageFutureForm,
