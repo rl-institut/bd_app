@@ -8,4 +8,5 @@ app_name = "heat"
 urlpatterns = [
     path("forms/", views.handle_forms, name="forms"),
     path("roof/", flows.RoofFlow.as_view(), name="roof"),
+    path("", views.LandingPage.as_view(), name="home"),
 ]

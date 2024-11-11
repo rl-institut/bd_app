@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.views.generic import TemplateView
 
 from .forms import ElectricityConsumptionForm
 from .forms import ElectricityGenerationForm
@@ -52,3 +53,7 @@ def handle_forms(request):
         }
 
     return render(request, "pages/heat_forms.html", context)
+
+
+class LandingPage(TemplateView):
+    template_name = "pages/home.html"
