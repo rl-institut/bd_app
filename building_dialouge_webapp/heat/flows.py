@@ -132,7 +132,10 @@ class State:
 
     def reset(self):
         """Reset current state and following state."""
-        following_node = self.next()
+        try:
+            following_node = self.next()
+        except FlowError:
+            following_node = None
         self.remove_state()
         following_states = {} if following_node is None else following_node.reset()
         following_states[self.target_id] = self.render_reset()
