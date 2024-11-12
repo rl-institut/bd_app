@@ -1,9 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div id="roof_type">{{ roof_type.content | safe }}</div>
-  <div id="roof_details">{{ roof_details.content | safe }}</div>
-  <div id="roof_usage_now">{{ roof_usage_now.content | safe }}</div>
-  <div id="roof_usage_future">{{ roof_usage_future.content | safe }}</div>
-  <div id="roof_insulation">{{ roof_insulation.content | safe }}</div>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div id="roof_type">{{ roof_type.content | safe }}</div>
+        <div id="roof_details">{{ roof_details.content | safe }}</div>
+        <div id="roof_usage_now">{{ roof_usage_now.content | safe }}</div>
+        <div id="roof_usage_future">{{ roof_usage_future.content | safe }}</div>
+        <div id="roof_insulation">{{ roof_insulation.content | safe }}</div>
+      </div>
+      <div class="col">
+        <div id="info">Hier kommt ein Infotext rein.</div>
+      </div>
+    </div>
+  </div>
 {% endblock content %}

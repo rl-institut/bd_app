@@ -294,6 +294,32 @@ class FormState(TemplateState):
         return StateStatus.Unchanged
 
 
+class FormInfoState(FormState):
+    def __init__(  # noqa: PLR0913
+        self,
+        flow: "Flow",
+        name: str,
+        form_class: type[Form],
+        info_text: str,
+        template_name: str | None = None,
+        label: str | None = None,
+    ):
+        super().__init__(flow, name, form_class, template_name, label)
+        self.info_text = info_text
+
+    @property
+    def response(self) -> dict[str, StateResponse]:
+        form_response = {"info": HTMLStateResponse(f'<div id="info" hx-swap-oob="innerHTML">{self.info_text}</div>')}
+        form_response.update(**super().response)
+        return form_response
+
+    @property
+    def reset_response(self) -> dict[str, StateResponse]:
+        form_response = {"info": HTMLStateResponse('<div id="info" hx-swap-oob="innerHTML"></div>')}
+        form_response.update(**super().reset_response)
+        return form_response
+
+
 class Transition:
     def __init__(self):
         # These are set once Transition is added to state
@@ -403,10 +429,11 @@ class RoofFlow(Flow):
         )
 
         # roof_type results going directly to Insulation
-        self.flat_roof = FormState(
+        self.flat_roof = FormInfoState(
             self,
             name="roof_insulation",
             form_class=forms.RoofInsulationForm,
+            info_text="Isolation",
         ).transition(
             Next("end"),
         )
@@ -418,10 +445,11 @@ class RoofFlow(Flow):
         ).transition(
             Next("roof_usage_now"),
         )
-        self.roof_usage_now = FormState(
+        self.roof_usage_now = FormInfoState(
             self,
             name="roof_usage_now",
             form_class=forms.RoofUsageNowForm,
+            info_text="Dachnutzung",
         ).transition(
             Switch("roof_usage_now").case("all_used", "all_used").default("not_all_used"),
         )
