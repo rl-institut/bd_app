@@ -139,22 +139,21 @@ class State:
         if status == StateStatus.Set:
             self.store_state()
             following_states = self.next().set()
-            following_states[self.name] = self.response
-            return following_states
-        if status == StateStatus.Unchanged:
+        elif status == StateStatus.Unchanged:
             following_states = self.next().set()
-            following_states[self.name] = self.response
-            return following_states
-        if status == StateStatus.Changed:
+        elif status == StateStatus.Changed:
             following_states = self.next().reset()
             self.store_state()
             next_state = self.next()
             following_states[next_state.name] = next_state.response
-            following_states[self.name] = self.response
-            return following_states
+        else:
+            error_msg = f"Unknown state status '{status}'."
+            raise FlowError(error_msg)
 
-        error_msg = f"Unknown state status '{status}'."
-        raise FlowError(error_msg)
+        if self.flow.request.htmx:
+            return following_states
+        following_states[self.name] = self.response
+        return following_states
 
     def reset(self) -> dict[str, StateResponse]:
         """Reset current state and following state."""
@@ -254,7 +253,7 @@ class FormState(TemplateState):
                 f"</form>",
             )
         context["form"] = self.form_class(data)
-        return get_template(self.template_name).render(context)
+        return HTMLStateResponse(get_template(self.template_name).render(context))
 
     def store_state(self):
         """Stores each form field's input value to the session."""
@@ -365,16 +364,12 @@ class Flow(TemplateView):
         if request.htmx:
             if isinstance(first_response := next(iter(state_partials.values())), RedirectStateResponse):
                 return HttpResponseClientRedirect(reverse(first_response.content))
-            # Merge reset responses and first occurring HTML response:
+            # Merge reset responses
             target = None
             html_response = ""
             for name, state_response in state_partials.items():
-                if isinstance(state_response, HTMLResetStateResponse):
-                    html_response += state_response.content
+                html_response += state_response.content
                 if isinstance(state_response, HTMLStateResponse):
-                    if target is not None:
-                        break
-                    html_response += state_response.content
                     target = name
             response = HttpResponse(html_response, content_type="text/html")
             return retarget(response, f"#{target}")
