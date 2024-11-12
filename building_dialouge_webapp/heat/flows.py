@@ -26,29 +26,54 @@ class StateStatus(IntEnum):
     Changed = 3  # if state is revisited with POST request differing from session
 
 
+class StateResponse:
+    """Base class for holding state content."""
+
+    def __init__(self, content: Any) -> None:
+        self.content = content
+
+
+class HTMLStateResponse(StateResponse):
+    """State response holding HTML to be rendered."""
+
+    def __init__(self, html: str) -> None:
+        super().__init__(html)
+
+
+class HTMLResetStateResponse(StateResponse):
+    """State response holding HTML in order to reset page content."""
+
+    def __init__(self, html: str) -> None:
+        super().__init__(html)
+
+
+class RedirectStateResponse(StateResponse):
+    """State response holding URL to redirect to."""
+
+    def __init__(self, url: str) -> None:
+        super().__init__(url)
+
+
 class State:
     """
     Represents a state in a flow, handling transitions, rendering responses and managing state in session.
 
     Attributes:
         flow (Flow): The flow instance to which this state belongs.
-        target_id (str): The identifier for the HTML target associated with this state.
-        response (str): The HTML response for the current state.
+        name (str): The identifier for the HTML target associated with this state.
         label (str, optional): An optional label for the state.
     """
 
     def __init__(
         self,
         flow: "Flow",
-        target_id: str,
-        response: str,
+        name: str,
         label: str | None = None,
     ):
         self.flow = flow
-        self.target_id = target_id
+        self.name = name
         self.label = label
         self._transition = None
-        self.response = response
         super().__init__()
 
     def transition(self, transition: "Transition") -> "State":
@@ -63,74 +88,70 @@ class State:
             return EndState(self.flow)
         return self._transition.follow(self)
 
-    def render(self) -> str:
-        """Render HTML for current target."""
-        return self.response
-
-    def render_reset(self) -> str:
-        """Return HTML including HTMX swap-oob in order to remove/reset HTML for current target."""
-        return f'<div id="{self.target_id}" hx-swap-oob="innerHTML"></div>'
-
     def store_state(self):
         """Saves the current state's input value to the session if the request method is POST."""
         if self.flow.request.method == "POST":
-            value = self.flow.request.POST[self.target_id]
+            value = self.flow.request.POST[self.name]
             session_data = self.flow.request.session.get("django_htmx_flow", {})
-            session_data[self.target_id] = value
+            session_data[self.name] = value
             self.flow.request.session["django_htmx_flow"] = session_data
 
     def remove_state(self):
         """Removes the current state's value from the session if it exists."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        if self.target_id in session_data:
-            del session_data[self.target_id]
+        if self.name in session_data:
+            del session_data[self.name]
             self.flow.request.session["django_htmx_flow"] = session_data
 
     def check_state(self) -> StateStatus:
         """Checks the status of the current state based on the session and POST data."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        if self.target_id not in self.flow.request.POST and self.target_id not in session_data:
+        if self.name not in self.flow.request.POST and self.name not in session_data:
             return StateStatus.New
-        if self.target_id in self.flow.request.POST and self.target_id not in session_data:
+        if self.name in self.flow.request.POST and self.name not in session_data:
             return StateStatus.Set
-        if self.target_id in self.flow.request.POST and self.flow.request.POST[self.target_id] != session_data.get(
-            self.target_id,
+        if self.name in self.flow.request.POST and self.flow.request.POST[self.name] != session_data.get(
+            self.name,
         ):
             return StateStatus.Changed
         return StateStatus.Unchanged
 
-    def set(self) -> dict[str, str]:
+    @property
+    def response(self) -> StateResponse:
+        """Return response of current state."""
+        return StateResponse(self.name)
+
+    @property
+    def reset_response(self) -> StateResponse:
+        """Return response of current state in case of reset."""
+        return StateResponse(self.name)
+
+    def set(self) -> dict[str, StateResponse]:
         """Sets or updates the state using check_state()."""
         status = self.check_state()
         if status == StateStatus.New:
-            return {self.target_id: self.render()}
+            return {self.name: self.response}
         if status == StateStatus.Set:
             self.store_state()
             following_states = self.next().set()
-            following_states[self.target_id] = self.render()
+            following_states[self.name] = self.response
             return following_states
         if status == StateStatus.Unchanged:
             following_states = self.next().set()
-            following_states[self.target_id] = self.render()
+            following_states[self.name] = self.response
             return following_states
         if status == StateStatus.Changed:
             following_states = self.next().reset()
             self.store_state()
             next_state = self.next()
-            if self.flow.request.htmx:
-                return {
-                    next_state.target_id: next_state.render()
-                    + "\n".join(v for k, v in following_states.items() if k != next_state.target_id),
-                    self.target_id: self.render(),
-                }
-            return {
-                next_state.target_id: next_state.render(),
-                self.target_id: self.render(),
-            }
+            following_states[next_state.name] = next_state.response
+            following_states[self.name] = self.response
+            return following_states
+
         error_msg = f"Unknown state status '{status}'."
         raise FlowError(error_msg)
 
-    def reset(self):
+    def reset(self) -> dict[str, StateResponse]:
         """Reset current state and following state."""
         try:
             following_node = self.next()
@@ -138,7 +159,7 @@ class State:
             following_node = None
         self.remove_state()
         following_states = {} if following_node is None else following_node.reset()
-        following_states[self.target_id] = self.render_reset()
+        following_states[self.name] = self.reset_response
         return following_states
 
 
@@ -150,7 +171,7 @@ class EndState(State):
     """
 
     def __init__(self, flow: "Flow", label: str = "end"):
-        super().__init__(flow, target_id="", response="", label=label)
+        super().__init__(flow, name="", label=label)
 
     def set(self) -> dict[str, str]:
         return {}
@@ -163,19 +184,25 @@ class TemplateState(State):
     def __init__(
         self,
         flow: "Flow",
-        target_id: str,
+        name: str,
         template_name: Template | str,
         label: str | None = None,
     ):
         self.template_name = template_name
-        super().__init__(flow, target_id, label)
+        super().__init__(flow, name, label)
 
     def get_context_data(self):
         return self.flow.request.GET
 
-    def render(self) -> str:
+    @property
+    def response(self) -> StateResponse:
         context = self.get_context_data()
-        return get_template(self.template_name).render(context)
+        return HTMLStateResponse(get_template(self.template_name).render(context))
+
+    @property
+    def reset_response(self) -> StateResponse:
+        """Return HTML including HTMX swap-oob in order to remove/reset HTML for current target."""
+        return HTMLResetStateResponse(f'<div id="{self.name}" hx-swap-oob="innerHTML"></div>')
 
 
 class FormState(TemplateState):
@@ -185,7 +212,7 @@ class FormState(TemplateState):
 
     Attributes:
         flow (Flow): The flow instance to which this state belongs.
-        target_id (str): The identifier for the HTML target associated with this state.
+        name (str): The identifier for the HTML target associated with this state.
         form_class (type[Form]): Form class associated with the current state.
         template_name (str | None): Optional template name for rendering the form.
         label (str, optional): An optional label for the state.
@@ -194,26 +221,27 @@ class FormState(TemplateState):
     def __init__(  # noqa: PLR0913
         self,
         flow: "Flow",
-        target_id: str,
+        name: str,
         form_class: type[Form],
         template_name: str | None = None,
         label: str | None = None,
     ):
-        super().__init__(flow, target_id, template_name, label)
+        super().__init__(flow, name, template_name, label)
         self.form_class = form_class
 
-    def render(self) -> str:
+    @property
+    def response(self) -> StateResponse:
         """Renders the form with data from the session if available; otherwise, renders a blank form."""
         status = self.check_state()
         data = None if status == StateStatus.New else self.flow.request.session.get("django_htmx_flow", {})
         context = self.get_context_data()
         if self.template_name is None:
             csrf_token = csrf(self.flow.request)["csrf_token"]
-            return (
+            return HTMLStateResponse(
                 f'<form hx-post="" hx-trigger="change">'
                 f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">'
                 f"{self.form_class(data).render()}"
-                f"</form>"
+                f"</form>",
             )
         context["form"] = self.form_class(data)
         return get_template(self.template_name).render(context)
@@ -305,7 +333,7 @@ class Switch(Transition):
         raise FlowError(error_msg)
 
     def default_switch_fct(self, state: "State") -> Any:
-        key = self.lookup if isinstance(self.lookup, str) else state.target_id
+        key = self.lookup if isinstance(self.lookup, str) else state.name
         session_data = self.flow.request.session.get("django_htmx_flow", {})
         if key in session_data:
             return session_data[key]
@@ -325,13 +353,28 @@ class Flow(TemplateView):
         state_partials = self.start.set()
 
         if request.htmx:
-            target = next(iter(state_partials.keys()))
-            content = next(iter(state_partials.values()))
-            response = HttpResponse(content, content_type="text/html")
+            # Merge reset responses and first occurring HTML response:
+            target = None
+            html_response = ""
+            for name, state_response in state_partials.items():
+                if isinstance(state_response, HTMLResetStateResponse):
+                    html_response += state_response.content
+                if isinstance(state_response, HTMLStateResponse):
+                    if target is not None:
+                        break
+                    html_response += state_response.content
+                    target = name
+            response = HttpResponse(html_response, content_type="text/html")
             return retarget(response, f"#{target}")
 
         # Traditional request
         context = self.get_context_data(**kwargs)
+        # Remove reset responses from partials
+        state_partials = {
+            name: response
+            for name, response in state_partials.items()
+            if not isinstance(response, HTMLResetStateResponse)
+        }
         context.update(state_partials)
         # Fill template with state partials by adding them with their target_id
         return self.render_to_response(context)
@@ -344,41 +387,53 @@ class RoofFlow(Flow):
         super().__init__()
         self.start = FormState(
             self,
-            target_id="roof_type",
+            name="roof_type",
             form_class=forms.RoofTypeForm,
         ).transition(
             Switch("roof_type").case("flachdach", "flat_roof").default("other_roof_type"),
         )
 
         # roof_type results going directly to Insulation
-        self.flat_roof = FormState(self, target_id="roof_insulation", form_class=forms.RoofInsulationForm).transition(
+        self.flat_roof = FormState(
+            self,
+            name="roof_insulation",
+            form_class=forms.RoofInsulationForm,
+        ).transition(
             Next("end"),
         )
         # roof_type results going to roof_details and roof_usage
-        self.other_roof_type = FormState(self, target_id="roof_details", form_class=forms.RoofDetailsForm).transition(
+        self.other_roof_type = FormState(
+            self,
+            name="roof_details",
+            form_class=forms.RoofDetailsForm,
+        ).transition(
             Next("roof_usage_now"),
         )
         self.roof_usage_now = FormState(
             self,
-            target_id="roof_usage_now",
+            name="roof_usage_now",
             form_class=forms.RoofUsageNowForm,
         ).transition(
             Switch("roof_usage_now").case("all_used", "all_used").default("not_all_used"),
         )
         # roof_usage results going directly to Insulation
-        self.all_used = FormState(self, target_id="roof_insulation", form_class=forms.RoofInsulationForm).transition(
+        self.all_used = FormState(
+            self,
+            name="roof_insulation",
+            form_class=forms.RoofInsulationForm,
+        ).transition(
             Next("end"),
         )
         # roof_usage results going to future usage
         self.not_all_used = FormState(
             self,
-            target_id="roof_usage_future",
+            name="roof_usage_future",
             form_class=forms.RoofUsageFutureForm,
         ).transition(Next("roof_insulation"))
         # last Form is Insulation
         self.roof_insulation = FormState(
             self,
-            target_id="roof_insulation",
+            name="roof_insulation",
             form_class=forms.RoofInsulationForm,
         ).transition(
             Next("end"),

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div id="roof_type">{{ roof_type | safe }}</div>
-  <div id="roof_details">{{ roof_details | safe }}</div>
-  <div id="roof_usage_now">{{ roof_usage_now | safe }}</div>
-  <div id="roof_usage_future">{{ roof_usage_future | safe }}</div>
-  <div id="roof_insulation">{{ roof_insulation | safe }}</div>
+  <div id="roof_type">{{ roof_type.content | safe }}</div>
+  <div id="roof_details">{{ roof_details.content | safe }}</div>
+  <div id="roof_usage_now">{{ roof_usage_now.content | safe }}</div>
+  <div id="roof_usage_future">{{ roof_usage_future.content | safe }}</div>
+  <div id="roof_insulation">{{ roof_insulation.content | safe }}</div>
 {% endblock content %}
