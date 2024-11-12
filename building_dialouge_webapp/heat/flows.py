@@ -6,10 +6,12 @@ from typing import Optional
 
 from django.forms import Form
 from django.http import HttpResponse
+from django.shortcuts import reverse
 from django.template import Template
 from django.template.context_processors import csrf
 from django.template.loader import get_template
 from django.views.generic import TemplateView
+from django_htmx.http import HttpResponseClientRedirect
 from django_htmx.http import retarget
 
 from . import forms
@@ -85,7 +87,10 @@ class State:
     def next(self) -> Optional["State"]:
         """Determines the next state by following the current transition."""
         if self._transition is None:
-            return EndState(self.flow)
+            if isinstance(self.flow.end, EndState):
+                return self.flow.end
+            error_msg = f"No next state or end state defined for state '{self.name}'."
+            raise FlowError(error_msg)
         return self._transition.follow(self)
 
     def store_state(self):
@@ -158,7 +163,11 @@ class State:
         except FlowError:
             following_node = None
         self.remove_state()
-        following_states = {} if following_node is None else following_node.reset()
+        # In case of reset, do not forward redirect responses
+        if following_node is None or isinstance(following_node, EndState):
+            following_states = {}
+        else:
+            following_states = following_node.reset()
         following_states[self.name] = self.reset_response
         return following_states
 
@@ -170,14 +179,15 @@ class EndState(State):
     Can be set explicitly or will be silently set.
     """
 
-    def __init__(self, flow: "Flow", label: str = "end"):
+    def __init__(self, flow: "Flow", url: str, label: str = "end"):
         super().__init__(flow, name="", label=label)
+        self.url = url
 
-    def set(self) -> dict[str, str]:
-        return {}
+    def set(self) -> dict[str, StateResponse]:
+        return {self.name: RedirectStateResponse(self.url)}
 
-    def reset(self) -> dict[str, str]:
-        return {}
+    def reset(self) -> dict[str, StateResponse]:
+        return {self.name: RedirectStateResponse(self.url)}
 
 
 class TemplateState(State):
@@ -346,13 +356,15 @@ class Switch(Transition):
 class Flow(TemplateView):
     def __init__(self):
         self.start = None
-        self.end = EndState(self)
+        self.end = None
         super().__init__()
 
     def dispatch(self, request, *args, **kwargs) -> HttpResponse:
         state_partials = self.start.set()
 
         if request.htmx:
+            if isinstance(first_response := next(iter(state_partials.values())), RedirectStateResponse):
+                return HttpResponseClientRedirect(reverse(first_response.content))
             # Merge reset responses and first occurring HTML response:
             target = None
             html_response = ""
@@ -373,7 +385,7 @@ class Flow(TemplateView):
         state_partials = {
             name: response
             for name, response in state_partials.items()
-            if not isinstance(response, HTMLResetStateResponse)
+            if not isinstance(response, (HTMLResetStateResponse, RedirectStateResponse))
         }
         context.update(state_partials)
         # Fill template with state partials by adding them with their target_id
@@ -438,4 +450,4 @@ class RoofFlow(Flow):
         ).transition(
             Next("end"),
         )
-        self.end = EndState(self)
+        self.end = EndState(self, url="heat:home")
