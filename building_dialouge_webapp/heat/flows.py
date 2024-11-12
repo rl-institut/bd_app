@@ -122,20 +122,20 @@ class State:
         return StateStatus.Unchanged
 
     @property
-    def response(self) -> StateResponse:
+    def response(self) -> dict[str, StateResponse]:
         """Return response of current state."""
-        return StateResponse(self.name)
+        return {self.name: StateResponse(self.name)}
 
     @property
-    def reset_response(self) -> StateResponse:
+    def reset_response(self) -> dict[str, StateResponse]:
         """Return response of current state in case of reset."""
-        return StateResponse(self.name)
+        return {self.name: StateResponse(self.name)}
 
     def set(self) -> dict[str, StateResponse]:
         """Sets or updates the state using check_state()."""
         status = self.check_state()
         if status == StateStatus.New:
-            return {self.name: self.response}
+            return self.response
         if status == StateStatus.Set:
             self.store_state()
             following_states = self.next().set()
@@ -145,14 +145,14 @@ class State:
             following_states = self.next().reset()
             self.store_state()
             next_state = self.next()
-            following_states[next_state.name] = next_state.response
+            following_states.update(next_state.response)
         else:
             error_msg = f"Unknown state status '{status}'."
             raise FlowError(error_msg)
 
         if self.flow.request.htmx:
             return following_states
-        following_states[self.name] = self.response
+        following_states.update(self.response)
         return following_states
 
     def reset(self) -> dict[str, StateResponse]:
@@ -167,7 +167,7 @@ class State:
             following_states = {}
         else:
             following_states = following_node.reset()
-        following_states[self.name] = self.reset_response
+        following_states.update(self.reset_response)
         return following_states
 
 
@@ -204,14 +204,14 @@ class TemplateState(State):
         return self.flow.request.GET
 
     @property
-    def response(self) -> StateResponse:
+    def response(self) -> dict[str, StateResponse]:
         context = self.get_context_data()
-        return HTMLStateResponse(get_template(self.template_name).render(context))
+        return {self.name: HTMLStateResponse(get_template(self.template_name).render(context))}
 
     @property
-    def reset_response(self) -> StateResponse:
+    def reset_response(self) -> dict[str, StateResponse]:
         """Return HTML including HTMX swap-oob in order to remove/reset HTML for current target."""
-        return HTMLResetStateResponse(f'<div id="{self.name}" hx-swap-oob="innerHTML"></div>')
+        return {self.name: HTMLResetStateResponse(f'<div id="{self.name}" hx-swap-oob="innerHTML"></div>')}
 
 
 class FormState(TemplateState):
@@ -239,21 +239,23 @@ class FormState(TemplateState):
         self.form_class = form_class
 
     @property
-    def response(self) -> StateResponse:
+    def response(self) -> dict[str, StateResponse]:
         """Renders the form with data from the session if available; otherwise, renders a blank form."""
         status = self.check_state()
         data = None if status == StateStatus.New else self.flow.request.session.get("django_htmx_flow", {})
         context = self.get_context_data()
         if self.template_name is None:
             csrf_token = csrf(self.flow.request)["csrf_token"]
-            return HTMLStateResponse(
-                f'<form hx-post="" hx-trigger="change">'
-                f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">'
-                f"{self.form_class(data).render()}"
-                f"</form>",
-            )
+            return {
+                self.name: HTMLStateResponse(
+                    f'<form hx-post="" hx-trigger="change">'
+                    f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">'
+                    f"{self.form_class(data).render()}"
+                    f"</form>",
+                ),
+            }
         context["form"] = self.form_class(data)
-        return HTMLStateResponse(get_template(self.template_name).render(context))
+        return {self.name: HTMLStateResponse(get_template(self.template_name).render(context))}
 
     def store_state(self):
         """Stores each form field's input value to the session."""
