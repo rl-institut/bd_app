@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block main %}
   <div class="container">
     <!-- Title Section -->
     <h1>building dialogue</h1>
@@ -29,7 +29,7 @@
                    id="postalCode"
                    class="form-control"
                    placeholder="Bsp: 45328" />
-            <button class="btn btn-dark">Starten</button>
+            <a href="{% url 'heat:roof' %}" class="btn btn-dark">Starten</a>
           </div>
         </div>
       </div>
@@ -47,4 +47,4 @@
       </div>
     </div>
   </div>
-{% endblock content %}
+{% endblock main %}
