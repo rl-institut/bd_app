@@ -57,3 +57,15 @@ def handle_forms(request):
 
 class LandingPage(TemplateView):
     template_name = "pages/home.html"
+
+
+class IntroUsage(TemplateView):
+    template_name = "pages/intro_usage.html"
+
+
+class IntroInventory(TemplateView):
+    template_name = "pages/intro_inventory.html"
+
+
+class IntroRenovation(TemplateView):
+    template_name = "pages/intro_renovation.html"

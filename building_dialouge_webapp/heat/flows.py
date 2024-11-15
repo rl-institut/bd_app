@@ -497,7 +497,11 @@ class CellarFlow(Flow):
             Switch("cellar_heating").case("no_cellar", "end").default("cellar_details"),
         )
 
-        self.cellar_details = FormState(self, name="cellar_details", form_class=forms.CellarDetailsForm).transition(
+        self.cellar_details = FormState(
+            self,
+            name="cellar_details",
+            form_class=forms.CellarDetailsForm,
+        ).transition(
             Next("cellar_insulation_exists"),
         )
 
