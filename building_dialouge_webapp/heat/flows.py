@@ -343,6 +343,12 @@ class Next(Transition):
 
 
 class Switch(Transition):
+    """
+    Attributes:
+        lookup (str): the field of the corresponding form on wich the switch depends
+        cases : .case("returned value of the field", "name of next state")
+    """
+
     def __init__(self, lookup: str | Callable | None = None):
         super().__init__()
         self.lookup = lookup
@@ -476,3 +482,39 @@ class RoofFlow(Flow):
             Next("end"),
         )
         self.end = EndState(self, url="heat:home")
+
+
+class CellarFlow(Flow):
+    template_name = "pages/cellar.html"
+
+    def __init__(self):
+        super().__init__()
+        self.start = FormState(
+            self,
+            name="cellar_heating",
+            form_class=forms.CellarHeatingForm,
+        ).transition(
+            Switch("cellar_heating").case("no_cellar", "end").default("cellar_details"),
+        )
+
+        self.cellar_details = FormState(self, name="cellar_details", form_class=forms.CellarDetailsForm).transition(
+            Next("cellar_insulation_exists"),
+        )
+
+        self.cellar_insulation_exists = FormState(
+            self,
+            name="cellar_insulation_exists",
+            form_class=forms.CellarInsulationForm,
+        ).transition(
+            Switch("cellar_ceiling_insulation_exists").case("doesnt_exist", "end").default("cellar_insulation_year"),
+        )
+
+        self.cellar_insulation_year = FormState(
+            self,
+            name="cellar_insulation_year",
+            form_class=forms.CellarInsulationYearForm,
+        ).transition(
+            Next("end"),
+        )
+
+        self.end = EndState(self, url="heat:roof")
