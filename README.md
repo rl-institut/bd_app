@@ -86,3 +86,66 @@ The following details how to deploy this application.
 ### Docker
 
 See detailed [cookiecutter-django Docker documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-with-docker.html).
+
+
+## Adding new Flows
+
+### 1. Forms
+add the forms needed for the flow.
+For each moment in the flow where a decision in the form / from the user will cause a diffrent form being
+rendered afterwards, that decision needs it's own form
+
+### 2. Flow
+start the Flow with a nice descriptive Name: for example "RoofFlow"
+```
+class RoofFlow(Flow):
+template_name = "path_to_template/name_of_template.html"
+
+    def __init__(self):
+        super().__init__()
+        self.start = State(
+            ...
+        ).transition(
+            ...,
+        )
+
+        # add more States in here
+
+        self.end = EndState(self, url="url_to_next_flow_or_view")
+```
+
+You can use these States:
+- ```FormState(self, name="roof_type", form_class=forms.NameOfForm,)```
+- ```FormInfoState(self, name="roof_insulation", form_class=forms.NameOfForm, info_text="Informationen",)```
+
+You can use there Transitions:
+- ```Next("name_of_the_next_state")```
+- ```Switch("name_of_the_field_that_will_cause_the_switch").case("returned value of the field", "name of next state").default("name_of_the_next_state")```
+    you can add as many cases as you need
+
+It is important, that the name_of_the_next_state in the transition is the same as a state that you are
+declaring later ```(self.name_of_the_next_state = State(...) )```
+### 3. Template
+Create a template with a fitting name: for example roof.html
+use this base structure:
+```
+    {% extends "base.html" %}
+
+    {% block content %}
+    <div class="container">
+        <div class="row">
+        <div class="col">
+            <div id="name_attribute_of_state">{{ name_attribute_of_state.content | safe }}</div>
+        </div>
+        <div class="col">
+            <div id="info">Hier kommt ein Infotext rein.</div>
+        </div>
+        </div>
+    </div>
+    {% endblock content %}
+```
+### 4. URL
+add the Flow to the url like this:
+```
+    path("roof/", flows.RoofFlow.as_view(), name="roof"),
+```
