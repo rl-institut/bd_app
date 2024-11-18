@@ -19,6 +19,54 @@ class BuildingTypeProtectionForm(forms.Form):
     )
 
 
+class BuildingDataForm(forms.Form):
+    construction_year = forms.IntegerField(
+        label="construction_year",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        max_value=2030,
+        min_value=1850,
+    )
+
+    number_persons = forms.IntegerField(
+        label="number_persons",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+    number_flats = forms.IntegerField(
+        label="number_flats",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+    living_space = forms.IntegerField(
+        label="living_space",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+    number_floors = forms.IntegerField(
+        label="number_floors",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+    adjoining_building = forms.ChoiceField(
+        label="adjoining_building",
+        choices=[
+            ("no", "Nein / Freistehend"),
+            ("1_side", "Eine Seite / Reihenendhaus"),
+            ("2_side", "Zwei Seiten / Reihenmittelhaus"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+    floor_plan = forms.ChoiceField(
+        label="floor_plan",
+        choices=[
+            ("compact", "Kompakt"),
+            ("complex", "Langgestreckt, gewinkelt, komplex, angrenzend"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
 class CellarHeatingForm(forms.Form):
     cellar_heating = forms.ChoiceField(
         label="cellar_heating",

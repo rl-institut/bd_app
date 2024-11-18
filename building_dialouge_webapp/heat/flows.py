@@ -462,6 +462,23 @@ class BuildingTypeFlow(Flow):
         self.end = EndState(self, url="heat:building_data")
 
 
+class BuildingDataFlow(Flow):
+    template_name = "pages/building_data.html"
+
+    def __init__(self):
+        super().__init__()
+        self.start = FormInfoState(
+            self,
+            name="building_data",
+            form_class=forms.BuildingDataForm,
+            info_text="Wohneinheiten: Die Anzahl der Wohneinheiten ...",
+        ).transition(
+            Next("end"),
+        )
+
+        self.end = EndState(self, url="heat:cellar")
+
+
 class CellarFlow(Flow):
     template_name = "pages/cellar.html"
 
