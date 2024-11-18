@@ -183,10 +183,20 @@ class EndState(State):
         self.url = url
 
     def set(self) -> dict[str, StateResponse]:
-        return {self.name: RedirectStateResponse(self.url)}
+        return self.response
 
     def reset(self) -> dict[str, StateResponse]:
+        return self.reset_response
+
+    @property
+    def response(self) -> dict[str, StateResponse]:
+        """Return response of current state."""
         return {self.name: RedirectStateResponse(self.url)}
+
+    @property
+    def reset_response(self) -> dict[str, StateResponse]:
+        """Return response of current state."""
+        return {}
 
 
 class TemplateState(State):
@@ -396,8 +406,13 @@ class Flow(TemplateView):
         state_partials = self.start.set()
 
         if request.htmx:
-            if isinstance(first_response := next(iter(state_partials.values())), RedirectStateResponse):
-                return HttpResponseClientRedirect(reverse(first_response.content))
+            try:
+                redirect_response = next(
+                    partial for partial in state_partials.values() if isinstance(partial, RedirectStateResponse)
+                )
+                return HttpResponseClientRedirect(reverse(redirect_response.content))
+            except StopIteration:
+                pass
             # Merge reset responses
             target = None
             html_response = ""
