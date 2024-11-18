@@ -431,17 +431,7 @@ class RoofFlow(Flow):
             name="roof_type",
             form_class=forms.RoofTypeForm,
         ).transition(
-            Switch("roof_type").case("flachdach", "flat_roof").default("other_roof_type"),
-        )
-
-        # roof_type results going directly to Insulation
-        self.flat_roof = FormInfoState(
-            self,
-            name="roof_insulation",
-            form_class=forms.RoofInsulationForm,
-            info_text="Isolation",
-        ).transition(
-            Next("end"),
+            Switch("roof_type").case("flachdach", "roof_insulation").default("other_roof_type"),
         )
         # roof_type results going to roof_details and roof_usage
         self.other_roof_type = FormState(
@@ -457,15 +447,7 @@ class RoofFlow(Flow):
             form_class=forms.RoofUsageNowForm,
             info_text="Dachnutzung",
         ).transition(
-            Switch("roof_usage_now").case("all_used", "all_used").default("not_all_used"),
-        )
-        # roof_usage results going directly to Insulation
-        self.all_used = FormState(
-            self,
-            name="roof_insulation",
-            form_class=forms.RoofInsulationForm,
-        ).transition(
-            Next("end"),
+            Switch("roof_usage_now").case("all_used", "roof_insulation").default("not_all_used"),
         )
         # roof_usage results going to future usage
         self.not_all_used = FormState(
