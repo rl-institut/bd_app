@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div id="building_type">{{ building_type.content | safe }}</div>
+        <div id="monument_protection">{{ monument_protection.content | safe }}</div>
+      </div>
+      <div class="col">
+        <div id="info">Hier kommt ein Infotext rein.</div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

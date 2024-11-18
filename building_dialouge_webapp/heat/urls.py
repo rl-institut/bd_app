@@ -10,6 +10,7 @@ urlpatterns = [
     path("", views.LandingPage.as_view(), name="home"),
     # step 1 consumption analysis
     path("intro_consumption/", views.IntroConsumption.as_view(), name="intro_consumption"),
+    path("building_type/", flows.BuildingTypeFlow.as_view(), name="building_type"),
     path("cellar/", flows.CellarFlow.as_view(), name="cellar"),
     # step 2 inventory analysis
     path("intro_inventory/", views.IntroInventory.as_view(), name="intro_inventory"),

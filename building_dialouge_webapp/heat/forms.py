@@ -1,6 +1,71 @@
 from django import forms
 
 
+class BuildingTypeForm(forms.Form):
+    building_type = forms.ChoiceField(
+        label="building_type",
+        choices=[
+            ("single_family", "Einfamlienhaus"),
+            ("apartment_building", "Mehrfamilienhaus"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class BuildingTypeProtectionForm(forms.Form):
+    monument_protection = forms.ChoiceField(
+        label="monument_protection",
+        choices=[("yes", "Ja"), ("no", "Nein")],
+    )
+
+
+class CellarHeatingForm(forms.Form):
+    cellar_heating = forms.ChoiceField(
+        label="cellar_heating",
+        choices=[
+            ("no_cellar", "Kein Keller"),
+            ("without_heating", "Keller ohne Heizung"),
+            ("with_heating", "Keller mit Heizung"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class CellarDetailsForm(forms.Form):
+    cellar_ceiling = forms.ChoiceField(
+        label="cellar_ceiling",
+        choices=[
+            ("solid", "Massiv"),
+            ("other", "Andere (Holz)"),
+        ],
+        widget=forms.RadioSelect,
+    )
+    cellar_vault = forms.ChoiceField(
+        label="cellar_vault",
+        choices=[(True, "Ja"), (False, "Nein")],
+    )
+    cellar_height = forms.FloatField(
+        label="cellar_height",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+
+class CellarInsulationForm(forms.Form):
+    cellar_ceiling_insulation_exists = forms.ChoiceField(
+        label="cellar_ceiling_insulation_exists",
+        choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
+    )
+
+
+class CellarInsulationYearForm(forms.Form):
+    cellar_insulation_year = forms.IntegerField(
+        label="cellar_insulation_year",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        max_value=2030,  # aktuelles Jahr per python bekommen?
+        min_value=1850,
+    )
+
+
 class RoofTypeForm(forms.Form):
     roof_type = forms.ChoiceField(
         label="roof_type",
@@ -72,51 +137,4 @@ class RoofInsulationForm(forms.Form):
     roof_insulation_exists = forms.ChoiceField(
         label="roof_insulation_exists",
         choices=[(True, "Yes"), (False, "No")],
-    )
-
-
-class CellarHeatingForm(forms.Form):
-    cellar_heating = forms.ChoiceField(
-        label="cellar_heating",
-        choices=[
-            ("no_cellar", "Kein Keller"),
-            ("without_heating", "Keller ohne Heizung"),
-            ("with_heating", "Keller mit Heizung"),
-        ],
-        widget=forms.RadioSelect,
-    )
-
-
-class CellarDetailsForm(forms.Form):
-    cellar_ceiling = forms.ChoiceField(
-        label="cellar_ceiling",
-        choices=[
-            ("solid", "Massiv"),
-            ("other", "Andere (Holz)"),
-        ],
-        widget=forms.RadioSelect,
-    )
-    cellar_vault = forms.ChoiceField(
-        label="cellar_vault",
-        choices=[(True, "Ja"), (False, "Nein")],
-    )
-    cellar_height = forms.FloatField(
-        label="cellar_height",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
-
-
-class CellarInsulationForm(forms.Form):
-    cellar_ceiling_insulation_exists = forms.ChoiceField(
-        label="cellar_ceiling_insulation_exists",
-        choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
-    )
-
-
-class CellarInsulationYearForm(forms.Form):
-    cellar_insulation_year = forms.IntegerField(
-        label="cellar_insulation_year",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,  # aktuelles Jahr per python bekommen?
-        min_value=1850,
     )
