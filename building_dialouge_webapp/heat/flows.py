@@ -461,6 +461,7 @@ class BuildingTypeFlow(Flow):
             self,
             name="building_type",
             form_class=forms.BuildingTypeForm,
+            template_name="partials/building_type_help.html",
         ).transition(
             Next("monument_protection"),
         )
@@ -469,6 +470,7 @@ class BuildingTypeFlow(Flow):
             self,
             name="monument_protection",
             form_class=forms.BuildingTypeProtectionForm,
+            template_name="partials/building_type_protection_help.html",
         ).transition(
             Switch("monument_protection").case("yes", "dead_end_monument_protection").default("end"),
         )
@@ -483,11 +485,11 @@ class BuildingDataFlow(Flow):
 
     def __init__(self):
         super().__init__()
-        self.start = FormInfoState(
+        self.start = FormState(
             self,
             name="building_data",
             form_class=forms.BuildingDataForm,
-            info_text="Wohneinheiten: Die Anzahl der Wohneinheiten ...",
+            template_name="partials/building_data_help.html",
         ).transition(
             Next("end"),
         )

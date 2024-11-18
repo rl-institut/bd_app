@@ -1,18 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <h3>Keller</h3>
-        <div id="cellar_heating">{{ cellar_heating.content | safe }}</div>
-        <div id="cellar_details">{{ cellar_details.content | safe }}</div>
-        <div id="cellar_insulation_exists">{{ cellar_insulation_exists.content | safe }}</div>
-        <div id="cellar_insulation_year">{{ cellar_insulation_year.content | safe }}</div>
+  <section class="position-relative h-100 flex-grow-1 pb-5">
+    <div class="help-background"></div>
+    <div class="step-title">
+      <div class="step-container">
+        <div class="main">
+          <h1>Keller</h1>
+        </div>
       </div>
-      <div class="col">
-        <div id="info">Hier kommt ein Infotext rein.</div>
-      </div>
+      <div class="help"></div>
     </div>
-  </div>
+    <div id="cellar_heating">{{ cellar_heating.content | safe }}</div>
+    <div id="cellar_details">{{ cellar_details.content | safe }}</div>
+    <div id="cellar_insulation_exists">{{ cellar_insulation_exists.content | safe }}</div>
+    <div id="cellar_insulation_year">{{ cellar_insulation_year.content | safe }}</div>
+  </section>
 {% endblock content %}

@@ -1,16 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <h3>Gebäudeart</h3>
-        <div id="building_type">{{ building_type.content | safe }}</div>
-        <div id="monument_protection">{{ monument_protection.content | safe }}</div>
+  <section class="position-relative h-100 flex-grow-1 pb-5">
+    <div class="help-background"></div>
+    <div class="step-title">
+      <div class="step-container">
+        <div class="main">
+          <h1>Gebäudeart</h1>
+        </div>
       </div>
-      <div class="col">
-        <div id="info">Hier kommt ein Infotext rein.</div>
-      </div>
+      <div class="help"></div>
     </div>
-  </div>
+    <div id="building_type">{{ building_type.content | safe }}</div>
+    <div id="monument_protection">{{ monument_protection.content | safe }}</div>
+  </section>
 {% endblock content %}

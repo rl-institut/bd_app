@@ -1,19 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <h3>Dach</h3>
-        <div id="roof_type">{{ roof_type.content | safe }}</div>
-        <div id="roof_details">{{ roof_details.content | safe }}</div>
-        <div id="roof_usage_now">{{ roof_usage_now.content | safe }}</div>
-        <div id="roof_usage_future">{{ roof_usage_future.content | safe }}</div>
-        <div id="roof_insulation">{{ roof_insulation.content | safe }}</div>
+  <section class="position-relative h-100 flex-grow-1 pb-5">
+    <div class="help-background"></div>
+    <div class="step-title">
+      <div class="step-container">
+        <div class="main">
+          <h1>Dach</h1>
+        </div>
       </div>
-      <div class="col">
-        <div id="info">Hier kommt ein Infotext rein.</div>
-      </div>
+      <div class="help"></div>
     </div>
-  </div>
+    <div id="roof_type">{{ roof_type.content | safe }}</div>
+    <div id="roof_details">{{ roof_details.content | safe }}</div>
+    <div id="roof_usage_now">{{ roof_usage_now.content | safe }}</div>
+    <div id="roof_usage_future">{{ roof_usage_future.content | safe }}</div>
+    <div id="roof_insulation">{{ roof_insulation.content | safe }}</div>
+  </section>
 {% endblock content %}
