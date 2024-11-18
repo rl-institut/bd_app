@@ -81,7 +81,7 @@
           {% endfor %}
         {% endif %}
         {% block main %}
-          {% block content %}
+          {% block sidebar %}
             <div class="d-flex flex-row justify-content-between h-100">
               <section class="sidebar border-end px-4 py-3 h-100">
                 <div>
@@ -162,132 +162,134 @@
                   </ul>
                 </div>
               </section>
-              <section class="position-relative h-100 flex-grow-1 pb-5">
-                <div class="help-background"></div>
-                <div class="step-title">
-                  <div class="step-container">
-                    <div class="main">
-                      <h1>Angaben zu Gebäude</h1>
-                    </div>
-                  </div>
-                  <div class="help"></div>
-                </div>
-                <div class="step-text">
-                  <div class="step-container">
-                    <div class="main">
-                      <span>Um das Potenzial Ihres Gebäudes genau einschätzen zu können, analysieren wir zuerst den aktuellen Energieverbrauch.</span>
-                    </div>
-                  </div>
-                  <div class="help"></div>
-                </div>
-                <form action="">
-                  <div class="step-question">
+              {% block content %}
+                <section class="position-relative h-100 flex-grow-1 pb-5">
+                  <div class="help-background"></div>
+                  <div class="step-title">
                     <div class="step-container">
                       <div class="main">
-                        <label for="" class="form-label">Zeitraum</label>
-                        <div class="input-unit">
-                          <input type="date" class="form-control form-control--sm" />
-                          <span class="form-text">bis</span>
-                          <input type="date" class="form-control form-control--sm" />
-                        </div>
+                        <h1>Angaben zu Gebäude</h1>
                       </div>
                     </div>
                     <div class="help"></div>
                   </div>
-                  <div class="step-question">
+                  <div class="step-text">
                     <div class="step-container">
                       <div class="main">
-                        <label for="" class="form-label">Heizungsverbrauch</label>
-                        <div class="input-unit">
+                        <span>Um das Potenzial Ihres Gebäudes genau einschätzen zu können, analysieren wir zuerst den aktuellen Energieverbrauch.</span>
+                      </div>
+                    </div>
+                    <div class="help"></div>
+                  </div>
+                  <form action="">
+                    <div class="step-question">
+                      <div class="step-container">
+                        <div class="main">
+                          <label for="" class="form-label">Zeitraum</label>
+                          <div class="input-unit">
+                            <input type="date" class="form-control form-control--sm" />
+                            <span class="form-text">bis</span>
+                            <input type="date" class="form-control form-control--sm" />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="help"></div>
+                    </div>
+                    <div class="step-question">
+                      <div class="step-container">
+                        <div class="main">
+                          <label for="" class="form-label">Heizungsverbrauch</label>
+                          <div class="input-unit">
+                            <input type="number" class="form-control form-control--sm" />
+                            <span class="form-text">kWh</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="help"></div>
+                    </div>
+                    <div class="step-question">
+                      <div class="step-container">
+                        <div class="main">
+                          <label for="" class="form-label">Anzahl Wohneiheiten</label>
                           <input type="number" class="form-control form-control--sm" />
-                          <span class="form-text">kWh</span>
                         </div>
                       </div>
-                    </div>
-                    <div class="help"></div>
-                  </div>
-                  <div class="step-question">
-                    <div class="step-container">
-                      <div class="main">
-                        <label for="" class="form-label">Anzahl Wohneiheiten</label>
-                        <input type="number" class="form-control form-control--sm" />
+                      <div class="help">
+                        <span>Wohneiheiten:</span>Die Anzahl der Wohneinheiten gibt an, wie viele separate Wohnungen oder Wohnbereiche in einem Gebäude oder einer Immobilie vorhanden sind.
                       </div>
                     </div>
-                    <div class="help">
-                      <span>Wohneiheiten:</span>Die Anzahl der Wohneinheiten gibt an, wie viele separate Wohnungen oder Wohnbereiche in einem Gebäude oder einer Immobilie vorhanden sind.
+                    <div class="step-question">
+                      <div class="step-container">
+                        <div class="main">
+                          <label for="" class="form-label">Anzahl Wohneiheiten</label>
+                          <select class="form-select form-select--md"
+                                  aria-label="Default select example">
+                            <option selected>Open this select menu</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="help"></div>
                     </div>
-                  </div>
-                  <div class="step-question">
-                    <div class="step-container">
-                      <div class="main">
-                        <label for="" class="form-label">Anzahl Wohneiheiten</label>
-                        <select class="form-select form-select--md"
-                                aria-label="Default select example">
-                          <option selected>Open this select menu</option>
-                          <option value="1">One</option>
-                          <option value="2">Two</option>
-                          <option value="3">Three</option>
-                        </select>
+                    <div class="step-question">
+                      <div class="step-container">
+                        <div class="main">
+                          <fieldset>
+                            <legend class="form-label">PV-Anlage vorhanden</legend>
+                            <div class="form-check">
+                              <input class="form-check-input"
+                                     type="radio"
+                                     name="flexRadioDefault"
+                                     id="flexRadioDefault1" />
+                              <label class="form-check-label" for="flexRadioDefault1">Ja</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input"
+                                     type="radio"
+                                     name="flexRadioDefault"
+                                     id="flexRadioDefault2"
+                                     checked />
+                              <label class="form-check-label" for="flexRadioDefault2">Nein</label>
+                            </div>
+                          </fieldset>
+                        </div>
+                      </div>
+                      <div class="help"></div>
+                    </div>
+                    <div class="step-question">
+                      <div class="step-container">
+                        <div class="main">
+                          <fieldset>
+                            <legend class="form-label">Select Options</legend>
+                            <div class="form-check">
+                              <input class="form-check-input"
+                                     type="checkbox"
+                                     value=""
+                                     id="flexCheckDefault" />
+                              <label class="form-check-label" for="flexCheckDefault">Default checkbox</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input"
+                                     type="checkbox"
+                                     value=""
+                                     id="flexCheckChecked"
+                                     checked />
+                              <label class="form-check-label" for="flexCheckChecked">Checked checkbox</label>
+                            </div>
+                          </fieldset>
+                        </div>
+                      </div>
+                      <div class="help">
+                        <span>Wohneiheiten:</span>Die Anzahl der Wohneinheiten gibt an, wie viele separate Wohnungen oder Wohnbereiche in einem Gebäude oder einer Immobilie vorhanden sind.
                       </div>
                     </div>
-                    <div class="help"></div>
-                  </div>
-                  <div class="step-question">
-                    <div class="step-container">
-                      <div class="main">
-                        <fieldset>
-                          <legend class="form-label">PV-Anlage vorhanden</legend>
-                          <div class="form-check">
-                            <input class="form-check-input"
-                                   type="radio"
-                                   name="flexRadioDefault"
-                                   id="flexRadioDefault1" />
-                            <label class="form-check-label" for="flexRadioDefault1">Ja</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input"
-                                   type="radio"
-                                   name="flexRadioDefault"
-                                   id="flexRadioDefault2"
-                                   checked />
-                            <label class="form-check-label" for="flexRadioDefault2">Nein</label>
-                          </div>
-                        </fieldset>
-                      </div>
-                    </div>
-                    <div class="help"></div>
-                  </div>
-                  <div class="step-question">
-                    <div class="step-container">
-                      <div class="main">
-                        <fieldset>
-                          <legend class="form-label">Select Options</legend>
-                          <div class="form-check">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   value=""
-                                   id="flexCheckDefault" />
-                            <label class="form-check-label" for="flexCheckDefault">Default checkbox</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   value=""
-                                   id="flexCheckChecked"
-                                   checked />
-                            <label class="form-check-label" for="flexCheckChecked">Checked checkbox</label>
-                          </div>
-                        </fieldset>
-                      </div>
-                    </div>
-                    <div class="help">
-                      <span>Wohneiheiten:</span>Die Anzahl der Wohneinheiten gibt an, wie viele separate Wohnungen oder Wohnbereiche in einem Gebäude oder einer Immobilie vorhanden sind.
-                    </div>
-                  </div>
-                </form>
-              </section>
+                  </form>
+                </section>
+              {% endblock content %}
             </div>
-          {% endblock content %}
+          {% endblock sidebar %}
         {% endblock main %}
       </main>
       <footer class="footer mt-auto">
