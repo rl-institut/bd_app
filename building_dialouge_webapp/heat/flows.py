@@ -457,7 +457,7 @@ class BuildingTypeFlow(Flow):
             Switch("monument_protection").case("yes", "dead_end_monument_protection").default("end"),
         )
         # TODO: make dead end popup or view and update url
-        self.dead_end_monument_protection = EndState(self, url="heat: home")
+        self.dead_end_monument_protection = EndState(self, url="heat:home")
 
         self.end = EndState(self, url="heat:building_data")
 
@@ -529,10 +529,10 @@ class RoofFlow(Flow):
             name="roof_type",
             form_class=forms.RoofTypeForm,
         ).transition(
-            Switch("roof_type").case("flachdach", "roof_insulation").default("other_roof_type"),
+            Switch("roof_type").case("flachdach", "roof_insulation").default("roof_details"),
         )
         # roof_type results going to roof_details and roof_usage
-        self.other_roof_type = FormState(
+        self.roof_details = FormState(
             self,
             name="roof_details",
             form_class=forms.RoofDetailsForm,
@@ -545,10 +545,10 @@ class RoofFlow(Flow):
             form_class=forms.RoofUsageNowForm,
             info_text="Dachnutzung",
         ).transition(
-            Switch("roof_usage_now").case("all_used", "roof_insulation").default("not_all_used"),
+            Switch("roof_usage_now").case("all_used", "roof_insulation").default("roof_usage_future"),
         )
         # roof_usage results going to future usage
-        self.not_all_used = FormState(
+        self.roof_usage_future = FormState(
             self,
             name="roof_usage_future",
             form_class=forms.RoofUsageFutureForm,
