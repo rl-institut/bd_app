@@ -116,9 +116,10 @@ template_name = "path_to_template/name_of_template.html"
 
 You can use these States:
 - ```FormState(self, name="roof_type", form_class=forms.NameOfForm,)```
-- ```FormInfoState(self, name="roof_insulation", form_class=forms.NameOfForm, info_text="Informationen",)```
+- ```EndState(self, url="url_to_next_flow_or_view")```
+- if you want to add helptext to a Form, create a partial (a separate html file) and add it to the corresponding state with the ```template_name``` parameter
 
-You can use there Transitions:
+You can use these Transitions:
 - ```Next("name_of_the_next_state")```
 - ```Switch("name_of_the_field_that_will_cause_the_switch").case("returned value of the field", "name of next state").default("name_of_the_next_state")```
     you can add as many cases as you need
@@ -132,17 +133,31 @@ use this base structure:
     {% extends "base.html" %}
 
     {% block content %}
-    <div class="container">
-        <div class="row">
-        <div class="col">
-            <div id="name_attribute_of_state">{{ name_attribute_of_state.content | safe }}</div>
+    <section class="position-relative h-100 flex-grow-1 pb-5">
+        <div class="help-background"></div>
+        <div class="step-title">
+            <div class="step-container">
+                <div class="main">
+                    <h1>Title of Page</h1>
+                </div>
+            </div>
+        <div class="help"></div>
         </div>
-        <div class="col">
-            <div id="info">Hier kommt ein Infotext rein.</div>
+        <div id="name_attribute_of_state">{{ name_attribute_of_state.content | safe }}</div>
+    </section>
+    {% endblock content %}
+```
+
+For a helptext partial you can use this structure: for example roof_help.html
+```
+    <div class="step-question">
+        <div class="step-container">
+            <div class="main">{{ form }}</div>
         </div>
+        <div class="help">
+            <span>Flachdach:&nbsp;</span>Ein Flachdach ist ein Dach mit einer sehr geringen Neigung, das fast waagerecht verläuft.
         </div>
     </div>
-    {% endblock content %}
 ```
 ### 4. URL
 add the Flow to the url like this:
