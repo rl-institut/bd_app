@@ -546,7 +546,7 @@ class RoofFlow(Flow):
             self,
             name="roof_type",
             form_class=forms.RoofTypeForm,
-            template_name="partials/roof_info.html",
+            template_name="partials/roof_help.html",
         ).transition(
             Switch("roof_type").case("flachdach", "roof_insulation").default("roof_details"),
         )
