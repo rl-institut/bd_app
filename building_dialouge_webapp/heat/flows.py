@@ -6,7 +6,6 @@ from typing import Optional
 
 from django.forms import Form
 from django.http import HttpResponse
-from django.http import QueryDict
 from django.shortcuts import reverse
 from django.template import Template
 from django.template.context_processors import csrf
@@ -201,6 +200,8 @@ class EndState(State):
 
 
 class TemplateState(State):
+    extra_context = None
+
     def __init__(
         self,
         flow: "Flow",
@@ -212,7 +213,10 @@ class TemplateState(State):
         super().__init__(flow, name, label)
 
     def get_context_data(self):
-        return self.flow.request.GET
+        context = {}
+        if self.extra_context is not None:
+            context.update(self.extra_context)
+        return context
 
     @property
     def response(self) -> dict[str, StateResponse]:
@@ -251,33 +255,18 @@ class FormState(TemplateState):
 
     @property
     def response(self) -> dict[str, StateResponse]:
-        """Renders the form with data from the session if available; otherwise, renders a blank form.
-        Describe what template_name can do and that its used for infotext
-        """
+        """Renders the form with data from the session if available; otherwise, renders a blank form."""
         status = self.check_state()
         data = None if status == StateStatus.New else self.flow.request.session.get("django_htmx_flow", {})
         context = self.get_context_data()
-        if isinstance(context, QueryDict):
-            context = context.dict()
         if self.template_name is None:
-            # render form without helptext
             csrf_token = csrf(self.flow.request)["csrf_token"]
             return {
                 self.name: HTMLStateResponse(
-                    f"""
-                    <div class="step-question">
-                        <div class="step-container">
-                            <div class="main">
-                                <form hx-post="" hx-trigger="change">
-                                    <input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">
-                                    {self.form_class(data).render()}
-                                </form>
-                            </div>
-                        </div>
-                        <div class="help">
-                        </div>
-                    </div>
-                    """,
+                    f'<form hx-post="" hx-trigger="change">'
+                    f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">'
+                    f"{self.form_class(data).render()}"
+                    f"</form>",
                 ),
             }
         context["form"] = self.form_class(data)
