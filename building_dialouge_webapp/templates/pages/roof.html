@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_flow.html" %}
 
 {% block content %}
   <section class="position-relative h-100 flex-grow-1 pb-5">
@@ -11,7 +11,7 @@
       </div>
       <div class="help"></div>
     </div>
-    <div id="roof_type">{{ roof_type.content | safe }}</div>
+    <div id="roof_type" hx-post="" hx-trigger="change" hx-include="this">{{ roof_type.content | safe }}</div>
     <div class="step-question">
       <div class="step-container">
         <div id="roof_details" class="main">{{ roof_details.content | safe }}</div>
@@ -20,7 +20,11 @@
     </div>
     <div class="step-question">
       <div class="step-container">
-        <div id="roof_usage_now" class="main">{{ roof_usage_now.content | safe }}</div>
+        <div id="roof_usage_now"
+             hx-post=""
+             hx-trigger="change"
+             hx-include="this"
+             class="main">{{ roof_usage_now.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>
