@@ -12,9 +12,29 @@
       <div class="help"></div>
     </div>
     <div id="roof_type">{{ roof_type.content | safe }}</div>
-    <div id="roof_details">{{ roof_details.content | safe }}</div>
-    <div id="roof_usage_now">{{ roof_usage_now.content | safe }}</div>
-    <div id="roof_usage_future">{{ roof_usage_future.content | safe }}</div>
-    <div id="roof_insulation">{{ roof_insulation.content | safe }}</div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="roof_details" class="main">{{ roof_details.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="roof_usage_now" class="main">{{ roof_usage_now.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="roof_usage_future" class="main">{{ roof_usage_future.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="roof_insulation" class="main">{{ roof_insulation.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
   </section>
 {% endblock content %}
