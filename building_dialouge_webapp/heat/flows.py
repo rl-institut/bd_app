@@ -281,7 +281,7 @@ class FormState(TemplateState):
         context["form"] = self.form_class(data)
         return {
             self.name: HTMLStateResponse(
-                get_template(self.template_name).render(context),
+                get_template(self.template_name).render(context, request=self.flow.request),
             ),
         }
 
