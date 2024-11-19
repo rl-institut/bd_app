@@ -315,18 +315,23 @@ class FormState(TemplateState):
     def check_state(self) -> StateStatus:
         """Checks the state status using all form fields."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        form_fields = self.form_class().fields
-
-        if all(field not in self.flow.request.POST and field not in session_data for field in form_fields):
+        required_fields = [field_name for field_name, field in self.form_class.base_fields.items() if field.required]
+        form = self.form_class(self.flow.request.POST)
+        if not form.is_valid():
+            if any(field in required_fields for field in self.flow.request.POST):
+                return StateStatus.Error
+            if all(field in session_data for field in required_fields):
+                # This line is only called in case of latest state firing
+                return StateStatus.Unchanged
             return StateStatus.New
-        if any(field in self.flow.request.POST and field not in session_data for field in form_fields):
+
+        # If form is valid, state is either SET or CHANGED (or in case of all forms in request UNCHANGED)
+        if all(field not in session_data for field in required_fields):
             return StateStatus.Set
-        if any(
-            field in self.flow.request.POST and self.flow.request.POST[field] != session_data.get(field)
-            for field in form_fields
-        ):
-            return StateStatus.Changed
-        return StateStatus.Unchanged
+        form_data = form.cleaned_data
+        if all(session_data.get(field) == form_data.get(field) for field in required_fields):
+            return StateStatus.Unchanged
+        return StateStatus.Changed
 
 
 class FormInfoState(FormState):
@@ -469,7 +474,10 @@ class Flow(TemplateView):
 
 class RoofFlow(Flow):
     template_name = "pages/roof.html"
-    extra_context = {"back_url": "heat:home", "next_includes": "#roof_type"}
+    extra_context = {
+        "back_url": "heat:home",
+        "next_includes": "#roof_type,#roof_details,#roof_usage_now,#roof_usage_future,#roof_insulation",
+    }
 
     def __init__(self):
         super().__init__()
