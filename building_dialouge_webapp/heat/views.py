@@ -7,6 +7,9 @@ class LandingPage(TemplateView):
 
 class IntroConsumption(TemplateView):
     template_name = "pages/intro_consumption.html"
+    extra_context = {
+        "back_url": "heat:home",
+    }
 
 
 class IntroInventory(TemplateView):

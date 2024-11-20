@@ -479,6 +479,10 @@ class Flow(TemplateView):
 
 class BuildingTypeFlow(Flow):
     template_name = "pages/building_type.html"
+    extra_context = {
+        "back_url": "heat:intro_consumption",
+        "next_includes": "#building_type,#monument_protection",
+    }
 
     def __init__(self):
         super().__init__()
@@ -507,6 +511,10 @@ class BuildingTypeFlow(Flow):
 
 class BuildingDataFlow(Flow):
     template_name = "pages/building_data.html"
+    extra_context = {
+        "back_url": "heat:building_type",
+        "next_includes": "#building_data",
+    }
 
     def __init__(self):
         super().__init__()
@@ -524,6 +532,10 @@ class BuildingDataFlow(Flow):
 
 class CellarFlow(Flow):
     template_name = "pages/cellar.html"
+    extra_context = {
+        "back_url": "heat:building_data",
+        "next_includes": "#cellar_heating,#cellar_details,#cellar_insulation_exists,#cellar_insulation_year",
+    }
 
     def __init__(self):
         super().__init__()
