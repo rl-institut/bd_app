@@ -1,0 +1,53 @@
+{% extends "base_flow.html" %}
+
+{% block content %}
+  <section class="position-relative h-100 flex-grow-1 pb-5">
+    <div class="help-background"></div>
+    <div class="step-title">
+      <div class="step-container">
+        <div class="main">
+          <h1>Heizung & Warmwasser</h1>
+        </div>
+      </div>
+      <div class="help"></div>
+    </div>
+    <div id="heating_system" hx-post="" hx-trigger="change" hx-include="this">{{ heating_system.content | safe }}</div>
+    <div id="heating_source" hx-post="" hx-trigger="change" hx-include="this">{{ heating_source.content | safe }}</div>
+    <div id="hotwater_heating_system"
+         hx-post=""
+         hx-trigger="change"
+         hx-include="this">{{ hotwater_heating_system.content | safe }}</div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="hotwater_measured"
+             hx-post=""
+             hx-trigger="change"
+             hx-include="this"
+             class="main">{{ hotwater_measured.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="solar_thermal_exists" class="main">{{ solar_thermal_exists.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div id="solar_thermal_energy_known"
+         hx-post=""
+         hx-trigger="change"
+         hx-include="this">{{ solar_thermal_energy_known.content | safe }}</div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="solar_thermal_energy" class="main">{{ solar_thermal_energy.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="solar_thermal_details" class="main">{{ solar_thermal_details.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+  </section>
+{% endblock content %}

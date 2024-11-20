@@ -571,7 +571,93 @@ class CellarFlow(Flow):
             Next("end"),
         )
 
-        self.end = EndState(self, url="heat:roof")
+        self.end = EndState(self, url="heat:hotwater_heating")
+
+
+class HotwaterHeatingFlow(Flow):
+    template_name = "pages/hotwater_heating.html"
+    extra_context = {
+        "back_url": "heat:cellar",
+        "next_includes": (
+            "#heating_system,#heating_source,#hotwater_heating_system,"
+            "#hotwater_measured,#solar_thermal_exists,#solar_thermal_energy_known,"
+            "#solar_thermal_energy,#solar_thermal_details"
+        ),
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.start = FormState(
+            self,
+            name="heating_system",
+            form_class=forms.HeatingSystemForm,
+            template_name="partials/heating_system_help.html",
+        ).transition(
+            Next("heating_source"),
+        )
+
+        self.heating_source = FormState(
+            self,
+            name="heating_source",
+            form_class=forms.HeatingSourceForm,
+            template_name="partials/heating_source_help.html",
+        ).transition(
+            Next("hotwater_heating_system"),
+        )
+
+        self.hotwater_heating_system = FormState(
+            self,
+            name="hotwater_heating_system",
+            form_class=forms.HotwaterHeatingSystemForm,
+            template_name="partials/hotwater_heating_system_help.html",
+        ).transition(
+            Switch("hotwater_heating_system").case("boiler", "solar_thermal_exists").default("hotwater_measured"),
+        )
+
+        self.hotwater_measured = FormState(
+            self,
+            name="hotwater_measured",
+            form_class=forms.HotwaterHeatingMeasuredForm,
+        ).transition(
+            Next("solar_thermal_exists"),
+        )
+
+        self.solar_thermal_exists = FormState(
+            self,
+            name="solar_thermal_exists",
+            form_class=forms.HotwaterHeatingSolarExistsForm,
+        ).transition(
+            Switch("solar_thermal_exists").case("doesnt_exist", "end").default("solar_thermal_energy_known"),
+        )
+
+        self.solar_thermal_energy_known = FormState(
+            self,
+            name="solar_thermal_energy_known",
+            form_class=forms.HotwaterHeatingSolarKnownForm,
+            template_name="partials/solar_thermal_energy_known_help.html",
+        ).transition(
+            Switch("solar_thermal_energy_known")
+            .case("known", "solar_thermal_energy")
+            .default("solar_thermal_details"),
+        )
+
+        self.solar_thermal_energy = FormState(
+            self,
+            name="solar_thermal_energy",
+            form_class=forms.HotwaterHeatingSolarEnergyForm,
+        ).transition(
+            Next("end"),
+        )
+
+        self.solar_thermal_details = FormState(
+            self,
+            name="solar_thermal_details",
+            form_class=forms.HotwaterHeatingSolarDetailsForm,
+        ).transition(
+            Next("end"),
+        )
+
+        self.end = EndState(self, url="heat:consumption_input")
 
 
 class RoofFlow(Flow):

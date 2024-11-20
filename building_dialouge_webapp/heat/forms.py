@@ -114,6 +114,107 @@ class CellarInsulationYearForm(forms.Form):
     )
 
 
+class HeatingSystemForm(forms.Form):
+    heating_system = forms.ChoiceField(
+        label="Heizungsart",
+        choices=[
+            ("central_heating", "Zentralheizung"),
+            ("level_heating", "Etagenheizung"),
+            ("night_storage", "Nachtspeicherheizung"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class HeatingSourceForm(forms.Form):
+    energy_source = forms.ChoiceField(
+        label="Technologie / Energieträger",
+        choices=[
+            ("gas", "Erdgas"),
+            ("oil", "Heizöl"),
+            ("district_heating", "Fernwärme"),
+            ("liquid_gas", "Flüssiggas"),
+            ("wood_pellets", "Holzpellets"),
+            ("geothermal_pump", "Erdwärmepumpe"),
+            ("air_heat_pump", "Luftwärmepumpe"),
+            ("groundwater", "Grundwasser-/Solewärmepumpe"),
+            ("heating_rod", "Heizstab"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class HotwaterHeatingSystemForm(forms.Form):
+    hotwater_heating_system = forms.ChoiceField(
+        label="Warmwasserbereitung erfolgt in ",
+        choices=[
+            ("boiler", "Boiler / Durchlauferhitzer"),
+            ("heater", "Heizanlage"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class HotwaterHeatingMeasuredForm(forms.Form):
+    hotwater_measured = forms.ChoiceField(
+        label="Wird der WW Verbrauch separat gemessen?",
+        choices=[(True, "Ja"), (False, "Nein")],
+    )
+
+
+class HotwaterHeatingSolarExistsForm(forms.Form):
+    solar_thermal_exists = forms.ChoiceField(
+        label="Solarthermieanlage vorhanden?",
+        choices=[
+            ("only_hotwater", "Ja, für Warmwasser"),
+            ("both", "Ja, für WW und Heizung"),
+            ("doesnt_exist", "Nein"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class HotwaterHeatingSolarKnownForm(forms.Form):
+    solar_thermal_energy_known = forms.ChoiceField(
+        label="Heizenergie bekannt?",
+        choices=[("known", "Ja"), ("unknown", "Unbekannt")],
+    )
+
+
+class HotwaterHeatingSolarEnergyForm(forms.Form):
+    solar_thermal_energy = forms.IntegerField(
+        label="Heizenergie",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+
+class HotwaterHeatingSolarDetailsForm(forms.Form):
+    solar_thermal_area = forms.FloatField(
+        label="Kollektorfläche in m²",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    roof_pitch = forms.IntegerField(
+        label="Dachneigung",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        min_value=0,
+        max_value=360,
+    )
+    roof_orientation = forms.ChoiceField(
+        label="Ausrichtung",
+        choices=[
+            ("n", "N"),
+            ("ne", "NO"),
+            ("e", "O"),
+            ("se", "SO"),
+            ("s", "S"),
+            ("sw", "SW"),
+            ("w", "W"),
+            ("nw", "NW"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
 class RoofTypeForm(forms.Form):
     roof_type = forms.ChoiceField(
         label="roof_type",

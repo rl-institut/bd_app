@@ -13,6 +13,7 @@ urlpatterns = [
     path("building_type/", flows.BuildingTypeFlow.as_view(), name="building_type"),
     path("building_data", flows.BuildingDataFlow.as_view(), name="building_data"),
     path("cellar/", flows.CellarFlow.as_view(), name="cellar"),
+    path("hotwater_heating/", flows.HotwaterHeatingFlow.as_view(), name="hotwater_heating"),
     # step 2 inventory analysis
     path("intro_inventory/", views.IntroInventory.as_view(), name="intro_inventory"),
     path("roof/", flows.RoofFlow.as_view(), name="roof"),
