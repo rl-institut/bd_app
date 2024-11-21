@@ -727,4 +727,33 @@ class RoofFlow(Flow):
         ).transition(
             Next("end"),
         )
-        self.end = EndState(self, url="heat:home")
+        self.end = EndState(self, url="heat:window")
+
+
+class WindowFlow(Flow):
+    template_name = "pages/window.html"
+    extra_context = {
+        "back_url": "heat:roof",
+        "next_includes": "#window_area,#window_details",
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.start = FormState(
+            self,
+            name="window_area",
+            form_class=forms.WindowAreaForm,
+        ).transition(
+            Next("window_details"),
+        )
+
+        self.window_details = FormState(
+            self,
+            name="window_details",
+            form_class=forms.WindowDetailsForm,
+            template_name="partials/window_details_help.html",
+        ).transition(
+            Next("end"),
+        )
+
+        self.end = EndState(self, url="heat:facade")

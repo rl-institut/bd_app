@@ -319,3 +319,63 @@ class RoofInsulationForm(forms.Form):
         label="roof_insulation_exists",
         choices=[(True, "Yes"), (False, "No")],
     )
+
+
+class WindowAreaForm(forms.Form):
+    window_area = forms.ChoiceField(
+        label="Umfang Fensterflächen",
+        choices=[
+            ("small", "Niedrig (wenige Fensterflächen)"),
+            ("medium", "Mittel (durchschnittlich große Fensterflächen)"),
+            ("large", "Hoch (viele Fensterfächen)"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class WindowDetailsForm(forms.Form):
+    window_type = forms.ChoiceField(
+        label="Fenstertyp",
+        choices=[
+            ("single_glazed", "Einfachverglast"),
+            ("double_glazed", "Zweifachverglast (Verbund- und Kastenfenster, luftisoliert)"),
+            ("double_heat_glazed", "Zweifach-Wärmeschutzverglasung"),
+            ("triple_glazed", "Dreifach-Wärmeschutzverglasung"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+    window_construction_year = forms.ChoiceField(
+        label="Fenstertyp",
+        choices=[
+            ("unkown", "Unbekannt"),
+            ("like_building", "wie Gebäude"),
+            ("year", "Jahr: "),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+    seperate_year = forms.IntegerField(
+        label="",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
+        max_value=2030,
+        min_value=1850,
+    )
+
+    window_share = forms.IntegerField(
+        label="prozentualer Anteil (bei mehreren Typen)",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        max_value=100,
+        min_value=0,
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        choice = cleaned_data.get("window_construction_year")
+        year = cleaned_data.get("seperate_year")
+
+        if choice == "year" and not year:
+            self.add_error("seperate_year", "Bitte ein Jahr angeben.")
+
+        return cleaned_data

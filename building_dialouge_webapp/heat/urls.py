@@ -19,6 +19,7 @@ urlpatterns = [
     # step 2 inventory analysis
     path("intro_inventory/", views.IntroInventory.as_view(), name="intro_inventory"),
     path("roof/", flows.RoofFlow.as_view(), name="roof"),
+    path("window/", flows.WindowFlow.as_view(), name="window"),
     # step 3 renovation request
     path("intro_renovation/", views.IntroRenovation.as_view(), name="intro_renovation"),
 ]
