@@ -12,6 +12,10 @@ class IntroConsumption(TemplateView):
     }
 
 
+class ConsumptionResult(TemplateView):
+    template_name = "pages/consumption_result.html"
+
+
 class IntroInventory(TemplateView):
     template_name = "pages/intro_inventory.html"
 

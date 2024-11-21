@@ -15,6 +15,7 @@ urlpatterns = [
     path("cellar/", flows.CellarFlow.as_view(), name="cellar"),
     path("hotwater_heating/", flows.HotwaterHeatingFlow.as_view(), name="hotwater_heating"),
     path("consumption_input/", flows.ConsumptionInputFlow.as_view(), name="consumption_input"),
+    path("consumption_result/", views.ConsumptionResult.as_view(), name="consumption_result"),
     # step 2 inventory analysis
     path("intro_inventory/", views.IntroInventory.as_view(), name="intro_inventory"),
     path("roof/", flows.RoofFlow.as_view(), name="roof"),

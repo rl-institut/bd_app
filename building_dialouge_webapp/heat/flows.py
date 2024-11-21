@@ -677,7 +677,7 @@ class ConsumptionInputFlow(Flow):
             Next("end"),
         )
 
-        self.end = EndState(self, url="heat:home")
+        self.end = EndState(self, url="heat:consumption_result")
 
 
 class RoofFlow(Flow):
