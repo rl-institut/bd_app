@@ -794,3 +794,49 @@ class FacadeFlow(Flow):
         )
 
         self.end = EndState(self, url="heat:heating")
+
+
+class HeatingFlow(Flow):
+    template_name = "pages/heating.html"
+    extra_context = {
+        "back_url": "heat:facade",
+        "next_includes": "#heating,#heating_hydraulic,#heating_details,#heating_storage",
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.start = FormState(
+            self,
+            name="heating",
+            form_class=forms.HeatingForm,
+        ).transition(
+            Next("heating_hydraulic"),
+        )
+
+        self.heating_hydraulic = FormState(
+            self,
+            name="heating_hydraulic",
+            form_class=forms.HeatingHydraulicForm,
+            template_name="partials/heating_hydraulic_help.html",
+        ).transition(
+            Next("heating_details"),
+        )
+
+        self.heating_details = FormState(
+            self,
+            name="heating_details",
+            form_class=forms.HeatingDetailsForm,
+        ).transition(
+            Next("heating_storage"),
+        )
+
+        self.heating_storage = FormState(
+            self,
+            name="heating_storage",
+            form_class=forms.HeatingStorageForm,
+            template_name="partials/heating_storage_help.html",
+        ).transition(
+            Next("end"),
+        )
+
+        self.end = EndState(self, url="heat:pv_system")

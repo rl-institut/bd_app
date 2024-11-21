@@ -26,27 +26,22 @@ class BuildingDataForm(forms.Form):
         max_value=2030,
         min_value=1850,
     )
-
     number_persons = forms.IntegerField(
         label="number_persons",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-
     number_flats = forms.IntegerField(
         label="number_flats",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-
     living_space = forms.IntegerField(
         label="living_space",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-
     number_floors = forms.IntegerField(
         label="number_floors",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-
     adjoining_building = forms.ChoiceField(
         label="adjoining_building",
         choices=[
@@ -56,7 +51,6 @@ class BuildingDataForm(forms.Form):
         ],
         widget=forms.RadioSelect,
     )
-
     floor_plan = forms.ChoiceField(
         label="floor_plan",
         choices=[
@@ -220,27 +214,22 @@ class ConsumptionInputForm(forms.Form):
         label="Zeitraum von:",
         widget=forms.DateInput(attrs={"type": "date"}),
     )
-
     heating_consumption_period_end = forms.DateField(
         label="bis:",
         widget=forms.DateInput(attrs={"type": "date"}),
     )
-
     heating_consumption = forms.IntegerField(
         label="Heizenergieverbrauch in kWh",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-
     heating_energy_source_cost = forms.FloatField(
         label="Brennstoffkosten in €",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-
     hotwater_consumption = forms.FloatField(
         label="Warmwasser: Verbrauch m³ pro kWh",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-
     hotwater_temperature = forms.IntegerField(
         label="Warmwasser: Temperatur",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
@@ -317,7 +306,7 @@ class RoofUsageFutureForm(forms.Form):
 class RoofInsulationForm(forms.Form):
     roof_insulation_exists = forms.ChoiceField(
         label="roof_insulation_exists",
-        choices=[(True, "Yes"), (False, "No")],
+        choices=[(True, "Ja"), (False, "Nein")],
     )
 
 
@@ -344,7 +333,6 @@ class WindowDetailsForm(forms.Form):
         ],
         widget=forms.RadioSelect,
     )
-
     window_construction_year = forms.ChoiceField(
         label="Fenstertyp",
         choices=[
@@ -354,7 +342,6 @@ class WindowDetailsForm(forms.Form):
         ],
         widget=forms.RadioSelect,
     )
-
     seperate_year = forms.IntegerField(
         label="",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
@@ -362,7 +349,6 @@ class WindowDetailsForm(forms.Form):
         max_value=2030,
         min_value=1850,
     )
-
     window_share = forms.IntegerField(
         label="prozentualer Anteil (bei mehreren Typen)",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
@@ -404,7 +390,7 @@ class FacadeForm(forms.Form):
 class FacadeInsulationForm(forms.Form):
     facade_insulation_exists = forms.ChoiceField(
         label="Dämmung vorhanden?",
-        choices=[("exists", "Yes"), ("doesnt_exist", "No"), ("unkown", "Unbekannt")],
+        choices=[("exists", "Ja"), ("doesnt_exist", "Nein"), ("unkown", "Unbekannt")],
     )
 
 
@@ -414,4 +400,51 @@ class FacadeInsulationYearForm(forms.Form):
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         max_value=2030,
         min_value=1850,
+    )
+
+
+class HeatingForm(forms.Form):
+    heating_system_construction_year = forms.IntegerField(
+        label="Baujahr Heizung",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        max_value=2030,
+        min_value=1850,
+    )
+    condensing_boiler_exists = forms.ChoiceField(
+        label="Brennwerttechnik vorhanden?",
+        choices=[(True, "Ja"), (False, "Nein"), ("unkown", "Unbekannt")],
+        widget=forms.RadioSelect,
+    )
+
+
+class HeatingHydraulicForm(forms.Form):
+    hydraulic_balancing_done = forms.ChoiceField(
+        label="Hydraulischer Abgleich durchgeführt?",
+        choices=[(True, "Ja"), (False, "Nein"), ("unkown", "Unbekannt")],
+        widget=forms.RadioSelect,
+    )
+
+
+class HeatingDetailsForm(forms.Form):
+    pipe_insulation_exists = forms.ChoiceField(
+        label="Rohre gedämmt?",
+        choices=[(True, "Ja"), (False, "Nein")],
+        widget=forms.RadioSelect,
+    )
+    floor_heating_exists = forms.ChoiceField(
+        label="Fußbodenheizung",
+        choices=[(True, "Ja"), (False, "Nein")],
+        widget=forms.RadioSelect,
+    )
+    heating_storage_exists = forms.ChoiceField(
+        label="Wärmespeicher",
+        choices=[(True, "Ja"), (False, "Nein")],
+        widget=forms.RadioSelect,
+    )
+
+
+class HeatingStorageForm(forms.Form):
+    heating_storage_capacity = forms.IntegerField(
+        label="Wärmespeicher Fassungsvermögen in l",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
