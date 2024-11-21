@@ -660,6 +660,26 @@ class HotwaterHeatingFlow(Flow):
         self.end = EndState(self, url="heat:consumption_input")
 
 
+class ConsumptionInputFlow(Flow):
+    template_name = "pages/consumption_input.html"
+    extra_context = {
+        "back_url": "heat:hotwater_heating",
+        "next_includes": "#roof_type,#roof_details,#roof_usage_now,#roof_usage_future,#roof_insulation",
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.start = FormState(
+            self,
+            name="consumption_input",
+            form_class=forms.ConsumptionInputForm,
+        ).transition(
+            Next("end"),
+        )
+
+        self.end = EndState(self, url="heat:home")
+
+
 class RoofFlow(Flow):
     template_name = "pages/roof.html"
     extra_context = {

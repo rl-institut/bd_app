@@ -215,6 +215,38 @@ class HotwaterHeatingSolarDetailsForm(forms.Form):
     )
 
 
+class ConsumptionInputForm(forms.Form):
+    heating_consumption_period_start = forms.DurationField(
+        label="Zeitraum von:",
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+
+    heating_consumption_period_end = forms.DateField(
+        label="bis:",
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+
+    heating_consumption = forms.IntegerField(
+        label="Heizenergieverbrauch in kWh",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+    heating_energy_source_cost = forms.FloatField(
+        label="Brennstoffkosten in €",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+    hotwater_consumption = forms.FloatField(
+        label="Warmwasser: Verbrauch m³ pro kWh",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+    hotwater_temperature = forms.IntegerField(
+        label="Warmwasser: Temperatur",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+
 class RoofTypeForm(forms.Form):
     roof_type = forms.ChoiceField(
         label="roof_type",
