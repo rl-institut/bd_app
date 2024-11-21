@@ -757,3 +757,40 @@ class WindowFlow(Flow):
         )
 
         self.end = EndState(self, url="heat:facade")
+
+
+class FacadeFlow(Flow):
+    template_name = "pages/facade.html"
+    extra_context = {
+        "back_url": "heat:window",
+        "next_includes": "#facade_details,#facade_insulation_exists,#facade_insulation_year",
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.start = FormState(
+            self,
+            name="facade_details",
+            form_class=forms.FacadeForm,
+        ).transition(
+            Next("facade_insulation_exists"),
+        )
+
+        self.facade_insulation_exists = FormState(
+            self,
+            name="facade_insulation_exists",
+            form_class=forms.FacadeInsulationForm,
+            template_name="partials/facade_insulation_help.html",
+        ).transition(
+            Switch("facade_insulation_exists").case("exists", "facade_insulation_year").default("end"),
+        )
+
+        self.facade_insulation_year = FormState(
+            self,
+            name="facade_insulation_year",
+            form_class=forms.FacadeInsulationYearForm,
+        ).transition(
+            Next("end"),
+        )
+
+        self.end = EndState(self, url="heat:heating")

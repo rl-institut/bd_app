@@ -379,3 +379,39 @@ class WindowDetailsForm(forms.Form):
             self.add_error("seperate_year", "Bitte ein Jahr angeben.")
 
         return cleaned_data
+
+
+class FacadeForm(forms.Form):
+    facade_type = forms.ChoiceField(
+        label="Bauweise",
+        choices=[
+            ("wood", "Holz"),
+            ("solid", "Massiv"),
+        ],
+        widget=forms.RadioSelect,
+    )
+    facade_condition = forms.ChoiceField(
+        label="Zustand",
+        choices=[
+            ("no_damage", "Keine Schäden"),
+            ("needs_paintjob", "Neuer Anstrich erforderlich"),
+            ("small_cracks", "Kleine Risse / bröckelnder Putz: "),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class FacadeInsulationForm(forms.Form):
+    facade_insulation_exists = forms.ChoiceField(
+        label="Dämmung vorhanden?",
+        choices=[("exists", "Yes"), ("doesnt_exist", "No"), ("unkown", "Unbekannt")],
+    )
+
+
+class FacadeInsulationYearForm(forms.Form):
+    facade_construction_year = forms.IntegerField(
+        label="Jahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        max_value=2030,
+        min_value=1850,
+    )

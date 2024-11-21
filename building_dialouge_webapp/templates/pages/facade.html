@@ -1,0 +1,32 @@
+{% extends "base_flow.html" %}
+
+{% block content %}
+  <section class="position-relative h-100 flex-grow-1 pb-5">
+    <div class="help-background"></div>
+    <div class="step-title">
+      <div class="step-container">
+        <div class="main">
+          <h1>Fassade</h1>
+        </div>
+      </div>
+      <div class="help"></div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="facade_details"
+             hx-post=""
+             hx-trigger="change"
+             hx-include="this"
+             class="main">{{ facade_details.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div id="facade_insulation_exists">{{ facade_insulation_exists.content | safe }}</div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="facade_insulation_year" class="main">{{ facade_insulation_year.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+  </section>
+{% endblock content %}
