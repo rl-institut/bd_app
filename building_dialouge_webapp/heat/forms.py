@@ -511,3 +511,37 @@ class VentilationSystemYearForm(forms.Form):
         max_value=2030,
         min_value=1850,
     )
+
+
+class FinancialSupportForm(forms.Form):
+    subsidy = forms.MultipleChoiceField(
+        label="Zuschüsse",
+        choices=[
+            ("sub1", "Steuerliche Förderung energetischer Sanierungsmaßnahmen"),
+            (
+                "sub2",
+                "BAFA - Bundesförderung für effiziente Gebäude - Maßnahmen an der Gebäudehülle - "
+                "(BEG EM) (Zuschuss inkl. iSFP-Bonus)",
+            ),
+            (
+                "sub3",
+                "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
+                "Wohngebäude (BEG EM) (Nr. 458) (Zuschuss inkl. Klima-Bonus)",
+            ),
+            (
+                "sub4",
+                "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
+                "Wohngebäude (BEG EM) (Nr. 458) (Effizienz-Bonus)",
+            ),
+            ("sub5", "Einkommensbonus"),
+            ("sub6", "Emissionsminderungszuschlag"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+    )
+    promotional_loan = forms.MultipleChoiceField(
+        label="Förderkredit",
+        choices=[
+            ("loan1", "KfW - Bundesförderung für effiziente Gebäude - Ergänzungskredit"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+    )

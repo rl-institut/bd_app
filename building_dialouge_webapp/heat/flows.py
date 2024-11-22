@@ -915,3 +915,24 @@ class VentilationSystemFlow(Flow):
         )
 
         self.end = EndState(self, url="heat:intro_renovation")
+
+
+class FinancialSupporFlow(Flow):
+    template_name = "pages/financial_support.html"
+    extra_context = {
+        "back_url": "heat:intro_renovation",  # actually renovation_request
+        "next_includes": "#ventilation_system_exists,#ventilation_system_year",
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.start = FormState(
+            self,
+            name="financial_support",
+            form_class=forms.FinancialSupportForm,
+            template_name="partials/financial_support_help.html",
+        ).transition(
+            Next("end"),
+        )
+
+        self.end = EndState(self, url="heat:results")

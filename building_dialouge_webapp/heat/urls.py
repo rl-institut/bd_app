@@ -26,4 +26,5 @@ urlpatterns = [
     path("ventilation_system/", flows.VentilationSystemFlow.as_view(), name="ventilation_system"),
     # step 3 renovation request
     path("intro_renovation/", views.IntroRenovation.as_view(), name="intro_renovation"),
+    path("financial_support/", flows.FinancialSupporFlow.as_view(), name="financial_support"),
 ]
