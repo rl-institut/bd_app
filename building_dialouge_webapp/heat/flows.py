@@ -593,8 +593,10 @@ class HotwaterHeatingFlow(Flow):
             form_class=forms.HeatingSystemForm,
             template_name="partials/heating_system_help.html",
         ).transition(
-            Next("heating_source"),
+            Switch("heating_system").case("central_heating", "heating_source").default("dead_end_heating"),
         )
+
+        self.dead_end_heating = EndState(self, url="heat:dead_end_heating")
 
         self.heating_source = FormState(
             self,
