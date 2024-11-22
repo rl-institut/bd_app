@@ -210,7 +210,7 @@ class HotwaterHeatingSolarDetailsForm(forms.Form):
 
 
 class ConsumptionInputForm(forms.Form):
-    heating_consumption_period_start = forms.DurationField(
+    heating_consumption_period_start = forms.DateField(
         label="Zeitraum von:",
         widget=forms.DateInput(attrs={"type": "date"}),
     )

@@ -666,7 +666,7 @@ class ConsumptionInputFlow(Flow):
     template_name = "pages/consumption_input.html"
     extra_context = {
         "back_url": "heat:hotwater_heating",
-        "next_includes": "#roof_type,#roof_details,#roof_usage_now,#roof_usage_future,#roof_insulation",
+        "next_includes": "#consumption_input",
     }
 
     def __init__(self):
