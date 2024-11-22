@@ -28,4 +28,5 @@ urlpatterns = [
     path("intro_renovation/", views.IntroRenovation.as_view(), name="intro_renovation"),
     path("financial_support/", flows.FinancialSupporFlow.as_view(), name="financial_support"),
     path("results/", views.Results.as_view(), name="results"),
+    path("next_steps/", views.NextSteps.as_view(), name="next_steps"),
 ]

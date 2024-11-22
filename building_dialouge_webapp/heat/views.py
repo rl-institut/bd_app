@@ -26,3 +26,7 @@ class IntroRenovation(TemplateView):
 
 class Results(TemplateView):
     template_name = "pages/results.html"
+
+
+class NextSteps(TemplateView):
+    template_name = "pages/next_steps.html"
