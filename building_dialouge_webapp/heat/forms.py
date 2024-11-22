@@ -494,3 +494,20 @@ class PVSystemBatteryForm(forms.Form):
         choices=[(True, "Ja"), (False, "Nein")],
         widget=forms.RadioSelect,
     )
+
+
+class VentilationSystemForm(forms.Form):
+    ventilation_system_exists = forms.ChoiceField(
+        label="Lüftungsanlage mit Wärmerückgewinnung vorhanden?",
+        choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
+        widget=forms.RadioSelect,
+    )
+
+
+class VentilationSystemYearForm(forms.Form):
+    ventilation_system_construction_year = forms.IntegerField(
+        label="Baujahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        max_value=2030,
+        min_value=1850,
+    )

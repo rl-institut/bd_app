@@ -886,3 +886,32 @@ class PVSystemFlow(Flow):
         )
 
         self.end = EndState(self, url="heat:ventilation_system")
+
+
+class VentilationSystemFlow(Flow):
+    template_name = "pages/ventilation_system.html"
+    extra_context = {
+        "back_url": "heat:pv_system",
+        "next_includes": "#ventilation_system_exists,#ventilation_system_year",
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.start = FormState(
+            self,
+            name="ventilation_system_exists",
+            form_class=forms.VentilationSystemForm,
+            template_name="partials/ventilation_system_help.html",
+        ).transition(
+            Switch("ventilation_system_exists").case("doesnt_exist", "end").default("ventilation_system_year"),
+        )
+
+        self.ventilation_system_year = FormState(
+            self,
+            name="ventilation_system_year",
+            form_class=forms.VentilationSystemYearForm,
+        ).transition(
+            Next("end"),
+        )
+
+        self.end = EndState(self, url="heat:intro_renovation")
