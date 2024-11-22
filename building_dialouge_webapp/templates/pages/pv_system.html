@@ -6,31 +6,28 @@
     <div class="step-title">
       <div class="step-container">
         <div class="main">
-          <h1>Heizung</h1>
+          <h1>PV-Anlage</h1>
         </div>
       </div>
       <div class="help"></div>
     </div>
     <div class="step-question">
       <div class="step-container">
-        <div id="heating" class="main">{{ heating.content | safe }}</div>
-        <div class="help"></div>
-      </div>
-    </div>
-    <div id="heating_hydraulic"
-         hx-post=""
-         hx-trigger="change"
-         hx-include="this">{{ heating_hydraulic.content | safe }}</div>
-    <div class="step-question">
-      <div class="step-container">
-        <div id="heating_details"
+        <div id="pv_system"
              hx-post=""
              hx-trigger="change"
              hx-include="this"
-             class="main">{{ heating_details.content | safe }}</div>
+             class="main">{{ pv_system.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>
-    <div id="heating_storage">{{ heating_storage.content | safe }}</div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="pv_system_planned" class="main">{{ pv_system_planned.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div id="pv_system_details">{{ pv_system_details.content | safe }}</div>
+    <div id="pv_system_battery">{{ pv_system_battery.content | safe }}</div>
   </section>
 {% endblock content %}

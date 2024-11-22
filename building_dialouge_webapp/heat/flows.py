@@ -840,3 +840,49 @@ class HeatingFlow(Flow):
         )
 
         self.end = EndState(self, url="heat:pv_system")
+
+
+class PVSystemFlow(Flow):
+    template_name = "pages/pv_system.html"
+    extra_context = {
+        "back_url": "heat:heating",
+        "next_includes": "#pv_system,#pv_system_planned,#pv_system_details,#pv_system_battery",
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.start = FormState(
+            self,
+            name="pv_system",
+            form_class=forms.PVSystemForm,
+        ).transition(
+            Switch("pv_exists").case("doesnt_exist", "pv_system_planned").default("pv_system_details"),
+        )
+
+        self.pv_system_planned = FormState(
+            self,
+            name="pv_system_planned",
+            form_class=forms.PVSystemPlannedForm,
+        ).transition(
+            Next("end"),
+        )
+
+        self.pv_system_details = FormState(
+            self,
+            name="pv_system_details",
+            form_class=forms.PVSystemDetailsForm,
+            template_name="partials/pv_system_details_help.html",
+        ).transition(
+            Next("pv_system_battery"),
+        )
+
+        self.pv_system_battery = FormState(
+            self,
+            name="pv_system_battery",
+            form_class=forms.PVSystemBatteryForm,
+            template_name="partials/pv_system_battery_help.html",
+        ).transition(
+            Next("end"),
+        )
+
+        self.end = EndState(self, url="heat:ventilation_system")

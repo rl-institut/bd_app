@@ -448,3 +448,49 @@ class HeatingStorageForm(forms.Form):
         label="Wärmespeicher Fassungsvermögen in l",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
+
+
+class PVSystemForm(forms.Form):
+    pv_exists = forms.ChoiceField(
+        label="PV-Anlage vorhanden?",
+        choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
+        widget=forms.RadioSelect,
+    )
+
+
+class PVSystemPlannedForm(forms.Form):
+    pv_planned = forms.ChoiceField(
+        label="Beabsichtigen Sie, eine zu installieren?",
+        choices=[(True, "Ja"), (False, "Nein")],
+        widget=forms.RadioSelect,
+    )
+
+
+class PVSystemDetailsForm(forms.Form):
+    pv_construction_year = forms.IntegerField(
+        label="Baujahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        max_value=2030,
+        min_value=1850,
+    )
+    pv_capacity = forms.IntegerField(
+        label="Leistung in kWp",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+
+class PVSystemBatteryForm(forms.Form):
+    battery_exists = forms.ChoiceField(
+        label="Batterie vorhanden?",
+        choices=[(True, "Ja"), (False, "Nein")],
+        widget=forms.RadioSelect,
+    )
+    battery_capacity = forms.IntegerField(
+        label="Leistung in kWh",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    battery_planned = forms.ChoiceField(
+        label="Beabsichtigen Sie, diese zu erweitern?",
+        choices=[(True, "Ja"), (False, "Nein")],
+        widget=forms.RadioSelect,
+    )
