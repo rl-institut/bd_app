@@ -5,6 +5,10 @@ class LandingPage(TemplateView):
     template_name = "pages/home.html"
 
 
+class DeadEndTenant(TemplateView):
+    template_name = "pages/dead_end_tenant.html"
+
+
 class IntroConsumption(TemplateView):
     template_name = "pages/intro_consumption.html"
     extra_context = {

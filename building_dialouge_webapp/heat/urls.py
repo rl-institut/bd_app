@@ -8,6 +8,7 @@ app_name = "heat"
 urlpatterns = [
     # sorted by appearance in view flow
     path("", views.LandingPage.as_view(), name="home"),
+    path("dead_end_tenant/", views.DeadEndTenant.as_view(), name="dead_end_tenant"),
     # step 1 consumption analysis
     path("intro_consumption/", views.IntroConsumption.as_view(), name="intro_consumption"),
     path("building_type/", flows.BuildingTypeFlow.as_view(), name="building_type"),
