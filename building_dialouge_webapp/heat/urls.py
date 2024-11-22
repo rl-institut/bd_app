@@ -12,6 +12,7 @@ urlpatterns = [
     # step 1 consumption analysis
     path("intro_consumption/", views.IntroConsumption.as_view(), name="intro_consumption"),
     path("building_type/", flows.BuildingTypeFlow.as_view(), name="building_type"),
+    path("dead_end_monument/", views.DeadEndMonumentProtection.as_view(), name="dead_end_monument_protection"),
     path("building_data", flows.BuildingDataFlow.as_view(), name="building_data"),
     path("cellar/", flows.CellarFlow.as_view(), name="cellar"),
     path("hotwater_heating/", flows.HotwaterHeatingFlow.as_view(), name="hotwater_heating"),

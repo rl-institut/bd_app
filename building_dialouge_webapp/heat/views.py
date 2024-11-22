@@ -16,6 +16,10 @@ class IntroConsumption(TemplateView):
     }
 
 
+class DeadEndMonumentProtection(TemplateView):
+    template_name = "pages/dead_end_monument_protection.html"
+
+
 class ConsumptionResult(TemplateView):
     template_name = "pages/consumption_result.html"
 
