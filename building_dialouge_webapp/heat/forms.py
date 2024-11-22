@@ -537,6 +537,7 @@ class FinancialSupportForm(forms.Form):
             ("sub6", "Emissionsminderungszuschlag"),
         ],
         widget=forms.CheckboxSelectMultiple,
+        required=False,
     )
     promotional_loan = forms.MultipleChoiceField(
         label="Förderkredit",
@@ -544,4 +545,5 @@ class FinancialSupportForm(forms.Form):
             ("loan1", "KfW - Bundesförderung für effiziente Gebäude - Ergänzungskredit"),
         ],
         widget=forms.CheckboxSelectMultiple,
+        required=False,
     )

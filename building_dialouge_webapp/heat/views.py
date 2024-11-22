@@ -22,3 +22,7 @@ class IntroInventory(TemplateView):
 
 class IntroRenovation(TemplateView):
     template_name = "pages/intro_renovation.html"
+
+
+class Results(TemplateView):
+    template_name = "pages/results.html"

@@ -921,7 +921,7 @@ class FinancialSupporFlow(Flow):
     template_name = "pages/financial_support.html"
     extra_context = {
         "back_url": "heat:intro_renovation",  # actually renovation_request
-        "next_includes": "#ventilation_system_exists,#ventilation_system_year",
+        "next_includes": "#financial_support",
     }
 
     def __init__(self):
