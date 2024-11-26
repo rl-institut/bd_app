@@ -101,7 +101,7 @@
                   <ul class="ps-0">
                     {% for step in index %}
                       <li class="sidebar-nav__step {{ step.index_state }}">
-                        <a href="{{ step.url }}">{{ step.name }}</a>
+                        <a href="{% url step.url %}">{{ step.name }}</a>
                       </li>
                     {% endfor %}
                   </ul>
