@@ -14,8 +14,9 @@ from django.views.generic import TemplateView
 from django_htmx.http import HttpResponseClientRedirect
 from django_htmx.http import retarget
 
+from building_dialouge_webapp.heat.navigation import get_flows
+
 from . import forms
-from . import views
 
 
 class FlowError(Exception):
@@ -482,10 +483,10 @@ class SidebarNavigationMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        index = []
+        index = get_flows()
         state_found = False
 
-        for step in FLOWS:
+        for step in index:
             index_state = ""
             if step["object"] == type(self):
                 index_state = "active"
@@ -493,14 +494,8 @@ class SidebarNavigationMixin:
             elif not state_found:
                 index_state = "visited"
 
-            index.append(
-                {
-                    "name": step["name"],
-                    "url": step["url"],
-                    "index_state": index_state,
-                    "is_category": step["name"][0].isdigit(),  # True if it's a category
-                },
-            )
+            step["index_state"] = index_state
+            step["is_category"] = step["name"][0].isdigit()
 
         context["index"] = index
         return context
@@ -967,26 +962,3 @@ class FinancialSupporFlow(SidebarNavigationMixin, Flow):
         )
 
         self.end = EndState(self, url="heat:results")
-
-
-FLOWS = [
-    {"name": "1. Verbrauchsanalyse", "object": views.IntroConsumption, "url": "heat:intro_consumption"},
-    {"name": "Gebäudeart", "object": BuildingTypeFlow, "url": "heat:building_type"},
-    {"name": "Angaben zu Gebäude", "object": BuildingDataFlow, "url": "heat:building_data"},
-    {"name": "Keller", "object": CellarFlow, "url": "heat:cellar"},
-    {"name": "Heizung & Warmwasser", "object": HotwaterHeatingFlow, "url": "heat:hotwater_heating"},
-    {"name": "Verbrauchseingabe", "object": ConsumptionInputFlow, "url": "heat:consumption_input"},
-    {"name": "Verbrauchsergebnis", "object": views.ConsumptionResult, "url": "heat:consumption_result"},
-    {"name": "2. Bestandsanalyse", "object": views.IntroInventory, "url": "heat:intro_inventory"},
-    {"name": "Dach", "object": RoofFlow, "url": "heat:roof"},
-    {"name": "Fenster", "object": WindowFlow, "url": "heat:window"},
-    {"name": "Fassade", "object": FacadeFlow, "url": "heat:facade"},
-    {"name": "Heizung", "object": HeatingFlow, "url": "heat:heating"},
-    {"name": "PV-Anlage", "object": PVSystemFlow, "url": "heat:pv_system"},
-    {"name": "Lüftungsanlage", "object": VentilationSystemFlow, "url": "heat:ventilation_system"},
-    {"name": "3. Sanierung", "object": views.IntroRenovation, "url": "heat:intro_renovation"},
-    {"name": "Sanierungswunsch", "object": FinancialSupporFlow, "url": "heat:financial_support"},  # renovation
-    {"name": "Förderung", "object": FinancialSupporFlow, "url": "heat:financial_support"},
-    {"name": "4. Ergebnisse", "object": views.Results, "url": "heat:results"},
-    {"name": "Nächste Schritte", "object": views.NextSteps, "url": "heat:next_steps"},
-]
