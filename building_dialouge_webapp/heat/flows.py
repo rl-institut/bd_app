@@ -15,6 +15,7 @@ from django_htmx.http import HttpResponseClientRedirect
 from django_htmx.http import retarget
 
 from . import forms
+from . import views
 
 
 class FlowError(Exception):
@@ -477,7 +478,28 @@ class Flow(TemplateView):
         return self.render_to_response(context)
 
 
-class BuildingTypeFlow(Flow):
+class SidebarNavigationMixin:
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        index = [step.copy() for step in FLOWS]
+
+        state_found = False
+
+        for step in index:
+            if step["object"] == type(self):
+                step["index_state"] = "active"
+                state_found = True
+            elif state_found:
+                step["index_state"] = ""
+            else:
+                step["index_state"] = "visited"
+
+        context["index"] = index
+        return context
+
+
+class BuildingTypeFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/building_type.html"
     extra_context = {
         "back_url": "heat:intro_consumption",
@@ -509,7 +531,7 @@ class BuildingTypeFlow(Flow):
         self.end = EndState(self, url="heat:building_data")
 
 
-class BuildingDataFlow(Flow):
+class BuildingDataFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/building_data.html"
     extra_context = {
         "back_url": "heat:building_type",
@@ -530,7 +552,7 @@ class BuildingDataFlow(Flow):
         self.end = EndState(self, url="heat:cellar")
 
 
-class CellarFlow(Flow):
+class CellarFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/cellar.html"
     extra_context = {
         "back_url": "heat:building_data",
@@ -574,7 +596,7 @@ class CellarFlow(Flow):
         self.end = EndState(self, url="heat:hotwater_heating")
 
 
-class HotwaterHeatingFlow(Flow):
+class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/hotwater_heating.html"
     extra_context = {
         "back_url": "heat:cellar",
@@ -662,7 +684,7 @@ class HotwaterHeatingFlow(Flow):
         self.end = EndState(self, url="heat:consumption_input")
 
 
-class ConsumptionInputFlow(Flow):
+class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/consumption_input.html"
     extra_context = {
         "back_url": "heat:hotwater_heating",
@@ -682,7 +704,7 @@ class ConsumptionInputFlow(Flow):
         self.end = EndState(self, url="heat:consumption_result")
 
 
-class RoofFlow(Flow):
+class RoofFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/roof.html"
     extra_context = {
         "back_url": "heat:home",
@@ -732,7 +754,7 @@ class RoofFlow(Flow):
         self.end = EndState(self, url="heat:window")
 
 
-class WindowFlow(Flow):
+class WindowFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/window.html"
     extra_context = {
         "back_url": "heat:roof",
@@ -761,7 +783,7 @@ class WindowFlow(Flow):
         self.end = EndState(self, url="heat:facade")
 
 
-class FacadeFlow(Flow):
+class FacadeFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/facade.html"
     extra_context = {
         "back_url": "heat:window",
@@ -798,7 +820,7 @@ class FacadeFlow(Flow):
         self.end = EndState(self, url="heat:heating")
 
 
-class HeatingFlow(Flow):
+class HeatingFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/heating.html"
     extra_context = {
         "back_url": "heat:facade",
@@ -844,7 +866,7 @@ class HeatingFlow(Flow):
         self.end = EndState(self, url="heat:pv_system")
 
 
-class PVSystemFlow(Flow):
+class PVSystemFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/pv_system.html"
     extra_context = {
         "back_url": "heat:heating",
@@ -890,7 +912,7 @@ class PVSystemFlow(Flow):
         self.end = EndState(self, url="heat:ventilation_system")
 
 
-class VentilationSystemFlow(Flow):
+class VentilationSystemFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/ventilation_system.html"
     extra_context = {
         "back_url": "heat:pv_system",
@@ -919,7 +941,7 @@ class VentilationSystemFlow(Flow):
         self.end = EndState(self, url="heat:intro_renovation")
 
 
-class FinancialSupporFlow(Flow):
+class FinancialSupporFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/financial_support.html"
     extra_context = {
         "back_url": "heat:intro_renovation",  # actually renovation_request
@@ -938,3 +960,26 @@ class FinancialSupporFlow(Flow):
         )
 
         self.end = EndState(self, url="heat:results")
+
+
+FLOWS = [
+    {"name": "1. Verbrauchsanalyse", "object": views.IntroConsumption, "url": "intro_consumption"},
+    {"name": "Gebäudeart", "object": BuildingTypeFlow, "url": "building_type"},
+    {"name": "Angaben zu Gebäude", "object": BuildingDataFlow, "url": "building_data"},
+    {"name": "Keller", "object": CellarFlow, "url": "cellar"},
+    {"name": "Heizung & Warmwasser", "object": HotwaterHeatingFlow, "url": "hotwater_heating"},
+    {"name": "Verbrauchseingabe", "object": ConsumptionInputFlow, "url": "consumption_input"},
+    {"name": "Verbrauchsergebnis", "object": views.ConsumptionResult, "url": "consumption_result"},
+    {"name": "2. Bestandsanalyse", "object": views.IntroInventory, "url": "intro_inventory"},
+    {"name": "Dach", "object": RoofFlow, "url": "roof"},
+    {"name": "Fenster", "object": WindowFlow, "url": "window"},
+    {"name": "Fassade", "object": FacadeFlow, "url": "facade"},
+    {"name": "Heizung", "object": HeatingFlow, "url": "heating"},
+    {"name": "PV-Anlage", "object": PVSystemFlow, "url": "pv_system"},
+    {"name": "Lüftungsanlage", "object": VentilationSystemFlow, "url": "ventilation_system"},
+    {"name": "3. Sanierung", "object": views.IntroRenovation, "url": "intro_renovation"},
+    {"name": "Sanierungswunsch", "object": FinancialSupporFlow, "url": "financial_support"},  # actually renovation
+    {"name": "Förderung", "object": FinancialSupporFlow, "url": "financial_support"},
+    {"name": "4. Ergebnisse", "object": views.Results, "url": "results"},
+    {"name": "Nächste Schritte", "object": views.NextSteps, "url": "next_steps"},
+]
