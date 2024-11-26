@@ -482,18 +482,25 @@ class SidebarNavigationMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        index = [step.copy() for step in FLOWS]
-
+        index = []
         state_found = False
 
-        for step in index:
+        for step in FLOWS:
+            index_state = ""
             if step["object"] == type(self):
-                step["index_state"] = "active"
+                index_state = "active"
                 state_found = True
-            elif state_found:
-                step["index_state"] = ""
-            else:
-                step["index_state"] = "visited"
+            elif not state_found:
+                index_state = "visited"
+
+            index.append(
+                {
+                    "name": step["name"],
+                    "url": step["url"],
+                    "index_state": index_state,
+                    "is_category": step["name"][0].isdigit(),  # True if it's a category
+                },
+            )
 
         context["index"] = index
         return context
