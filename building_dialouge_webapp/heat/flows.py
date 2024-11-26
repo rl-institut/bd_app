@@ -43,11 +43,8 @@ class HTMLStateResponse(StateResponse):
         super().__init__(html)
 
 
-class HTMLResetStateResponse(StateResponse):
-    """State response holding HTML in order to reset page content."""
-
-    def __init__(self, html: str) -> None:
-        super().__init__(html)
+class SwapHTMLStateResponse(HTMLStateResponse):
+    """State response holding HTML to be swapped into other target."""
 
 
 class RedirectStateResponse(StateResponse):
@@ -239,7 +236,7 @@ class TemplateState(State):
     def reset_response(self) -> dict[str, StateResponse]:
         """Return HTML including HTMX swap-oob in order to remove/reset HTML for current target."""
         return {
-            self.name: HTMLResetStateResponse(
+            self.name: SwapHTMLStateResponse(
                 f'<div id="{self.name}" hx-swap-oob="innerHTML"></div>',
             ),
         }
@@ -355,7 +352,7 @@ class FormInfoState(FormState):
     @property
     def response(self) -> dict[str, StateResponse]:
         form_response = {
-            "info": HTMLStateResponse(
+            "_info": SwapHTMLStateResponse(
                 f'<div id="info" hx-swap-oob="innerHTML">{self.info_text}</div>',
             ),
         }
@@ -365,7 +362,7 @@ class FormInfoState(FormState):
     @property
     def reset_response(self) -> dict[str, StateResponse]:
         form_response = {
-            "info": HTMLStateResponse('<div id="info" hx-swap-oob="innerHTML"></div>'),
+            "_info": SwapHTMLStateResponse('<div id="info" hx-swap-oob="innerHTML"></div>'),
         }
         form_response.update(**super().reset_response)
         return form_response
@@ -457,9 +454,15 @@ class Flow(TemplateView):
             # Merge reset responses
             target = None
             html_response = ""
-            for name, state_response in state_partials.items():
+            ordered_partials = dict(
+                sorted(state_partials.items(), key=lambda item: isinstance(item[1], SwapHTMLStateResponse)),
+            )
+            for name, state_response in ordered_partials.items():
                 html_response += state_response.content
-                if isinstance(state_response, HTMLStateResponse):
+                if isinstance(state_response, HTMLStateResponse) and not isinstance(
+                    state_response,
+                    SwapHTMLStateResponse,
+                ):
                     target = name
             response = HttpResponse(html_response, content_type="text/html")
             return retarget(response, f"#{target}")
@@ -470,7 +473,7 @@ class Flow(TemplateView):
         state_partials = {
             name: response
             for name, response in state_partials.items()
-            if not isinstance(response, (HTMLResetStateResponse, RedirectStateResponse))
+            if not isinstance(response, (SwapHTMLStateResponse, RedirectStateResponse))
         }
         context.update(state_partials)
         # Fill template with state partials by adding them with their target_id
