@@ -477,6 +477,11 @@ class Flow(TemplateView):
         # Fill template with state partials by adding them with their target_id
         return self.render_to_response(context)
 
+    def finished(self):
+        """Check if the given flow is finished."""
+        state_responses = self.start.set()
+        return any(isinstance(response, EndState) for response in state_responses.values())
+
 
 class BuildingTypeFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/building_type.html"
