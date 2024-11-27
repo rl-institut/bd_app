@@ -14,9 +14,8 @@ from django.views.generic import TemplateView
 from django_htmx.http import HttpResponseClientRedirect
 from django_htmx.http import retarget
 
-from building_dialouge_webapp.heat.navigation import get_flows
-
 from . import forms
+from .navigation import SidebarNavigationMixin
 
 
 class FlowError(Exception):
@@ -477,28 +476,6 @@ class Flow(TemplateView):
         context.update(state_partials)
         # Fill template with state partials by adding them with their target_id
         return self.render_to_response(context)
-
-
-class SidebarNavigationMixin:
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        index = get_flows()
-        state_found = False
-
-        for step in index:
-            index_state = ""
-            if step["object"] == type(self):
-                index_state = "active"
-                state_found = True
-            elif not state_found:
-                index_state = "visited"
-
-            step["index_state"] = index_state
-            step["is_category"] = step["name"][0].isdigit()
-
-        context["index"] = index
-        return context
 
 
 class BuildingTypeFlow(SidebarNavigationMixin, Flow):

@@ -1,6 +1,6 @@
 from django.views.generic import TemplateView
 
-from .flows import SidebarNavigationMixin
+from .navigation import SidebarNavigationMixin
 
 
 class LandingPage(TemplateView):
