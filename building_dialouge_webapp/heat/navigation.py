@@ -80,9 +80,9 @@ class SidebarNavigationMixin:
                 "steps": [
                     {
                         "name": "Sanierungswunsch",
-                        "object": flows.FinancialSupporFlow,
-                        "url": "heat:financial_support",
-                    },  # renovation
+                        "object": flows.RenovationRequestFlow,
+                        "url": "heat:renovation_request",
+                    },
                     {"name": "Förderung", "object": flows.FinancialSupporFlow, "url": "heat:financial_support"},
                 ],
             },

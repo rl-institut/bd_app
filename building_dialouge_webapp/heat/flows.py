@@ -925,10 +925,77 @@ class VentilationSystemFlow(SidebarNavigationMixin, Flow):
         self.end = EndState(self, url="heat:intro_renovation")
 
 
+class RenovationRequestFlow(SidebarNavigationMixin, Flow):
+    template_name = "pages/renovation_request.html"
+    extra_context = {
+        "back_url": "heat:intro_renovation",
+        "next_includes": (
+            "#primary_heating,#renovation_biomass,#renovation_heatpump,"
+            "#renovation_pvsolar,#renovation_solar,#renovation_details"
+        ),
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.start = FormState(
+            self,
+            name="primary_heating",
+            form_class=forms.RenovationTechnologyForm,
+        ).transition(
+            Switch("primary_heating")
+            .case("bio_mass", "renovation_biomass")
+            .case("heat_pump", "renovation_heatpump")
+            .case("heating_rod", "renovation_pvsolar")
+            .default("renovation_solar"),
+        )
+
+        self.renovation_biomass = FormState(
+            self,
+            name="renovation_biomass",
+            form_class=forms.RenovationBioMassForm,
+        ).transition(
+            Next("renovation_details"),
+        )
+
+        self.renovation_heatpump = FormState(
+            self,
+            name="renovation_heatpump",
+            form_class=forms.RenovationHeatPumpForm,
+        ).transition(
+            Next("renovation_details"),
+        )
+
+        self.renovation_pvsolar = FormState(
+            self,
+            name="renovation_pvsolar",
+            form_class=forms.RenovationPVSolarForm,
+        ).transition(
+            Next("renovation_details"),
+        )
+
+        self.renovation_solar = FormState(
+            self,
+            name="renovation_solar",
+            form_class=forms.RenovationSolarForm,
+        ).transition(
+            Next("renovation_details"),
+        )
+
+        self.renovation_details = FormState(
+            self,
+            name="renovation_details",
+            form_class=forms.RenovationRequestForm,
+        ).transition(
+            Next("end"),
+        )
+
+        self.end = EndState(self, url="heat:financial_support")
+
+
 class FinancialSupporFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/financial_support.html"
     extra_context = {
-        "back_url": "heat:intro_renovation",  # actually renovation_request
+        "back_url": "heat:renovation_request",
         "next_includes": "#financial_support",
     }
 
