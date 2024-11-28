@@ -3,7 +3,7 @@
 @mixin sidebar-items {
   a {
     color: $grey-400;
-    pointer-events: none;
+    pointer-events: auto;
   }
 
   &.visited a {
