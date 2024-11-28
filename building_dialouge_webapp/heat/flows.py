@@ -272,13 +272,16 @@ class FormState(TemplateState):
             csrf_token = csrf(self.flow.request)["csrf_token"]
             rendered_form = (
                 f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">\n'
-                f"{self.form_class(data).as_div()}"
+                f"{self.form_class(data, prefix=self.flow.prefix).as_div()}"
             )
             return {self.name: HTMLStateResponse(rendered_form)}
-        context["form"] = self.form_class(data)
+        context["form"] = self.form_class(data, prefix=self.flow.prefix)
         return {
             self.name: HTMLStateResponse(
-                get_template(self.template_name).render(context, request=self.flow.request),
+                get_template(self.template_name).render(
+                    context,
+                    request=self.flow.request,
+                ),
             ),
         }
 
@@ -298,27 +301,37 @@ class FormState(TemplateState):
         """Stores each form field's input value to the session."""
         if self.flow.request.method == "POST":
             session_data = self.flow.request.session.get("django_htmx_flow", {})
-            form_instance = self.form_class(self.flow.request.POST)
+            form_instance = self.form_class(
+                self.flow.request.POST,
+                prefix=self.flow.prefix,
+            )
             if form_instance.is_valid():
                 form_data = form_instance.cleaned_data
                 for field_name, value in form_data.items():
-                    session_data[field_name] = value
+                    session_data[field_name if self.flow.prefix is None else f"{self.flow.prefix}-{field_name}"] = (
+                        value
+                    )
                 self.flow.request.session["django_htmx_flow"] = session_data
 
     def remove_state(self):
         """Removes each form field's stored value from the session."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        form_instance = self.form_class()
+        form_instance = self.form_class(prefix=self.flow.prefix)
         for field in form_instance.fields:
-            if field in session_data:
-                del session_data[field]
+            key = field if self.flow.prefix is None else f"{self.flow.prefix}-{field}"
+            if key in session_data:
+                del session_data[key]
         self.flow.request.session["django_htmx_flow"] = session_data
 
     def check_state(self) -> StateStatus:
         """Checks the state status using all form fields."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        required_fields = [field_name for field_name, field in self.form_class.base_fields.items() if field.required]
-        form = self.form_class(self.flow.request.POST)
+        required_fields = [
+            field_name if self.flow.prefix is None else f"{self.flow.prefix}-{field_name}"
+            for field_name, field in self.form_class.base_fields.items()
+            if field.required
+        ]
+        form = self.form_class(self.flow.request.POST, prefix=self.flow.prefix)
         if not form.is_valid():
             if any(field in required_fields for field in self.flow.request.POST):
                 return StateStatus.Error
@@ -331,7 +344,11 @@ class FormState(TemplateState):
         if all(field not in session_data for field in required_fields):
             return StateStatus.Set
         form_data = form.cleaned_data
-        if all(session_data.get(field) == form_data.get(field) for field in required_fields):
+        if all(
+            session_data.get(field)
+            == form_data.get(field if self.flow.prefix is None else field[len(self.flow.prefix) + 1 :])
+            for field in required_fields
+        ):
             return StateStatus.Unchanged
         return StateStatus.Changed
 
@@ -362,7 +379,9 @@ class FormInfoState(FormState):
     @property
     def reset_response(self) -> dict[str, StateResponse]:
         form_response = {
-            "_info": SwapHTMLStateResponse('<div id="info" hx-swap-oob="innerHTML"></div>'),
+            "_info": SwapHTMLStateResponse(
+                '<div id="info" hx-swap-oob="innerHTML"></div>',
+            ),
         }
         form_response.update(**super().reset_response)
         return form_response
@@ -425,6 +444,7 @@ class Switch(Transition):
 
     def default_switch_fct(self, state: "State") -> Any:
         key = self.lookup if isinstance(self.lookup, str) else state.name
+        key = key if self.flow.prefix is None else f"{self.flow.prefix}-{key}"
         session_data = self.flow.request.session.get("django_htmx_flow", {})
         if key in session_data:
             return session_data[key]
@@ -435,7 +455,10 @@ class Switch(Transition):
 
 
 class Flow(TemplateView):
-    def __init__(self):
+    prefix: str | None = None
+
+    def __init__(self, prefix: str | None = None):
+        self.prefix = prefix
         self.start = None
         self.end = None
         super().__init__()
@@ -455,7 +478,10 @@ class Flow(TemplateView):
             target = None
             html_response = ""
             ordered_partials = dict(
-                sorted(state_partials.items(), key=lambda item: isinstance(item[1], SwapHTMLStateResponse)),
+                sorted(
+                    state_partials.items(),
+                    key=lambda item: isinstance(item[1], SwapHTMLStateResponse),
+                ),
             )
             for name, state_response in ordered_partials.items():
                 html_response += state_response.content
@@ -507,7 +533,10 @@ class BuildingTypeFlow(Flow):
             Switch("monument_protection").case("yes", "dead_end_monument_protection").default("end"),
         )
         # TODO: make dead end popup or view and update url
-        self.dead_end_monument_protection = EndState(self, url="heat:dead_end_monument_protection")
+        self.dead_end_monument_protection = EndState(
+            self,
+            url="heat:dead_end_monument_protection",
+        )
 
         self.end = EndState(self, url="heat:building_data")
 
