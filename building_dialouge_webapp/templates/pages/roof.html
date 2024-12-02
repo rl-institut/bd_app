@@ -1,0 +1,44 @@
+{% extends "base_flow.html" %}
+
+{% block content %}
+  <section class="position-relative h-100 flex-grow-1 pb-5">
+    <div class="help-background"></div>
+    <div class="step-title">
+      <div class="step-container">
+        <div class="main">
+          <h1>Dach</h1>
+        </div>
+      </div>
+      <div class="help"></div>
+    </div>
+    <div id="roof_type" hx-post="" hx-trigger="change" hx-include="this">{{ roof_type.content | safe }}</div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="roof_details" class="main">{{ roof_details.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="roof_usage_now"
+             hx-post=""
+             hx-trigger="change"
+             hx-include="this"
+             class="main">{{ roof_usage_now.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="roof_usage_future" class="main">{{ roof_usage_future.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="roof_insulation" class="main">{{ roof_insulation.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+  </section>
+{% endblock content %}

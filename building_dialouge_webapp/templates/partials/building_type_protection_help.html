@@ -1,0 +1,11 @@
+<div class="step-question">
+  <div class="step-container">
+    <div class="main">
+      {{ form }}
+      {% csrf_token %}
+    </div>
+  </div>
+  <div class="help">
+    <span>Denkmalschutz:&nbsp;</span>Um festzustellen, ob ein Haus unter Denkmalschutz steht, können Sie die <a href="{% url 'heat:home' %}">folgenden Schritte unternehmen</a>.
+  </div>
+</div>

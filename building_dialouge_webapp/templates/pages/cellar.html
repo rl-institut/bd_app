@@ -1,0 +1,39 @@
+{% extends "base_flow.html" %}
+
+{% block content %}
+  <section class="position-relative h-100 flex-grow-1 pb-5">
+    <div class="help-background"></div>
+    <div class="step-title">
+      <div class="step-container">
+        <div class="main">
+          <h1>Keller</h1>
+        </div>
+      </div>
+      <div class="help"></div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="cellar_heating" class="main">{{ cellar_heating.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="cellar_details" class="main">{{ cellar_details.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="cellar_insulation_exists" class="main">{{ cellar_insulation_exists.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="cellar_insulation_year" class="main">{{ cellar_insulation_year.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+  </section>
+{% endblock content %}
