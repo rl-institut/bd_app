@@ -6,11 +6,11 @@ class SidebarNavigationMixin:
 
         for category in index:
             for step in category["steps"]:
-                flow_object = step["object"]
+                flow_object = step["object"]()
 
                 if step["url"] == current_url:
                     step["index_state"] = "active"
-                elif flow_object.finished(self):
+                elif hasattr(flow_object, "finished") and flow_object.finished(self.request):
                     step["index_state"] = "visited"
                 else:
                     step["index_state"] = ""
