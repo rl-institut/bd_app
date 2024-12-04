@@ -2,15 +2,14 @@ class SidebarNavigationMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         index = self.get_flows()
-        current_url = self.request.path
+        state_found = False
 
         for category in index:
             for step in category["steps"]:
-                flow_object = step["object"]()
-
-                if step["url"] == current_url:
+                if step["object"] == type(self):
                     step["index_state"] = "active"
-                elif hasattr(flow_object, "finished") and flow_object.finished(self.request):
+                    state_found = True
+                elif not state_found:
                     step["index_state"] = "visited"
                 else:
                     step["index_state"] = ""
