@@ -318,7 +318,7 @@ class FormState(TemplateState):
                 del session_data[field]
         self.flow.request.session["django_htmx_flow"] = session_data
 
-    def check_state(self) -> StateStatus:
+    def check_state(self) -> StateStatus:  # noqa: PLR0911
         """Checks the state status using all form fields."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
         required_fields = [field_name for field_name, field in self.form_class.base_fields.items()]
@@ -331,9 +331,13 @@ class FormState(TemplateState):
                 return StateStatus.Unchanged
             return StateStatus.New
 
-        # If form is valid, state is either SET or CHANGED (or in case of all forms in request UNCHANGED)
+        # If form is valid, state is either SET, CHANGED or UNCHANGED
         if all(field not in session_data for field in required_fields):
             return StateStatus.Set
+
+        if all(field not in self.flow.request.POST for field in required_fields):
+            # This means no field is required and thus this could be a HTMX request where form is not included
+            return StateStatus.Unchanged
         form_data = form.cleaned_data
         if all(session_data.get(field) == form_data.get(field) for field in required_fields):
             return StateStatus.Unchanged
