@@ -644,10 +644,12 @@ class RenovationRequestForm(forms.Form):
         errors = {}
 
         if cleaned_data.get("facade_renovation") and not cleaned_data.get("facade_renovation_details"):
-            errors["facade_renovation_details"] = "Bitte mindestens eine Spezifikation fürs Fassade sanieren auswälen."
+            errors["facade_renovation_details"] = (
+                "Bitte mindestens eine Spezifikation fürs Fassade sanieren auswählen."
+            )
 
         if cleaned_data.get("roof_renovation") and not cleaned_data.get("roof_renovation_details"):
-            errors["roof_renovation_details"] = "Bitte mindestens eine Spezifikation fürs Dach sanieren auswälen."
+            errors["roof_renovation_details"] = "Bitte mindestens eine Spezifikation fürs Dach sanieren auswählen."
 
         if errors:
             raise forms.ValidationError(errors)

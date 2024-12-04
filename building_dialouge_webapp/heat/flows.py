@@ -138,18 +138,18 @@ class State:
         """Return response of current state."""
         return {self.name: StateResponse("Something went wrong.")}
 
-    def set(self) -> dict[str, StateResponse]:
+    def set(self, previous_state: StateStatus = StateStatus.Unchanged) -> dict[str, StateResponse]:
         """Sets or updates the state using check_state()."""
-        status = self.check_state()
+        status = StateStatus.New if previous_state == StateStatus.Set else self.check_state()
         if status == StateStatus.New:
             return self.response
         if status == StateStatus.Error:
             return self.error_response
         if status == StateStatus.Set:
             self.store_state()
-            following_states = self.next().set()
+            following_states = self.next().set(status)
         elif status == StateStatus.Unchanged:
-            following_states = self.next().set()
+            following_states = self.next().set(status)
         elif status == StateStatus.Changed:
             following_states = self.next().reset()
             self.store_state()
@@ -191,7 +191,7 @@ class EndState(State):
         super().__init__(flow, name="", label=label)
         self.url = url
 
-    def set(self) -> dict[str, StateResponse]:
+    def set(self, previous_state: StateStatus = StateStatus.Unchanged) -> dict[str, StateResponse]:
         return self.response
 
     def reset(self) -> dict[str, StateResponse]:
@@ -318,10 +318,10 @@ class FormState(TemplateState):
                 del session_data[field]
         self.flow.request.session["django_htmx_flow"] = session_data
 
-    def check_state(self) -> StateStatus:
+    def check_state(self) -> StateStatus:  # noqa: PLR0911
         """Checks the state status using all form fields."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        required_fields = [field_name for field_name, field in self.form_class.base_fields.items() if field.required]
+        required_fields = [field_name for field_name, field in self.form_class.base_fields.items()]
         form = self.form_class(self.flow.request.POST)
         if not form.is_valid():
             if any(field in required_fields for field in self.flow.request.POST):
@@ -331,9 +331,13 @@ class FormState(TemplateState):
                 return StateStatus.Unchanged
             return StateStatus.New
 
-        # If form is valid, state is either SET or CHANGED (or in case of all forms in request UNCHANGED)
+        # If form is valid, state is either SET, CHANGED or UNCHANGED
         if all(field not in session_data for field in required_fields):
             return StateStatus.Set
+
+        if all(field not in self.flow.request.POST for field in required_fields):
+            # This means no field is required and thus this could be a HTMX request where form is not included
+            return StateStatus.Unchanged
         form_data = form.cleaned_data
         if all(session_data.get(field) == form_data.get(field) for field in required_fields):
             return StateStatus.Unchanged
@@ -480,8 +484,13 @@ class Flow(TemplateView):
     def finished(self, request):
         """Check if the given flow is finished."""
         self.request = request
-        state_responses = self.start.set()
-        return any(isinstance(response, RedirectStateResponse) for response in state_responses.values())
+        node = self.start
+        while True:
+            if node.check_state() != StateStatus.Unchanged:
+                return False
+            node = node.next()
+            if isinstance(node, EndState):
+                return True
 
 
 class BuildingTypeFlow(SidebarNavigationMixin, Flow):
