@@ -331,7 +331,6 @@ class FormState(TemplateState):
         required_fields = [
             field_name if self.flow.prefix is None else f"{self.flow.prefix}-{field_name}"
             for field_name, field in self.form_class.base_fields.items()
-            if field.required
         ]
         form = self.form_class(self.flow.request.POST, prefix=self.flow.prefix)
 
