@@ -44,11 +44,8 @@ class HTMLStateResponse(StateResponse):
         super().__init__(html)
 
 
-class HTMLResetStateResponse(StateResponse):
-    """State response holding HTML in order to reset page content."""
-
-    def __init__(self, html: str) -> None:
-        super().__init__(html)
+class SwapHTMLStateResponse(HTMLStateResponse):
+    """State response holding HTML to be swapped into other target."""
 
 
 class RedirectStateResponse(StateResponse):
@@ -240,7 +237,7 @@ class TemplateState(State):
     def reset_response(self) -> dict[str, StateResponse]:
         """Return HTML including HTMX swap-oob in order to remove/reset HTML for current target."""
         return {
-            self.name: HTMLResetStateResponse(
+            self.name: SwapHTMLStateResponse(
                 f'<div id="{self.name}" hx-swap-oob="innerHTML"></div>',
             ),
         }
@@ -276,13 +273,16 @@ class FormState(TemplateState):
             csrf_token = csrf(self.flow.request)["csrf_token"]
             rendered_form = (
                 f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">\n'
-                f"{self.form_class(data).as_div()}"
+                f"{self.form_class(data, prefix=self.flow.prefix).as_div()}"
             )
             return {self.name: HTMLStateResponse(rendered_form)}
-        context["form"] = self.form_class(data)
+        context["form"] = self.form_class(data, prefix=self.flow.prefix)
         return {
             self.name: HTMLStateResponse(
-                get_template(self.template_name).render(context, request=self.flow.request),
+                get_template(self.template_name).render(
+                    context,
+                    request=self.flow.request,
+                ),
             ),
         }
 
@@ -302,27 +302,39 @@ class FormState(TemplateState):
         """Stores each form field's input value to the session."""
         if self.flow.request.method == "POST":
             session_data = self.flow.request.session.get("django_htmx_flow", {})
-            form_instance = self.form_class(self.flow.request.POST)
+            form_instance = self.form_class(
+                self.flow.request.POST,
+                prefix=self.flow.prefix,
+            )
             if form_instance.is_valid():
                 form_data = form_instance.cleaned_data
                 for field_name, value in form_data.items():
-                    session_data[field_name] = value
+                    session_data[field_name if self.flow.prefix is None else f"{self.flow.prefix}-{field_name}"] = (
+                        value
+                    )
                 self.flow.request.session["django_htmx_flow"] = session_data
 
     def remove_state(self):
         """Removes each form field's stored value from the session."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        form_instance = self.form_class()
+        form_instance = self.form_class(prefix=self.flow.prefix)
         for field in form_instance.fields:
-            if field in session_data:
-                del session_data[field]
+            key = field if self.flow.prefix is None else f"{self.flow.prefix}-{field}"
+            if key in session_data:
+                del session_data[key]
         self.flow.request.session["django_htmx_flow"] = session_data
 
     def check_state(self) -> StateStatus:  # noqa: PLR0911
         """Checks the state status using all form fields."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        required_fields = [field_name for field_name, field in self.form_class.base_fields.items()]
-        form = self.form_class(self.flow.request.POST)
+
+        required_fields = [
+            field_name if self.flow.prefix is None else f"{self.flow.prefix}-{field_name}"
+            for field_name, field in self.form_class.base_fields.items()
+            if field.required
+        ]
+        form = self.form_class(self.flow.request.POST, prefix=self.flow.prefix)
+
         if not form.is_valid():
             if any(field in required_fields for field in self.flow.request.POST):
                 return StateStatus.Error
@@ -339,7 +351,11 @@ class FormState(TemplateState):
             # This means no field is required and thus this could be a HTMX request where form is not included
             return StateStatus.Unchanged
         form_data = form.cleaned_data
-        if all(session_data.get(field) == form_data.get(field) for field in required_fields):
+        if all(
+            session_data.get(field)
+            == form_data.get(field if self.flow.prefix is None else field[len(self.flow.prefix) + 1 :])
+            for field in required_fields
+        ):
             return StateStatus.Unchanged
         return StateStatus.Changed
 
@@ -360,7 +376,7 @@ class FormInfoState(FormState):
     @property
     def response(self) -> dict[str, StateResponse]:
         form_response = {
-            "info": HTMLStateResponse(
+            "_info": SwapHTMLStateResponse(
                 f'<div id="info" hx-swap-oob="innerHTML">{self.info_text}</div>',
             ),
         }
@@ -370,7 +386,9 @@ class FormInfoState(FormState):
     @property
     def reset_response(self) -> dict[str, StateResponse]:
         form_response = {
-            "info": HTMLStateResponse('<div id="info" hx-swap-oob="innerHTML"></div>'),
+            "_info": SwapHTMLStateResponse(
+                '<div id="info" hx-swap-oob="innerHTML"></div>',
+            ),
         }
         form_response.update(**super().reset_response)
         return form_response
@@ -433,6 +451,7 @@ class Switch(Transition):
 
     def default_switch_fct(self, state: "State") -> Any:
         key = self.lookup if isinstance(self.lookup, str) else state.name
+        key = key if self.flow.prefix is None else f"{self.flow.prefix}-{key}"
         session_data = self.flow.request.session.get("django_htmx_flow", {})
         if key in session_data:
             return session_data[key]
@@ -443,7 +462,10 @@ class Switch(Transition):
 
 
 class Flow(TemplateView):
-    def __init__(self):
+    prefix: str | None = None
+
+    def __init__(self, prefix: str | None = None):
+        self.prefix = prefix
         self.start = None
         self.end = None
         super().__init__()
@@ -462,9 +484,18 @@ class Flow(TemplateView):
             # Merge reset responses
             target = None
             html_response = ""
-            for name, state_response in state_partials.items():
+            ordered_partials = dict(
+                sorted(
+                    state_partials.items(),
+                    key=lambda item: isinstance(item[1], SwapHTMLStateResponse),
+                ),
+            )
+            for name, state_response in ordered_partials.items():
                 html_response += state_response.content
-                if isinstance(state_response, HTMLStateResponse):
+                if isinstance(state_response, HTMLStateResponse) and not isinstance(
+                    state_response,
+                    SwapHTMLStateResponse,
+                ):
                     target = name
             response = HttpResponse(html_response, content_type="text/html")
             return retarget(response, f"#{target}")
@@ -475,7 +506,7 @@ class Flow(TemplateView):
         state_partials = {
             name: response
             for name, response in state_partials.items()
-            if not isinstance(response, (HTMLResetStateResponse, RedirectStateResponse))
+            if not isinstance(response, (SwapHTMLStateResponse, RedirectStateResponse))
         }
         context.update(state_partials)
         # Fill template with state partials by adding them with their target_id
