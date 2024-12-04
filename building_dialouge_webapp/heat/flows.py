@@ -15,6 +15,7 @@ from django_htmx.http import HttpResponseClientRedirect
 from django_htmx.http import retarget
 
 from . import forms
+from .navigation import SidebarNavigationMixin
 
 
 class FlowError(Exception):
@@ -134,18 +135,18 @@ class State:
         """Return response of current state."""
         return {self.name: StateResponse("Something went wrong.")}
 
-    def set(self) -> dict[str, StateResponse]:
+    def set(self, previous_state: StateStatus = StateStatus.Unchanged) -> dict[str, StateResponse]:
         """Sets or updates the state using check_state()."""
-        status = self.check_state()
+        status = StateStatus.New if previous_state == StateStatus.Set else self.check_state()
         if status == StateStatus.New:
             return self.response
         if status == StateStatus.Error:
             return self.error_response
         if status == StateStatus.Set:
             self.store_state()
-            following_states = self.next().set()
+            following_states = self.next().set(status)
         elif status == StateStatus.Unchanged:
-            following_states = self.next().set()
+            following_states = self.next().set(status)
         elif status == StateStatus.Changed:
             following_states = self.next().reset()
             self.store_state()
@@ -187,7 +188,7 @@ class EndState(State):
         super().__init__(flow, name="", label=label)
         self.url = url
 
-    def set(self) -> dict[str, StateResponse]:
+    def set(self, previous_state: StateStatus = StateStatus.Unchanged) -> dict[str, StateResponse]:
         return self.response
 
     def reset(self) -> dict[str, StateResponse]:
@@ -323,15 +324,16 @@ class FormState(TemplateState):
                 del session_data[key]
         self.flow.request.session["django_htmx_flow"] = session_data
 
-    def check_state(self) -> StateStatus:
+    def check_state(self) -> StateStatus:  # noqa: PLR0911
         """Checks the state status using all form fields."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
+
         required_fields = [
             field_name if self.flow.prefix is None else f"{self.flow.prefix}-{field_name}"
             for field_name, field in self.form_class.base_fields.items()
-            if field.required
         ]
         form = self.form_class(self.flow.request.POST, prefix=self.flow.prefix)
+
         if not form.is_valid():
             if any(field in required_fields for field in self.flow.request.POST):
                 return StateStatus.Error
@@ -340,9 +342,13 @@ class FormState(TemplateState):
                 return StateStatus.Unchanged
             return StateStatus.New
 
-        # If form is valid, state is either SET or CHANGED (or in case of all forms in request UNCHANGED)
+        # If form is valid, state is either SET, CHANGED or UNCHANGED
         if all(field not in session_data for field in required_fields):
             return StateStatus.Set
+
+        if all(field not in self.flow.request.POST for field in required_fields):
+            # This means no field is required and thus this could be a HTMX request where form is not included
+            return StateStatus.Unchanged
         form_data = form.cleaned_data
         if all(
             session_data.get(field)
@@ -505,8 +511,19 @@ class Flow(TemplateView):
         # Fill template with state partials by adding them with their target_id
         return self.render_to_response(context)
 
+    def finished(self, request):
+        """Check if the given flow is finished."""
+        self.request = request
+        node = self.start
+        while True:
+            if node.check_state() != StateStatus.Unchanged:
+                return False
+            node = node.next()
+            if isinstance(node, EndState):
+                return True
 
-class BuildingTypeFlow(Flow):
+
+class BuildingTypeFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/building_type.html"
     extra_context = {
         "back_url": "heat:intro_consumption",
@@ -532,16 +549,13 @@ class BuildingTypeFlow(Flow):
         ).transition(
             Switch("monument_protection").case("yes", "dead_end_monument_protection").default("end"),
         )
-        # TODO: make dead end popup or view and update url
-        self.dead_end_monument_protection = EndState(
-            self,
-            url="heat:dead_end_monument_protection",
-        )
+
+        self.dead_end_monument_protection = EndState(self, url="heat:dead_end_monument_protection")
 
         self.end = EndState(self, url="heat:building_data")
 
 
-class BuildingDataFlow(Flow):
+class BuildingDataFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/building_data.html"
     extra_context = {
         "back_url": "heat:building_type",
@@ -562,7 +576,7 @@ class BuildingDataFlow(Flow):
         self.end = EndState(self, url="heat:cellar")
 
 
-class CellarFlow(Flow):
+class CellarFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/cellar.html"
     extra_context = {
         "back_url": "heat:building_data",
@@ -606,7 +620,7 @@ class CellarFlow(Flow):
         self.end = EndState(self, url="heat:hotwater_heating")
 
 
-class HotwaterHeatingFlow(Flow):
+class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/hotwater_heating.html"
     extra_context = {
         "back_url": "heat:cellar",
@@ -694,7 +708,7 @@ class HotwaterHeatingFlow(Flow):
         self.end = EndState(self, url="heat:consumption_input")
 
 
-class ConsumptionInputFlow(Flow):
+class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/consumption_input.html"
     extra_context = {
         "back_url": "heat:hotwater_heating",
@@ -714,7 +728,7 @@ class ConsumptionInputFlow(Flow):
         self.end = EndState(self, url="heat:consumption_result")
 
 
-class RoofFlow(Flow):
+class RoofFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/roof.html"
     extra_context = {
         "back_url": "heat:home",
@@ -764,7 +778,7 @@ class RoofFlow(Flow):
         self.end = EndState(self, url="heat:window")
 
 
-class WindowFlow(Flow):
+class WindowFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/window.html"
     extra_context = {
         "back_url": "heat:roof",
@@ -793,7 +807,7 @@ class WindowFlow(Flow):
         self.end = EndState(self, url="heat:facade")
 
 
-class FacadeFlow(Flow):
+class FacadeFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/facade.html"
     extra_context = {
         "back_url": "heat:window",
@@ -830,7 +844,7 @@ class FacadeFlow(Flow):
         self.end = EndState(self, url="heat:heating")
 
 
-class HeatingFlow(Flow):
+class HeatingFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/heating.html"
     extra_context = {
         "back_url": "heat:facade",
@@ -876,7 +890,7 @@ class HeatingFlow(Flow):
         self.end = EndState(self, url="heat:pv_system")
 
 
-class PVSystemFlow(Flow):
+class PVSystemFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/pv_system.html"
     extra_context = {
         "back_url": "heat:heating",
@@ -922,7 +936,7 @@ class PVSystemFlow(Flow):
         self.end = EndState(self, url="heat:ventilation_system")
 
 
-class VentilationSystemFlow(Flow):
+class VentilationSystemFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/ventilation_system.html"
     extra_context = {
         "back_url": "heat:pv_system",
@@ -951,10 +965,77 @@ class VentilationSystemFlow(Flow):
         self.end = EndState(self, url="heat:intro_renovation")
 
 
-class FinancialSupporFlow(Flow):
+class RenovationRequestFlow(SidebarNavigationMixin, Flow):
+    template_name = "pages/renovation_request.html"
+    extra_context = {
+        "back_url": "heat:intro_renovation",
+        "next_includes": (
+            "#primary_heating,#renovation_biomass,#renovation_heatpump,"
+            "#renovation_pvsolar,#renovation_solar,#renovation_details"
+        ),
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.start = FormState(
+            self,
+            name="primary_heating",
+            form_class=forms.RenovationTechnologyForm,
+        ).transition(
+            Switch("primary_heating")
+            .case("bio_mass", "renovation_biomass")
+            .case("heat_pump", "renovation_heatpump")
+            .case("heating_rod", "renovation_pvsolar")
+            .default("renovation_solar"),
+        )
+
+        self.renovation_biomass = FormState(
+            self,
+            name="renovation_biomass",
+            form_class=forms.RenovationBioMassForm,
+        ).transition(
+            Next("renovation_details"),
+        )
+
+        self.renovation_heatpump = FormState(
+            self,
+            name="renovation_heatpump",
+            form_class=forms.RenovationHeatPumpForm,
+        ).transition(
+            Next("renovation_details"),
+        )
+
+        self.renovation_pvsolar = FormState(
+            self,
+            name="renovation_pvsolar",
+            form_class=forms.RenovationPVSolarForm,
+        ).transition(
+            Next("renovation_details"),
+        )
+
+        self.renovation_solar = FormState(
+            self,
+            name="renovation_solar",
+            form_class=forms.RenovationSolarForm,
+        ).transition(
+            Next("renovation_details"),
+        )
+
+        self.renovation_details = FormState(
+            self,
+            name="renovation_details",
+            form_class=forms.RenovationRequestForm,
+        ).transition(
+            Next("end"),
+        )
+
+        self.end = EndState(self, url="heat:financial_support")
+
+
+class FinancialSupporFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/financial_support.html"
     extra_context = {
-        "back_url": "heat:intro_renovation",  # actually renovation_request
+        "back_url": "heat:renovation_request",
         "next_includes": "#financial_support",
     }
 

@@ -1,0 +1,71 @@
+{% extends "base_footer_button.html" %}
+
+{% block content %}
+  <section class="position-relative h-100 flex-grow-1 pb-5">
+    <div class="help-background"></div>
+    <div class="step-title">
+      <div class="step-container">
+        <div class="main">
+          <h1>Sanierungswunsch</h1>
+        </div>
+      </div>
+      <div class="help"></div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="primary_heating"
+             hx-post=""
+             hx-trigger="change"
+             hx-include="this"
+             class="main">{{ primary_heating.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="renovation_biomass"
+             hx-post=""
+             hx-trigger="change"
+             hx-include="this"
+             class="main">{{ renovation_biomass.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="renovation_heatpump"
+             hx-post=""
+             hx-trigger="change"
+             hx-include="this"
+             class="main">{{ renovation_heatpump.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="renovation_pvsolar"
+             hx-post=""
+             hx-trigger="change"
+             hx-include="this"
+             class="main">{{ renovation_pvsolar.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="renovation_solar"
+             hx-post=""
+             hx-trigger="change"
+             hx-include="this"
+             class="main">{{ renovation_solar.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="renovation_details" class="main">{{ renovation_details.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+  </section>
+{% endblock content %}

@@ -521,6 +521,142 @@ class VentilationSystemYearForm(forms.Form):
     )
 
 
+class RenovationTechnologyForm(forms.Form):
+    primary_heating = forms.ChoiceField(
+        label="Technologie/Energieträger",
+        choices=[
+            ("district_heating", "Fernwärme"),
+            ("bio_mass", "Biomasseheizung"),
+            ("heat_pump", "Wärmepumpe"),
+            ("oil_heating", "Effiziente Öl- und Gasheizung"),
+            ("heating_rod", "Heizstab"),
+            ("bhkw", "BHKW"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class RenovationSolarForm(forms.Form):
+    secondary_heating = forms.MultipleChoiceField(
+        label="Heizungs-Untertechnologie",
+        choices=[
+            ("solar", "Solarthermie"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+
+
+class RenovationPVSolarForm(forms.Form):
+    secondary_heating = forms.MultipleChoiceField(
+        label="Heizungs-Untertechnologie",
+        choices=[
+            ("pv", "PV-Anlage"),
+            ("solar", "Solarthermie"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+
+
+class RenovationBioMassForm(forms.Form):
+    bio_mass_source = forms.ChoiceField(
+        label="Heizungs-Untertechnologie",
+        choices=[
+            ("wood_pellets", "Holzpellets"),
+            ("chip_heating", "Hackschnitzelheizungen"),
+            ("firewood_boilder", "Scheitholzkessel"),
+        ],
+        widget=forms.RadioSelect,
+    )
+    secondary_heating = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("solar", "Solarthermie"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+
+
+class RenovationHeatPumpForm(forms.Form):
+    heat_pump_type = forms.ChoiceField(
+        label="Heizungs-Untertechnologie",
+        choices=[
+            ("geothermal_pump", "Erdwärmepumpe"),
+            ("air_heat_pump", "Luftwärmepumpe"),
+            ("groundwater", "Grundwasser-/Solewärmepumpe"),
+        ],
+        widget=forms.RadioSelect,
+    )
+    secondary_heating = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("oil_heating", "Effiziente Öl- und Gasheizung"),
+            ("heating_rod", "Heizstab"),
+            ("pv", "PV-Anlage"),
+            ("solar", "Solarthermie"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+
+
+class RenovationRequestForm(forms.Form):
+    facade_renovation = forms.BooleanField(
+        label="Fassade sanieren",
+        required=False,
+    )
+    facade_renovation_details = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("paint", "streichen"),
+            ("plaster", "verputzen"),
+            ("insulate", "dämmen"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+    roof_renovation = forms.BooleanField(
+        label="Dach sanieren",
+        required=False,
+    )
+    roof_renovation_details = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("cover", "decken"),
+            ("expand", "ausbauen"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+    window_renovation = forms.BooleanField(
+        label="Fenster austauschen",
+        required=False,
+    )
+    cellar_renovation = forms.BooleanField(
+        label="Kellerdeckendämmung",
+        required=False,
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        errors = {}
+
+        if cleaned_data.get("facade_renovation") and not cleaned_data.get("facade_renovation_details"):
+            errors["facade_renovation_details"] = (
+                "Bitte mindestens eine Spezifikation fürs Fassade sanieren auswählen."
+            )
+
+        if cleaned_data.get("roof_renovation") and not cleaned_data.get("roof_renovation_details"):
+            errors["roof_renovation_details"] = "Bitte mindestens eine Spezifikation fürs Dach sanieren auswählen."
+
+        if errors:
+            raise forms.ValidationError(errors)
+
+        return cleaned_data
+
+
 class FinancialSupportForm(forms.Form):
     subsidy = forms.MultipleChoiceField(
         label="Zuschüsse",

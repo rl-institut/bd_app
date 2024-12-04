@@ -99,66 +99,16 @@
                 </div>
                 <div class="sidebar-nav pt-4">
                   <ul class="ps-0">
-                    <li class="sidebar-nav__category visited">
-                      <a href="">1. Verbrauchsanalyse</a>
-                    </li>
-                    <li class="sidebar-nav__step visited">
-                      <a href="">Gebäudeart</a>
-                    </li>
-                    <li class="sidebar-nav__step visited">
-                      <a href="">Angaben zu Gebäude</a>
-                    </li>
-                    <li class="sidebar-nav__step active">
-                      <a href="">Keller</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Heizung & Warmwasser</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Verbrauchseingabe</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Verbrauchsergebnis</a>
-                    </li>
-                  </ul>
-                  <ul class="ps-0">
-                    <li class="sidebar-nav__category">
-                      <a href="">2. Bestandsanalyse</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Dach</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Fenster</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Fassade</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Heizung</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">PV-Anlage</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Lüftungsanlage</a>
-                    </li>
-                  </ul>
-                  <ul class="ps-0">
-                    <li class="sidebar-nav__category">
-                      <a href="">3. Sanierung</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Sanierungswunsch</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Förderung</a>
-                    </li>
-                  </ul>
-                  <ul class="ps-0">
-                    <li class="sidebar-nav__category">
-                      <a href="">4. Ergebnisse</a>
-                    </li>
+                    {% for category in index %}
+                      <li class="sidebar-nav__category {{ category.index_state }}">
+                        <a href="{% url category.url %}">{{ category.category }}</a>
+                      </li>
+                      {% for step in category.steps %}
+                        <li class="sidebar-nav__step {{ step.index_state }}">
+                          <a href="{% url step.url %}">{{ step.name }}</a>
+                        </li>
+                      {% endfor %}
+                    {% endfor %}
                   </ul>
                 </div>
               </section>

@@ -1,5 +1,7 @@
 from django.views.generic import TemplateView
 
+from .navigation import SidebarNavigationMixin
+
 
 class LandingPage(TemplateView):
     template_name = "pages/home.html"
@@ -12,7 +14,7 @@ class DeadEndTenant(TemplateView):
     }
 
 
-class IntroConsumption(TemplateView):
+class IntroConsumption(SidebarNavigationMixin, TemplateView):
     template_name = "pages/intro_consumption.html"
     extra_context = {
         "back_url": "heat:home",
@@ -34,7 +36,7 @@ class DeadEndHeating(TemplateView):
     }
 
 
-class ConsumptionResult(TemplateView):
+class ConsumptionResult(SidebarNavigationMixin, TemplateView):
     template_name = "pages/consumption_result.html"
     extra_context = {
         "back_url": "heat:consumption_input",
@@ -42,7 +44,7 @@ class ConsumptionResult(TemplateView):
     }
 
 
-class IntroInventory(TemplateView):
+class IntroInventory(SidebarNavigationMixin, TemplateView):
     template_name = "pages/intro_inventory.html"
     extra_context = {
         "back_url": "heat:consumption_result",
@@ -50,14 +52,15 @@ class IntroInventory(TemplateView):
     }
 
 
-class IntroRenovation(TemplateView):
+class IntroRenovation(SidebarNavigationMixin, TemplateView):
     template_name = "pages/intro_renovation.html"
     extra_context = {
         "back_url": "heat:ventilation_system",
+        "next_url": "heat:renovation_request",
     }
 
 
-class Results(TemplateView):
+class Results(SidebarNavigationMixin, TemplateView):
     template_name = "pages/results.html"
     extra_context = {
         "back_url": "heat:financial_support",
@@ -65,7 +68,7 @@ class Results(TemplateView):
     }
 
 
-class NextSteps(TemplateView):
+class NextSteps(SidebarNavigationMixin, TemplateView):
     template_name = "pages/next_steps.html"
     extra_context = {
         "back_url": "heat:results",
