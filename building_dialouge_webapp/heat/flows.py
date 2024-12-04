@@ -519,7 +519,7 @@ class BuildingTypeFlow(SidebarNavigationMixin, Flow):
         ).transition(
             Switch("monument_protection").case("yes", "dead_end_monument_protection").default("end"),
         )
-        # TODO: make dead end popup or view and update url
+
         self.dead_end_monument_protection = EndState(self, url="heat:dead_end_monument_protection")
 
         self.end = EndState(self, url="heat:building_data")
