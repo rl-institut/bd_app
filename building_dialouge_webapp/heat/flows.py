@@ -465,11 +465,13 @@ class Flow(TemplateView):
 
     def __init__(self, prefix: str | None = None):
         self.prefix = prefix
+        self.request = None
         self.start = None
         self.end = None
         super().__init__()
 
     def dispatch(self, request, *args, **kwargs) -> HttpResponse:
+        self.request = request
         state_partials = self.start.set()
 
         if request.htmx:
@@ -975,8 +977,8 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
         ),
     }
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, prefix=None):
+        super().__init__(prefix=prefix)
         self.start = FormState(
             self,
             name="primary_heating",
@@ -1031,12 +1033,18 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
 
         self.end = EndState(self, url="heat:financial_support")
 
+    def dispatch(self, request, *args, **kwargs):
+        # Retrieve the prefix dynamically
+        self.prefix = kwargs.get("scenario", self.prefix)
+        return super().dispatch(request, *args, **kwargs)
+
 
 class FinancialSupporFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/financial_support.html"
     extra_context = {
         "back_url": "heat:renovation_request",
         "next_includes": "#financial_support",
+        "back_kwargs": "scenario1",
     }
 
     def __init__(self):

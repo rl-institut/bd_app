@@ -29,7 +29,7 @@ urlpatterns = [
     path("ventilation_system/", flows.VentilationSystemFlow.as_view(), name="ventilation_system"),
     # step 3 renovation request
     path("intro_renovation/", views.IntroRenovation.as_view(), name="intro_renovation"),
-    path("renovation_request/", flows.RenovationRequestFlow.as_view(), name="renovation_request"),
+    path("renovation_request/<str:scenario>", views.renovation_scenario, name="renovation_request"),
     path("financial_support/", flows.FinancialSupporFlow.as_view(), name="financial_support"),
     path("results/", views.Results.as_view(), name="results"),
     path("next_steps/", views.NextSteps.as_view(), name="next_steps"),
