@@ -78,8 +78,9 @@ def renovation_scenario(request, scenario=None):
         scenarios = request.session["scenarios"]
 
         if scenario != "new_scenario":
-            request.session["scenarios"].append(scenario)
-            request.session.modified = True
+            if scenario not in scenarios:
+                request.session["scenarios"].append(scenario)
+                request.session.modified = True
             flow = RenovationRequestFlow(prefix=scenario)
             return flow.dispatch(request)
 
@@ -92,14 +93,17 @@ def renovation_scenario(request, scenario=None):
         return JsonResponse({"error": "Maximum number of scenarios reached."}, status=400)
 
     if request.method == "POST" and request.htmx:
-        if "save_scenario" in request.POST:
+        if scenario == "save_scenario":
+            prefix = "scenario1"
             # FLow States should save their data automatically
             session_data = request.session.get("django_htmx_flow", {})
-            scenario_data = session_data
+            scenario_data = {
+                key[len(prefix) + 1 :]: value for key, value in session_data.items() if key.startswith(prefix + "-")
+            }
             # Return partial to be rendered with htmx, including the scenarioX fields
             return JsonResponse(
                 {
-                    "html": render_to_string("partials/scenario_box.html", {"scenario": scenario_data}),
+                    "html": render_to_string("partials/scenario_box.html", {"scenario": scenario_data}, request),
                 },
             )
 
