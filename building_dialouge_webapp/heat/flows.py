@@ -179,6 +179,10 @@ class State:
         following_states.update(self.reset_response)
         return following_states
 
+    @property
+    def data(self) -> dict[str, Any]:
+        return {self.name: self.name}
+
 
 class EndState(State):
     """
@@ -366,6 +370,16 @@ class FormState(TemplateState):
             return StateStatus.Unchanged
         return StateStatus.Changed
 
+    @property
+    def data(self) -> dict[str, Any]:
+        """Return cleaned data of the form with data from the session."""
+        session_data = self.flow.request.session.get("django_htmx_flow", {})
+        form = self.form_class(session_data, prefix=self.flow.prefix)
+        if form.is_valid():
+            return form.cleaned_data
+        error_msg = f"Invalid data in flow '{self.name}': {form.errors}."
+        raise FlowError(error_msg)
+
 
 class FormInfoState(FormState):
     def __init__(  # noqa: PLR0913
@@ -539,6 +553,19 @@ class Flow(TemplateView):
             node = node.next()
             if isinstance(node, EndState):
                 return True
+
+    def data(self, request) -> dict[str, Any]:
+        """Get data of the flow if finished."""
+        self.request = request
+
+        data = {}
+        node = self.start
+        while True:
+            data.update(node.data)
+            node = node.next()
+            if isinstance(node, EndState):
+                break
+        return data
 
 
 class BuildingTypeFlow(SidebarNavigationMixin, Flow):

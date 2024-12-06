@@ -74,7 +74,7 @@ def renovation_scenario(request, scenario=None):
         scenario_id = 1
         while scenario_id <= SCENARIO_MAX:
             flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
-            if not flow.finished(request=request):
+            if not flow.finished():
                 break
             scenario_id += 1
         return f"scenario{scenario_id}"
@@ -88,10 +88,6 @@ def renovation_scenario(request, scenario=None):
     scenario_index = int(scenario[8:])
     if scenario_index > SCENARIO_MAX:
         return JsonResponse({"error": "Maximum number of scenarios reached."}, status=400)
-
-    if request.method == "GET":
-        request.session["scenarios"].append(scenario)
-        request.session.modified = True
 
     if scenario_changed:
         # If we return flow.dispatch(prefix=scenario), URL is not changed!
