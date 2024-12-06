@@ -1,3 +1,5 @@
+import inspect
+
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
@@ -5,6 +7,7 @@ from django.views.generic import TemplateView
 
 from building_dialouge_webapp.heat.flows import RenovationRequestFlow
 
+from . import forms
 from .navigation import SidebarNavigationMixin
 
 SCENARIO_MAX = 3
@@ -97,15 +100,40 @@ def renovation_scenario(request, scenario=None):
 
     if flow.finished(request):
         scenario_data = flow.data(request)
+        user_friendly_data = get_user_friendly_data(form_surname="Renovation", scenario_data=scenario_data)
         flow.extra_context.update(
             {
                 "href": reverse("heat:renovation_request", kwargs={"scenario": scenario}),
                 "title": f"Szenario {scenario_index}",
-                "text": ", ".join(f"{key}: {value}" for key, value in scenario_data.items()),
+                "text": ", ".join(user_friendly_data),
             },
         )
 
     return flow.dispatch(request)
+
+
+def get_user_friendly_data(form_surname, scenario_data):
+    user_friendly_data = []
+
+    flow_forms = [
+        form_class()
+        for name, form_class in inspect.getmembers(forms, inspect.isclass)
+        if name.startswith(form_surname)
+    ]
+
+    # add labels from forms for easier readability
+    for form in flow_forms:
+        for field_name, field in form.fields.items():
+            if field_name in scenario_data:
+                value = scenario_data[field_name]
+
+                if value:
+                    if isinstance(value, list):  # For multiple-choice fields
+                        labels = [dict(field.choices).get(v, v) for v in value]
+                        user_friendly_data.extend(labels)
+                    else:
+                        user_friendly_data.append(dict(field.choices).get(value, value))
+    return user_friendly_data
 
 
 class Results(SidebarNavigationMixin, TemplateView):
