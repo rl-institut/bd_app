@@ -87,5 +87,6 @@
       <a class="btn btn-primary"
          href="{% url 'heat:renovation_request' scenario='new_scenario' %}">Weiteres Heizszenario</a>
     </div>
+    <c-scenario-box href="{{ href }}" title="{{ title }}" text="{{ text }}"></c-scenario-box>
   </section>
 {% endblock content %}

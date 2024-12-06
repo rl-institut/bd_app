@@ -79,7 +79,7 @@ def renovation_scenario(request, scenario=None):
             scenario_id += 1
         return f"scenario{scenario_id}"
 
-    # Needed to adapt URL vie redirect if necessary
+    # Needed to adapt URL via redirect if necessary
     scenario_changed = scenario is None or scenario == "new_scenario"
     scenario = "scenario1" if scenario is None else scenario
     scenario = get_new_scenario() if scenario == "new_scenario" else scenario
@@ -92,7 +92,19 @@ def renovation_scenario(request, scenario=None):
     if scenario_changed:
         # If we return flow.dispatch(prefix=scenario), URL is not changed!
         return HttpResponseRedirect(reverse("heat:renovation_request", kwargs={"scenario": scenario}))
+
     flow = RenovationRequestFlow(prefix=scenario)
+
+    if flow.finished(request):
+        scenario_data = flow.data(request)
+        flow.extra_context.update(
+            {
+                "href": reverse("heat:renovation_request", kwargs={"scenario": scenario}),
+                "title": f"Szenario {scenario_index}",
+                "text": ", ".join(f"{key}: {value}" for key, value in scenario_data.items()),
+            },
+        )
+
     return flow.dispatch(request)
 
 
