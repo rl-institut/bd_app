@@ -13,17 +13,8 @@
     </div>
     <div class="help">
       <div id="scenario-boxes">
-        {% for scenario_data in request.session.values %}
-          {% if scenario_data is dict %}
-            <div class="scenario-box">
-              <p>
-                <strong>Heizung:</strong> {{ scenario_data.primary_heating }}
-              </p>
-              <p>
-                <strong>Details:</strong> {{ scenario_data.renovation_details|join:", " }}
-              </p>
-            </div>
-          {% endif %}
+        {% for box in scenario_boxes %}
+          <c-scenario-box id="{{ box.id }}" href="{{ box.href }}" title="{{ box.title }}" text="{{ box.text }}" />
         {% endfor %}
       </div>
     </div>
@@ -87,6 +78,5 @@
       <a class="btn btn-primary"
          href="{% url 'heat:renovation_request' scenario='new_scenario' %}">Weiteres Heizszenario</a>
     </div>
-    <c-scenario-box href="{{ href }}" title="{{ title }}" text="{{ text }}"></c-scenario-box>
   </section>
 {% endblock content %}

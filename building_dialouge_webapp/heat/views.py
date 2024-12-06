@@ -77,10 +77,30 @@ def renovation_scenario(request, scenario=None):
         scenario_id = 1
         while scenario_id <= SCENARIO_MAX:
             flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
-            if not flow.finished():
+            if not flow.finished(request):
                 break
             scenario_id += 1
         return f"scenario{scenario_id}"
+
+    def get_all_scenario_data():
+        """Goes through scenarios and gets their data if finished."""
+        scenario_data_list = []
+        scenario_id = 1
+        while scenario_id <= SCENARIO_MAX:
+            flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+            if not flow.finished(request):
+                break
+            scenario_data = flow.data(request)
+            user_friendly_data = get_user_friendly_data(form_surname="Renovation", scenario_data=scenario_data)
+            extra_context = {
+                "id": f"scenario{scenario_id}box",
+                "href": reverse("heat:renovation_request", kwargs={"scenario": scenario}),
+                "title": f"Szenario {scenario_id}",
+                "text": ", ".join(user_friendly_data),
+            }
+            scenario_data_list.append(extra_context)
+            scenario_id += 1
+        return scenario_data_list
 
     # Needed to adapt URL via redirect if necessary
     scenario_changed = scenario is None or scenario == "new_scenario"
@@ -97,18 +117,7 @@ def renovation_scenario(request, scenario=None):
         return HttpResponseRedirect(reverse("heat:renovation_request", kwargs={"scenario": scenario}))
 
     flow = RenovationRequestFlow(prefix=scenario)
-
-    if flow.finished(request):
-        scenario_data = flow.data(request)
-        user_friendly_data = get_user_friendly_data(form_surname="Renovation", scenario_data=scenario_data)
-        flow.extra_context.update(
-            {
-                "href": reverse("heat:renovation_request", kwargs={"scenario": scenario}),
-                "title": f"Szenario {scenario_index}",
-                "text": ", ".join(user_friendly_data),
-            },
-        )
-
+    flow.extra_context.update({"scenario_boxes": get_all_scenario_data()})
     return flow.dispatch(request)
 
 
