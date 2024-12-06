@@ -81,6 +81,7 @@ class SidebarNavigationMixin:
                         "name": "Sanierungswunsch",
                         "object": flows.RenovationRequestFlow,
                         "url": "heat:renovation_request",
+                        "kwargs": "scenario1",
                     },
                     {"name": "Förderung", "object": flows.FinancialSupporFlow, "url": "heat:financial_support"},
                 ],

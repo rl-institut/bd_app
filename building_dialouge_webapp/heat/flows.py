@@ -135,7 +135,10 @@ class State:
         """Return response of current state."""
         return {self.name: StateResponse("Something went wrong.")}
 
-    def set(self, previous_state: StateStatus = StateStatus.Unchanged) -> dict[str, StateResponse]:
+    def set(
+        self,
+        previous_state: StateStatus = StateStatus.Unchanged,
+    ) -> dict[str, StateResponse]:
         """Sets or updates the state using check_state()."""
         status = StateStatus.New if previous_state == StateStatus.Set else self.check_state()
         if status == StateStatus.New:
@@ -176,6 +179,10 @@ class State:
         following_states.update(self.reset_response)
         return following_states
 
+    @property
+    def data(self) -> dict[str, Any]:
+        return {self.name: self.name}
+
 
 class EndState(State):
     """
@@ -188,7 +195,10 @@ class EndState(State):
         super().__init__(flow, name="", label=label)
         self.url = url
 
-    def set(self, previous_state: StateStatus = StateStatus.Unchanged) -> dict[str, StateResponse]:
+    def set(
+        self,
+        previous_state: StateStatus = StateStatus.Unchanged,
+    ) -> dict[str, StateResponse]:
         return self.response
 
     def reset(self) -> dict[str, StateResponse]:
@@ -352,11 +362,23 @@ class FormState(TemplateState):
         form_data = form.cleaned_data
         if all(
             session_data.get(field)
-            == form_data.get(field if self.flow.prefix is None else field[len(self.flow.prefix) + 1 :])
+            == form_data.get(
+                field if self.flow.prefix is None else field[len(self.flow.prefix) + 1 :],
+            )
             for field in required_fields
         ):
             return StateStatus.Unchanged
         return StateStatus.Changed
+
+    @property
+    def data(self) -> dict[str, Any]:
+        """Return cleaned data of the form with data from the session."""
+        session_data = self.flow.request.session.get("django_htmx_flow", {})
+        form = self.form_class(session_data, prefix=self.flow.prefix)
+        if form.is_valid():
+            return form.cleaned_data
+        error_msg = f"Invalid data in flow '{self.name}': {form.errors}."
+        raise FlowError(error_msg)
 
 
 class FormInfoState(FormState):
@@ -365,19 +387,26 @@ class FormInfoState(FormState):
         flow: "Flow",
         name: str,
         form_class: type[Form],
-        info_text: str,
+        info_text: str | dict[str, str | tuple[str, str]],
         template_name: str | None = None,
         label: str | None = None,
     ):
         super().__init__(flow, name, form_class, template_name, label)
-        self.info_text = info_text
+        # info text is mapped as {target: (response text, reset text)}
+        if isinstance(info_text, str):
+            self.info_text = {"_info": (info_text, "")}
+        else:
+            self.info_text = {
+                target: (value, "") if isinstance(value, str) else value for target, value in info_text.items()
+            }
 
     @property
     def response(self) -> dict[str, StateResponse]:
         form_response = {
-            "_info": SwapHTMLStateResponse(
-                f'<div id="info" hx-swap-oob="innerHTML">{self.info_text}</div>',
-            ),
+            target: SwapHTMLStateResponse(
+                f'<div id="{target}" hx-swap-oob="innerHTML">{text[0]}</div>',
+            )
+            for target, text in self.info_text.items()
         }
         form_response.update(**super().response)
         return form_response
@@ -385,9 +414,10 @@ class FormInfoState(FormState):
     @property
     def reset_response(self) -> dict[str, StateResponse]:
         form_response = {
-            "_info": SwapHTMLStateResponse(
-                '<div id="info" hx-swap-oob="innerHTML"></div>',
-            ),
+            target: SwapHTMLStateResponse(
+                f'<div id="{target}" hx-swap-oob="innerHTML">{text[1]}</div>',
+            )
+            for target, text in self.info_text.items()
         }
         form_response.update(**super().reset_response)
         return form_response
@@ -465,11 +495,13 @@ class Flow(TemplateView):
 
     def __init__(self, prefix: str | None = None):
         self.prefix = prefix
+        self.request = None
         self.start = None
         self.end = None
         super().__init__()
 
     def dispatch(self, request, *args, **kwargs) -> HttpResponse:
+        self.request = request
         state_partials = self.start.set()
 
         if request.htmx:
@@ -522,6 +554,19 @@ class Flow(TemplateView):
             if isinstance(node, EndState):
                 return True
 
+    def data(self, request) -> dict[str, Any]:
+        """Get data of the flow if finished."""
+        self.request = request
+
+        data = {}
+        node = self.start
+        while True:
+            data.update(node.data)
+            node = node.next()
+            if isinstance(node, EndState):
+                break
+        return data
+
 
 class BuildingTypeFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/building_type.html"
@@ -550,7 +595,10 @@ class BuildingTypeFlow(SidebarNavigationMixin, Flow):
             Switch("monument_protection").case("yes", "dead_end_monument_protection").default("end"),
         )
 
-        self.dead_end_monument_protection = EndState(self, url="heat:dead_end_monument_protection")
+        self.dead_end_monument_protection = EndState(
+            self,
+            url="heat:dead_end_monument_protection",
+        )
 
         self.end = EndState(self, url="heat:building_data")
 
@@ -975,8 +1023,8 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
         ),
     }
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, prefix=None):
+        super().__init__(prefix=prefix)
         self.start = FormState(
             self,
             name="primary_heating",
@@ -1021,15 +1069,21 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
             Next("renovation_details"),
         )
 
-        self.renovation_details = FormState(
+        self.renovation_details = FormInfoState(
             self,
             name="renovation_details",
             form_class=forms.RenovationRequestForm,
+            info_text={"next_button": ("Speichern", "Weiter")},
         ).transition(
             Next("end"),
         )
 
-        self.end = EndState(self, url="heat:financial_support")
+        self.end = EndState(self, url="heat:renovation_request")
+
+    def dispatch(self, request, *args, **kwargs):
+        # Retrieve the prefix dynamically
+        self.prefix = kwargs.get("scenario", self.prefix)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class FinancialSupporFlow(SidebarNavigationMixin, Flow):
@@ -1037,6 +1091,7 @@ class FinancialSupporFlow(SidebarNavigationMixin, Flow):
     extra_context = {
         "back_url": "heat:renovation_request",
         "next_includes": "#financial_support",
+        "back_kwargs": "scenario1",
     }
 
     def __init__(self):
