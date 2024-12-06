@@ -84,9 +84,8 @@
       </div>
     </div>
     <div class="d-flex justify-content-between">
-      <button class="btn btn-primary"
-              hx-get="{% url 'heat:renovation_request' scenario='new_scenario' %}"
-              hx-target="body">Weiteres Heizszenario</button>
+      <a class="btn btn-primary"
+         href="{% url 'heat:renovation_request' scenario='new_scenario' %}">Weiteres Heizszenario</a>
     </div>
   </section>
 {% endblock content %}

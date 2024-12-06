@@ -1051,7 +1051,7 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
             Next("end"),
         )
 
-        self.end = EndState(self, url="heat:financial_support")
+        self.end = EndState(self, url="heat:renovation_request")
 
     def dispatch(self, request, *args, **kwargs):
         # Retrieve the prefix dynamically

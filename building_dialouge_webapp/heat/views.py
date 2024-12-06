@@ -1,12 +1,13 @@
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
-from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.generic import TemplateView
 
 from building_dialouge_webapp.heat.flows import RenovationRequestFlow
 
 from .navigation import SidebarNavigationMixin
+
+SCENARIO_MAX = 3
 
 
 class LandingPage(TemplateView):
@@ -67,51 +68,30 @@ class IntroRenovation(SidebarNavigationMixin, TemplateView):
     }
 
 
-SCENARIO_MAX = 3
-
-
 def renovation_scenario(request, scenario=None):
+    # Needed to adapt URL vie redirect if necessary
+    scenario_changed = scenario is None
+    scenario = "scenario1" if scenario_changed else scenario
+
     if "scenarios" not in request.session:
         request.session["scenarios"] = []
 
     if request.method == "GET":
         scenarios = request.session["scenarios"]
 
-        if scenario != "new_scenario":
-            if scenario not in scenarios:
-                request.session["scenarios"].append(scenario)
-                request.session.modified = True
-            flow = RenovationRequestFlow(prefix=scenario)
-            return flow.dispatch(request)
-
-        if len(scenarios) < SCENARIO_MAX:
-            new_scenario = f"scenario{len(scenarios) + 1}"
-            request.session["scenarios"].append(new_scenario)
+        scenario_changed = True if scenario == "new_scenario" else scenario_changed
+        scenario = f"scenario{len(scenarios) + 1}" if scenario == "new_scenario" else scenario
+        if scenario not in scenarios:
+            if len(scenarios) >= SCENARIO_MAX:
+                return JsonResponse({"error": "Maximum number of scenarios reached."}, status=400)
+            request.session["scenarios"].append(scenario)
             request.session.modified = True
-            return HttpResponseRedirect(reverse("heat:renovation_request", kwargs={"scenario": new_scenario}))
 
-        return JsonResponse({"error": "Maximum number of scenarios reached."}, status=400)
-
-    if request.method == "POST" and request.htmx:
-        if scenario == "save_scenario":
-            prefix = "scenario1"
-            # FLow States should save their data automatically
-            session_data = request.session.get("django_htmx_flow", {})
-            scenario_data = {
-                key[len(prefix) + 1 :]: value for key, value in session_data.items() if key.startswith(prefix + "-")
-            }
-            # Return partial to be rendered with htmx, including the scenarioX fields
-            return JsonResponse(
-                {
-                    "html": render_to_string("partials/scenario_box.html", {"scenario": scenario_data}, request),
-                },
-            )
-
-        # For other HTMX requests, continue the flow
-        flow = RenovationRequestFlow(prefix=scenario)
-        return flow.dispatch(request)
-
-    return JsonResponse({"error": "Invalid request."}, status=400)
+    if scenario_changed:
+        # If we return flow.dispatch(prefix=scenario), URL is not changed!
+        return HttpResponseRedirect(reverse("heat:renovation_request", kwargs={"scenario": scenario}))
+    flow = RenovationRequestFlow(prefix=scenario)
+    return flow.dispatch(request)
 
 
 class Results(SidebarNavigationMixin, TemplateView):
