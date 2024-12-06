@@ -25,7 +25,7 @@
           {# Next button in flow is always a HTMX call to current page including several form inputs. #}
           {% if next_includes %}
             <a class="btn btn-primary" hx-post="" hx-include="{{ next_includes }}">
-              <span class="ps-2">Weiter</span>
+              <span class="ps-2" id="next_button">Weiter</span>
               <svg xmlns="http://www.w3.org/2000/svg"
                    width="16"
                    height="16"

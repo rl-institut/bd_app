@@ -135,7 +135,10 @@ class State:
         """Return response of current state."""
         return {self.name: StateResponse("Something went wrong.")}
 
-    def set(self, previous_state: StateStatus = StateStatus.Unchanged) -> dict[str, StateResponse]:
+    def set(
+        self,
+        previous_state: StateStatus = StateStatus.Unchanged,
+    ) -> dict[str, StateResponse]:
         """Sets or updates the state using check_state()."""
         status = StateStatus.New if previous_state == StateStatus.Set else self.check_state()
         if status == StateStatus.New:
@@ -188,7 +191,10 @@ class EndState(State):
         super().__init__(flow, name="", label=label)
         self.url = url
 
-    def set(self, previous_state: StateStatus = StateStatus.Unchanged) -> dict[str, StateResponse]:
+    def set(
+        self,
+        previous_state: StateStatus = StateStatus.Unchanged,
+    ) -> dict[str, StateResponse]:
         return self.response
 
     def reset(self) -> dict[str, StateResponse]:
@@ -352,7 +358,9 @@ class FormState(TemplateState):
         form_data = form.cleaned_data
         if all(
             session_data.get(field)
-            == form_data.get(field if self.flow.prefix is None else field[len(self.flow.prefix) + 1 :])
+            == form_data.get(
+                field if self.flow.prefix is None else field[len(self.flow.prefix) + 1 :],
+            )
             for field in required_fields
         ):
             return StateStatus.Unchanged
@@ -365,19 +373,26 @@ class FormInfoState(FormState):
         flow: "Flow",
         name: str,
         form_class: type[Form],
-        info_text: str,
+        info_text: str | dict[str, str | tuple[str, str]],
         template_name: str | None = None,
         label: str | None = None,
     ):
         super().__init__(flow, name, form_class, template_name, label)
-        self.info_text = info_text
+        # info text is mapped as {target: (response text, reset text)}
+        if isinstance(info_text, str):
+            self.info_text = {"_info": (info_text, "")}
+        else:
+            self.info_text = {
+                target: (value, "") if isinstance(value, str) else value for target, value in info_text.items()
+            }
 
     @property
     def response(self) -> dict[str, StateResponse]:
         form_response = {
-            "_info": SwapHTMLStateResponse(
-                f'<div id="info" hx-swap-oob="innerHTML">{self.info_text}</div>',
-            ),
+            target: SwapHTMLStateResponse(
+                f'<div id="{target}" hx-swap-oob="innerHTML">{text[0]}</div>',
+            )
+            for target, text in self.info_text.items()
         }
         form_response.update(**super().response)
         return form_response
@@ -385,9 +400,10 @@ class FormInfoState(FormState):
     @property
     def reset_response(self) -> dict[str, StateResponse]:
         form_response = {
-            "_info": SwapHTMLStateResponse(
-                '<div id="info" hx-swap-oob="innerHTML"></div>',
-            ),
+            target: SwapHTMLStateResponse(
+                f'<div id="{target}" hx-swap-oob="innerHTML">{text[1]}</div>',
+            )
+            for target, text in self.info_text.items()
         }
         form_response.update(**super().reset_response)
         return form_response
@@ -552,7 +568,10 @@ class BuildingTypeFlow(SidebarNavigationMixin, Flow):
             Switch("monument_protection").case("yes", "dead_end_monument_protection").default("end"),
         )
 
-        self.dead_end_monument_protection = EndState(self, url="heat:dead_end_monument_protection")
+        self.dead_end_monument_protection = EndState(
+            self,
+            url="heat:dead_end_monument_protection",
+        )
 
         self.end = EndState(self, url="heat:building_data")
 
@@ -1023,10 +1042,11 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
             Next("renovation_details"),
         )
 
-        self.renovation_details = FormState(
+        self.renovation_details = FormInfoState(
             self,
             name="renovation_details",
             form_class=forms.RenovationRequestForm,
+            info_text={"next_button": ("Speichern", "Weiter")},
         ).transition(
             Next("end"),
         )
