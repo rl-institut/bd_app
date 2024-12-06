@@ -9,10 +9,7 @@
           <h1>Sanierungswunsch</h1>
         </div>
       </div>
-      <div class="help"></div>
-    </div>
-    <div class="help">
-      <div id="scenario-boxes">
+      <div class="help" id="scenario-boxes">
         {% for box in scenario_boxes %}
           <c-scenario-box id="{{ box.id }}" href="{{ box.href }}" title="{{ box.title }}" text="{{ box.text }}" />
         {% endfor %}
