@@ -69,23 +69,29 @@ class IntroRenovation(SidebarNavigationMixin, TemplateView):
 
 
 def renovation_scenario(request, scenario=None):
-    # Needed to adapt URL vie redirect if necessary
-    scenario_changed = scenario is None
-    scenario = "scenario1" if scenario_changed else scenario
+    def get_new_scenario():
+        """Goes through scenarios and checks if they have finished."""
+        scenario_id = 1
+        while scenario_id <= SCENARIO_MAX:
+            flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+            if not flow.finished(request=request):
+                break
+            scenario_id += 1
+        return f"scenario{scenario_id}"
 
-    if "scenarios" not in request.session:
-        request.session["scenarios"] = []
+    # Needed to adapt URL vie redirect if necessary
+    scenario_changed = scenario is None or scenario == "new_scenario"
+    scenario = "scenario1" if scenario is None else scenario
+    scenario = get_new_scenario() if scenario == "new_scenario" else scenario
+
+    # Check if scenario ID is lower than max scenarios
+    scenario_index = int(scenario[8:])
+    if scenario_index > SCENARIO_MAX:
+        return JsonResponse({"error": "Maximum number of scenarios reached."}, status=400)
 
     if request.method == "GET":
-        scenarios = request.session["scenarios"]
-
-        scenario_changed = True if scenario == "new_scenario" else scenario_changed
-        scenario = f"scenario{len(scenarios) + 1}" if scenario == "new_scenario" else scenario
-        if scenario not in scenarios:
-            if len(scenarios) >= SCENARIO_MAX:
-                return JsonResponse({"error": "Maximum number of scenarios reached."}, status=400)
-            request.session["scenarios"].append(scenario)
-            request.session.modified = True
+        request.session["scenarios"].append(scenario)
+        request.session.modified = True
 
     if scenario_changed:
         # If we return flow.dispatch(prefix=scenario), URL is not changed!
