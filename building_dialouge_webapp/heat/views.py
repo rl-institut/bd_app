@@ -82,26 +82,6 @@ def renovation_scenario(request, scenario=None):
             scenario_id += 1
         return f"scenario{scenario_id}"
 
-    def get_all_scenario_data():
-        """Goes through scenarios and gets their data if finished."""
-        scenario_data_list = []
-        scenario_id = 1
-        while scenario_id <= SCENARIO_MAX:
-            flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
-            if not flow.finished(request):
-                break
-            scenario_data = flow.data(request)
-            user_friendly_data = get_user_friendly_data(form_surname="Renovation", scenario_data=scenario_data)
-            extra_context = {
-                "id": f"scenario{scenario_id}box",
-                "href": reverse("heat:renovation_request", kwargs={"scenario": f"scenario{scenario_id}"}),
-                "title": f"Szenario {scenario_id}",
-                "text": ", ".join(user_friendly_data),
-            }
-            scenario_data_list.append(extra_context)
-            scenario_id += 1
-        return scenario_data_list
-
     # Needed to adapt URL via redirect if necessary
     scenario_changed = scenario is None or scenario == "new_scenario"
     scenario = "scenario1" if scenario is None else scenario
@@ -117,8 +97,29 @@ def renovation_scenario(request, scenario=None):
         return HttpResponseRedirect(reverse("heat:renovation_request", kwargs={"scenario": scenario}))
 
     flow = RenovationRequestFlow(prefix=scenario)
-    flow.extra_context.update({"scenario_boxes": get_all_scenario_data()})
+    flow.extra_context.update({"scenario_boxes": get_all_scenario_data(request)})
     return flow.dispatch(request)
+
+
+def get_all_scenario_data(request):
+    """Goes through scenarios and gets their data if finished."""
+    scenario_data_list = []
+    scenario_id = 1
+    while scenario_id <= SCENARIO_MAX:
+        flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+        if not flow.finished(request):
+            break
+        scenario_data = flow.data(request)
+        user_friendly_data = get_user_friendly_data(form_surname="Renovation", scenario_data=scenario_data)
+        extra_context = {
+            "id": f"scenario{scenario_id}box",
+            "href": reverse("heat:renovation_request", kwargs={"scenario": f"scenario{scenario_id}"}),
+            "title": f"Szenario {scenario_id}",
+            "text": ", ".join(user_friendly_data),
+        }
+        scenario_data_list.append(extra_context)
+        scenario_id += 1
+    return scenario_data_list
 
 
 def get_user_friendly_data(form_surname, scenario_data):
@@ -149,10 +150,13 @@ def get_user_friendly_data(form_surname, scenario_data):
 
 class RenovationOverview(SidebarNavigationMixin, TemplateView):
     template_name = "pages/renovation_overview.html"
-    extra_context = {
-        "back_url": "heat:renovation_request",
-        "next_url": "heat:financial_support",
-    }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_url"] = "heat:renovation_request"
+        context["next_url"] = "heat:financial_support"
+        context["scenario_boxes"] = get_all_scenario_data(self.request)
+        return context
 
 
 class Results(SidebarNavigationMixin, TemplateView):
