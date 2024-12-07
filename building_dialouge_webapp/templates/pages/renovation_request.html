@@ -25,63 +25,51 @@
         </div>
       </div>
     </div>
-    {% if renovation_biomass %}
-      <div class="step-question">
-        <div class="step-container">
-          <div id="renovation_biomass"
-               hx-post=""
-               hx-trigger="change"
-               hx-include="this"
-               class="main">{{ renovation_biomass.content | safe }}</div>
-          <div class="help"></div>
-        </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="renovation_biomass"
+             hx-post=""
+             hx-trigger="change"
+             hx-include="this"
+             class="main">{{ renovation_biomass.content | safe }}</div>
+        <div class="help"></div>
       </div>
-    {% endif %}
-    {% if renovation_heatpump %}
-      <div class="step-question">
-        <div class="step-container">
-          <div id="renovation_heatpump"
-               hx-post=""
-               hx-trigger="change"
-               hx-include="this"
-               class="main">{{ renovation_heatpump.content | safe }}</div>
-          <div class="help"></div>
-        </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="renovation_heatpump"
+             hx-post=""
+             hx-trigger="change"
+             hx-include="this"
+             class="main">{{ renovation_heatpump.content | safe }}</div>
+        <div class="help"></div>
       </div>
-    {% endif %}
-    {% if renovation_pvsolar %}
-      <div class="step-question">
-        <div class="step-container">
-          <div id="renovation_pvsolar"
-               hx-post=""
-               hx-trigger="change"
-               hx-include="this"
-               class="main">{{ renovation_pvsolar.content | safe }}</div>
-          <div class="help"></div>
-        </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="renovation_pvsolar"
+             hx-post=""
+             hx-trigger="change"
+             hx-include="this"
+             class="main">{{ renovation_pvsolar.content | safe }}</div>
+        <div class="help"></div>
       </div>
-    {% endif %}
-    {% if renovation_solar %}
-      <div class="step-question">
-        <div class="step-container">
-          <div id="renovation_solar"
-               hx-post=""
-               hx-trigger="change"
-               hx-include="this"
-               class="main">{{ renovation_solar.content | safe }}</div>
-          <div class="help"></div>
-        </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="renovation_solar"
+             hx-post=""
+             hx-trigger="change"
+             hx-include="this"
+             class="main">{{ renovation_solar.content | safe }}</div>
+        <div class="help"></div>
       </div>
-    {% endif %}
+    </div>
     <div class="step-question">
       <div class="step-container">
         <div id="renovation_details" class="main">{{ renovation_details.content | safe }}</div>
         <div class="help"></div>
       </div>
-    </div>
-    <div class="d-flex justify-content-between">
-      <a class="btn btn-primary"
-         href="{% url 'heat:renovation_request' scenario='new_scenario' %}">Weiteres Heizszenario</a>
     </div>
   </section>
 {% endblock content %}

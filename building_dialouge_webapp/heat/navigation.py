@@ -83,6 +83,11 @@ class SidebarNavigationMixin:
                         "url": "heat:renovation_request",
                         "kwargs": "scenario1",
                     },
+                    {
+                        "name": "Sanierungsübersicht",
+                        "object": views.RenovationOverview,
+                        "url": "heat:renovation_overview",
+                    },
                     {"name": "Förderung", "object": flows.FinancialSupporFlow, "url": "heat:financial_support"},
                 ],
             },

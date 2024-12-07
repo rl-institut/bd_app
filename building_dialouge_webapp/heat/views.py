@@ -147,6 +147,14 @@ def get_user_friendly_data(form_surname, scenario_data):
     return user_friendly_data
 
 
+class RenovationOverview(SidebarNavigationMixin, TemplateView):
+    template_name = "pages/renovation_overview.html"
+    extra_context = {
+        "back_url": "heat:renovation_request",
+        "next_url": "heat:financial_support",
+    }
+
+
 class Results(SidebarNavigationMixin, TemplateView):
     template_name = "pages/results.html"
     extra_context = {

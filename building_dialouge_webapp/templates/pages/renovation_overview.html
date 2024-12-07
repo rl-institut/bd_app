@@ -1,0 +1,11 @@
+{% extends "base_footer_button.html" %}
+
+{% block content %}
+  <div class="container my-5">
+    <h2>Erstellte Szenarien:</h2>
+    <div class="d-flex justify-content-between">
+      <a class="btn btn-primary"
+         href="{% url 'heat:renovation_request' scenario='new_scenario' %}">Weiteres Heizszenario</a>
+    </div>
+  </div>
+{% endblock content %}
