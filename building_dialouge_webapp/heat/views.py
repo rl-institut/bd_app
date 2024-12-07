@@ -94,7 +94,7 @@ def renovation_scenario(request, scenario=None):
             user_friendly_data = get_user_friendly_data(form_surname="Renovation", scenario_data=scenario_data)
             extra_context = {
                 "id": f"scenario{scenario_id}box",
-                "href": reverse("heat:renovation_request", kwargs={"scenario": scenario}),
+                "href": reverse("heat:renovation_request", kwargs={"scenario": f"scenario{scenario_id}"}),
                 "title": f"Szenario {scenario_id}",
                 "text": ", ".join(user_friendly_data),
             }
@@ -140,6 +140,8 @@ def get_user_friendly_data(form_surname, scenario_data):
                     if isinstance(value, list):  # For multiple-choice fields
                         labels = [dict(field.choices).get(v, v) for v in value]
                         user_friendly_data.extend(labels)
+                    elif isinstance(value, bool):
+                        user_friendly_data.append(field.label)
                     else:
                         user_friendly_data.append(dict(field.choices).get(value, value))
     return user_friendly_data
