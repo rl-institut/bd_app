@@ -130,22 +130,22 @@ def get_user_friendly_data(form_surname, scenario_data):
         for name, form_class in inspect.getmembers(forms, inspect.isclass)
         if name.startswith(form_surname)
     ]
-
     # add labels from forms for easier readability
     for form in flow_forms:
         for field_name, field in form.fields.items():
-            if field_name in scenario_data:
+            if scenario_data.get(field_name):
                 value = scenario_data[field_name]
 
-                if value:
-                    if isinstance(value, list):  # For multiple-choice fields
-                        labels = [dict(field.choices).get(v, v) for v in value]
-                        user_friendly_data.extend(labels)
-                    elif isinstance(value, bool):
-                        user_friendly_data.append(field.label)
-                    else:
-                        user_friendly_data.append(dict(field.choices).get(value, value))
-    return user_friendly_data
+                if isinstance(value, list):  # For multiple-choice fields
+                    labels = [dict(field.choices).get(v) for v in value if v in dict(field.choices)]
+                    user_friendly_data.extend(labels)
+                elif isinstance(value, bool):
+                    user_friendly_data.append(field.label)
+                else:  # for select-fields / radiobuttons
+                    label = dict(field.choices).get(value)
+                    if label:
+                        user_friendly_data.append(label)
+    return list(set(user_friendly_data))
 
 
 class RenovationOverview(SidebarNavigationMixin, TemplateView):
