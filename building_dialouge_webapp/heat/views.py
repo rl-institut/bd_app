@@ -2,6 +2,7 @@ from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
 from django.views.generic import TemplateView
+from django.shortcuts import render
 
 from building_dialouge_webapp.heat.flows import RenovationRequestFlow
 
@@ -49,6 +50,20 @@ class ConsumptionResult(SidebarNavigationMixin, TemplateView):
         "back_url": "heat:consumption_input",
         "next_url": "heat:intro_inventory",
     }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["test"] = "hallo"
+
+        consumptionresult = 50
+        if consumptionresult < 20:
+            roof_color = "red"
+        elif consumptionresult < 50:
+            roof_color = "orange"
+        else:
+            roof_color = "green"
+        context["roof_color"] = roof_color
+        return context
 
 
 class IntroInventory(SidebarNavigationMixin, TemplateView):
