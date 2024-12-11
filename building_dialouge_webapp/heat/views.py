@@ -56,13 +56,20 @@ class ConsumptionResult(SidebarNavigationMixin, TemplateView):
         context["test"] = "hallo"
 
         consumptionresult = 50
-        if consumptionresult < 20:
-            roof_color = "red"
-        elif consumptionresult < 50:
-            roof_color = "orange"
-        else:
+        if consumptionresult < 50:
             roof_color = "green"
+            house_position = 1
+        elif consumptionresult < 100:
+            roof_color = "lightgreen"
+            house_position = 2
+        elif consumptionresult < 150:
+            roof_color = "yellow"
+            house_position = 3
+        else:
+            roof_color = "red"
+            house_position = 4
         context["roof_color"] = roof_color
+        context["house_position"] = house_position
         return context
 
 

@@ -1,11 +1,66 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energieausweis-Balken</title>
+    <style>
+        .energy-bar {
+            display: flex;
+            width: 66%;
+            margin-left: auto;
+            margin-right: auto;
+            height: 50px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
 
+        .energy-bar div {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .section-a {
+            background-color: #00b300; /* Grün */
+        }
+
+        .section-b {
+            background-color: #99cc00; /* Hellgrün */
+        }
+
+        .section-c {
+            background-color: #ffcc00; /* Gelb */
+        }
+
+        .section-d {
+            background-color: #ff3300; /* Rot */
+        }
+
+        .house {
+            width: 10%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
 {% block content %}
   <div class="container my-5">
     <h2>Ergebnis Ihrer Verbrauchsanalyse</h2>
     <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+  </div>
+<div>
 <svg
+  class = house
    data-name="Layer 2"
+   style="left: calc(16.5% * {{ house_position }} + 8.25%);"
    viewBox="0 0 91.9 61.021028"
    x="0px"
    y="0px"
@@ -220,4 +275,12 @@
   </metadata>
 </svg>
   </div>
+     <div class="energy-bar">
+        <div class="section-a">A</div>
+        <div class="section-b">B</div>
+        <div class="section-c">C</div>
+        <div class="section-d">D</div>
+    </div>
+
 {% endblock content %}
+</body>
