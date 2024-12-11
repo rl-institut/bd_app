@@ -64,7 +64,7 @@ class ConsumptionResult(SidebarNavigationMixin, TemplateView):
             consumption_result = float(consumption_result)
         """
 
-        consumption_result = 40 # needs to change to value of actual result
+        consumption_result = 150 # needs to change to value of actual result
         if consumption_result < 50:
             roof_color = "#00b300"
             house_position = "8%"
