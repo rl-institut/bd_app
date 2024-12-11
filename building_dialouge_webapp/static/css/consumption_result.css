@@ -1,0 +1,45 @@
+
+    .energy-bar {
+        display: flex;
+        width: 50%;
+        height: 20px;
+        margin-left: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+    }
+
+    .energy-bar div {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .section-a {
+        background-color: #00b300; /* Grün */
+    }
+
+    .section-b {
+        background-color: #99cc00; /* Hellgrün */
+    }
+
+    .section-c {
+        background-color: #ffcc00; /* Gelb */
+    }
+
+    .section-d {
+        background-color: #ff3300; /* Rot */
+    }
+
+    .container_house {
+        width: 50%;
+    }
+
+    .house{
+        position: relative;
+    }
