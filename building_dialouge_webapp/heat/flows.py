@@ -554,6 +554,19 @@ class Flow(TemplateView):
             if isinstance(node, EndState):
                 return True
 
+    def reset(self, request):
+        """Reset the Flow, delete its nodes"""
+        self.request = request
+        node = self.start
+        while True:
+            if isinstance(node, EndState):
+                node.remove_state()
+                return False
+            next_node = node.next()
+            node.remove_state()
+            node = next_node
+            return True
+
     def data(self, request) -> dict[str, Any]:
         """Get data of the flow if finished."""
         self.request = request

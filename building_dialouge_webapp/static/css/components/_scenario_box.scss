@@ -36,6 +36,8 @@
     .scenario-box-header {
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      position: relative;
       padding-bottom: 0.5rem;
 
       svg {
@@ -53,5 +55,19 @@
     .scenario-box-text {
       flex-grow: 1;
       color: $grey-800;
+    }
+
+    .delete-scenario-form {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 4px;
+    }
+
+    .delete-scenario-button {
+      background: none;
+      font-size: 16px;
+      color: $grey-800;
+      padding: 4px;
     }
   }

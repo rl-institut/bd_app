@@ -1,4 +1,5 @@
 import inspect
+from urllib.parse import urlparse
 
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
@@ -101,6 +102,21 @@ def renovation_scenario(request, scenario=None):
     return flow.dispatch(request)
 
 
+def delete_scenario(request):
+    """Delete the selected scenario"""
+    scenario_id = request.POST["delete_scenario"][:9]
+
+    # get only the "name" part of the url for reversing
+    current_url = request.headers.get("hx-current-url")
+    parsed_url = urlparse(current_url)
+    url_path = parsed_url.path.strip("/").split("/")
+    url_name = url_path[-2] if len(url_path) > 1 else url_path[0]
+
+    flow = RenovationRequestFlow(prefix=scenario_id)
+    flow.reset(request)
+    return HttpResponseRedirect(reverse(f"heat:{url_name}"))
+
+
 def get_all_scenario_data(request):
     """Goes through scenarios and gets their data if finished."""
     scenario_data_list = []
@@ -108,7 +124,8 @@ def get_all_scenario_data(request):
     while scenario_id <= SCENARIO_MAX:
         flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
         if not flow.finished(request):
-            break
+            scenario_id += 1
+            continue
         scenario_data = flow.data(request)
         user_friendly_data = get_user_friendly_data(form_surname="Renovation", scenario_data=scenario_data)
         extra_context = {
