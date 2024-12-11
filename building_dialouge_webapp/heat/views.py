@@ -54,7 +54,17 @@ class ConsumptionResult(SidebarNavigationMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        consumption_result = 40
+        """
+        consumption_result = self.request.GET.get("consumption_result")
+        if consumption_result is None:
+            consumption_result = self.request.session.get("consumption_result")
+        if consumption_result is None:
+            consumption_result = 40
+        else:
+            consumption_result = float(consumption_result)
+        """
+
+        consumption_result = 40 # needs to change to value of actual result
         if consumption_result < 50:
             roof_color = "#00b300"
             house_position = "8%"
