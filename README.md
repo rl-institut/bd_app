@@ -87,6 +87,10 @@ The following details how to deploy this application.
 
 See detailed [cookiecutter-django Docker documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-with-docker.html).
 
+## Installation (locally)
+1. Install Python, Postgresql and your IDE of choice
+2. Clone bd_app repository from github
+3. Enter bd_app directory
 
 ## Adding new Flows
 
