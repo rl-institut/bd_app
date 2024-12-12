@@ -1,0 +1,21 @@
+{
+    "RoofDetailsForm": {
+      "complex": {
+        "validation": "compare_values",
+        "value1": "roof_area",
+        "value2": "number_roof_windows",
+        "measure": "value2 <= value1 / 2",
+        "message": "Your number of roof windows (value2) seems too high for the given roof area (value1 m²)."
+      },
+      "roof_area": {
+        "min_value": 0,
+        "max_value": 1000
+      }
+    },
+    "RoofUsageFutureForm": {
+        "roof_usage_share": {
+            "min_value": 0,
+            "max_value": 100
+        }
+    }
+  }
