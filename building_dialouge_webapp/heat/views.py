@@ -1,11 +1,16 @@
+import inspect
+from urllib.parse import urlparse
+
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
 from django.views.generic import TemplateView
+from django_htmx.http import HttpResponseClientRedirect
 from django.shortcuts import render
 
 from building_dialouge_webapp.heat.flows import RenovationRequestFlow
 
+from . import forms
 from .navigation import SidebarNavigationMixin
 
 SCENARIO_MAX = 3
@@ -100,19 +105,32 @@ class IntroRenovation(SidebarNavigationMixin, TemplateView):
 
 
 def renovation_scenario(request, scenario=None):
+    def get_existing_scenarios():
+        """Goes through scenarios and returns all that have finished"""
+        existing_scenarios = []
+        scenario_id = 1
+        while scenario_id <= SCENARIO_MAX:
+            flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+            if flow.finished(request):
+                existing_scenarios.append(f"scenario{scenario_id}")
+            scenario_id += 1
+
     def get_new_scenario():
         """Goes through scenarios and checks if they have finished."""
         scenario_id = 1
         while scenario_id <= SCENARIO_MAX:
             flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
-            if not flow.finished():
+            if not flow.finished(request):
                 break
             scenario_id += 1
         return f"scenario{scenario_id}"
 
-    # Needed to adapt URL vie redirect if necessary
+    # Needed to adapt URL via redirect if necessary
     scenario_changed = scenario is None or scenario == "new_scenario"
-    scenario = "scenario1" if scenario is None else scenario
+    if scenario is None:
+        existing_scenarios = get_existing_scenarios()
+        # If no scenarios exist, start with "scenario1"
+        scenario = existing_scenarios[0] if existing_scenarios else "scenario1"
     scenario = get_new_scenario() if scenario == "new_scenario" else scenario
 
     # Check if scenario ID is lower than max scenarios
@@ -123,8 +141,84 @@ def renovation_scenario(request, scenario=None):
     if scenario_changed:
         # If we return flow.dispatch(prefix=scenario), URL is not changed!
         return HttpResponseRedirect(reverse("heat:renovation_request", kwargs={"scenario": scenario}))
+
     flow = RenovationRequestFlow(prefix=scenario)
+    flow.extra_context.update({"scenario_boxes": get_all_scenario_data(request)})
     return flow.dispatch(request)
+
+
+def delete_scenario(request):
+    """Delete the selected scenario"""
+    scenario_id = request.POST["delete_scenario"][:9]
+
+    # get only the "name" part of the url for reversing
+    current_url = request.headers.get("hx-current-url")
+    parsed_url = urlparse(current_url)
+    url_path = parsed_url.path.strip("/").split("/")
+    url_name = url_path[-2] if len(url_path) > 1 else url_path[0]
+
+    flow = RenovationRequestFlow(prefix=scenario_id)
+    flow.reset(request)
+    return HttpResponseClientRedirect(reverse(f"heat:{url_name}"))
+
+
+def get_all_scenario_data(request):
+    """Goes through scenarios and gets their data if finished."""
+    scenario_data_list = []
+    scenario_id = 1
+    while scenario_id <= SCENARIO_MAX:
+        flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+        if not flow.finished(request):
+            scenario_id += 1
+            continue
+        scenario_data = flow.data(request)
+        user_friendly_data = get_user_friendly_data(form_surname="Renovation", scenario_data=scenario_data)
+        extra_context = {
+            "id": f"scenario{scenario_id}box",
+            "href": reverse("heat:renovation_request", kwargs={"scenario": f"scenario{scenario_id}"}),
+            "title": f"Szenario {scenario_id}",
+            "text": ", ".join(user_friendly_data),
+        }
+        scenario_data_list.append(extra_context)
+        scenario_id += 1
+    return scenario_data_list
+
+
+def get_user_friendly_data(form_surname, scenario_data):
+    user_friendly_data = []
+
+    flow_forms = [
+        form_class()
+        for name, form_class in inspect.getmembers(forms, inspect.isclass)
+        if name.startswith(form_surname)
+    ]
+    # add labels from forms for easier readability
+    for form in flow_forms:
+        for field_name, field in form.fields.items():
+            if scenario_data.get(field_name):
+                value = scenario_data[field_name]
+
+                if isinstance(value, list):  # For multiple-choice fields
+                    labels = [dict(field.choices).get(v) for v in value if v in dict(field.choices)]
+                    user_friendly_data.extend(labels)
+                elif isinstance(value, bool):
+                    user_friendly_data.append(field.label)
+                else:  # for select-fields / radiobuttons
+                    label = dict(field.choices).get(value)
+                    if label:
+                        user_friendly_data.append(label)
+    return list(set(user_friendly_data))
+
+
+class RenovationOverview(SidebarNavigationMixin, TemplateView):
+    template_name = "pages/renovation_overview.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_url"] = "heat:renovation_request"
+        context["next_url"] = "heat:financial_support"
+        context["scenario_boxes"] = get_all_scenario_data(self.request)
+        return context
 
 
 class Results(SidebarNavigationMixin, TemplateView):

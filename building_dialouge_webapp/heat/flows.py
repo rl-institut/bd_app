@@ -554,6 +554,17 @@ class Flow(TemplateView):
             if isinstance(node, EndState):
                 return True
 
+    def reset(self, request):
+        """Reset the Flow, delete its nodes"""
+        self.request = request
+        node = self.start
+        while True:
+            next_node = node.next()
+            node.remove_state()
+            node = next_node
+            if isinstance(node, EndState):
+                break
+
     def data(self, request) -> dict[str, Any]:
         """Get data of the flow if finished."""
         self.request = request
@@ -1078,7 +1089,7 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
             Next("end"),
         )
 
-        self.end = EndState(self, url="heat:renovation_request")
+        self.end = EndState(self, url="heat:renovation_overview")
 
     def dispatch(self, request, *args, **kwargs):
         # Retrieve the prefix dynamically
