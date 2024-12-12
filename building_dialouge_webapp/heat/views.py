@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
 from django.views.generic import TemplateView
+from django_htmx.http import HttpResponseClientRedirect
 
 from building_dialouge_webapp.heat.flows import RenovationRequestFlow
 
@@ -127,7 +128,7 @@ def delete_scenario(request):
 
     flow = RenovationRequestFlow(prefix=scenario_id)
     flow.reset(request)
-    return HttpResponseRedirect(reverse(f"heat:{url_name}"))
+    return HttpResponseClientRedirect(reverse(f"heat:{url_name}"))
 
 
 def get_all_scenario_data(request):
