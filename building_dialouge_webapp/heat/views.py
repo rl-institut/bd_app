@@ -93,17 +93,23 @@ def consumption_year(request, year=None):
     return flow.dispatch(request)
 
 
-def delete_year(request):
-    """Delete the selected year"""
-    year_id = request.POST["delete_year"][:9]
-
+def delete_flow(request):
+    """Delete the selected year or scenario."""
     # get only the "name" part of the url for reversing
     current_url = request.headers.get("hx-current-url")
     parsed_url = urlparse(current_url)
     url_path = parsed_url.path.strip("/").split("/")
     url_name = url_path[-2] if len(url_path) > 1 else url_path[0]
 
-    flow = ConsumptionInputFlow(prefix=year_id)
+    flow_id = request.POST.get("delete_flow")
+
+    if flow_id.startswith("year"):
+        prefix = flow_id[:5]
+        flow = ConsumptionInputFlow(prefix=prefix)
+    elif flow_id.startswith("scenario"):
+        prefix = flow_id[:9]
+        flow = RenovationRequestFlow(prefix=prefix)
+
     flow.reset(request)
     return HttpResponseClientRedirect(reverse(f"heat:{url_name}"))
 
@@ -118,13 +124,11 @@ def get_all_year_data(request):
             year_id += 1
             continue
         year_data = flow.data(request)
-        form = forms.ConsumptionInputForm(year_data)  # Initialize form with data
+        form = forms.ConsumptionInputForm(year_data)
 
         if form.is_valid():
             start_date = form.cleaned_data.get("heating_consumption_period_start")
             end_date = form.cleaned_data.get("heating_consumption_period_end")
-
-            duration = None
             if start_date and end_date:
                 duration = (end_date - start_date).days
         extra_context = {

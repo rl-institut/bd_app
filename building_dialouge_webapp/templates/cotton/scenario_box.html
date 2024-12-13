@@ -9,12 +9,12 @@
     </svg>
     <h2>{{ title }}</h2>
   </div>
-  <form hx-post="{% url 'heat:renovation_delete' %}"
+  <form hx-post="{% url 'heat:delete_flow' %}"
         hx-target="body"
         class="delete-scenario-form">
     {% csrf_token %}
     <button type="submit"
-            name="delete_scenario"
+            name="delete_flow"
             value="{{ id }}"
             class="delete-scenario-button">X</button>
   </form>
