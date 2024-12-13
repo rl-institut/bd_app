@@ -118,12 +118,20 @@ def get_all_year_data(request):
             year_id += 1
             continue
         year_data = flow.data(request)
-        user_friendly_data = get_user_friendly_data(form_surname="Consumption", scenario_data=year_data)
+        form = forms.ConsumptionInputForm(year_data)  # Initialize form with data
+
+        if form.is_valid():
+            start_date = form.cleaned_data.get("heating_consumption_period_start")
+            end_date = form.cleaned_data.get("heating_consumption_period_end")
+
+            duration = None
+            if start_date and end_date:
+                duration = (end_date - start_date).days
         extra_context = {
             "id": f"year{year_id}box",
             "href": reverse("heat:consumption_input", kwargs={"year": f"year{year_id}"}),
             "title": f"Zeitraum {year_id}",
-            "text": ", ".join(user_friendly_data),
+            "text": duration,
         }
         year_data_list.append(extra_context)
         year_id += 1

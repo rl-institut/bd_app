@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import ValidationError
 
 
 class BuildingTypeForm(forms.Form):
@@ -238,13 +239,14 @@ class ConsumptionInputForm(forms.Form):
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
-    def clean_heating_consumption_period_start(self):
-        date_value = self.cleaned_data["heating_consumption_period_start"]
-        return date_value.isoformat()
+    def clean(self):
+        cleaned_data = super().clean()
+        start = cleaned_data.get("heating_consumption_period_start")
+        end = cleaned_data.get("heating_consumption_period_end")
 
-    def clean_heating_consumption_period_end(self):
-        date_value = self.cleaned_data["heating_consumption_period_end"]
-        return date_value.isoformat()
+        if start and end:
+            if end <= start:
+                raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
 
 
 class RoofTypeForm(forms.Form):
