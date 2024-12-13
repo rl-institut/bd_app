@@ -219,8 +219,11 @@ class ConsumptionInputForm(forms.Form):
         widget=forms.DateInput(attrs={"type": "date"}),
     )
     heating_consumption = forms.IntegerField(
-        label="Heizenergieverbrauch in kWh",
+        label="Heizenergieverbrauch",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    heating_conpumtion_unit = forms.ChoiceField(
+        choices=[("kwh", "kWh"), ("l", "l"), ("kg", "kg"), ("m³", "m³")],
     )
     heating_energy_source_cost = forms.FloatField(
         label="Brennstoffkosten in €",
