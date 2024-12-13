@@ -49,6 +49,11 @@ class SidebarNavigationMixin:
                         "url": "heat:consumption_input",
                     },
                     {
+                        "name": "Verbrauchsanalyse Übersicht",
+                        "object": views.ConsumptionOverview,
+                        "url": "heat:consumption_overview",
+                    },
+                    {
                         "name": "Verbrauchsergebnis",
                         "object": views.ConsumptionResult,
                         "url": "heat:consumption_result",

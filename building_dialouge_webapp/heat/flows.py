@@ -774,12 +774,13 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
         "next_includes": "#consumption_input",
     }
 
-    def __init__(self):
-        super().__init__()
-        self.start = FormState(
+    def __init__(self, prefix=None):
+        super().__init__(prefix=prefix)
+        self.start = FormInfoState(
             self,
             name="consumption_input",
             form_class=forms.ConsumptionInputForm,
+            info_text={"next_button": ("Speichern", "Weiter")},
         ).transition(
             Next("end"),
         )

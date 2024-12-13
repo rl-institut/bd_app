@@ -1,0 +1,23 @@
+{% extends "base_footer_button.html" %}
+
+{% block content %}
+  <section class="position-relative h-100 flex-grow-1 pb-5">
+    <div class="help-background"></div>
+    <div class="step-title">
+      <div class="step-container">
+        <div class="main">
+          <h1>Verbrauchsanalyse Übersicht</h1>
+        </div>
+      </div>
+      <div class="help" id="year-boxes">
+        {% for box in year_boxes %}
+          <c-year-box id="{{ box.id }}" href="{{ box.href }}" title="{{ box.title }}" text="{{ box.text }}" />
+        {% endfor %}
+      </div>
+    </div>
+    <div class="d-flex justify-content-between">
+      <a class="btn btn-primary"
+         href="{% url 'heat:consumption_input' year='new_year' %}">Weitere Verbrauchsanalyse</a>
+    </div>
+  </section>
+{% endblock content %}

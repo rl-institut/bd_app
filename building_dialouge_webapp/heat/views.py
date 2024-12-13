@@ -6,14 +6,15 @@ from django.http import JsonResponse
 from django.urls import reverse
 from django.views.generic import TemplateView
 from django_htmx.http import HttpResponseClientRedirect
-from django.shortcuts import render
 
+from building_dialouge_webapp.heat.flows import ConsumptionInputFlow
 from building_dialouge_webapp.heat.flows import RenovationRequestFlow
 
 from . import forms
 from .navigation import SidebarNavigationMixin
 
 SCENARIO_MAX = 3
+YEAR_MAX = 4
 
 
 class LandingPage(TemplateView):
@@ -49,6 +50,97 @@ class DeadEndHeating(TemplateView):
     }
 
 
+def consumption_year(request, year=None):
+    def get_existing_years():
+        """Goes through years and returns all that have finished"""
+        existing_years = []
+        year_id = 1
+        while year_id <= YEAR_MAX:
+            flow = ConsumptionInputFlow(prefix=f"year{year_id}")
+            if flow.finished(request):
+                existing_years.append(f"year{year_id}")
+            year_id += 1
+
+    def get_new_year():
+        """Goes through years and checks if they have finished."""
+        year_id = 1
+        while year_id <= YEAR_MAX:
+            flow = ConsumptionInputFlow(prefix=f"year{year_id}")
+            if not flow.finished(request):
+                break
+            year_id += 1
+        return f"year{year_id}"
+
+    # Needed to adapt URL via redirect if necessary
+    year_changed = year is None or year == "new_year"
+    if year is None:
+        existing_years = get_existing_years()
+        # If no years exist, start with "year1"
+        year = existing_years[0] if existing_years else "year1"
+    year = get_new_year() if year == "new_year" else year
+
+    # Check if year ID is lower than max years
+    year_index = int(year[4:])
+    if year_index > YEAR_MAX:
+        return JsonResponse({"error": "Maximum number of years reached."}, status=400)
+
+    if year_changed:
+        # If we return flow.dispatch(prefix=year), URL is not changed!
+        return HttpResponseRedirect(reverse("heat:consumption_input", kwargs={"year": year}))
+
+    flow = ConsumptionInputFlow(prefix=year)
+    flow.extra_context.update({"year_boxes": get_all_year_data(request)})
+    return flow.dispatch(request)
+
+
+def delete_year(request):
+    """Delete the selected year"""
+    year_id = request.POST["delete_year"][:9]
+
+    # get only the "name" part of the url for reversing
+    current_url = request.headers.get("hx-current-url")
+    parsed_url = urlparse(current_url)
+    url_path = parsed_url.path.strip("/").split("/")
+    url_name = url_path[-2] if len(url_path) > 1 else url_path[0]
+
+    flow = ConsumptionInputFlow(prefix=year_id)
+    flow.reset(request)
+    return HttpResponseClientRedirect(reverse(f"heat:{url_name}"))
+
+
+def get_all_year_data(request):
+    """Goes through years and gets their data if finished."""
+    year_data_list = []
+    year_id = 1
+    while year_id <= YEAR_MAX:
+        flow = ConsumptionInputFlow(prefix=f"year{year_id}")
+        if not flow.finished(request):
+            year_id += 1
+            continue
+        year_data = flow.data(request)
+        user_friendly_data = get_user_friendly_data(form_surname="Consumption", scenario_data=year_data)
+        extra_context = {
+            "id": f"year{year_id}box",
+            "href": reverse("heat:consumption_input", kwargs={"year": f"year{year_id}"}),
+            "title": f"Zeitraum {year_id}",
+            "text": ", ".join(user_friendly_data),
+        }
+        year_data_list.append(extra_context)
+        year_id += 1
+    return year_data_list
+
+
+class ConsumptionOverview(SidebarNavigationMixin, TemplateView):
+    template_name = "pages/consumption_overview.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_url"] = "heat:hotwater_heating"
+        context["next_url"] = "heat:consumption_result"
+        context["year_boxes"] = get_all_year_data(self.request)
+        return context
+
+
 class ConsumptionResult(SidebarNavigationMixin, TemplateView):
     template_name = "pages/consumption_result.html"
     extra_context = {
@@ -68,15 +160,18 @@ class ConsumptionResult(SidebarNavigationMixin, TemplateView):
         else:
             consumption_result = float(consumption_result)
         """
+        consumption_max_a = 50
+        consumption_max_b = 100
+        consumption_max_c = 150
 
-        consumption_result = 150 # needs to change to value of actual result
-        if consumption_result < 50:
+        consumption_result = 150  # needs to change to value of actual result
+        if consumption_result < consumption_max_a:
             roof_color = "#00b300"
             house_position = "8%"
-        elif consumption_result < 100:
+        elif consumption_result < consumption_max_b:
             roof_color = "#99cc00"
             house_position = "33%"
-        elif consumption_result < 150:
+        elif consumption_result < consumption_max_c:
             roof_color = "#ffcc00"
             house_position = "58%"
         else:

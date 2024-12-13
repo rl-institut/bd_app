@@ -1,0 +1,22 @@
+<a href="{{ href }}" class="year-box" id="{{ id }}">
+  <div class="year-box-header">
+    <svg width="24"
+         height="24"
+         version="1.1"
+         viewBox="0 0 100 100"
+         xmlns="http://www.w3.org/2000/svg">
+      <path d="{{ icon_path }}" />
+    </svg>
+    <h2>{{ title }}</h2>
+  </div>
+  <form hx-post="{% url 'heat:renovation_delete' %}"
+        hx-target="body"
+        class="delete-year-form">
+    {% csrf_token %}
+    <button type="submit"
+            name="delete_year"
+            value="{{ id }}"
+            class="delete-year-button">X</button>
+  </form>
+  <div class="year-box-text">{{ text }}</div>
+</a>

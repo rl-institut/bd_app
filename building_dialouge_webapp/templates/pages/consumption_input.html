@@ -14,7 +14,11 @@
     <div class="step-question">
       <div class="step-container">
         <div id="consumption_input" class="main">{{ consumption_input.content | safe }}</div>
-        <div class="help"></div>
+        <div class="help" id="year-boxes">
+          {% for box in year_boxes %}
+            <c-year-box id="{{ box.id }}" href="{{ box.href }}" title="{{ box.title }}" text="{{ box.text }}" />
+          {% endfor %}
+        </div>
       </div>
     </div>
   </section>
