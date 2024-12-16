@@ -785,7 +785,12 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
             Next("end"),
         )
 
-        self.end = EndState(self, url="heat:consumption_result")
+        self.end = EndState(self, url="heat:consumption_overview")
+
+        def dispatch(self, request, *args, **kwargs):
+            # Retrieve the prefix dynamically
+            self.prefix = kwargs.get("scenario", self.prefix)
+            return super().dispatch(request, *args, **kwargs)
 
 
 class RoofFlow(SidebarNavigationMixin, Flow):

@@ -87,7 +87,6 @@ def consumption_year(request, year=None):
     if year_changed:
         # If we return flow.dispatch(prefix=year), URL is not changed!
         return HttpResponseRedirect(reverse("heat:consumption_input", kwargs={"year": year}))
-
     flow = ConsumptionInputFlow(prefix=year)
     flow.extra_context.update({"year_boxes": get_all_year_data(request)})
     return flow.dispatch(request)
@@ -123,19 +122,12 @@ def get_all_year_data(request):
         if not flow.finished(request):
             year_id += 1
             continue
-        year_data = flow.data(request)
-        form = forms.ConsumptionInputForm(year_data)
 
-        if form.is_valid():
-            start_date = form.cleaned_data.get("heating_consumption_period_start")
-            end_date = form.cleaned_data.get("heating_consumption_period_end")
-            if start_date and end_date:
-                duration = (end_date - start_date).days
         extra_context = {
             "id": f"year{year_id}box",
             "href": reverse("heat:consumption_input", kwargs={"year": f"year{year_id}"}),
             "title": f"Zeitraum {year_id}",
-            "text": duration,
+            "text": "",
         }
         year_data_list.append(extra_context)
         year_id += 1
