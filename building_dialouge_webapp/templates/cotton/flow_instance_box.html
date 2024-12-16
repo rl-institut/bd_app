@@ -1,5 +1,5 @@
-<a href="{{ href }}" class="year-box" id="{{ id }}">
-  <div class="year-box-header">
+<a href="{{ href }}" class="flow-instance-box" id="{{ id }}">
+  <div class="flow-instance-box-header">
     <svg width="24"
          height="24"
          version="1.1"
@@ -11,12 +11,12 @@
   </div>
   <form hx-post="{% url 'heat:delete_flow' %}"
         hx-target="body"
-        class="delete-year-form">
+        class="delete-flow-instance-form">
     {% csrf_token %}
     <button type="submit"
             name="delete_flow"
             value="{{ id }}"
-            class="delete-year-button">X</button>
+            class="delete-flow-instance-button">X</button>
   </form>
-  <div class="year-box-text">{{ text }}</div>
+  <div class="flow-instance-box-text">{{ text }}</div>
 </a>
