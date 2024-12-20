@@ -1,15 +1,10 @@
-import ast
-import json
 from abc import abstractmethod
 from collections.abc import Callable
 from enum import IntEnum
 from typing import Any
 from typing import Optional
 
-from django.core.validators import MaxValueValidator
-from django.core.validators import MinValueValidator
 from django.forms import Form
-from django.forms import ValidationError
 from django.http import HttpResponse
 from django.shortcuts import reverse
 from django.template import Template
@@ -287,13 +282,11 @@ class FormState(TemplateState):
         if self.template_name is None:
             csrf_token = csrf(self.flow.request)["csrf_token"]
             form_instance = self.form_class(data, prefix=self.flow.prefix)
-            self.apply_dynamic_rules(form_instance)
             rendered_form = (
                 f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">\n {form_instance.as_div()}'
             )
             return {self.name: HTMLStateResponse(rendered_form)}
         form_instance = self.form_class(data, prefix=self.flow.prefix)
-        self.apply_dynamic_rules(form_instance)
         context["form"] = form_instance
         return {
             self.name: HTMLStateResponse(
@@ -303,45 +296,6 @@ class FormState(TemplateState):
                 ),
             ),
         }
-
-    def apply_dynamic_rules(self, form):
-        """Applies dynamic rules to the form instance."""
-        with open("building_dialouge_webapp/static/json/validation.json") as file:  # noqa: PTH123
-            dynamic_rules = json.load(file)
-            form_rules = dynamic_rules.get(self.form_class.__name__, {})
-        if form_rules:
-            for field_name, rules in form_rules.items():
-                """ complex validation logic still needs to be done, maybe kinda like this:
-                    if field_name == "complex":
-                    custom_validation = self.get_dynamic_validator(rules)
-                    for target_field in rules.get("target_fields", []):
-                        if target_field in form.fields:
-                            form.fields[target_field].validators.append(custom_validation) """
-
-                if field_name in form.fields:
-                    field = form.fields[field_name]
-                    for rule, value in rules.items():
-                        setattr(field, rule, value)
-                        if rule == "min_value":
-                            field.widget.attrs["min"] = value
-                            field.validators.append(MinValueValidator(value))
-                        elif rule == "max_value":
-                            field.widget.attrs["max"] = value
-                            field.validators.append(MaxValueValidator(value))
-
-    def get_dynamic_validator(self, rules):
-        """Generates a dynamic validation function based on the rules."""
-
-        def dynamic_validator(value):
-            value1 = self.flow.request.session.get("django_htmx_flow", {}).get(rules["value1"])
-            value2 = value
-
-            condition = rules.get("measure")
-            if value1 is not None and condition:
-                if not ast.literal_eval(condition, {"value1": value1, "value2": value2}):
-                    raise ValidationError(rules.get("message", "Invalid input based on dynamic validation."))
-
-        return dynamic_validator
 
     @property
     def response(self) -> dict[str, StateResponse]:
@@ -353,8 +307,7 @@ class FormState(TemplateState):
     @property
     def error_response(self) -> dict[str, StateResponse]:
         """Renders the form with incorrect data from the request."""
-        form_instance = self.form_class(self.flow.request.POST, prefix=self.flow.prefix)
-        self.apply_dynamic_rules(form_instance)
+        form_instance = self.form_class(self.flow.request.POST, prefix=self.flow.prefix)  # noqa: F841
         return self._render_form(self.flow.request.POST)
 
     def store_state(self):
@@ -365,7 +318,6 @@ class FormState(TemplateState):
                 self.flow.request.POST,
                 prefix=self.flow.prefix,
             )
-            self.apply_dynamic_rules(form_instance)
             if form_instance.is_valid():
                 form_data = form_instance.cleaned_data
                 for field_name, value in form_data.items():
@@ -378,7 +330,6 @@ class FormState(TemplateState):
         """Removes each form field's stored value from the session."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
         form_instance = self.form_class(prefix=self.flow.prefix)
-        self.apply_dynamic_rules(form_instance)
         for field in form_instance.fields:
             key = field if self.flow.prefix is None else f"{self.flow.prefix}-{field}"
             if key in session_data:

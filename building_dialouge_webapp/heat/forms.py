@@ -1,4 +1,35 @@
+import json
+
 from django import forms
+from django.core.validators import MaxValueValidator
+from django.core.validators import MinValueValidator
+
+
+class ValidationForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        with open("building_dialouge_webapp/static/json/validation.json") as file:  # noqa: PTH123
+            dynamic_rules = json.load(file)
+            form_rules = dynamic_rules.get(self.__class__.__name__, {})
+        if form_rules:
+            for field_name, rules in form_rules.items():
+                # complex validation logic still needs to be done, maybe kinda like this:
+                if field_name == "complex":
+                    custom_validation = self.get_dynamic_validator(rules)
+                    for target_field in rules.get("target_fields", []):
+                        if target_field in self.fields:
+                            self.fields[target_field].validators.append(custom_validation)
+
+                if field_name in self.fields:
+                    field = self.fields[field_name]
+                    for rule, value in rules.items():
+                        setattr(field, rule, value)
+                        if rule == "min_value":
+                            field.widget.attrs["min"] = value
+                            field.validators.append(MinValueValidator(value))
+                        elif rule == "max_value":
+                            field.widget.attrs["max"] = value
+                            field.validators.append(MaxValueValidator(value))
 
 
 class BuildingTypeForm(forms.Form):
@@ -244,7 +275,7 @@ class ConsumptionInputForm(forms.Form):
         return date_value.isoformat()
 
 
-class RoofTypeForm(forms.Form):
+class RoofTypeForm(ValidationForm):
     roof_type = forms.ChoiceField(
         label="roof_type",
         choices=[
@@ -257,7 +288,7 @@ class RoofTypeForm(forms.Form):
     )
 
 
-class RoofDetailsForm(forms.Form):
+class RoofDetailsForm(ValidationForm):
     roof_area = forms.IntegerField(
         label="roof_area",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
@@ -282,7 +313,7 @@ class RoofDetailsForm(forms.Form):
     )
 
 
-class RoofUsageNowForm(forms.Form):
+class RoofUsageNowForm(ValidationForm):
     roof_usage_now = forms.ChoiceField(
         label="roof_usage_now",
         choices=[
@@ -294,7 +325,7 @@ class RoofUsageNowForm(forms.Form):
     )
 
 
-class RoofUsageFutureForm(forms.Form):
+class RoofUsageFutureForm(ValidationForm):
     roof_usage_planned = forms.ChoiceField(
         label="roof_usage_planned",
         choices=[
@@ -309,7 +340,7 @@ class RoofUsageFutureForm(forms.Form):
     )
 
 
-class RoofInsulationForm(forms.Form):
+class RoofInsulationForm(ValidationForm):
     roof_insulation_exists = forms.ChoiceField(
         label="roof_insulation_exists",
         choices=[(True, "Ja"), (False, "Nein")],
