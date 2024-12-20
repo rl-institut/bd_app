@@ -1,3 +1,4 @@
+import ast
 import json
 
 from django import forms
@@ -6,14 +7,15 @@ from django.core.validators import MinValueValidator
 
 
 class ValidationForm(forms.Form):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, request=None, **kwargs):
+        self.request = request
         super().__init__(*args, **kwargs)
+
         with open("building_dialouge_webapp/static/json/validation.json") as file:  # noqa: PTH123
             dynamic_rules = json.load(file)
             form_rules = dynamic_rules.get(self.__class__.__name__, {})
         if form_rules:
             for field_name, rules in form_rules.items():
-                # complex validation logic still needs to be done, maybe kinda like this:
                 if field_name == "complex":
                     custom_validation = self.get_dynamic_validator(rules)
                     for target_field in rules.get("target_fields", []):
@@ -30,6 +32,39 @@ class ValidationForm(forms.Form):
                         elif rule == "max_value":
                             field.widget.attrs["max"] = value
                             field.validators.append(MaxValueValidator(value))
+
+    def get_dynamic_validator(self, rules):
+        """
+        Generates a dynamic validation function based on the rules.
+        Is called through validator when the corresponding field is validated.
+        """
+
+        def dynamic_validator(value):
+            session_data = self.request.session.get("django_htmx_flow", {})
+            value1_key = rules.get("value1")
+            value1 = session_data.get(value1_key)
+
+            # Retrieve from the field being validated, needed inside condition
+            value2 = value  # noqa: F841
+
+            condition = rules.get("measure")
+            if value1 is not None and condition:
+                try:
+                    is_valid = ast.literal_eval(condition)
+                    if not is_valid:
+                        self.raise_validation_error(rules)
+                except (SyntaxError, ValueError) as err:
+                    self.raise_validation_error(rules, error=err)
+
+        return dynamic_validator
+
+    @staticmethod
+    def raise_validation_error(rules, error=None):
+        """Handles raising a validation error."""
+        message = rules.get("message", "Invalid input based on dynamic validation.")
+        if error:
+            message = f"Error in validation condition: {error}"
+        raise forms.ValidationError(message)
 
 
 class BuildingTypeForm(forms.Form):

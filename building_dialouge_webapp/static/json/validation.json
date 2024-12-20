@@ -2,6 +2,7 @@
     "RoofDetailsForm": {
       "complex": {
         "validation": "compare_values",
+        "target_fields": ["number_roof_windows"],
         "value1": "roof_area",
         "value2": "number_roof_windows",
         "measure": "value2 <= value1 / 2",
