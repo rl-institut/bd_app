@@ -1,7 +1,12 @@
 {% extends "base_footer_button.html" %}
 
+{% load static %}
+
+<link rel="stylesheet" href="/static/css/results.css">
+
 {% block content %}
   <div class="container my-5">
+    <div class="help-background"></div>
     <h2>Ergebnisse</h2>
     <div>
       Herzlichen Glückwunsch, die Berechnung ist abgeschlossen! <br>
@@ -13,6 +18,7 @@
     <h2 class="accordion-header" id="panelsStayOpen-headingOne">
       <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
         Verbrauch
+        <div class="energy_efficiency"><object type="image/svg+xml" data="/static/images/svg/energy_consumption_index.svg" height="200" width="800"></object></div>
       </button>
     </h2>
     <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
@@ -42,7 +48,22 @@
     </h2>
     <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
       <div class="accordion-body">
-        <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+        Hier sehen Sie die Gesamtkosten für jedes von Ihnen gewählte Szenario.
+        Neben den Investitionskosten für Sanierungsmaßnahmen und Technologiewechsel werden die für Sie relevanten Zuschüsse aufgeführt.
+        Die berechnete Summe zeigt den Betrag, den Sie nach Abzug der Zuschüsse selbst aufwenden müssen.
+        Diese Übersicht unterstützt Sie dabei, die finanziellen Auswirkungen Ihrer Entscheidungen besser zu erfassen und zu planen.
+
+        {{ measures_table|safe }} <br>
+
+        Eine genauere Aufschlüsselung der Kosten für jede einzelne Sanierungsmaßnahme, sowie für die verschidenen Posten innerhalb eines Technologiewechsels finden Sie hier.
+        Zusätzlich werden die von Ihnen ausgewählten Zuschüsse aufgeführt.
+        Diese Übersicht gibt Ihnen eine fundierte Vorab-Einschätzung der finanziellen Aspekte, die Ihnen bei der Planung und Beratung für Ihre Maßnahmen nützlich sein wird.
+
+        {{ html_content|safe }}
+
+        Die aufgeführten Kosten enthalten auch jene, die über den betrachteten Zeitraum sowieso angefallen wären - die Instandhaltungskosten.
+        Denn um Ihr Gebäude instand zu halten, sind in jedem Fall Aufwendungen - z.B. für Reüeraturen und Wartungsarbeiten - nötig.
+        Wenn Sie also in absehbarer Zeit ohnehin mit solchen Kosten rechnen, kann sich eine Sanierung umso mehr lohnen.
       </div>
     </div>
   </div>
