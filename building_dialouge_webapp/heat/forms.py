@@ -15,7 +15,7 @@ class BuildingTypeForm(forms.Form):
 class BuildingTypeProtectionForm(forms.Form):
     monument_protection = forms.ChoiceField(
         label="monument_protection",
-        choices=[("yes", "Ja"), ("no", "Nein")],
+        choices=[("no", "Nein"), ("yes", "Ja")],
     )
 
 
@@ -142,8 +142,8 @@ class HotwaterHeatingSystemForm(forms.Form):
     hotwater_heating_system = forms.ChoiceField(
         label="Warmwasserbereitung erfolgt in ",
         choices=[
-            ("boiler", "Boiler / Durchlauferhitzer"),
             ("heater", "Heizanlage"),
+            ("boiler", "Boiler / Durchlauferhitzer"),
         ],
         widget=forms.RadioSelect,
     )
