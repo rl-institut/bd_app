@@ -278,7 +278,7 @@ class RoofTypeForm(forms.Form):
 
 class RoofDetailsForm(forms.Form):
     roof_area = forms.IntegerField(
-        label="roof_area",
+        label="Dachfläche in m² (gesamt)",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     roof_orientation = forms.ChoiceField(
@@ -288,15 +288,15 @@ class RoofDetailsForm(forms.Form):
             ("no", "NO"),
             ("o", "O"),
             ("so", "SO"),
-            ("sw", "SW"),
             ("s", "S"),
+            ("sw", "SW"),
             ("w", "W"),
             ("nw", "NW"),
         ],
         widget=forms.RadioSelect,
     )
     number_roof_windows = forms.IntegerField(
-        label="number_of_windows",
+        label="Anzahl der Dachfenster oder Dachgauben",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
