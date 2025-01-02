@@ -66,8 +66,8 @@ class CellarHeatingForm(forms.Form):
         label="cellar_heating",
         choices=[
             ("no_cellar", "Kein Keller"),
-            ("without_heating", "Keller ohne Heizung"),
-            ("with_heating", "Keller mit Heizung"),
+            ("without_heating", "Keller unbeheizt"),
+            ("with_heating", "Keller beheizt"),
         ],
         widget=forms.RadioSelect,
     )
@@ -187,7 +187,7 @@ class HotwaterHeatingSolarDetailsForm(forms.Form):
         label="Kollektorfläche in m²",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-    roof_pitch = forms.IntegerField(
+    roof_inclination = forms.IntegerField(
         label="Dachneigung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         min_value=0,
@@ -219,7 +219,7 @@ class ConsumptionInputForm(forms.Form):
         widget=forms.DateInput(attrs={"type": "date"}),
     )
     heating_consumption = forms.IntegerField(
-        label="Heizenergieverbrauch in kWh",
+        label="Heizenergieverbrauch",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     heating_energy_source_cost = forms.FloatField(
@@ -227,11 +227,11 @@ class ConsumptionInputForm(forms.Form):
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     hotwater_consumption = forms.FloatField(
-        label="Warmwasser: Verbrauch m³ pro kWh",
+        label="Warmwasserverbrauch",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     hotwater_temperature = forms.IntegerField(
-        label="Warmwasser: Temperatur",
+        label="Warmwassertemperatur in °C",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
