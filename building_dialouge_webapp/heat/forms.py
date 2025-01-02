@@ -285,9 +285,9 @@ class RoofDetailsForm(forms.Form):
         label="In welcher Richtung ist ihr Dach ausgerichtet?",
         choices=[
             ("n", "N"),
-            ("no", "NO"),
-            ("o", "O"),
-            ("so", "SO"),
+            ("ne", "NO"),
+            ("e", "O"),
+            ("se", "SO"),
             ("s", "S"),
             ("sw", "SW"),
             ("w", "W"),
@@ -342,7 +342,7 @@ class WindowAreaForm(forms.Form):
         label="Umfang Fensterflächen",
         choices=[
             ("small", "Niedrig (wenige Fensterflächen)"),
-            ("medium", "Mittel (durchschnittlich große Fensterflächen)"),
+            ("medium", "Mittel (durchschnittlich viele Fensterflächen)"),
             ("large", "Hoch (viele Fensterfächen)"),
         ],
         widget=forms.RadioSelect,
@@ -361,7 +361,7 @@ class WindowDetailsForm(forms.Form):
         widget=forms.RadioSelect,
     )
     window_construction_year = forms.ChoiceField(
-        label="Fenstertyp",
+        label="Jahr des Einbaus",
         choices=[
             ("unkown", "Unbekannt"),
             ("like_building", "wie Gebäude"),
