@@ -222,6 +222,16 @@ class ConsumptionInputForm(forms.Form):
         label="Heizenergieverbrauch",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
+    heating_consumption_unit = forms.ChoiceField(
+        label="Einheit",
+        choices=[
+            ("kwh", "Kilowattstunden / kWh"),
+            ("l", "Liter / l"),
+            ("cbm", "Kubikmeter / m³"),
+            ("t", "Tonnen / t"),
+        ],
+        widget=forms.RadioSelect,
+    )
     heating_energy_source_cost = forms.FloatField(
         label="Brennstoffkosten in €",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
@@ -229,6 +239,15 @@ class ConsumptionInputForm(forms.Form):
     hotwater_consumption = forms.FloatField(
         label="Warmwasserverbrauch",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    hotwater_consumption_unit = forms.ChoiceField(
+        label="Einheit",
+        choices=[
+            ("kwh", "Kilowattstunden / kWh"),
+            ("l", "Liter / l"),
+            ("cbm", "Kubikmeter / m³"),
+        ],
+        widget=forms.RadioSelect,
     )
     hotwater_temperature = forms.IntegerField(
         label="Warmwassertemperatur in °C",
