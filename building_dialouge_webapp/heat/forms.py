@@ -542,7 +542,7 @@ class VentilationSystemYearForm(forms.Form):
 
 class RenovationTechnologyForm(forms.Form):
     primary_heating = forms.ChoiceField(
-        label="Technologie/Energieträger",
+        label="Heizungstechnologie",
         choices=[
             ("district_heating", "Fernwärme"),
             ("bio_mass", "Biomasseheizung"),
@@ -557,7 +557,7 @@ class RenovationTechnologyForm(forms.Form):
 
 class RenovationSolarForm(forms.Form):
     secondary_heating = forms.MultipleChoiceField(
-        label="Heizungs-Untertechnologie",
+        label="Zusätzliche Erzeuger",
         choices=[
             ("solar", "Solarthermie"),
         ],
@@ -568,7 +568,7 @@ class RenovationSolarForm(forms.Form):
 
 class RenovationPVSolarForm(forms.Form):
     secondary_heating = forms.MultipleChoiceField(
-        label="Heizungs-Untertechnologie",
+        label="Zusätzliche Erzeuger",
         choices=[
             ("pv", "PV-Anlage"),
             ("solar", "Solarthermie"),
@@ -580,16 +580,16 @@ class RenovationPVSolarForm(forms.Form):
 
 class RenovationBioMassForm(forms.Form):
     bio_mass_source = forms.ChoiceField(
-        label="Heizungs-Untertechnologie",
+        label="Energieträger",
         choices=[
             ("wood_pellets", "Holzpellets"),
-            ("chip_heating", "Hackschnitzelheizungen"),
-            ("firewood_boilder", "Scheitholzkessel"),
+            ("wood_chips", "Hackschnitzel"),
+            ("firewood", "Scheitholz"),
         ],
         widget=forms.RadioSelect,
     )
     secondary_heating = forms.MultipleChoiceField(
-        label="",
+        label="Zusätzliche Erzeuger",
         choices=[
             ("solar", "Solarthermie"),
         ],
@@ -600,7 +600,7 @@ class RenovationBioMassForm(forms.Form):
 
 class RenovationHeatPumpForm(forms.Form):
     heat_pump_type = forms.ChoiceField(
-        label="Heizungs-Untertechnologie",
+        label="Wärmepumpentyp",
         choices=[
             ("geothermal_pump", "Erdwärmepumpe"),
             ("air_heat_pump", "Luftwärmepumpe"),
@@ -609,7 +609,7 @@ class RenovationHeatPumpForm(forms.Form):
         widget=forms.RadioSelect,
     )
     secondary_heating = forms.MultipleChoiceField(
-        label="",
+        label="Zusätzliche Erzeuger",
         choices=[
             ("oil_heating", "Effiziente Öl- und Gasheizung"),
             ("heating_rod", "Heizstab"),
