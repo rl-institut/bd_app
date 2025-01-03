@@ -29,62 +29,55 @@ sth_load_path = full_path("profile_STH_load_raw.csv")
 
 
 def coefficient_of_performance(medium: list = ['air', 'water', 'brine'] , type_temp: list = ['VL75C', 'VL40C']) -> dict:  
-    # medium wenn einzeln nur ein str, nicht list; genauso type_temp
+    # medium wenn einzeln nur ein str, nicht list; genauso type_temp, OEMOF angucken
     """
     This function returns the coefficient of
-    performance (COP) depending on medium and type. OEMOF angucken
+    performance (COP) depending on medium and type. 
     """
+    # file paths corresponding to medium
+    medium_paths = {
+        'air': cop_air_path,
+        'water': cop_water_path,
+        'brine': cop_brine_path
+    }
+    
     # Read csv-file
-    df_cop_air = pd.read_csv(cop_air_path)
-    df_cop_water = pd.read_csv(cop_water_path)
-    df_cop_brine = pd.read_csv(cop_brine_path)
+    # df_cop_air = pd.read_csv(cop_air_path)
+    # df_cop_water = pd.read_csv(cop_water_path)
+    # df_cop_brine = pd.read_csv(cop_brine_path)
+
     # empty dict for return
     cop_air_dict = {}
     cop_water_dict = {}
     cop_brine_dict = {}
+
     # dicts for checking allowed types
     allowed_medium = {'air', 'water', 'brine'}
     allowed_type_temp = {'VL75C', 'VL40C'}
 
-# evtl auch try ausprobieren, oder weniger if verschachtelungen?, kein hard coden?
-    if medium in allowed_medium and type_temp in allowed_type_temp:
-        for row in df_cop{medium}.loc[f'COP{medium}-{type_temp}']:
-            cop_{medium}_type += row
-            # gucke letzte Chat gpt an
+    # checking allowed types
+    if medium not in allowed_medium:
+        raise ValueError(f'Invalid medium {medium}. Allowed mediums: air, water, brine')
+    if type_temp not in allowed_type_temp:
+        raise ValueError(f'Invalid temperature {medium}. Allowed temperatures: VL75C, VL40C')
 
-    if medium, type_temp == 'air', 'VL75C':
-        for row in df_cop_air.loc['COP-Air-VL75C']:
-            cop_air_dict += row
-    elif medium, type_temp == 'air', 'VL40C':
-        for row in df_cop_air.loc['COP-Air-VL40C']:
-            cop_air_dict += row
-    elif medium, type_temp == 'water', 'VL75C':
-        for row in df_cop_air.loc['COP-Air-VL75C']:
-            cop_air_dict += row
-    elif medium, type_temp == 'water', 'VL40C':
-        for row in df_cop_air.loc['COP-Air-VL40C']:
-            cop_air_dict += row
-    elif medium, type_temp == 'brine', 'VL75C':
-        for row in df_cop_air.loc['COP-Air-VL75C']:
-            cop_air_dict += row
-    elif medium, type_temp == 'brine', 'VL40C':
-        for row in df_cop_air.loc['COP-Air-VL40C']:
-            cop_air_dict += row
-    else:
-        print('Either the medium or Tymeperatur is not supported')
+    # read csv-file according to medium given
+    df_medium = pd.read_csv(medium_paths[medium])
 
-    # returning the dict depending on chosen medium
-    if medium == 'air':
-        return cop_air_dict
-    elif medium == 'water':
-        return cop_water_dict
-    elif medium == 'brine':
-        return cop_brine_dict
+    # column name for column to be read
+    column_name = f'COP-{medium.capitalize()}-{type_temp}'
 
+    # checking coulmn name
+    if column_name not in df_medium.columns:
+        raise ValueError(f'Invalid temperature {type_temp} for medium {medium}. Column name {column_name} not found.')
+    
+    # extract desired column as timeseries
+    cop_timeseries = df_medium[column_name]
+    
+    return cop_timeseries
 
-
-
-coefficient_of_performance('air', 'VL75C')
+# example
+# print(coefficient_of_performance('air', 'VL75C'))
 
 def hotwater_per_person(number_people):
     """
