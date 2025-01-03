@@ -28,7 +28,7 @@ sth_heat_path = full_path("profile_STH_heat_raw.csv")
 sth_load_path = full_path("profile_STH_load_raw.csv")
 
 
-def coefficient_of_performance(medium: list = ['air', 'water', 'brine'] , type_temp: list = ['VL75C', 'VL40C']) -> dict:  
+def coefficient_of_performance(medium: list = ['air', 'water', 'brine'] , type_temp: list = ['VL75C', 'VL40C']) -> pd.Series:  
     # medium wenn einzeln nur ein str, nicht list; genauso type_temp, OEMOF angucken
     """
     This function returns the coefficient of
@@ -40,16 +40,6 @@ def coefficient_of_performance(medium: list = ['air', 'water', 'brine'] , type_t
         'water': cop_water_path,
         'brine': cop_brine_path
     }
-    
-    # Read csv-file
-    # df_cop_air = pd.read_csv(cop_air_path)
-    # df_cop_water = pd.read_csv(cop_water_path)
-    # df_cop_brine = pd.read_csv(cop_brine_path)
-
-    # empty dict for return
-    cop_air_dict = {}
-    cop_water_dict = {}
-    cop_brine_dict = {}
 
     # dicts for checking allowed types
     allowed_medium = {'air', 'water', 'brine'}
@@ -79,11 +69,35 @@ def coefficient_of_performance(medium: list = ['air', 'water', 'brine'] , type_t
 # example
 # print(coefficient_of_performance('air', 'VL75C'))
 
-def hotwater_per_person(number_people):
+def hotwater_per_person(number_people: list =[1, 2, 3, 4, 5]) -> pd.Series:
     """
     This function returns the hotwater-usage
      per number of people in a household.
     """
+
+    # read csv-file
+    df_hotwater = pd.read_csv(hotwater_pp_path)
+
+    # dict for checking allowed type
+    allowed_number_people = {1, 2, 3, 4, 5}
+
+    # checking allowed type
+    if number_people not in allowed_number_people:
+        raise ValueError(f'Invalid number of people: {number_people}. Allowed number of people: 1, 2, 3, 4, 5')
+    
+    # column name for column to be read
+    column_name = f'HW-{number_people}P-60C'
+
+    # checking column name
+    if column_name not in df_hotwater.columns:
+        raise ValueError(f'Invalid number of people {number_people}. Column name {column_name} not found.')
+    
+    # extract desired column as timeseries
+    cop_timeseries = df_hotwater[column_name]
+    
+    return cop_timeseries
+
+print(hotwater_per_person(3))
 
 def load(number_people, eef):
     """
