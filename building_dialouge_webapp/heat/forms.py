@@ -15,7 +15,7 @@ class BuildingTypeForm(forms.Form):
 class BuildingTypeProtectionForm(forms.Form):
     monument_protection = forms.ChoiceField(
         label="monument_protection",
-        choices=[("yes", "Ja"), ("no", "Nein")],
+        choices=[("no", "Nein"), ("yes", "Ja")],
     )
 
 
@@ -66,8 +66,8 @@ class CellarHeatingForm(forms.Form):
         label="cellar_heating",
         choices=[
             ("no_cellar", "Kein Keller"),
-            ("without_heating", "Keller ohne Heizung"),
-            ("with_heating", "Keller mit Heizung"),
+            ("without_heating", "Keller unbeheizt"),
+            ("with_heating", "Keller beheizt"),
         ],
         widget=forms.RadioSelect,
     )
@@ -142,8 +142,8 @@ class HotwaterHeatingSystemForm(forms.Form):
     hotwater_heating_system = forms.ChoiceField(
         label="Warmwasserbereitung erfolgt in ",
         choices=[
-            ("boiler", "Boiler / Durchlauferhitzer"),
             ("heater", "Heizanlage"),
+            ("boiler", "Boiler / Durchlauferhitzer"),
         ],
         widget=forms.RadioSelect,
     )
@@ -187,7 +187,7 @@ class HotwaterHeatingSolarDetailsForm(forms.Form):
         label="Kollektorfläche in m²",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-    roof_pitch = forms.IntegerField(
+    roof_inclination = forms.IntegerField(
         label="Dachneigung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         min_value=0,
@@ -219,19 +219,36 @@ class ConsumptionInputForm(forms.Form):
         widget=forms.DateInput(attrs={"type": "date"}),
     )
     heating_consumption = forms.IntegerField(
-        label="Heizenergieverbrauch in kWh",
+        label="Heizenergieverbrauch",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    heating_consumption_unit = forms.ChoiceField(
+        label="Einheit",
+        choices=[
+            ("kwh", "Kilowattstunden / kWh"),
+            ("l", "Liter / l"),
+            ("cbm", "Kubikmeter / m³"),
+            ("t", "Tonnen / t"),
+        ],
     )
     heating_energy_source_cost = forms.FloatField(
         label="Brennstoffkosten in €",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     hotwater_consumption = forms.FloatField(
-        label="Warmwasser: Verbrauch m³ pro kWh",
+        label="Warmwasserverbrauch",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
+    hotwater_consumption_unit = forms.ChoiceField(
+        label="Einheit",
+        choices=[
+            ("kwh", "Kilowattstunden / kWh"),
+            ("l", "Liter / l"),
+            ("cbm", "Kubikmeter / m³"),
+        ],
+    )
     hotwater_temperature = forms.IntegerField(
-        label="Warmwasser: Temperatur",
+        label="Warmwassertemperatur in °C",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
@@ -259,25 +276,25 @@ class RoofTypeForm(forms.Form):
 
 class RoofDetailsForm(forms.Form):
     roof_area = forms.IntegerField(
-        label="roof_area",
+        label="Dachfläche in m² (gesamt)",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     roof_orientation = forms.ChoiceField(
         label="In welcher Richtung ist ihr Dach ausgerichtet?",
         choices=[
             ("n", "N"),
-            ("no", "NO"),
-            ("o", "O"),
-            ("so", "SO"),
-            ("sw", "SW"),
+            ("ne", "NO"),
+            ("e", "O"),
+            ("se", "SO"),
             ("s", "S"),
+            ("sw", "SW"),
             ("w", "W"),
             ("nw", "NW"),
         ],
         widget=forms.RadioSelect,
     )
     number_roof_windows = forms.IntegerField(
-        label="number_of_windows",
+        label="Anzahl der Dachfenster oder Dachgauben",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
@@ -323,7 +340,7 @@ class WindowAreaForm(forms.Form):
         label="Umfang Fensterflächen",
         choices=[
             ("small", "Niedrig (wenige Fensterflächen)"),
-            ("medium", "Mittel (durchschnittlich große Fensterflächen)"),
+            ("medium", "Mittel (durchschnittlich viele Fensterflächen)"),
             ("large", "Hoch (viele Fensterfächen)"),
         ],
         widget=forms.RadioSelect,
@@ -342,7 +359,7 @@ class WindowDetailsForm(forms.Form):
         widget=forms.RadioSelect,
     )
     window_construction_year = forms.ChoiceField(
-        label="Fenstertyp",
+        label="Jahr des Einbaus",
         choices=[
             ("unkown", "Unbekannt"),
             ("like_building", "wie Gebäude"),
@@ -523,7 +540,7 @@ class VentilationSystemYearForm(forms.Form):
 
 class RenovationTechnologyForm(forms.Form):
     primary_heating = forms.ChoiceField(
-        label="Technologie/Energieträger",
+        label="Heizungstechnologie",
         choices=[
             ("district_heating", "Fernwärme"),
             ("bio_mass", "Biomasseheizung"),
@@ -538,7 +555,7 @@ class RenovationTechnologyForm(forms.Form):
 
 class RenovationSolarForm(forms.Form):
     secondary_heating = forms.MultipleChoiceField(
-        label="Heizungs-Untertechnologie",
+        label="Zusätzliche Erzeuger",
         choices=[
             ("solar", "Solarthermie"),
         ],
@@ -549,7 +566,7 @@ class RenovationSolarForm(forms.Form):
 
 class RenovationPVSolarForm(forms.Form):
     secondary_heating = forms.MultipleChoiceField(
-        label="Heizungs-Untertechnologie",
+        label="Zusätzliche Erzeuger",
         choices=[
             ("pv", "PV-Anlage"),
             ("solar", "Solarthermie"),
@@ -561,16 +578,16 @@ class RenovationPVSolarForm(forms.Form):
 
 class RenovationBioMassForm(forms.Form):
     bio_mass_source = forms.ChoiceField(
-        label="Heizungs-Untertechnologie",
+        label="Energieträger",
         choices=[
             ("wood_pellets", "Holzpellets"),
-            ("chip_heating", "Hackschnitzelheizungen"),
-            ("firewood_boilder", "Scheitholzkessel"),
+            ("wood_chips", "Hackschnitzel"),
+            ("firewood", "Scheitholz"),
         ],
         widget=forms.RadioSelect,
     )
     secondary_heating = forms.MultipleChoiceField(
-        label="",
+        label="Zusätzliche Erzeuger",
         choices=[
             ("solar", "Solarthermie"),
         ],
@@ -581,7 +598,7 @@ class RenovationBioMassForm(forms.Form):
 
 class RenovationHeatPumpForm(forms.Form):
     heat_pump_type = forms.ChoiceField(
-        label="Heizungs-Untertechnologie",
+        label="Wärmepumpentyp",
         choices=[
             ("geothermal_pump", "Erdwärmepumpe"),
             ("air_heat_pump", "Luftwärmepumpe"),
@@ -590,7 +607,7 @@ class RenovationHeatPumpForm(forms.Form):
         widget=forms.RadioSelect,
     )
     secondary_heating = forms.MultipleChoiceField(
-        label="",
+        label="Zusätzliche Erzeuger",
         choices=[
             ("oil_heating", "Effiziente Öl- und Gasheizung"),
             ("heating_rod", "Heizstab"),
