@@ -230,7 +230,6 @@ class ConsumptionInputForm(forms.Form):
             ("cbm", "Kubikmeter / m³"),
             ("t", "Tonnen / t"),
         ],
-        widget=forms.RadioSelect,
     )
     heating_energy_source_cost = forms.FloatField(
         label="Brennstoffkosten in €",
@@ -247,7 +246,6 @@ class ConsumptionInputForm(forms.Form):
             ("l", "Liter / l"),
             ("cbm", "Kubikmeter / m³"),
         ],
-        widget=forms.RadioSelect,
     )
     hotwater_temperature = forms.IntegerField(
         label="Warmwassertemperatur in °C",
