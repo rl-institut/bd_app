@@ -339,13 +339,13 @@ class Results(SidebarNavigationMixin, TemplateView):
 
             return investments_html + subsidies_html + sums_html
 
-        html_scenario1 = generate_html_table(df_scenario1_investments, df_scenario1_subsidies, df_scenario1_sum, "scenario1")
-        html_scenario2 = generate_html_table(df_scenario2_investments, df_scenario2_subsidies, df_scenario2_sum, "scenario2")
+        html_scenario1 = generate_html_table(df_scenario1_investments, df_scenario1_subsidies, df_scenario1_sum, "tab_scenario1")
+        html_scenario2 = generate_html_table(df_scenario2_investments, df_scenario2_subsidies, df_scenario2_sum, "tab_scenario2")
 
         # Tab-Steuerelemente
         tabs_html = """<div class='tabs'>
-            <button class='tab-button' style="background-color: #1b9e77;" onclick="showTab('scenario1', '#1b9e77')">Szenario 1</button>
-            <button class='tab-button' style="background-color: #7570b3;" onclick="showTab('scenario2', '#7570b3')">Szenario 2</button>
+            <button class='tab-button' style="background-color: #1b9e77;" onclick="showTab('tab_scenario1', '#1b9e77')">Szenario 1</button>
+            <button class='tab-button' style="background-color: #7570b3;" onclick="showTab('tab_scenario2', '#7570b3')">Szenario 2</button>
         </div>"""
 
         # Zusammenfügen
@@ -353,11 +353,11 @@ class Results(SidebarNavigationMixin, TemplateView):
             .tabs {{ margin-bottom: 0; position: relative; top: 0; left: 0; }}
             .tab-button {{ margin-right: 5px; padding: 10px; color: white; border: none; cursor: pointer; }}
             .tab-button:hover {{ opacity: 0.9; }}
-            .table {{ display: none; width: 40%; margin: 0; border-collapse: collapse; }}
+            .table {{ display: none; width: 100%; margin: 0; border-collapse: collapse; }}
             .table th, .table td {{ border: 1px solid lightgrey; padding: 10px; text-align: left; }}
-            .table th {{ width: 75%; border-right: none; border-left: none; background-color: #f9f9f9; }}
-            .scenario1 {{ display: table; border: 10px solid #1b9e77; border-radius: 10px; }}
-            .scenario2 {{ border: 10px solid #7570b3; border-radius: 10px; }}
+            .table th {{ width: 70%; border-right: none; border-left: none; background-color: #f9f9f9; }}
+            .tab_scenario1 {{ display: table; border: 10px solid #1b9e77; border-radius: 10px; }}
+            .tab_scenario2 {{ border: 10px solid #7570b3; border-radius: 10px; }}
         </style>
         <script>
             function showTab(tabName, borderColor) {{
@@ -385,36 +385,15 @@ class Results(SidebarNavigationMixin, TemplateView):
         }
         df = pd.DataFrame(tabledata)
 
-        # Styling-Funktion
-        def style_table(df):
-            styles = [
-                '<style> .table { border: 1px solid grey; border-radius: 12px; border-collapse: collapse; width: 100%; } </style>',
-                '<style> th { background-color: #DCDCDC; padding: 10px; text-align: center; } </style>',
-                '<style> th.procedure { font-weight: bold; } </style>',
-                '<style> th.scenario1 { background-color: #DCDCDC; color: white; padding: 10px; } </style>',
-                '<style> th.scenario2 { background-color: #DCDCDC; color: white; padding: 10px; } </style>',
-                '<style> th.scenario1 span { background-color: #1b9e77; padding: 5px 15px; border-radius: 5px; } </style>',
-                '<style> th.scenario2 span { background-color: #7570b3; padding: 5px 15px; border-radius: 5px; } </style>',
-                '<style> td.no-entry { color: #A9A9A9; } </style>',
-                '<style> th, td { border: 1px solid grey; padding: 10px; text-align: center; } </style>',
-            ]
-
-            html_table = df.to_html(classes='table', escape=False, index=False)
-            html_table = ''.join(styles) + html_table
-            html_table = html_table.replace('<th>', '<th class="procedure">', 1)
-            html_table = html_table.replace('<th>Szenario 1</th>', '<th class="scenario1"><span>Szenario 1</span></th>')
-            html_table = html_table.replace('<th>Szenario 2</th>', '<th class="scenario2"><span>Szenario 2</span></th>')
-            html_table = html_table.replace('<td>nicht ausgewählt</td>', '<td class="no-entry">nicht ausgewählt</td>')
-            html_table = html_table.replace('<table ', '<table style="border-radius: 12px;" ')
-            return html_table
-
         # Generierte zweite Tabelle
-        measures_table = style_table(df)
+        #measures_table = style_table(df)
 
         # Kontext hinzufügen
-        context['measures_table'] = measures_table
+        #context['measures_table'] = measures_table
         # Kontext hinzufügen
         context['html_content'] = full_html
+        context['hectare_scenario1'] = 2.2
+        context['hectare_scenario2'] = 1.3
         return context
 
 class NextSteps(SidebarNavigationMixin, TemplateView):
@@ -422,3 +401,26 @@ class NextSteps(SidebarNavigationMixin, TemplateView):
     extra_context = {
         "back_url": "heat:results",
     }
+
+
+def style_table(df):
+    styles = [
+        '<style> .table { border: 1px solid grey; border-radius: 12px; border-collapse: collapse; width: 100%; } </style>',
+        '<style> th { background-color: #DCDCDC; padding: 10px; text-align: center; } </style>',
+        '<style> th.procedure { font-weight: bold; } </style>',
+        '<style> th.scenario1 { background-color: #DCDCDC; color: white; padding: 10px; } </style>',
+        '<style> th.scenario2 { background-color: #DCDCDC; color: white; padding: 10px; } </style>',
+        '<style> th.scenario1 span { background-color: #1b9e77; padding: 5px 15px; border-radius: 5px; } </style>',
+        '<style> th.scenario2 span { background-color: #7570b3; padding: 5px 15px; border-radius: 5px; } </style>',
+        '<style> td.no-entry { color: #A9A9A9; } </style>',
+        '<style> th, td { border: 1px solid grey; padding: 10px; text-align: center; } </style>',
+    ]
+
+    html_table = df.to_html(classes='table', escape=False, index=False)
+    html_table = ''.join(styles) + html_table
+    html_table = html_table.replace('<th>', '<th class="procedure">', 1)
+    html_table = html_table.replace('<th>Szenario 1</th>', '<th class="scenario1"><span>Szenario 1</span></th>')
+    html_table = html_table.replace('<th>Szenario 2</th>', '<th class="scenario2"><span>Szenario 2</span></th>')
+    html_table = html_table.replace('<td>nicht ausgewählt</td>', '<td class="no-entry">nicht ausgewählt</td>')
+    html_table = html_table.replace('<table ', '<table style="border-radius: 12px;" ')
+    return html_table
