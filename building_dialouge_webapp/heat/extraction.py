@@ -140,9 +140,36 @@ def photovoltaic(elev_angle, direc_angle, type):
     and type.
     """
 
+    # read csv-file
+    df_pv = pd.read_csv(pv_path)
+
+    # dicts for checking allowed types
+    allowed_elev_angle = {0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90}
+    allowed_direc_angle = {0, 120, 150, 180, 210, 240, 270, 30, 300, 330, 360, 60, 90}
+    # what about the type?
+
+    # checking allowed types
+    if elev_angle not in allowed_elev_angle:
+        raise ValueError(f'Invalid elevation angle {elev_angle}. Allowed elevation angles: {allowed_elev_angle}')
+    if direc_angle not in allowed_direc_angle:
+        raise ValueError(f'Invalid directional angle {direc_angle}. Allowed directional angles: {allowed_direc_angle}')
+
+    # column name for column to be read
+    column_name = f'PV-H{elev_angle}-A{direc_angle}'
+
+    # checking coulmn name
+    if column_name not in df_pv.columns:
+        raise ValueError(f'Invalid elevation angle {elev_angle} for chosen directional angle {direc_angle}. Column name {column_name} not found.')
+    
+    # extract desired column as timeseries
+    pv_timeseries = df_pv[column_name]
+    
+    return pv_timeseries
+
+
 def solarthermal(elev_angle, direc_angle, type):
     """
-    This function returns the energy (?) given by
+    This function returns the energy output from
     solarthermal per elevation angle, directional angle
     and type.
     """
