@@ -5,7 +5,11 @@ import os
 
 # code inspired by oemof-B3/tests/test_data_processing.py
 # and     oemof-B3/scripts/prepare_heat_demand.py
-
+'''
+TO-DO:
+- resample
+- types in pv function
+'''
 
 # define the paths
 DATA_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -174,4 +178,5 @@ def solarthermal(elev_angle, direc_angle, type):
     and type.
     """
 
+    return None
 
