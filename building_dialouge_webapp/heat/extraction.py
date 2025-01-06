@@ -93,22 +93,49 @@ def hotwater_per_person(number_people: list =[1, 2, 3, 4, 5]) -> pd.Series:
         raise ValueError(f'Invalid number of people {number_people}. Column name {column_name} not found.')
     
     # extract desired column as timeseries
-    cop_timeseries = df_hotwater[column_name]
+    hotwater_timeseries = df_hotwater[column_name]
     
-    return cop_timeseries
+    return hotwater_timeseries
 
-print(hotwater_per_person(3))
+# example
+# print(hotwater_per_person(3))
 
-def load(number_people, eef):
+def load(number_people: list =[1, 2, 3, 4, 5], eec: list =[0, 1, 2, 3, 4]) -> pd.Series:
     """
     This function returns the load
     per number of people in a household
     and energy efficeincy class.
     """
 
+    # read csv-file
+    df_load = pd.read_csv(load_path)
+
+    # dicts for checking allowed types
+    allowed_number_people = {1, 2, 3, 4, 5}
+    allowed_eec = {0, 1, 2, 3, 4}
+
+    # checking allowed types
+    if number_people not in allowed_number_people:
+        raise ValueError(f'Invalid number of people {number_people}. Allowed number of people: 1, 2, 3, 4, 5')
+    if eec not in allowed_eec:
+        raise ValueError(f'Invalid energy efficency class {medium}. Allowed energy efficency classes: 0, 1, 2, 3, 4')
+
+    # column name for column to be read
+    column_name = f'EL-SEK{eec}P{number_people}'
+
+    # checking coulmn name
+    if column_name not in df_load.columns:
+        raise ValueError(f'Invalid energy efficency class {eec} for chosen number of people {number_people}. Column name {column_name} not found.')
+    
+    # extract desired column as timeseries
+    load_timeseries = df_load[column_name]
+    
+    return load_timeseries
+
+
 def photovoltaic(elev_angle, direc_angle, type):
     """
-    This function returns the energy (?) given by
+    This function returns the energy output from
     photovoltaics per elevation angle, directional angle
     and type.
     """
