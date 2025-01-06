@@ -128,8 +128,6 @@ class CellarInsulationYearForm(forms.Form):
     cellar_insulation_year = forms.IntegerField(
         label="cellar_insulation_year",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,  # aktuelles Jahr per python bekommen?
-        min_value=1850,
     )
 
 
@@ -377,14 +375,10 @@ class WindowDetailsForm(forms.Form):
         label="",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         required=False,
-        max_value=2030,
-        min_value=1850,
     )
     window_share = forms.IntegerField(
         label="prozentualer Anteil (bei mehreren Typen)",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=100,
-        min_value=0,
     )
 
     def clean(self):
@@ -429,8 +423,6 @@ class FacadeInsulationYearForm(forms.Form):
     facade_construction_year = forms.IntegerField(
         label="Jahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,
-        min_value=1850,
     )
 
 
@@ -438,8 +430,6 @@ class HeatingForm(forms.Form):
     heating_system_construction_year = forms.IntegerField(
         label="Baujahr Heizung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,
-        min_value=1850,
     )
     condensing_boiler_exists = forms.ChoiceField(
         label="Brennwerttechnik vorhanden?",
@@ -501,8 +491,6 @@ class PVSystemDetailsForm(forms.Form):
     pv_construction_year = forms.IntegerField(
         label="Baujahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,
-        min_value=1850,
     )
     pv_capacity = forms.IntegerField(
         label="Leistung in kWp",
@@ -539,8 +527,6 @@ class VentilationSystemYearForm(forms.Form):
     ventilation_system_construction_year = forms.IntegerField(
         label="Baujahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,
-        min_value=1850,
     )
 
 

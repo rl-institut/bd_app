@@ -1,14 +1,81 @@
 {
-    "RoofDetailsForm": {
-      "roof_area": {
-        "min_value": 0,
-        "max_value": 1000
+  "BuildingDataForm": {
+      "construction_year": {
+          "min_value": 1900,
+          "max_value": 2023
       }
-    },
-    "RoofUsageFutureForm": {
-        "roof_usage_share": {
-            "min_value": 0,
-            "max_value": 100
-        }
+  },
+  "CellarDetailsForm": {
+      "cellar_height": {
+          "min_value": 1,
+          "max_value": 5
+      }
+  },
+  "CellarInsulationYearForm": {
+      "cellar_insulation_year": {
+          "min_value": 1900,
+          "max_value": 2023
+      }
+  },
+  "HotwaterHeatingSolarEnergyForm": {
+      "solar_thermal_energy": {
+          "min_value": 1
+      }
+  },
+  "HotwaterHeatingSolarDetailsForm": {
+      "solar_thermal_area": {
+          "min_value": 1,
+          "max_value": 1000
+      },
+      "roof_pitch": {
+          "min_value": 0,
+          "max_value": 80
+      }
+  },
+  "ConsumptionInputForm": {
+      "hotwater_temperature": {
+          "min_value": 30,
+          "max_value": 90
+      }
+  },
+  "RoofUsageFutureForm": {
+      "roof_usage_share": {
+          "min_value": 0,
+          "max_value": 100
+      }
+  },
+  "WindowDetailsForm": {
+      "seperate_year": {
+          "min_value": 1900,
+          "max_value": 2023
+      },
+      "window_share": {
+        "min_value": 0,
+        "max_value": 100
+    }
+  },
+  "FacadeInsulationYearForm": {
+    "facade_construction_year": {
+        "min_value": 1900,
+        "max_value": 2023
+    }
+  },
+  "HeatingForm": {
+    "heating_system_construction_year": {
+        "min_value": 1900,
+        "max_value": 2023
+    }
+  },
+  "PVSystemDetailsForm": {
+    "pv_construction_year": {
+        "min_value": 1900,
+        "max_value": 2023
+    }
+  },
+  "VentilationSystemYearForm": {
+    "ventilation_system_construction_year": {
+        "min_value": 1900,
+        "max_value": 2023
     }
   }
+}
