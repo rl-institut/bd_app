@@ -27,16 +27,16 @@ nav.navbar {
 
 footer {
   z-index: 99;
-  
+
   .footer {
     ul {
       display: flex;
       list-style: none;
       margin-bottom: 0;
     }
-  
+
     a {
       @include nav-links;
-    } 
+    }
   }
 }

@@ -1,7 +1,7 @@
 import inspect
-import pandas as pd
 from urllib.parse import urlparse
 
+import pandas as pd
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
@@ -202,11 +202,16 @@ def renovation_scenario(request, scenario=None):
     # Check if scenario ID is lower than max scenarios
     scenario_index = int(scenario[8:])
     if scenario_index > SCENARIO_MAX:
-        return JsonResponse({"error": "Maximum number of scenarios reached."}, status=400)
+        return JsonResponse(
+            {"error": "Maximum number of scenarios reached."},
+            status=400,
+        )
 
     if scenario_changed:
         # If we return flow.dispatch(prefix=scenario), URL is not changed!
-        return HttpResponseRedirect(reverse("heat:renovation_request", kwargs={"scenario": scenario}))
+        return HttpResponseRedirect(
+            reverse("heat:renovation_request", kwargs={"scenario": scenario}),
+        )
 
     flow = RenovationRequestFlow(prefix=scenario)
     flow.extra_context.update({"scenario_boxes": get_all_scenario_data(request)})
@@ -234,10 +239,16 @@ def get_all_scenario_data(request):
             scenario_id += 1
             continue
         scenario_data = flow.data(request)
-        user_friendly_data = get_user_friendly_data(form_surname="Renovation", scenario_data=scenario_data)
+        user_friendly_data = get_user_friendly_data(
+            form_surname="Renovation",
+            scenario_data=scenario_data,
+        )
         extra_context = {
             "id": f"scenario{scenario_id}box",
-            "href": reverse("heat:renovation_request", kwargs={"scenario": f"scenario{scenario_id}"}),
+            "href": reverse(
+                "heat:renovation_request",
+                kwargs={"scenario": f"scenario{scenario_id}"},
+            ),
             "title": f"Szenario {scenario_id}",
             "text": ", ".join(user_friendly_data),
         }
@@ -303,50 +314,121 @@ class Results(SidebarNavigationMixin, TemplateView):
         # Tabellenstruktur erstellen
         def create_table(title, dynamic_column, values):
             values = [f"{value:,.2f} €" if isinstance(value, (int, float)) else value for value in values]
-            return pd.DataFrame({
-                title: dynamic_column,
-                "": values
-            })
+            return pd.DataFrame(
+                {
+                    title: dynamic_column,
+                    "": values,
+                },
+            )
 
         # Dynamische Spalten
-        scenario1_dynamic_column_investments = ["Luft-Wärmepumpe", "Wärmespeicher", "Wärmemengenzähler", "Pumpe des Heizsystems", "Lüftungsanlage", "Außenfassade dämmen"]
-        scenario1_dynamic_column_subsidies = ["KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - Wohnungsgebäude (BEG EM) (Nr. 458) (Zuschuss inkl. Klima-Bonus)"]
+        scenario1_dynamic_column_investments = [
+            "Luft-Wärmepumpe",
+            "Wärmespeicher",
+            "Wärmemengenzähler",
+            "Pumpe des Heizsystems",
+            "Lüftungsanlage",
+            "Außenfassade dämmen",
+        ]
+        scenario1_dynamic_column_subsidies = [
+            "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
+            "Wohnungsgebäude (BEG EM) (Nr. 458) (Zuschuss inkl. Klima-Bonus)",
+        ]
 
-        scenario2_dynamic_column_investments = ["Luft-Wärmepumpe", "Wärmespeicher", "Wärmemengenzähler", "Pumpe des Heizsystems", "Lüftungsanlage", "Dach dämmen", "Außenfassade dämmen"]
-        scenario2_dynamic_column_subsidies = ["KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - Wohnungsgebäude (BEG EM) (Nr. 458) (Zuschuss inkl. Klima-Bonus)", "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - Wohnungsgebäude (BEG EM) (Nr. 458) (Effizienz-Bonus)"]
+        scenario2_dynamic_column_investments = [
+            "Luft-Wärmepumpe",
+            "Wärmespeicher",
+            "Wärmemengenzähler",
+            "Pumpe des Heizsystems",
+            "Lüftungsanlage",
+            "Dach dämmen",
+            "Außenfassade dämmen",
+        ]
+        scenario2_dynamic_column_subsidies = [
+            "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
+            "Wohnungsgebäude (BEG EM) (Nr. 458) (Zuschuss inkl. Klima-Bonus)",
+            "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
+            "Wohnungsgebäude (BEG EM) (Nr. 458) (Effizienz-Bonus)",
+        ]
 
         # Tabellen für Szenario 1
-        df_scenario1_investments = create_table("Investitionskosten", scenario1_dynamic_column_investments, scenario1_investments)
-        df_scenario1_subsidies = create_table("Zuschüsse", scenario1_dynamic_column_subsidies, scenario1_subsidies)
-        df_scenario1_sum = pd.DataFrame({
-            "Summe": [""],
-            "": [f"{sum(scenario1_investments) - sum(scenario1_subsidies):,.2f} €"]
-        })
+        df_scenario1_investments = create_table(
+            "Investitionskosten",
+            scenario1_dynamic_column_investments,
+            scenario1_investments,
+        )
+        df_scenario1_subsidies = create_table(
+            "Zuschüsse",
+            scenario1_dynamic_column_subsidies,
+            scenario1_subsidies,
+        )
+        df_scenario1_sum = pd.DataFrame(
+            {
+                "Summe": [""],
+                "": [f"{sum(scenario1_investments) - sum(scenario1_subsidies):,.2f} €"],
+            },
+        )
 
         # Tabellen für Szenario 2
-        df_scenario2_investments = create_table("Investitionskosten", scenario2_dynamic_column_investments, scenario2_investments)
-        df_scenario2_subsidies = create_table("Zuschüsse", scenario2_dynamic_column_subsidies, scenario2_subsidies)
-        df_scenario2_sum = pd.DataFrame({
-            "Summe": [""],
-            "": [f"{sum(scenario2_investments) - sum(scenario2_subsidies):,.2f} €"]
-        })
+        df_scenario2_investments = create_table(
+            "Investitionskosten",
+            scenario2_dynamic_column_investments,
+            scenario2_investments,
+        )
+        df_scenario2_subsidies = create_table(
+            "Zuschüsse",
+            scenario2_dynamic_column_subsidies,
+            scenario2_subsidies,
+        )
+        df_scenario2_sum = pd.DataFrame(
+            {
+                "Summe": [""],
+                "": [f"{sum(scenario2_investments) - sum(scenario2_subsidies):,.2f} €"],
+            },
+        )
 
         # HTML-Tabellen generieren
         def generate_html_table(investments, subsidies, sums, scenario_name):
-            investments_html = investments.to_html(classes=f"table {scenario_name}", index=False, escape=False)
-            subsidies_html = subsidies.to_html(classes=f"table {scenario_name}", index=False, escape=False)
-            sums_html = sums.to_html(classes=f"table {scenario_name}", index=False, escape=False)
+            investments_html = investments.to_html(
+                classes=f"table {scenario_name}",
+                index=False,
+                escape=False,
+            )
+            subsidies_html = subsidies.to_html(
+                classes=f"table {scenario_name}",
+                index=False,
+                escape=False,
+            )
+            sums_html = sums.to_html(
+                classes=f"table {scenario_name}",
+                index=False,
+                escape=False,
+            )
 
             return investments_html + subsidies_html + sums_html
 
-        html_scenario1 = generate_html_table(df_scenario1_investments, df_scenario1_subsidies, df_scenario1_sum, "tab_scenario1")
-        html_scenario2 = generate_html_table(df_scenario2_investments, df_scenario2_subsidies, df_scenario2_sum, "tab_scenario2")
+        html_scenario1 = generate_html_table(
+            df_scenario1_investments,
+            df_scenario1_subsidies,
+            df_scenario1_sum,
+            "tab_scenario1",
+        )
+        html_scenario2 = generate_html_table(
+            df_scenario2_investments,
+            df_scenario2_subsidies,
+            df_scenario2_sum,
+            "tab_scenario2",
+        )
 
         # Tab-Steuerelemente
-        tabs_html = """<div class='tabs'>
-            <button class='tab-button' style="background-color: #1b9e77;" onclick="showTab('tab_scenario1', '#1b9e77')">Szenario 1</button>
-            <button class='tab-button' style="background-color: #7570b3;" onclick="showTab('tab_scenario2', '#7570b3')">Szenario 2</button>
-        </div>"""
+        tabs_html = """
+        <div class='tabs'>
+            <button class='tab-button' style="background-color: #1b9e77;"
+                    onclick="showTab('tab_scenario1', '#1b9e77')">Szenario 1</button>
+            <button class='tab-button' style="background-color: #7570b3;"
+                    onclick="showTab('tab_scenario2', '#7570b3')">Szenario 2</button>
+        </div>
+        """
 
         # Zusammenfügen
         full_html = f"""<style>
@@ -377,24 +459,39 @@ class Results(SidebarNavigationMixin, TemplateView):
         {html_scenario2}
         """
 
-        tabledata = {
-            'Maßnahme': ['Heiztechnologie wechseln', 'Fassade sanieren', 'Dach sanieren', 'Fenster austauschen',
-                         'Kellerdecke dämmen'],
-            'Szenario 1': [-50, -50, 'nicht ausgewählt', 'nicht ausgewählt', 'nicht ausgewählt'],
-            'Szenario 2': [-88, -50, -45, 'nicht ausgewählt', 'nicht ausgewählt']
-        }
-        df = pd.DataFrame(tabledata)
+        """
+        # tabledata = {
+        #     "Maßnahme": [
+        #         "Heiztechnologie wechseln",
+        #         "Fassade sanieren",
+        #         "Dach sanieren",
+        #         "Fenster austauschen",
+        #         "Kellerdecke dämmen",
+        #     ],
+        #     "Szenario 1": [
+        #         -50,
+        #         -50,
+        #         "nicht ausgewählt",
+        #         "nicht ausgewählt",
+        #         "nicht ausgewählt",
+        #     ],
+        #     "Szenario 2": [-88, -50, -45, "nicht ausgewählt", "nicht ausgewählt"],
+        # }
+        # df = pd.DataFrame(tabledata)
 
         # Generierte zweite Tabelle
-        #measures_table = style_table(df)
+        # measures_table = style_table(df)
 
         # Kontext hinzufügen
-        #context['measures_table'] = measures_table
+        # context['measures_table'] = measures_table
+        """
+
         # Kontext hinzufügen
-        context['html_content'] = full_html
-        context['hectare_scenario1'] = 2.2
-        context['hectare_scenario2'] = 1.3
+        context["html_content"] = full_html
+        context["hectare_scenario1"] = 2.2
+        context["hectare_scenario2"] = 1.3
         return context
+
 
 class NextSteps(SidebarNavigationMixin, TemplateView):
     template_name = "pages/next_steps.html"
@@ -405,22 +502,32 @@ class NextSteps(SidebarNavigationMixin, TemplateView):
 
 def style_table(df):
     styles = [
-        '<style> .table { border: 1px solid grey; border-radius: 12px; border-collapse: collapse; width: 100%; } </style>',
-        '<style> th { background-color: #DCDCDC; padding: 10px; text-align: center; } </style>',
-        '<style> th.procedure { font-weight: bold; } </style>',
-        '<style> th.scenario1 { background-color: #DCDCDC; color: white; padding: 10px; } </style>',
-        '<style> th.scenario2 { background-color: #DCDCDC; color: white; padding: 10px; } </style>',
-        '<style> th.scenario1 span { background-color: #1b9e77; padding: 5px 15px; border-radius: 5px; } </style>',
-        '<style> th.scenario2 span { background-color: #7570b3; padding: 5px 15px; border-radius: 5px; } </style>',
-        '<style> td.no-entry { color: #A9A9A9; } </style>',
-        '<style> th, td { border: 1px solid grey; padding: 10px; text-align: center; } </style>',
+        "<style> "
+        "   .table { border: 1px solid grey; border-radius: 12px; border-collapse: collapse; width: 100%; } "
+        "</style>",
+        "<style> th { background-color: #DCDCDC; padding: 10px; text-align: center; } </style>",
+        "<style> th.procedure { font-weight: bold; } </style>",
+        "<style> th.scenario1 { background-color: #DCDCDC; color: white; padding: 10px; } </style>",
+        "<style> th.scenario2 { background-color: #DCDCDC; color: white; padding: 10px; } </style>",
+        "<style> th.scenario1 span { background-color: #1b9e77; padding: 5px 15px; border-radius: 5px; } </style>",
+        "<style> th.scenario2 span { background-color: #7570b3; padding: 5px 15px; border-radius: 5px; } </style>",
+        "<style> td.no-entry { color: #A9A9A9; } </style>",
+        "<style> th, td { border: 1px solid grey; padding: 10px; text-align: center; } </style>",
     ]
 
-    html_table = df.to_html(classes='table', escape=False, index=False)
-    html_table = ''.join(styles) + html_table
-    html_table = html_table.replace('<th>', '<th class="procedure">', 1)
-    html_table = html_table.replace('<th>Szenario 1</th>', '<th class="scenario1"><span>Szenario 1</span></th>')
-    html_table = html_table.replace('<th>Szenario 2</th>', '<th class="scenario2"><span>Szenario 2</span></th>')
-    html_table = html_table.replace('<td>nicht ausgewählt</td>', '<td class="no-entry">nicht ausgewählt</td>')
-    html_table = html_table.replace('<table ', '<table style="border-radius: 12px;" ')
-    return html_table
+    html_table = df.to_html(classes="table", escape=False, index=False)
+    html_table = "".join(styles) + html_table
+    html_table = html_table.replace("<th>", '<th class="procedure">', 1)
+    html_table = html_table.replace(
+        "<th>Szenario 1</th>",
+        '<th class="scenario1"><span>Szenario 1</span></th>',
+    )
+    html_table = html_table.replace(
+        "<th>Szenario 2</th>",
+        '<th class="scenario2"><span>Szenario 2</span></th>',
+    )
+    html_table = html_table.replace(
+        "<td>nicht ausgewählt</td>",
+        '<td class="no-entry">nicht ausgewählt</td>',
+    )
+    return html_table.replace("<table ", '<table style="border-radius: 12px;" ')
