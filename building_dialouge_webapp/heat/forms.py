@@ -1,4 +1,3 @@
-import ast
 import json
 
 from django import forms
@@ -7,8 +6,7 @@ from django.core.validators import MinValueValidator
 
 
 class ValidationForm(forms.Form):
-    def __init__(self, *args, request=None, **kwargs):
-        self.request = request
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         with open("building_dialouge_webapp/static/json/validation.json") as file:  # noqa: PTH123
@@ -16,12 +14,6 @@ class ValidationForm(forms.Form):
             form_rules = dynamic_rules.get(self.__class__.__name__, {})
         if form_rules:
             for field_name, rules in form_rules.items():
-                if field_name == "complex":
-                    custom_validation = self.get_dynamic_validator(rules)
-                    for target_field in rules.get("target_fields", []):
-                        if target_field in self.fields:
-                            self.fields[target_field].validators.append(custom_validation)
-
                 if field_name in self.fields:
                     field = self.fields[field_name]
                     for rule, value in rules.items():
@@ -32,39 +24,6 @@ class ValidationForm(forms.Form):
                         elif rule == "max_value":
                             field.widget.attrs["max"] = value
                             field.validators.append(MaxValueValidator(value))
-
-    def get_dynamic_validator(self, rules):
-        """
-        Generates a dynamic validation function based on the rules.
-        Is called through validator when the corresponding field is validated.
-        """
-
-        def dynamic_validator(value):
-            session_data = self.request.session.get("django_htmx_flow", {})
-            value1_key = rules.get("value1")
-            value1 = session_data.get(value1_key)
-
-            # Retrieve from the field being validated, needed inside condition
-            value2 = value  # noqa: F841
-
-            condition = rules.get("measure")
-            if value1 is not None and condition:
-                try:
-                    is_valid = ast.literal_eval(condition)
-                    if not is_valid:
-                        self.raise_validation_error(rules)
-                except (SyntaxError, ValueError) as err:
-                    self.raise_validation_error(rules, error=err)
-
-        return dynamic_validator
-
-    @staticmethod
-    def raise_validation_error(rules, error=None):
-        """Handles raising a validation error."""
-        message = rules.get("message", "Invalid input based on dynamic validation.")
-        if error:
-            message = f"Error in validation condition: {error}"
-        raise forms.ValidationError(message)
 
 
 class BuildingTypeForm(forms.Form):
@@ -169,8 +128,6 @@ class CellarInsulationYearForm(forms.Form):
     cellar_insulation_year = forms.IntegerField(
         label="cellar_insulation_year",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,  # aktuelles Jahr per python bekommen?
-        min_value=1850,
     )
 
 
@@ -435,14 +392,10 @@ class WindowDetailsForm(forms.Form):
         label="",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         required=False,
-        max_value=2030,
-        min_value=1850,
     )
     window_share = forms.IntegerField(
         label="prozentualer Anteil (bei mehreren Typen)",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=100,
-        min_value=0,
     )
 
     def clean(self):
@@ -487,8 +440,6 @@ class FacadeInsulationYearForm(forms.Form):
     facade_construction_year = forms.IntegerField(
         label="Jahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,
-        min_value=1850,
     )
 
 
@@ -496,8 +447,6 @@ class HeatingForm(forms.Form):
     heating_system_construction_year = forms.IntegerField(
         label="Baujahr Heizung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,
-        min_value=1850,
     )
     condensing_boiler_exists = forms.ChoiceField(
         label="Brennwerttechnik vorhanden?",
@@ -559,8 +508,6 @@ class PVSystemDetailsForm(forms.Form):
     pv_construction_year = forms.IntegerField(
         label="Baujahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,
-        min_value=1850,
     )
     pv_capacity = forms.IntegerField(
         label="Leistung in kWp",
@@ -597,8 +544,6 @@ class VentilationSystemYearForm(forms.Form):
     ventilation_system_construction_year = forms.IntegerField(
         label="Baujahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,
-        min_value=1850,
     )
 
 
