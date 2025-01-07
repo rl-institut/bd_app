@@ -270,23 +270,28 @@ class FormState(TemplateState):
         self,
         flow: "Flow",
         name: str,
-        form_class: type[Form],
+        form_class: type[forms.ValidationForm],
         template_name: str | None = None,
         label: str | None = None,
     ):
         super().__init__(flow, name, template_name, label)
         self.form_class = form_class
 
+    def _init_form(self, data: dict[str, Any] | None = None) -> Form:
+        if "request" in self.form_class.__init__.__code__.co_varnames:
+            return self.form_class(data, prefix=self.flow.prefix, request=self.flow.request)
+        return self.form_class(data, prefix=self.flow.prefix)
+
     def _render_form(self, data):
         context = self.get_context_data()
         if self.template_name is None:
             csrf_token = csrf(self.flow.request)["csrf_token"]
-            form_instance = self.form_class(data, prefix=self.flow.prefix, request=self.flow.request)
+            form_instance = self._init_form(data)
             rendered_form = (
                 f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">\n {form_instance.as_div()}'
             )
             return {self.name: HTMLStateResponse(rendered_form)}
-        form_instance = self.form_class(data, prefix=self.flow.prefix, request=self.flow.request)
+        form_instance = self._init_form(data)
         context["form"] = form_instance
         return {
             self.name: HTMLStateResponse(
@@ -313,11 +318,7 @@ class FormState(TemplateState):
         """Stores each form field's input value to the session."""
         if self.flow.request.method == "POST":
             session_data = self.flow.request.session.get("django_htmx_flow", {})
-            form_instance = self.form_class(
-                self.flow.request.POST,
-                prefix=self.flow.prefix,
-                request=self.flow.request,
-            )
+            form_instance = self._init_form(self.flow.request.POST)
             if form_instance.is_valid():
                 form_data = form_instance.cleaned_data
                 for field_name, value in form_data.items():
@@ -329,7 +330,7 @@ class FormState(TemplateState):
     def remove_state(self):
         """Removes each form field's stored value from the session."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        form_instance = self.form_class(prefix=self.flow.prefix, request=self.flow.request)
+        form_instance = self._init_form()
         for field in form_instance.fields:
             key = field if self.flow.prefix is None else f"{self.flow.prefix}-{field}"
             if key in session_data:
@@ -344,7 +345,7 @@ class FormState(TemplateState):
             field_name if self.flow.prefix is None else f"{self.flow.prefix}-{field_name}"
             for field_name, field in self.form_class.base_fields.items()
         ]
-        form = self.form_class(self.flow.request.POST, prefix=self.flow.prefix, request=self.flow.request)
+        form = self._init_form(self.flow.request.POST)
 
         if not form.is_valid():
             if any(field in required_fields for field in self.flow.request.POST):
@@ -376,7 +377,7 @@ class FormState(TemplateState):
     def data(self) -> dict[str, Any]:
         """Return cleaned data of the form with data from the session."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        form = self.form_class(session_data, prefix=self.flow.prefix, request=self.flow.request)
+        form = self._init_form(session_data)
         if form.is_valid():
             return form.cleaned_data
         error_msg = f"Invalid data in flow '{self.name}': {form.errors}."
