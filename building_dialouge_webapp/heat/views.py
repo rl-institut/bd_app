@@ -12,6 +12,7 @@ from building_dialouge_webapp.heat.flows import ConsumptionInputFlow
 from building_dialouge_webapp.heat.flows import RenovationRequestFlow
 
 from . import forms
+from . import tables
 from .navigation import SidebarNavigationMixin
 
 SCENARIO_MAX = 3
@@ -459,37 +460,24 @@ class Results(SidebarNavigationMixin, TemplateView):
         {html_scenario2}
         """
 
-        """
-        # tabledata = {
-        #     "Maßnahme": [
-        #         "Heiztechnologie wechseln",
-        #         "Fassade sanieren",
-        #         "Dach sanieren",
-        #         "Fenster austauschen",
-        #         "Kellerdecke dämmen",
-        #     ],
-        #     "Szenario 1": [
-        #         -50,
-        #         -50,
-        #         "nicht ausgewählt",
-        #         "nicht ausgewählt",
-        #         "nicht ausgewählt",
-        #     ],
-        #     "Szenario 2": [-88, -50, -45, "nicht ausgewählt", "nicht ausgewählt"],
-        # }
-        # df = pd.DataFrame(tabledata)
-
-        # Generierte zweite Tabelle
-        # measures_table = style_table(df)
-
-        # Kontext hinzufügen
-        # context['measures_table'] = measures_table
-        """
-
+        consumption_data = {
+            "scenario1": {
+                "change_heating": -50,
+                "renovate_facade": -50,
+            },
+            "scenario2": {
+                "change_heating": -88,
+                "renovate_facade": -50,
+                "renovate_roof": -45,
+            },
+        }
+        consumption_table = tables.Table(consumption_data)
+        consumption_table_html = consumption_table.to_html()
         # Kontext hinzufügen
         context["html_content"] = full_html
         context["hectare_scenario1"] = 2.2
         context["hectare_scenario2"] = 1.3
+        context["consumption_table_html"] = consumption_table_html
         return context
 
 
@@ -498,36 +486,3 @@ class NextSteps(SidebarNavigationMixin, TemplateView):
     extra_context = {
         "back_url": "heat:results",
     }
-
-
-def style_table(df):
-    styles = [
-        "<style> "
-        "   .table { border: 1px solid grey; border-radius: 12px; border-collapse: collapse; width: 100%; } "
-        "</style>",
-        "<style> th { background-color: #DCDCDC; padding: 10px; text-align: center; } </style>",
-        "<style> th.procedure { font-weight: bold; } </style>",
-        "<style> th.scenario1 { background-color: #DCDCDC; color: white; padding: 10px; } </style>",
-        "<style> th.scenario2 { background-color: #DCDCDC; color: white; padding: 10px; } </style>",
-        "<style> th.scenario1 span { background-color: #1b9e77; padding: 5px 15px; border-radius: 5px; } </style>",
-        "<style> th.scenario2 span { background-color: #7570b3; padding: 5px 15px; border-radius: 5px; } </style>",
-        "<style> td.no-entry { color: #A9A9A9; } </style>",
-        "<style> th, td { border: 1px solid grey; padding: 10px; text-align: center; } </style>",
-    ]
-
-    html_table = df.to_html(classes="table", escape=False, index=False)
-    html_table = "".join(styles) + html_table
-    html_table = html_table.replace("<th>", '<th class="procedure">', 1)
-    html_table = html_table.replace(
-        "<th>Szenario 1</th>",
-        '<th class="scenario1"><span>Szenario 1</span></th>',
-    )
-    html_table = html_table.replace(
-        "<th>Szenario 2</th>",
-        '<th class="scenario2"><span>Szenario 2</span></th>',
-    )
-    html_table = html_table.replace(
-        "<td>nicht ausgewählt</td>",
-        '<td class="no-entry">nicht ausgewählt</td>',
-    )
-    return html_table.replace("<table ", '<table style="border-radius: 12px;" ')

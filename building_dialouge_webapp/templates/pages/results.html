@@ -60,46 +60,7 @@
               In dieser Übersicht sehen Sie, wie sich die von Ihnen im Szenario gewählten Sanierungsmaßnahmen und Technologiewechsel auf den Energieverbrauch Ihres Gebäudes auswirken.
               Für jede Maßnahme wird die Differenz im Energieverbrauch in kWh/m² angegeben, sodass Sie den absoluten Effekt jeder einzelnen Maßnahme nachvollziehen können.
             </p>
-            <table class="consumption_table">
-              <thead>
-                <tr>
-                  <th class="procedure">Maßnahme</th>
-                  <th>
-                    <span class="scenario1">Szenario 1</span>
-                  </th>
-                  <th>
-                    <span class="scenario2">Szenario 2</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Heiztechnologie wechseln</td>
-                  <td>-50</td>
-                  <td>-88</td>
-                </tr>
-                <tr>
-                  <td>Fassade sanieren</td>
-                  <td>-50</td>
-                  <td>-50</td>
-                </tr>
-                <tr>
-                  <td>Dach sanieren</td>
-                  <td class="no-entry">nicht ausgewählt</td>
-                  <td>-45</td>
-                </tr>
-                <tr>
-                  <td>Fenster austauschen</td>
-                  <td class="no-entry">nicht ausgewählt</td>
-                  <td class="no-entry">nicht ausgewählt</td>
-                </tr>
-                <tr>
-                  <td>Kellerdecke dämmen</td>
-                  <td class="no-entry">nicht ausgewählt</td>
-                  <td class="no-entry">nicht ausgewählt</td>
-                </tr>
-              </tbody>
-            </table>
+            {{ consumption_table_html|safe }}
           </div>
         </div>
       </div>
