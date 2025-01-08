@@ -186,7 +186,6 @@ class IntroRenovation(SidebarNavigationMixin, TemplateView):
     extra_context = {
         "back_url": "heat:ventilation_system",
         "next_url": "heat:renovation_request",
-        "next_kwargs": "scenario1",
     }
 
 
@@ -194,7 +193,7 @@ def renovation_scenario(request, scenario=None):
     def get_new_scenario():
         """Goes through scenarios and checks if they have finished."""
         scenario_id = 1
-        while scenario_id <= SCENARIO_MAX:
+        while scenario_id < SCENARIO_MAX:
             flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
             if not flow.finished(request):
                 break
