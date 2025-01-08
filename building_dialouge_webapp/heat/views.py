@@ -194,16 +194,6 @@ class IntroRenovation(SidebarNavigationMixin, TemplateView):
 
 
 def renovation_scenario(request, scenario=None):
-    def get_existing_scenarios():
-        """Goes through scenarios and returns all that have finished"""
-        existing_scenarios = []
-        scenario_id = 1
-        while scenario_id <= SCENARIO_MAX:
-            flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
-            if flow.finished(request):
-                existing_scenarios.append(f"scenario{scenario_id}")
-            scenario_id += 1
-
     def get_new_scenario():
         """Goes through scenarios and checks if they have finished."""
         scenario_id = 1
@@ -216,16 +206,16 @@ def renovation_scenario(request, scenario=None):
 
     # Needed to adapt URL via redirect if necessary
     scenario_changed = scenario is None or scenario == "new_scenario"
-    if scenario is None:
-        existing_scenarios = get_existing_scenarios()
-        # If no scenarios exist, start with "scenario1"
-        scenario = existing_scenarios[0] if existing_scenarios else "scenario1"
-    scenario = get_new_scenario() if scenario == "new_scenario" else scenario
 
-    # Check if scenario ID is lower than max scenarios
-    scenario_index = int(scenario[8:])
-    if scenario_index > SCENARIO_MAX:
-        return JsonResponse({"error": "Maximum number of scenarios reached."}, status=400)
+    # scenario is none when renovatio_request first called or when opened via back-button
+    if scenario is None:
+        scenario = get_new_scenario()
+    elif scenario == "new_scenario":
+        scenario = get_new_scenario()
+        # Check if scenario ID is lower than max scenarios
+        scenario_index = int(scenario[8:])
+        if scenario_index > SCENARIO_MAX:
+            return JsonResponse({"error": "Maximum number of scenarios reached."}, status=400)
 
     if scenario_changed:
         # If we return flow.dispatch(prefix=scenario), URL is not changed!
