@@ -341,7 +341,15 @@ class RoofUsageFutureForm(forms.Form):
 class RoofInsulationForm(forms.Form):
     roof_insulation_exists = forms.ChoiceField(
         label="roof_insulation_exists",
-        choices=[(True, "Ja"), (False, "Nein")],
+        choices=[("yes", "Ja"), ("no", "Nein"), ("unknown", "Unbekannt")],
+    )
+
+
+class RoofInsulationYearForm(forms.Form):
+    roof_insulation_year = forms.IntegerField(
+        label="Jahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
     )
 
 

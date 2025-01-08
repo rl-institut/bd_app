@@ -797,7 +797,9 @@ class RoofFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/roof.html"
     extra_context = {
         "back_url": "heat:home",
-        "next_includes": "#roof_type,#roof_details,#roof_usage_now,#roof_usage_future,#roof_insulation",
+        "next_includes": (
+            "#roof_type,#roof_details,#roof_usage_now,#roof_usage_future,#roof_insulation,#roof_insulation_year"
+        ),
     }
 
     def __init__(self):
@@ -837,6 +839,11 @@ class RoofFlow(SidebarNavigationMixin, Flow):
             self,
             name="roof_insulation",
             form_class=forms.RoofInsulationForm,
+        ).transition(Switch("roof_insulation_exists").case("yes", "roof_insulation_year").default("end"))
+        self.roof_insulation_year = FormState(
+            self,
+            name="roof_insulation_year",
+            form_class=forms.RoofInsulationYearForm,
         ).transition(
             Next("end"),
         )
