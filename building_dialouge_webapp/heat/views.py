@@ -190,21 +190,11 @@ class IntroRenovation(SidebarNavigationMixin, TemplateView):
 
 
 def renovation_scenario(request, scenario=None):
-    def get_new_scenario():
-        """Goes through scenarios and checks if they have finished."""
-        scenario_id = 1
-        while scenario_id < SCENARIO_MAX:
-            flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
-            if not flow.finished(request):
-                break
-            scenario_id += 1
-        return f"scenario{scenario_id}"
-
     # Needed to adapt URL via redirect if necessary
     scenario_changed = False
     # scenario is none when renovation_request first called or when opened via back-button
     if scenario is None or scenario == "new_scenario":
-        scenario = get_new_scenario()
+        scenario = get_new_scenario(request)
         scenario_changed = True
     # Check if scenario ID is lower than max scenarios
     scenario_index = int(scenario[8:])
@@ -218,6 +208,17 @@ def renovation_scenario(request, scenario=None):
     flow = RenovationRequestFlow(prefix=scenario)
     flow.extra_context.update({"scenario_boxes": get_all_scenario_data(request)})
     return flow.dispatch(request)
+
+
+def get_new_scenario(request):
+    """Goes through scenarios and checks if they have finished."""
+    scenario_id = 1
+    while scenario_id < SCENARIO_MAX:
+        flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+        if not flow.finished(request):
+            break
+        scenario_id += 1
+    return f"scenario{scenario_id}"
 
 
 def delete_scenario(request):
@@ -291,6 +292,7 @@ class RenovationOverview(SidebarNavigationMixin, TemplateView):
         context["back_url"] = "heat:renovation_request"
         context["next_url"] = "heat:financial_support"
         context["scenario_boxes"] = get_all_scenario_data(self.request)
+        context["max_reached"] = int(get_new_scenario(self.request)[8:]) >= SCENARIO_MAX
         return context
 
 
