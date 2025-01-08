@@ -51,20 +51,10 @@ class DeadEndHeating(TemplateView):
 
 
 def consumption_year(request, year=None):
-    def get_existing_years():
-        """Goes through years and returns all that have finished"""
-        existing_years = []
-        year_id = 1
-        while year_id <= YEAR_MAX:
-            flow = ConsumptionInputFlow(prefix=f"year{year_id}")
-            if flow.finished(request):
-                existing_years.append(f"year{year_id}")
-            year_id += 1
-
     def get_new_year():
         """Goes through years and checks if they have finished."""
         year_id = 1
-        while year_id <= YEAR_MAX:
+        while year_id < YEAR_MAX:
             flow = ConsumptionInputFlow(prefix=f"year{year_id}")
             if not flow.finished(request):
                 break
@@ -73,16 +63,16 @@ def consumption_year(request, year=None):
 
     # Needed to adapt URL via redirect if necessary
     year_changed = year is None or year == "new_year"
-    if year is None:
-        existing_years = get_existing_years()
-        # If no years exist, start with "year1"
-        year = existing_years[0] if existing_years else "year1"
-    year = get_new_year() if year == "new_year" else year
 
-    # Check if year ID is lower than max years
-    year_index = int(year[4:])
-    if year_index > YEAR_MAX:
-        return JsonResponse({"error": "Maximum number of years reached."}, status=400)
+    # year is none when consumption_input first called or when opened via navigation sidebar or back-button
+    if year is None:
+        year = get_new_year()
+    elif year == "new_year":
+        year = get_new_year()
+        # Check if year ID is lower than max years
+        year_index = int(year[4:])
+        if year_index > YEAR_MAX:
+            return JsonResponse({"error": "Maximum number of years reached."}, status=400)
 
     if year_changed:
         # If we return flow.dispatch(prefix=year), URL is not changed!
