@@ -634,14 +634,14 @@ class RenovationRequestForm(forms.Form):
         label="Fassade sanieren",
         required=False,
     )
-    facade_renovation_details = forms.MultipleChoiceField(
+    facade_renovation_details = forms.ChoiceField(
         label="",
         choices=[
             ("paint", "streichen"),
             ("plaster", "verputzen"),
             ("insulate", "dämmen"),
         ],
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.RadioSelect,
         required=False,
     )
     roof_renovation = forms.BooleanField(
