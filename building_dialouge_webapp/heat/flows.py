@@ -1,13 +1,19 @@
+from __future__ import annotations
+
 from abc import abstractmethod
-from collections.abc import Callable
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from django.forms import Form
+    from django.template import Template
+
 from enum import IntEnum
 from typing import Any
-from typing import Optional
 
-from django.forms import Form
 from django.http import HttpResponse
 from django.shortcuts import reverse
-from django.template import Template
 from django.template.context_processors import csrf
 from django.template.loader import get_template
 from django.views.generic import TemplateView
@@ -67,7 +73,7 @@ class State:
 
     def __init__(
         self,
-        flow: "Flow",
+        flow: Flow,
         name: str,
         label: str | None = None,
     ):
@@ -77,13 +83,13 @@ class State:
         self._transition = None
         super().__init__()
 
-    def transition(self, transition: "Transition") -> "State":
+    def transition(self, transition: Transition) -> State:
         """Assigns a transition to the state and sets the flow context."""
         transition.flow = self.flow
         self._transition = transition
         return self
 
-    def next(self) -> Optional["State"]:
+    def next(self) -> State | None:
         """Determines the next state by following the current transition."""
         if self._transition is None:
             if isinstance(self.flow.end, EndState):
@@ -191,7 +197,7 @@ class EndState(State):
     Can be set explicitly or will be silently set.
     """
 
-    def __init__(self, flow: "Flow", url: str, label: str = "end"):
+    def __init__(self, flow: Flow, url: str, label: str = "end"):
         super().__init__(flow, name="", label=label)
         self.url = url
 
@@ -216,17 +222,20 @@ class EndState(State):
 
 
 class TemplateState(State):
-    extra_context = None
+    extra_context = {}
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
-        flow: "Flow",
+        flow: Flow,
         name: str,
         template_name: Template | str,
         label: str | None = None,
+        context: dict[str, Any] | None = None,
     ):
         self.template_name = template_name
         super().__init__(flow, name, label)
+        if context:
+            self.extra_context.update(context)
 
     def get_context_data(self):
         context = {}
@@ -268,7 +277,7 @@ class FormState(TemplateState):
 
     def __init__(  # noqa: PLR0913
         self,
-        flow: "Flow",
+        flow: Flow,
         name: str,
         form_class: type[Form],
         template_name: str | None = None,
@@ -384,7 +393,7 @@ class FormState(TemplateState):
 class FormInfoState(FormState):
     def __init__(  # noqa: PLR0913
         self,
-        flow: "Flow",
+        flow: Flow,
         name: str,
         form_class: type[Form],
         info_text: str | dict[str, str | tuple[str, str]],
@@ -429,10 +438,10 @@ class Transition:
         self.flow = None
 
     @abstractmethod
-    def follow(self, state: "State") -> "State":
+    def follow(self, state: State) -> State:
         """Must be implemented by subclasses."""
 
-    def _state(self, state_name) -> "State":
+    def _state(self, state_name) -> State:
         return getattr(self.flow, state_name)
 
 
@@ -441,7 +450,7 @@ class Next(Transition):
         super().__init__()
         self.next_state = next_state
 
-    def follow(self, state: "State") -> "State":
+    def follow(self, state: State) -> State:
         return self._state(self.next_state)
 
 
@@ -457,15 +466,15 @@ class Switch(Transition):
         self.lookup = lookup
         self.cases = {}
 
-    def case(self, value: Any, state_name: str) -> "Switch":
+    def case(self, value: Any, state_name: str) -> Switch:
         self.cases[value] = state_name
         return self
 
-    def default(self, state_name: str) -> "Switch":
+    def default(self, state_name: str) -> Switch:
         self.cases["_default"] = state_name
         return self
 
-    def follow(self, state: "State") -> "State":
+    def follow(self, state: State) -> State:
         result = (
             self.lookup(state)
             if self.lookup is not None and not isinstance(self.lookup, str)
@@ -478,7 +487,7 @@ class Switch(Transition):
         error_msg = f"No option for result '{result}' found, no default given."
         raise FlowError(error_msg)
 
-    def default_switch_fct(self, state: "State") -> Any:
+    def default_switch_fct(self, state: State) -> Any:
         key = self.lookup if isinstance(self.lookup, str) else state.name
         key = key if self.flow.prefix is None else f"{self.flow.prefix}-{key}"
         session_data = self.flow.request.session.get("django_htmx_flow", {})
@@ -1097,7 +1106,7 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
             self,
             name="renovation_details",
             form_class=forms.RenovationRequestForm,
-            info_text={"next_button": ("Speichern", "Weiter")},
+            info_text={"next_button_text": ("Speichern", "Weiter")},
         ).transition(
             Next("end"),
         )
@@ -1115,6 +1124,7 @@ class FinancialSupporFlow(SidebarNavigationMixin, Flow):
     extra_context = {
         "back_url": "heat:renovation_request",
         "next_includes": "#financial_support",
+        "next_disabled": True,
         "back_kwargs": "scenario1",
     }
 
@@ -1126,7 +1136,12 @@ class FinancialSupporFlow(SidebarNavigationMixin, Flow):
             form_class=forms.FinancialSupportForm,
             template_name="partials/financial_support_help.html",
         ).transition(
-            Next("end"),
+            Next("stop"),
         )
-
+        self.stop = TemplateState(
+            self,
+            "next_button",
+            "partials/next_button.html",
+            context={"next_url": "heat:results"},
+        ).transition(Next("end"))
         self.end = EndState(self, url="heat:results")
