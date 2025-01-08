@@ -223,21 +223,6 @@ def get_new_scenario(request):
     return f"scenario{scenario_id}"
 
 
-def delete_scenario(request):
-    """Delete the selected scenario"""
-    scenario_id = request.POST["delete_scenario"][:9]
-
-    # get only the "name" part of the url for reversing
-    current_url = request.headers.get("hx-current-url")
-    parsed_url = urlparse(current_url)
-    url_path = parsed_url.path.strip("/").split("/")
-    url_name = url_path[-2] if len(url_path) > 1 else url_path[0]
-
-    flow = RenovationRequestFlow(prefix=scenario_id)
-    flow.reset(request)
-    return HttpResponseClientRedirect(reverse(f"heat:{url_name}"))
-
-
 def get_all_scenario_data(request):
     """Goes through scenarios and gets their data if finished."""
     scenario_data_list = []
