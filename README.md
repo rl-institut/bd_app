@@ -226,3 +226,19 @@ add the Flow to the url like this:
 ```
     path("roof/", flows.RoofFlow.as_view(), name="roof"),
 ```
+
+## Add dependencies
+
+This can be done in `requirements/` folder by adding dependency to related *.in file and compile/lock dependencies.
+Via `uv` (you must install uv first - recommended!):
+```shell
+uv pip compile -o requirements/base.txt requirements/base.in
+uv pip compile -o requirements/local.txt requirements/local.in
+uv pip compile -o requirements/production.txt requirements/production.in
+```
+or via `pip-compile` (you must install pip-tools first):
+```shell
+pip-compile -o requirements/base.txt requirements/base.in
+pip-compile -o requirements/local.txt requirements/local.in
+pip-compile -o requirements/production.txt requirements/production.in
+```
