@@ -61,18 +61,15 @@ def consumption_year(request, year=None):
             year_id += 1
         return f"year{year_id}"
 
-    # Needed to adapt URL via redirect if necessary
-    year_changed = year is None or year == "new_year"
-
     # year is none when consumption_input first called or when opened via navigation sidebar or back-button
-    if year is None:
+    year_changed = False
+    if year is None or year == "new_year":
         year = get_new_year()
-    elif year == "new_year":
-        year = get_new_year()
-        # Check if year ID is lower than max years
-        year_index = int(year[4:])
-        if year_index > YEAR_MAX:
-            return JsonResponse({"error": "Maximum number of years reached."}, status=400)
+        year_changed = True
+    # Check if year ID is lower than max years
+    year_index = int(year[4:])
+    if year_index > YEAR_MAX:
+        return JsonResponse({"error": "Maximum number of years reached."}, status=400)
 
     if year_changed:
         # If we return flow.dispatch(prefix=year), URL is not changed!
@@ -205,17 +202,15 @@ def renovation_scenario(request, scenario=None):
         return f"scenario{scenario_id}"
 
     # Needed to adapt URL via redirect if necessary
-    scenario_changed = scenario is None or scenario == "new_scenario"
-
-    # scenario is none when renovatio_request first called or when opened via back-button
-    if scenario is None:
+    scenario_changed = False
+    # scenario is none when renovation_request first called or when opened via back-button
+    if scenario is None or scenario == "new_scenario":
         scenario = get_new_scenario()
-    elif scenario == "new_scenario":
-        scenario = get_new_scenario()
-        # Check if scenario ID is lower than max scenarios
-        scenario_index = int(scenario[8:])
-        if scenario_index > SCENARIO_MAX:
-            return JsonResponse({"error": "Maximum number of scenarios reached."}, status=400)
+        scenario_changed = True
+    # Check if scenario ID is lower than max scenarios
+    scenario_index = int(scenario[8:])
+    if scenario_index > SCENARIO_MAX:
+        return JsonResponse({"error": "Maximum number of scenarios reached."}, status=400)
 
     if scenario_changed:
         # If we return flow.dispatch(prefix=scenario), URL is not changed!
