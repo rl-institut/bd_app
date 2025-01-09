@@ -25,7 +25,6 @@ body {
   border: 5px solid #e3e3e3;
 }
 
-/* Style for the square container */
 .accordion-button::before {
   content: '';
   position: absolute;
@@ -40,7 +39,6 @@ body {
   z-index: 0;
 }
 
-/* Triangle inside the square */
 .accordion-button::after {
   content: '';
   position: absolute;
@@ -55,7 +53,6 @@ body {
   transition: transform 0.3s ease;
 }
 
-/* Rotate the triangle when expanded */
 .accordion-button:not(.collapsed)::after {
   transform: translateY(-50%) rotate(0deg);
 }
@@ -67,7 +64,6 @@ body {
   border-bottom: none;
 }
 
-/* Remove blue border on focus */
 .accordion-button:focus {
   outline: none;
   box-shadow: none;
@@ -81,114 +77,185 @@ body {
 /* --------------------------------------------- */
 /* TABLE-STYLES                                  */
 /* --------------------------------------------- */
-
 table.consumption_table,
-table.cost_sum_table {
+table.investment_table {
   border: 1px solid #b9b9b9;
-  border-radius: 12px;  /* Abgerundete Ecken */
+  border-radius: 12px;  */
   width: 100%;
   margin: 0 auto;
-  border-collapse: collapse; /* Falls gewünscht */
+  border-collapse: collapse;
 }
 
-/* Grundlegende Tabellenzellen */
 table.consumption_table th,
 table.consumption_table td,
-table.cost_sum_table th,
-table.cost_sum_table td {
-  border: 1px solid #b9b9b9; /* Einfache Linienfarbe */
+table.investment_table th,
+table.investment_table td {
+  border: 1px solid #b9b9b9;
   padding: 10px;
-  vertical-align: middle; /* Vertikale Zentrierung */
+  vertical-align: middle;
 }
 
-/* Alle th-Elemente */
 table.consumption_table th,
-table.cost_sum_table th {
-  background-color: #f0f0f0; /* Einheitlicher grauer Hintergrund */
+table.investment_table th {
+  background-color: #f0f0f0;
   font-weight: bold;
-  text-align: left; /* Standard links ausgerichtet */
-  padding-left: 10px; /* Platz links für Text */
-  color: #000;        /* Schwarzer Text als Standard */
-}
-.scenario1 {
-  background-color: #1b9e77; /* Hintergrundfarbe Szenario 1 */
-  color: #fff; /* Weißer Text */
-  padding: 5px;
-}
-.scenario2 {
-  background-color: #7570b3; /* Hintergrundfarbe Szenario 1 */
-  color: #fff; /* Weißer Text */
-  padding: 5px;
-}
-/* Normale Zellen (td) */
-table.consumption_table td {
-  text-align: left; /* Standard links ausgerichtet */
+  text-align: left;  */
+  padding-left: 10px;
+  color: #000;
 }
 
-/* Grau gefärbter Text für nicht ausgewählte Einträge */
-table.consumption_table td.no-entry {
-  color: #b9b9b9; /* Grauer Text */
+.scenario1 {
+  background-color: #1b9e77;
+  color: #fff;/
+  padding: 5px;
 }
-.cost_sum_table th.scenario1 span {
+
+.scenario2 {
+  background-color: #7570b3;
+  color: #fff;
+  padding: 5px;
+}
+
+table.consumption_table td {
+}
+
+table.consumption_table td.no-entry {
+  color: #b9b9b9;
+}
+
+.investment_table th.scenario1 span,
+.consumption_table th.scenario1 span {
   background-color: #1b9e77;
   padding: 5px 15px;
-  }
-.cost_sum_table th.scenario2 span {
+}
+
+.investment_table th.scenario2 span,
+.consumption_table th.scenario2 span{
   background-color: #7570b3;
   padding: 5px 15px;
-  }
-.cost_sum_table th.scenario3 span
-  { background-color: #ff9900;
+}
+
+.investment_table th.scenario3 span,
+.consumption_table th.scenario3 span {
+  background-color: #ff9900;
   padding: 5px 15px;
-  }
-.cost_sum_table td.no-entry {
+}
+.consumption_table td.no-entry {
   color: #A9A9A9;
   }
-.cost_sum_table th, td {
+
+.investment_table th, td {
   border: 1px solid grey;
   padding: 10px;
   text-align: center;
   }
-.cost_sum_table tr:last-child td {
+
+.investment_table tr:last-child td {
   font-weight: bold;
   }
+
 .maintenance {
   background-color: #fdb462;
   font-weight: bold;
   padding: 5px;
   }
+
 .renovation {
   background-color: #80b1d3;
   font-weight: bold;
   padding: 5px;
   }
+
 .electricity {
   background-color: #b3de69;
   font-weight: bold;
   padding: 5px;
   }
+
 .heating {
   background-color: #fb8072;
   font-weight: bold;
   padding: 5px;
   }
+
 .saving_forest {
   background-color: #f9f9f9;
   padding: 10px;
 }
+
 .saving_emission {
   background-color: #00604e;
   color: #fff;
   padding: 5px;
 }
+
 .hectare {
   font-weight: bold;
   font-size: 18px;
 }
+
 .plant_in_hand {
   position: relative;
   height: 40px;
   margin-left: 80px;
   margin-dowm: 20px;
-  z-index: 10; /* Stellt sicher, dass das SVG über anderen Inhalten liegt */
+  z-index: 10;
+}
+
+.tabs-container input[type="radio"] {
+    display: none;
+}
+
+.tabs-container .tab-label {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 10px 20px;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.tabs-container .tab-1 {
+    background-color: #1b9e77;
+}
+
+.tabs-container .tab-2 {
+    background-color: #7570b3;
+}
+
+.tab-content table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.tabs-content {
+    margin-top: 20px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content table th:first-child,
+.tab-content table td:first-child {
+  width: 80%;
+  text-align: left;
+  vertical-align: top;
+  word-wrap: break-word;
+}
+
+.tab-content table th:last-child,
+.tab-content table td:last-child {
+  width: 20%;
+  text-align: right;
+  vertical-align: middle;
+}
+
+#tab_scenario1:checked ~ .tabs-content .tab_scenario1 {
+    display: block;
+}
+
+#tab_scenario2:checked ~ .tabs-content .tab_scenario2 {
+    display: block;
 }

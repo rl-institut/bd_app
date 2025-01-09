@@ -83,104 +83,87 @@
             Diese Übersicht unterstützt Sie dabei, die finanziellen Auswirkungen Ihrer Entscheidungen besser zu erfassen und zu planen.
             <br />
             <br />
-            <table border="1" class="cost_sum_table">
-              <thead>
-                <tr>
-                  <th class="procedure">Maßnahme</th>
-                  <th>
-                    <span class="scenario1">Szenario 1</span>
-                  </th>
-                  <th>
-                    <span class="scenario2">Szenario 2</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Investitionskosten</td>
-                  <td>95.800 €</td>
-                  <td>167.280 €</td>
-                </tr>
-                <tr>
-                  <td>
-                    Summe Zuschüsse
-                    <br />
-                    (ohne Rückzahlung)
-                  </td>
-                  <td>-138.000 €</td>
-                  <td>-25.090 €</td>
-                </tr>
-                <tr>
-                  <td>Summe</td>
-                  <td>-42.200 €</td>
-                  <td>142.190 €</td>
-                </tr>
-              </tbody>
-            </table>
+            {{ investment_table_html|safe }}
             <br />
             Eine genauere Aufschlüsselung der Kosten für jede einzelne Sanierungsmaßnahme, sowie für die verschidenen Posten innerhalb eines Technologiewechsels finden Sie hier.
             Zusätzlich werden die von Ihnen ausgewählten Zuschüsse aufgeführt.
             Diese Übersicht gibt Ihnen eine fundierte Vorab-Einschätzung der finanziellen Aspekte, die Ihnen bei der Planung und Beratung für Ihre Maßnahmen nützlich sein wird.
             <br />
             <br />
-            {{ html_content|safe }}
-            <br />
-            Die aufgeführten Kosten enthalten auch jene, die über den betrachteten Zeitraum sowieso angefallen wären - die <span class="maintenance">Instandhaltungskosten</span>.
-            Denn um Ihr Gebäude instand zu halten, sind in jedem Fall Aufwendungen - z.B. für Reüeraturen und Wartungsarbeiten - nötig.
-            Wenn Sie also in absehbarer Zeit ohnehin mit solchen Kosten rechnen, kann sich eine <span class="renovation">Sanierung</span> umso mehr lohnen.
-            <br />
-            <br />
-            <strong>placeholder for chart "Zusammensetzung der Investitionskosten"</strong>
-            <br />
-            <br />
-            Ihre jährlichen Energiekosten für <span class="electricity">Strom</span> und <span class="heating">Heizung & Warmwasser</span> und Ihr Einsparpotenzial:
-            <br />
-            <br />
-            <strong>placeholder for chart "Energiekosten pro Jahr in €"</strong>
-            <br />
-            <br />
+            <div class="tabs-container">
+              {# 1) Radio-Buttons + Labels #}
+              {% for scenario in scenarios %}
+                <input type="radio"
+                       id="{{ scenario.id }}"
+                       name="tabs"
+                       class="tab-input"
+                       {% if forloop.first %}checked{% endif %} />
+                <label for="{{ scenario.id }}" class="tab-label tab-{{ scenario.index }}">{{ scenario.label }}</label>
+              {% endfor %}
+              {# 2) Inhalt der Tabs #}
+              <div class="tabs-content">
+                {% for scenario in scenarios %}
+                  <div class="tab-content {{ scenario.id }}">{{ scenario.table_html|safe }}</div>
+                {% endfor %}
+              </div>
+              <br />
+              Die aufgeführten Kosten enthalten auch jene, die über den betrachteten Zeitraum sowieso angefallen wären - die <span class="maintenance">Instandhaltungskosten</span>.
+              Denn um Ihr Gebäude instand zu halten, sind in jedem Fall Aufwendungen - z.B. für Reüeraturen und Wartungsarbeiten - nötig.
+              Wenn Sie also in absehbarer Zeit ohnehin mit solchen Kosten rechnen, kann sich eine <span class="renovation">Sanierung</span> umso mehr lohnen.
+              <br />
+              <br />
+              <strong>placeholder for chart "Zusammensetzung der Investitionskosten"</strong>
+              <br />
+              <br />
+              Ihre jährlichen Energiekosten für <span class="electricity">Strom</span> und <span class="heating">Heizung & Warmwasser</span> und Ihr Einsparpotenzial:
+              <br />
+              <br />
+              <strong>placeholder for chart "Energiekosten pro Jahr in €"</strong>
+              <br />
+              <br />
+            </div>
           </div>
         </div>
-      </div>
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="panelsStayOpen-headingThree">
-          <button class="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#panelsStayOpen-collapseThree"
-                  aria-expanded="false"
-                  aria-controls="panelsStayOpen-collapseThree">Emissionen</button>
-        </h2>
-        <div id="panelsStayOpen-collapseThree"
-             class="accordion-collapse collapse"
-             aria-labelledby="panelsStayOpen-headingThree">
-          <div class="accordion-body">
-            Je nach eingesetzter Heizung und Sanierungsmaßnahmen fallen unterschiedlich hohe CO<sub>2</sub>-Emissionen an.
-            <br />
-            <br />
-            Für jede Tonne emittiertes CO<sub>2</sub> fallen seit 2021 Kosten an.
-            Diese Kosten werden steigen und einen maßgeblichen Teil der laufenden Energiekosten darstellen:
-            <br />
-            <br />
-            <strong>placeholder for chart "CO<sub>2</sub>-Kosten in € pro Jahr"</strong>
-            <br />
-            <br />
-            <div class="saving_forest">
-              Sehr gut, die Maßnahmen in deinen
-              <br />
-              Szenarien helfen, <span class="saving_emission">Emissionen zu vermeiden.</span>
-              <object class="plant_in_hand"
-                      type="image/svg+xml"
-                      data="/static/images/svg/plant_in_hand.svg"></object>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+            <button class="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseThree"
+                    aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseThree">Emissionen</button>
+          </h2>
+          <div id="panelsStayOpen-collapseThree"
+               class="accordion-collapse collapse"
+               aria-labelledby="panelsStayOpen-headingThree">
+            <div class="accordion-body">
+              Je nach eingesetzter Heizung und Sanierungsmaßnahmen fallen unterschiedlich hohe CO<sub>2</sub>-Emissionen an.
               <br />
               <br />
-              Zur Einordnung:
+              Für jede Tonne emittiertes CO<sub>2</sub> fallen seit 2021 Kosten an.
+              Diese Kosten werden steigen und einen maßgeblichen Teil der laufenden Energiekosten darstellen:
               <br />
               <br />
-              <span class="hectare">{{ hectare_scenario1 }} Hektar</span> zusätzlicher Wald wäre nötig, um die Einsparungen in <span class="scenario1">Szenario 1</span> zu erreichen.
+              <strong>placeholder for chart "CO<sub>2</sub>-Kosten in € pro Jahr"</strong>
               <br />
               <br />
-              <span class="hectare">{{ hectare_scenario2 }} Hektar</span> zusätzlicher Wald wäre nötig, um die Einsparungen in <span class="scenario2">Szenario 2</span> zu erreichen.
+              <div class="saving_forest">
+                Sehr gut, die Maßnahmen in deinen
+                <br />
+                Szenarien helfen, <span class="saving_emission">Emissionen zu vermeiden.</span>
+                <object class="plant_in_hand"
+                        type="image/svg+xml"
+                        data="/static/images/svg/plant_in_hand.svg"></object>
+                <br />
+                <br />
+                Zur Einordnung:
+                <br />
+                <br />
+                <span class="hectare">{{ hectare_scenario1 }} Hektar</span> zusätzlicher Wald wäre nötig, um die Einsparungen in <span class="scenario1">Szenario 1</span> zu erreichen.
+                <br />
+                <br />
+                <span class="hectare">{{ hectare_scenario2 }} Hektar</span> zusätzlicher Wald wäre nötig, um die Einsparungen in <span class="scenario2">Szenario 2</span> zu erreichen.
+              </div>
             </div>
           </div>
         </div>
