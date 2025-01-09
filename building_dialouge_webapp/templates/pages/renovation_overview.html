@@ -16,8 +16,10 @@
       </div>
     </div>
     <div class="d-flex justify-content-between">
-      <a class="btn btn-primary"
-         href="{% url 'heat:renovation_request' scenario='new_scenario' %}">Weiteres Heizszenario</a>
+      <form action="{% url 'heat:renovation_request' scenario='new_scenario' %}"
+            method="get">
+        <button class="btn btn-primary" {% if max_reached %}disabled{% endif %}>Weiteres Heizszenario</button>
+      </form>
     </div>
   </section>
 {% endblock content %}

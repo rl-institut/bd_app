@@ -51,20 +51,10 @@ class DeadEndHeating(TemplateView):
 
 
 def consumption_year(request, year=None):
-    def get_new_year():
-        """Goes through years and checks if they have finished."""
-        year_id = 1
-        while year_id < YEAR_MAX:
-            flow = ConsumptionInputFlow(prefix=f"year{year_id}")
-            if not flow.finished(request):
-                break
-            year_id += 1
-        return f"year{year_id}"
-
     # year is none when consumption_input first called or when opened via navigation sidebar or back-button
     year_changed = False
     if year is None or year == "new_year":
-        year = get_new_year()
+        year = get_new_year(request)
         year_changed = True
     # Check if year ID is lower than max years
     year_index = int(year[4:])
@@ -77,6 +67,17 @@ def consumption_year(request, year=None):
     flow = ConsumptionInputFlow(prefix=year)
     flow.extra_context.update({"year_boxes": get_all_year_data(request)})
     return flow.dispatch(request)
+
+
+def get_new_year(request):
+    """Goes through years and checks if they have finished."""
+    year_id = 1
+    while year_id < YEAR_MAX:
+        flow = ConsumptionInputFlow(prefix=f"year{year_id}")
+        if not flow.finished(request):
+            break
+        year_id += 1
+    return f"year{year_id}"
 
 
 def delete_flow(request):
@@ -129,6 +130,7 @@ class ConsumptionOverview(SidebarNavigationMixin, TemplateView):
         context["back_url"] = "heat:hotwater_heating"
         context["next_url"] = "heat:consumption_result"
         context["year_boxes"] = get_all_year_data(self.request)
+        context["max_reached"] = int(get_new_year(self.request)[4:]) > YEAR_MAX
         return context
 
 
@@ -186,26 +188,15 @@ class IntroRenovation(SidebarNavigationMixin, TemplateView):
     extra_context = {
         "back_url": "heat:ventilation_system",
         "next_url": "heat:renovation_request",
-        "next_kwargs": "scenario1",
     }
 
 
 def renovation_scenario(request, scenario=None):
-    def get_new_scenario():
-        """Goes through scenarios and checks if they have finished."""
-        scenario_id = 1
-        while scenario_id <= SCENARIO_MAX:
-            flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
-            if not flow.finished(request):
-                break
-            scenario_id += 1
-        return f"scenario{scenario_id}"
-
     # Needed to adapt URL via redirect if necessary
     scenario_changed = False
     # scenario is none when renovation_request first called or when opened via back-button
     if scenario is None or scenario == "new_scenario":
-        scenario = get_new_scenario()
+        scenario = get_new_scenario(request)
         scenario_changed = True
     # Check if scenario ID is lower than max scenarios
     scenario_index = int(scenario[8:])
@@ -221,19 +212,15 @@ def renovation_scenario(request, scenario=None):
     return flow.dispatch(request)
 
 
-def delete_scenario(request):
-    """Delete the selected scenario"""
-    scenario_id = request.POST["delete_scenario"][:9]
-
-    # get only the "name" part of the url for reversing
-    current_url = request.headers.get("hx-current-url")
-    parsed_url = urlparse(current_url)
-    url_path = parsed_url.path.strip("/").split("/")
-    url_name = url_path[-2] if len(url_path) > 1 else url_path[0]
-
-    flow = RenovationRequestFlow(prefix=scenario_id)
-    flow.reset(request)
-    return HttpResponseClientRedirect(reverse(f"heat:{url_name}"))
+def get_new_scenario(request):
+    """Goes through scenarios and checks if they have finished."""
+    scenario_id = 1
+    while scenario_id < SCENARIO_MAX:
+        flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+        if not flow.finished(request):
+            break
+        scenario_id += 1
+    return f"scenario{scenario_id}"
 
 
 def get_all_scenario_data(request):
@@ -292,6 +279,7 @@ class RenovationOverview(SidebarNavigationMixin, TemplateView):
         context["back_url"] = "heat:renovation_request"
         context["next_url"] = "heat:financial_support"
         context["scenario_boxes"] = get_all_scenario_data(self.request)
+        context["max_reached"] = int(get_new_scenario(self.request)[8:]) > SCENARIO_MAX
         return context
 
 

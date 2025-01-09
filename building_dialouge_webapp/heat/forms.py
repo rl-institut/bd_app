@@ -341,7 +341,15 @@ class RoofUsageFutureForm(forms.Form):
 class RoofInsulationForm(forms.Form):
     roof_insulation_exists = forms.ChoiceField(
         label="roof_insulation_exists",
-        choices=[(True, "Ja"), (False, "Nein")],
+        choices=[("yes", "Ja"), ("no", "Nein"), ("unknown", "Unbekannt")],
+    )
+
+
+class RoofInsulationYearForm(forms.Form):
+    roof_insulation_year = forms.IntegerField(
+        label="Jahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
     )
 
 
@@ -634,14 +642,14 @@ class RenovationRequestForm(forms.Form):
         label="Fassade sanieren",
         required=False,
     )
-    facade_renovation_details = forms.MultipleChoiceField(
+    facade_renovation_details = forms.ChoiceField(
         label="",
         choices=[
             ("paint", "streichen"),
             ("plaster", "verputzen"),
             ("insulate", "dämmen"),
         ],
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.RadioSelect,
         required=False,
     )
     roof_renovation = forms.BooleanField(
