@@ -87,7 +87,19 @@ The following details how to deploy this application.
 
 See detailed [cookiecutter-django Docker documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-with-docker.html).
 
-## Installation (locally)
+## Installation
+
+### Docker
+
+Build dev container with
+
+`docker-compose -f local.yml up -d --build`
+
+or for production (requires manual creation of `.envs/.production/.django`):
+
+`docker-compose -f production.yml up -d --build`
+
+### Local
 
 1. Clone repo, setup virtual environment and install
 
@@ -150,6 +162,22 @@ python manage.py migrate
 python manage.py runserver
 ```
 
+## Add dependencies
+
+This can be done in `requirements/` folder by adding dependency to related *.in file and compile/lock dependencies.
+Via `uv` (you must install uv first - recommended!):
+```shell
+uv pip compile -o requirements/base.txt requirements/base.in
+uv pip compile -o requirements/local.txt requirements/local.in
+uv pip compile -o requirements/production.txt requirements/production.in
+```
+or via `pip-compile` (you must install pip-tools first):
+```shell
+pip-compile -o requirements/base.txt requirements/base.in
+pip-compile -o requirements/local.txt requirements/local.in
+pip-compile -o requirements/production.txt requirements/production.in
+```
+
 ## Adding new Flows
 
 ### 1. Forms
@@ -188,6 +216,7 @@ You can use these Transitions:
 
 It is important, that the name_of_the_next_state in the transition is the same as a state that you are
 declaring later ```(self.name_of_the_next_state = State(...) )```
+
 ### 3. Template
 Create a template with a fitting name: for example roof.html
 use this base structure:
