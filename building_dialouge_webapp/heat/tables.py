@@ -29,16 +29,32 @@ class Table:
     def translate_column(self, column_name):
         return self.translations.get(column_name, column_name)
 
-    def to_html(self, dataframe, title):
+    def generate_table_data(self):
+        return self.data
+
+    def to_html(self, title):
+        dataframe = pd.DataFrame(self.generate_table_data())
         html_table = dataframe.to_html(classes="table", escape=False, index=False)
         html_table = html_table.replace('<table border="1" class="dataframe table">', f'<table class="{title}">')
 
+        dataframe = pd.DataFrame(self.generate_table_data())
+        style = dataframe.style
+        style.set_table_attributes(f'class="{title}"')
+        html = style.to_html()
+
         for header, translated in self.translations.items():
-            html_table = html_table.replace(
+            html = html_table.replace(
                 f"<th>{translated}</th>",
                 f'<th class="{header}"><span>{translated}</span></th>',
             )
-        return html_table
+        return html
+
+    def generate_sum(self, dataframe):
+        sum_row = ["Summe", *dataframe.iloc[:, 1:].sum().tolist()]
+        dataframe.loc[len(dataframe)] = sum_row
+        for col in dataframe.columns[1:]:
+            dataframe[col] = dataframe[col].apply(format_currency)
+        return dataframe
 
 
 class ConsumptionTable(Table):
@@ -70,11 +86,10 @@ class ConsumptionTable(Table):
             table_data[self.translate_column(scenario)] = [
                 scenario_data.get(proc, "nicht ausgewählt") for proc in self.procedures
             ]
-        return pd.DataFrame(table_data)
+        return table_data
 
     def to_html(self, title="consumption_table"):
-        dataframe = self.generate_table_data()
-        html_table = super().to_html(dataframe, title)
+        html_table = super().to_html(title)
         return html_table.replace(
             "<td>nicht ausgewählt</td>",
             '<td class="no-entry">nicht ausgewählt</td>',
@@ -101,15 +116,14 @@ class InvestmentTable(Table):
             ]
 
         dataframe = pd.DataFrame(table_data)
-        sum_row = [self.translate_column("Summe"), *dataframe.iloc[:, 1:].sum().tolist()]
+        sum_row = ["Summe", *dataframe.iloc[:, 1:].sum().tolist()]
         dataframe.loc[len(dataframe)] = sum_row
         for col in dataframe.columns[1:]:
             dataframe[col] = dataframe[col].apply(format_currency)
         return dataframe
 
     def to_html(self, title="investment_table"):
-        dataframe = self.generate_table_data()
-        return super().to_html(dataframe, title)
+        return super().to_html(title)
 
 
 class TabularTable(Table):
@@ -124,10 +138,14 @@ class TabularTable(Table):
         "insulate_roof": "Dach dämmen",
     }
 
-    def generate_table_data(self, scenario_data):
+    def generate_table_data(self):
+        scenario_data = self.data.get(
+            "scenario1",
+            {},
+        )  # Passe hier an, falls mehrere Szenarien verarbeitet werden sollen
+
         investments = scenario_data.get("investments", {})
         subsidies = scenario_data.get("subsidies", {})
-
         dataframe_investments = pd.DataFrame(
             {
                 "Investitionskosten": [self.translations.get(k, k) for k in investments],
@@ -152,8 +170,8 @@ class TabularTable(Table):
 
         return dataframe_investments, dataframe_subsidies, dataframe_sum
 
-    def generate_html_table(self, scenario_data, scenario_class, title="summary_table"):
-        dataframe_investments, dataframe_subsidies, dataframe_sum = self.generate_table_data(scenario_data)
+    def generate_html_table(self, scenario_class, title="summary_table"):
+        dataframe_investments, dataframe_subsidies, dataframe_sum = self.generate_table_data()
 
         def format_html(dataframe, css_class):
             html = dataframe.to_html(classes=f"table {css_class}", index=False, escape=False)
