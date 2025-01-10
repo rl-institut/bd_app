@@ -1,7 +1,6 @@
 {# Next button in flow is always a HTMX call to current page including several form inputs. #}
 {% if next_includes %}
-  <a id="next_button"
-     class="btn btn-primary {% if next_disabled %}disabled{% endif %}"
+  <a class="btn btn-primary {% if next_disabled %}disabled{% endif %}"
      hx-post=""
      hx-include="{{ next_includes }}"
      hx-vals='{{ hx_vals }}'
@@ -9,12 +8,10 @@
 {% else %}
   {% if next_url %}
     {% if next_kwargs %}
-      <a id="next_button"
-         class="btn btn-primary {% if next_disabled %}disabled{% endif %}"
+      <a class="btn btn-primary {% if next_disabled %}disabled{% endif %}"
          href="{% url next_url scenario=next_kwargs %}">
     {% else %}
-      <a id="next_button"
-         class="btn btn-primary {% if next_disabled %}disabled{% endif %}"
+      <a class="btn btn-primary {% if next_disabled %}disabled{% endif %}"
          href="{% url next_url %}">
     {% endif %}
   {% endif %}
