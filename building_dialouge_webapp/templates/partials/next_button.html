@@ -3,7 +3,9 @@
   <a id="next_button"
      class="btn btn-primary {% if next_disabled %}disabled{% endif %}"
      hx-post=""
-     hx-include="{{ next_includes }}">
+     hx-include="{{ next_includes }}"
+     hx-vals='{{ hx_vals }}'
+  >
 {% else %}
   {% if next_url %}
     {% if next_kwargs %}
