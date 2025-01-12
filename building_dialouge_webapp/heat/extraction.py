@@ -2,13 +2,11 @@ import numpy as np
 import pandas as pd
 import os
 
-
-# code inspired by oemof-B3/tests/test_data_processing.py
-# and     oemof-B3/scripts/prepare_heat_demand.py
 '''
 TO-DO:
 - resample
-- types in pv function
+- types in pv function -> Question
+- option of csv choosing in sth function -> Question
 '''
 
 # define the paths
@@ -51,9 +49,9 @@ def coefficient_of_performance(medium: list = ['air', 'water', 'brine'] , type_t
 
     # checking allowed types
     if medium not in allowed_medium:
-        raise ValueError(f'Invalid medium {medium}. Allowed mediums: air, water, brine')
+        raise ValueError(f'Invalid medium {medium}. Allowed mediums: {allowed_medium}')
     if type_temp not in allowed_type_temp:
-        raise ValueError(f'Invalid temperature {medium}. Allowed temperatures: VL75C, VL40C')
+        raise ValueError(f'Invalid temperature {medium}. Allowed temperatures: {allowed_type_temp}')
 
     # read csv-file according to medium given
     df_medium = pd.read_csv(medium_paths[medium])
@@ -71,7 +69,7 @@ def coefficient_of_performance(medium: list = ['air', 'water', 'brine'] , type_t
     return cop_timeseries
 
 # example
-# print(coefficient_of_performance('air', 'VL75C'))
+# print(coefficient_of_performance('fish', 'VL75C'))
 
 def hotwater_per_person(number_people: list =[1, 2, 3, 4, 5]) -> pd.Series:
     """
@@ -87,7 +85,7 @@ def hotwater_per_person(number_people: list =[1, 2, 3, 4, 5]) -> pd.Series:
 
     # checking allowed type
     if number_people not in allowed_number_people:
-        raise ValueError(f'Invalid number of people: {number_people}. Allowed number of people: 1, 2, 3, 4, 5')
+        raise ValueError(f'Invalid number of people: {number_people}. Allowed number of people: {allowed_number_people}')
     
     # column name for column to be read
     column_name = f'HW-{number_people}P-60C'
@@ -120,9 +118,9 @@ def load(number_people: list =[1, 2, 3, 4, 5], eec: list =[0, 1, 2, 3, 4]) -> pd
 
     # checking allowed types
     if number_people not in allowed_number_people:
-        raise ValueError(f'Invalid number of people {number_people}. Allowed number of people: 1, 2, 3, 4, 5')
+        raise ValueError(f'Invalid number of people {number_people}. Allowed number of people: {allowed_number_people}')
     if eec not in allowed_eec:
-        raise ValueError(f'Invalid energy efficency class {medium}. Allowed energy efficency classes: 0, 1, 2, 3, 4')
+        raise ValueError(f'Invalid energy efficency class {eec}. Allowed energy efficency classes: {allowed_eec}')
 
     # column name for column to be read
     column_name = f'EL-SEK{eec}P{number_people}'
@@ -136,13 +134,17 @@ def load(number_people: list =[1, 2, 3, 4, 5], eec: list =[0, 1, 2, 3, 4]) -> pd
     
     return load_timeseries
 
+# example
+# print(load(3, 9))
 
-def photovoltaic(elev_angle, direc_angle, type):
+def photovoltaic(elev_angle: list = [0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90], 
+                 direc_angle: list = [0, 120, 150, 180, 210, 240, 270, 30, 300, 330, 360, 60, 90]) -> pd.Series:
     """
     This function returns the energy output from
     photovoltaics per elevation angle, directional angle
     and type.
     """
+    # what about type?
 
     # read csv-file
     df_pv = pd.read_csv(pv_path)
@@ -170,8 +172,12 @@ def photovoltaic(elev_angle, direc_angle, type):
     
     return pv_timeseries
 
+# example
+# print(photovoltaic(10,210))
 
-def solarthermal(elev_angle, direc_angle, type):
+def solarthermal(elev_angle: list = [0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90], 
+                 direc_angle: list = [0, 120, 150, 180, 210, 240, 270, 30, 300, 330, 360, 60, 90],
+                 type: list = [40, 75]) -> pd.Series:
     """
     This function returns the energy output from
     solarthermal per elevation angle, directional angle
@@ -200,10 +206,13 @@ def solarthermal(elev_angle, direc_angle, type):
     column_name = f'STH-VL{type}-H{elev_angle}-A{direc_angle}'
 
     # checking coulmn name
-    if column_name not in df_pv.columns:
+    if column_name not in df_sth_load.columns:
         raise ValueError(f'Invalid elevation angle {elev_angle} and directional angle {direc_angle} for chosen type {type}. Column name {column_name} not found.')
     
     # extract desired column as timeseries
     sth_timeseries = df_sth_load[column_name]
     
     return sth_timeseries
+
+# example
+# print(solarthermal(10,210,40))
