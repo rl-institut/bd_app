@@ -175,8 +175,35 @@ def solarthermal(elev_angle, direc_angle, type):
     """
     This function returns the energy output from
     solarthermal per elevation angle, directional angle
-    and type.
+    and type (temperature dependent).
     """
+    # csv files STH_load and STH_heat have the same column names atm
 
-    return None
+    # read csv-files
+    df_sth_load = pd.read_csv(sth_load_path)
+    # df_sth_heat = pd.read_csv(sth_heat_path) -> for what is it needed? 
 
+    # dicts for checking allowed types
+    allowed_temp_type = {40, 75}
+    allowed_elev_angle = {0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90}
+    allowed_direc_angle = {0, 120, 150, 180, 210, 240, 270, 30, 300, 330, 360, 60, 90}
+ 
+    # checking allowed types
+    if type not in allowed_temp_type:
+        raise ValueError(f'Invalid type {type}. Allowed types: {allowed_temp_type}')
+    if elev_angle not in allowed_elev_angle:
+        raise ValueError(f'Invalid elevation angle {elev_angle}. Allowed elevation angles: {allowed_elev_angle}')
+    if direc_angle not in allowed_direc_angle:
+        raise ValueError(f'Invalid directional angle {direc_angle}. Allowed directional angles: {allowed_direc_angle}')
+
+    # column name for column to be read
+    column_name = f'STH-VL{type}-H{elev_angle}-A{direc_angle}'
+
+    # checking coulmn name
+    if column_name not in df_pv.columns:
+        raise ValueError(f'Invalid elevation angle {elev_angle} and directional angle {direc_angle} for chosen type {type}. Column name {column_name} not found.')
+    
+    # extract desired column as timeseries
+    sth_timeseries = df_sth_load[column_name]
+    
+    return sth_timeseries
