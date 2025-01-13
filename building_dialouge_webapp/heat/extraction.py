@@ -30,11 +30,14 @@ sth_heat_path = full_path("profile_STH_heat_raw.csv")
 sth_load_path = full_path("profile_STH_load_raw.csv")
 
 
-def coefficient_of_performance(medium: list = ['air', 'water', 'brine'] , type_temp: list = ['VL75C', 'VL40C']) -> pd.Series:  
+def coefficient_of_performance(medium: int, type_temp: int) -> pd.Series:  
     # medium wenn einzeln nur ein str, nicht list; genauso type_temp, OEMOF angucken
     """
     This function returns the coefficient of
-    performance (COP) depending on medium and type. 
+    performance (COP) depending on medium and type (temperature dependent). 
+
+    Allowed mediums: 'air', 'water', 'brine'
+    Allowed type of temperature dependency: 'VL75C', 'VL40C'
     """
     # file paths corresponding to medium
     medium_paths = {
@@ -71,10 +74,12 @@ def coefficient_of_performance(medium: list = ['air', 'water', 'brine'] , type_t
 # example
 # print(coefficient_of_performance('fish', 'VL75C'))
 
-def hotwater_per_person(number_people: list =[1, 2, 3, 4, 5]) -> pd.Series:
+def hotwater_per_person(number_people: int) -> pd.Series:
     """
     This function returns the hotwater-usage
-     per number of people in a household.
+    per number of people in a household.
+
+    Allowed number of people: 1, 2, 3, 4, 5
     """
 
     # read csv-file
@@ -102,11 +107,14 @@ def hotwater_per_person(number_people: list =[1, 2, 3, 4, 5]) -> pd.Series:
 # example
 # print(hotwater_per_person(3))
 
-def load(number_people: list =[1, 2, 3, 4, 5], eec: list =[0, 1, 2, 3, 4]) -> pd.Series:
+def load(number_people: int, eec: int) -> pd.Series:
     """
     This function returns the load
     per number of people in a household
     and energy efficeincy class.
+
+    Allowed number of people: 1, 2, 3, 4, 5
+    Allowed energy efficency classes: 0, 1, 2, 3, 4
     """
 
     # read csv-file
@@ -137,12 +145,14 @@ def load(number_people: list =[1, 2, 3, 4, 5], eec: list =[0, 1, 2, 3, 4]) -> pd
 # example
 # print(load(3, 9))
 
-def photovoltaic(elev_angle: list = [0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90], 
-                 direc_angle: list = [0, 120, 150, 180, 210, 240, 270, 30, 300, 330, 360, 60, 90]) -> pd.Series:
+def photovoltaic(elev_angle: int, direc_angle: int) -> pd.Series:
     """
     This function returns the energy output from
     photovoltaics per elevation angle, directional angle
     and type.
+
+    Allowed elevation angles: 0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90
+    Allowed directional angle: 0, 120, 150, 180, 210, 240, 270, 30, 300, 330, 360, 60, 90
     """
     # what about type?
 
@@ -175,13 +185,15 @@ def photovoltaic(elev_angle: list = [0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90],
 # example
 # print(photovoltaic(10,210))
 
-def solarthermal(elev_angle: list = [0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90], 
-                 direc_angle: list = [0, 120, 150, 180, 210, 240, 270, 30, 300, 330, 360, 60, 90],
-                 type: list = [40, 75]) -> pd.Series:
+def solarthermal(type_temp: int, elev_angle: int, direc_angle: int) -> pd.Series:
     """
     This function returns the energy output from
     solarthermal per elevation angle, directional angle
     and type (temperature dependent).
+
+    Alowed type depending on temperature: 40, 75
+    Allowed elevation angles: 0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90
+    Allowed directional angle: 0, 120, 150, 180, 210, 240, 270, 30, 300, 330, 360, 60, 90
     """
     # csv files STH_load and STH_heat have the same column names atm
 
@@ -190,13 +202,13 @@ def solarthermal(elev_angle: list = [0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90],
     # df_sth_heat = pd.read_csv(sth_heat_path) -> for what is it needed? 
 
     # dicts for checking allowed types
-    allowed_temp_type = {40, 75}
+    allowed_type_temp = {40, 75}
     allowed_elev_angle = {0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90}
     allowed_direc_angle = {0, 120, 150, 180, 210, 240, 270, 30, 300, 330, 360, 60, 90}
  
     # checking allowed types
     if type not in allowed_temp_type:
-        raise ValueError(f'Invalid type {type}. Allowed types: {allowed_temp_type}')
+        raise ValueError(f'Invalid type {type_temp}. Allowed types: {allowed_type_temp}')
     if elev_angle not in allowed_elev_angle:
         raise ValueError(f'Invalid elevation angle {elev_angle}. Allowed elevation angles: {allowed_elev_angle}')
     if direc_angle not in allowed_direc_angle:
@@ -207,7 +219,7 @@ def solarthermal(elev_angle: list = [0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90],
 
     # checking coulmn name
     if column_name not in df_sth_load.columns:
-        raise ValueError(f'Invalid elevation angle {elev_angle} and directional angle {direc_angle} for chosen type {type}. Column name {column_name} not found.')
+        raise ValueError(f'Invalid elevation angle {elev_angle} and directional angle {direc_angle} for chosen type {type_temp}. Column name {column_name} not found.')
     
     # extract desired column as timeseries
     sth_timeseries = df_sth_load[column_name]
