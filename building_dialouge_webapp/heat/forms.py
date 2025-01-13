@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import ValidationError
 
 
 class BuildingTypeForm(forms.Form):
@@ -260,6 +261,15 @@ class ConsumptionInputForm(forms.Form):
         date_value = self.cleaned_data["heating_consumption_period_end"]
         return date_value.isoformat()
 
+    def clean(self):
+        cleaned_data = super().clean()
+        start = cleaned_data.get("heating_consumption_period_start")
+        end = cleaned_data.get("heating_consumption_period_end")
+
+        if start and end:
+            if end <= start:
+                raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
+
 
 class RoofTypeForm(forms.Form):
     roof_type = forms.ChoiceField(
@@ -331,7 +341,15 @@ class RoofUsageFutureForm(forms.Form):
 class RoofInsulationForm(forms.Form):
     roof_insulation_exists = forms.ChoiceField(
         label="roof_insulation_exists",
-        choices=[(True, "Ja"), (False, "Nein")],
+        choices=[("yes", "Ja"), ("no", "Nein"), ("unknown", "Unbekannt")],
+    )
+
+
+class RoofInsulationYearForm(forms.Form):
+    roof_insulation_year = forms.IntegerField(
+        label="Jahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
     )
 
 
@@ -624,14 +642,14 @@ class RenovationRequestForm(forms.Form):
         label="Fassade sanieren",
         required=False,
     )
-    facade_renovation_details = forms.MultipleChoiceField(
+    facade_renovation_details = forms.ChoiceField(
         label="",
         choices=[
             ("paint", "streichen"),
             ("plaster", "verputzen"),
             ("insulate", "dämmen"),
         ],
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.RadioSelect,
         required=False,
     )
     roof_renovation = forms.BooleanField(

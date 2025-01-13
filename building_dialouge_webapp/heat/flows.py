@@ -774,24 +774,32 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
         "next_includes": "#consumption_input",
     }
 
-    def __init__(self):
-        super().__init__()
-        self.start = FormState(
+    def __init__(self, prefix=None):
+        super().__init__(prefix=prefix)
+        self.start = FormInfoState(
             self,
             name="consumption_input",
             form_class=forms.ConsumptionInputForm,
+            info_text={"next_button": ("Speichern", "Weiter")},
         ).transition(
             Next("end"),
         )
 
-        self.end = EndState(self, url="heat:consumption_result")
+        self.end = EndState(self, url="heat:consumption_overview")
+
+        def dispatch(self, request, *args, **kwargs):
+            # Retrieve the prefix dynamically
+            self.prefix = kwargs.get("scenario", self.prefix)
+            return super().dispatch(request, *args, **kwargs)
 
 
 class RoofFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/roof.html"
     extra_context = {
         "back_url": "heat:home",
-        "next_includes": "#roof_type,#roof_details,#roof_usage_now,#roof_usage_future,#roof_insulation",
+        "next_includes": (
+            "#roof_type,#roof_details,#roof_usage_now,#roof_usage_future,#roof_insulation,#roof_insulation_year"
+        ),
     }
 
     def __init__(self):
@@ -831,6 +839,11 @@ class RoofFlow(SidebarNavigationMixin, Flow):
             self,
             name="roof_insulation",
             form_class=forms.RoofInsulationForm,
+        ).transition(Switch("roof_insulation_exists").case("yes", "roof_insulation_year").default("end"))
+        self.roof_insulation_year = FormState(
+            self,
+            name="roof_insulation_year",
+            form_class=forms.RoofInsulationYearForm,
         ).transition(
             Next("end"),
         )
