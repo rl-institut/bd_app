@@ -4,9 +4,12 @@ import os
 
 '''
 TO-DO:
-- resample
-- types in pv function -> Question
-- option of csv choosing in sth function -> Question
+- resample -> Question: not all modules have a timestamp-csv and its a different file setup? 
+                        just use, what is given and use this file instead of the raw_data file?
+- types in pv function -> Question: what about type?
+- option of csv choosing in sth function -> Question: csv files STH_load and STH_heat have the 
+                                                        same column names atm, could not figure out 
+                                                        what the differnet use is. do we need both?
 '''
 
 # define the paths
@@ -30,8 +33,7 @@ sth_heat_path = full_path("profile_STH_heat_raw.csv")
 sth_load_path = full_path("profile_STH_load_raw.csv")
 
 
-def coefficient_of_performance(medium: int, type_temp: int) -> pd.Series:  
-    # medium wenn einzeln nur ein str, nicht list; genauso type_temp, OEMOF angucken
+def coefficient_of_performance(medium: int, type_temp: int) -> pd.Series:
     """
     This function returns the coefficient of
     performance (COP) depending on medium and type (temperature dependent). 
