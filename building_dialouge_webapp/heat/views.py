@@ -363,7 +363,7 @@ class Results(SidebarNavigationMixin, TemplateView):
             single_scenario_data = {scenario_name: scenario_data}
             table_obj = tables.TabularTable(single_scenario_data)
 
-            scenario_table_html = table_obj.generate_html_table(scenario_data, scenario_id)
+            scenario_table_html = table_obj.to_html(scenario_data, scenario_id)
 
             scenario_list.append(
                 {
