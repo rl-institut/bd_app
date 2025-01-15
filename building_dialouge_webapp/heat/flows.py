@@ -1020,6 +1020,16 @@ class PVSystemFlow(SidebarNavigationMixin, Flow):
             Next("end"),
         )
 
+        self.stop = TemplateState(
+            self,
+            target="next_button",
+            template_name="partials/next_button.html",
+            context={
+                "hx_vals": '{"pv_system_done": "True"}',
+            },
+            lookup="pv_system_done",
+        ).transition(Next("end"))
+
         self.end = EndState(self, url="heat:ventilation_system")
 
 
@@ -1066,10 +1076,6 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/renovation_request.html"
     extra_context = {
         "back_url": "heat:intro_renovation",
-        "next_includes": (
-            "#primary_heating,#renovation_biomass,#renovation_heatpump,"
-            "#renovation_pvsolar,#renovation_solar,#renovation_details"
-        ),
     }
 
     def __init__(self, prefix=None):
@@ -1139,7 +1145,6 @@ class FinancialSupporFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/financial_support.html"
     extra_context = {
         "back_url": "heat:renovation_request",
-        "next_includes": "#financial_support",
         "next_disabled": True,
         "back_kwargs": "scenario1",
     }
@@ -1159,7 +1164,6 @@ class FinancialSupporFlow(SidebarNavigationMixin, Flow):
             target="next_button",
             template_name="partials/next_button.html",
             context={
-                "next_includes": "#financial_support",
                 "hx_vals": '{"financial_support_done": "True"}',
             },
             lookup="financial_support_done",
