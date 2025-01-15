@@ -1027,7 +1027,7 @@ class VentilationSystemFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/ventilation_system.html"
     extra_context = {
         "back_url": "heat:pv_system",
-        "next_includes": "#ventilation_system_exists,#ventilation_system_year",
+        "next_disabled": True,
     }
 
     def __init__(self):
@@ -1038,7 +1038,7 @@ class VentilationSystemFlow(SidebarNavigationMixin, Flow):
             form_class=forms.VentilationSystemForm,
             template_name="partials/ventilation_system_help.html",
         ).transition(
-            Switch("ventilation_system_exists").case("doesnt_exist", "end").default("ventilation_system_year"),
+            Switch("ventilation_system_exists").case("doesnt_exist", "stop").default("ventilation_system_year"),
         )
 
         self.ventilation_system_year = FormState(
@@ -1046,8 +1046,18 @@ class VentilationSystemFlow(SidebarNavigationMixin, Flow):
             target="ventilation_system_year",
             form_class=forms.VentilationSystemYearForm,
         ).transition(
-            Next("end"),
+            Next("stop"),
         )
+
+        self.stop = TemplateState(
+            self,
+            target="next_button",
+            template_name="partials/next_button.html",
+            context={
+                "hx_vals": '{"ventilation_system_done": "True"}',
+            },
+            lookup="ventilation_system_done",
+        ).transition(Next("end"))
 
         self.end = EndState(self, url="heat:intro_renovation")
 
