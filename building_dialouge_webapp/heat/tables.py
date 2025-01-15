@@ -110,7 +110,7 @@ class SumTable(Table):
         return super().to_html(title)
 
 
-class InvestmentTable(SumTable):
+class InvestmentSummaryTable(SumTable):
     translations = {
         **Table.translations,
         "investment_overview": "Finanzierungsübersicht",
@@ -134,7 +134,7 @@ class InvestmentTable(SumTable):
         return super().to_html(title)
 
 
-class TabularTable(Table):
+class InvestmentTable(Table):
     translations = {
         **Table.translations,
         "air_heat_pump": "Luft-Wärmepumpe",
@@ -147,47 +147,35 @@ class TabularTable(Table):
     }
 
     def generate_table_data(self):
-        for scenario_data in self.data.values():
-            investments = scenario_data.get("investments", {})
-            subsidies = scenario_data.get("subsidies", {})
+        investments = self.data.get("investments", {})
 
-            dataframe_investments = pd.DataFrame(
-                {
-                    "Investitionskosten": [self.translations.get(k, k) for k in investments],
-                    "": [format_currency(v) for v in investments.values()],
-                },
-            )
+        return pd.DataFrame(
+            {
+                "Investitionskosten": [self.translations.get(k, k) for k in investments],
+                "": [format_currency(v) for v in investments.values()],
+            },
+        )
 
-            dataframe_subsidies = pd.DataFrame(
-                {
-                    "Zuschüsse": list(subsidies),
-                    "": [format_currency(v) for v in subsidies.values()],
-                },
-            )
 
-            total_cost = sum(investments.values()) - sum(subsidies.values())
-            dataframe_sum = pd.DataFrame(
-                {
-                    "Summe": [""],
-                    "": [format_currency(total_cost)],
-                },
-            )
+class SubsidiesTable(Table):
+    def generate_table_data(self):
+        subsidies = self.data.get("subsidies", {})
+        return pd.DataFrame(
+            {
+                "Zuschüsse": list(subsidies),
+                "": [format_currency(v) for v in subsidies.values()],
+            },
+        )
 
-            return dataframe_investments, dataframe_subsidies, dataframe_sum
-        return None
 
-    def to_html(self, scenario_name, title="summary_table"):
-        dataframe_investments, dataframe_subsidies, dataframe_sum = self.generate_table_data()
-
-        def format_html(dataframe, css_class):
-            html = dataframe.to_html(classes=f"table {css_class}", index=False, escape=False)
-            return html.replace(
-                '<table border="1" class="dataframe table">',
-                f'<table class="table {css_class} {title}">',
-            )
-
-        return (
-            format_html(dataframe_investments, scenario_name)
-            + format_html(dataframe_subsidies, scenario_name)
-            + format_html(dataframe_sum, scenario_name)
+class TotalCostTable(Table):
+    def generate_table_data(self):
+        investments = self.data.get("investments", {})
+        subsidies = self.data.get("subsidies", {})
+        total_cost = sum(investments.values()) - sum(subsidies.values())
+        return pd.DataFrame(
+            {
+                "Summe": [""],
+                "": [format_currency(total_cost)],
+            },
         )

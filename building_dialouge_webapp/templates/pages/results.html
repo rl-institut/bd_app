@@ -82,7 +82,7 @@
             Diese Übersicht unterstützt Sie dabei, die finanziellen Auswirkungen Ihrer Entscheidungen besser zu erfassen und zu planen.
             <br />
             <br />
-            {{ investment_table_html|safe }}
+            {{ investment_summary_table_html|safe }}
             <br />
             Eine genauere Aufschlüsselung der Kosten für jede einzelne Sanierungsmaßnahme, sowie für die verschidenen Posten innerhalb eines Technologiewechsels finden Sie hier.
             Zusätzlich werden die von Ihnen ausgewählten Zuschüsse aufgeführt.
@@ -102,7 +102,11 @@
               {# 2) Inhalt der Tabs #}
               <div class="tabs-content">
                 {% for scenario in scenarios %}
-                  <div class="tab-content {{ scenario.id }}">{{ scenario.table_html|safe }}</div>
+                  <div class="tab-content {{ scenario.id }}">
+                    {{ scenario.investment_table|safe }}
+                    {{ scenario.subsidies_table|safe }}
+                    {{ scenario.total_cost_table|safe }}
+                  </div>
                 {% endfor %}
               </div>
               <br />

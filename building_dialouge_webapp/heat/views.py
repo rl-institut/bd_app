@@ -360,30 +360,31 @@ class Results(SidebarNavigationMixin, TemplateView):
         scenario_list = []
         for i, (scenario_name, scenario_data) in enumerate(summary_data.items(), start=1):
             scenario_id = f"tab_scenario{i}"
-            single_scenario_data = {scenario_name: scenario_data}
-            table_obj = tables.TabularTable(single_scenario_data)
-
-            scenario_table_html = table_obj.to_html(scenario_name)
+            investment_table = tables.InvestmentTable(scenario_data).to_html(f"{scenario_name} summary_table")
+            subsidies_table = tables.SubsidiesTable(scenario_data).to_html(f"{scenario_name} summary_table")
+            total_cost_table = tables.TotalCostTable(scenario_data).to_html(f"{scenario_name} summary_table")
 
             scenario_list.append(
                 {
                     "index": i,
                     "id": scenario_id,
                     "label": f"Szenario {i}",
-                    "table_html": scenario_table_html,
+                    "investment_table": investment_table,
+                    "subsidies_table": subsidies_table,
+                    "total_cost_table": total_cost_table,
                 },
             )
 
         consumption_table = tables.ConsumptionTable(consumption_data)
         consumption_table_html = consumption_table.to_html(title="consumption_table")
-        investment_table = tables.InvestmentTable(investment_data)
-        investment_table_html = investment_table.to_html(title="investment_table")
+        investment_summary_table = tables.InvestmentSummaryTable(investment_data)
+        investment_summary_table_html = investment_summary_table.to_html(title="investment_table")
         # Kontext hinzufügen
         context["html_content"] = "<Hallo>"
         context["hectare_scenario1"] = 2.2
         context["hectare_scenario2"] = 1.3
         context["consumption_table_html"] = consumption_table_html
-        context["investment_table_html"] = investment_table_html
+        context["investment_summary_table_html"] = investment_summary_table_html
         context["scenarios"] = scenario_list
         return context
 
