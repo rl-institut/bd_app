@@ -11,6 +11,7 @@ from building_dialouge_webapp.heat.flows import ConsumptionInputFlow
 from building_dialouge_webapp.heat.flows import RenovationRequestFlow
 
 from . import forms
+from . import tables
 from .navigation import SidebarNavigationMixin
 
 SCENARIO_MAX = 3
@@ -143,7 +144,6 @@ class ConsumptionResult(SidebarNavigationMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         """
         consumption_result = self.request.GET.get("consumption_result")
         if consumption_result is None:
@@ -201,12 +201,15 @@ def renovation_scenario(request, scenario=None):
     # Check if scenario ID is lower than max scenarios
     scenario_index = int(scenario[8:])
     if scenario_index > SCENARIO_MAX:
-        return JsonResponse({"error": "Maximum number of scenarios reached."}, status=400)
-
+        return JsonResponse(
+            {"error": "Maximum number of scenarios reached."},
+            status=400,
+        )
     if scenario_changed:
         # If we return flow.dispatch(prefix=scenario), URL is not changed!
-        return HttpResponseRedirect(reverse("heat:renovation_request", kwargs={"scenario": scenario}))
-
+        return HttpResponseRedirect(
+            reverse("heat:renovation_request", kwargs={"scenario": scenario}),
+        )
     flow = RenovationRequestFlow(prefix=scenario)
     flow.extra_context.update({"scenario_boxes": get_all_scenario_data(request)})
     return flow.dispatch(request)
@@ -233,10 +236,16 @@ def get_all_scenario_data(request):
             scenario_id += 1
             continue
         scenario_data = flow.data(request)
-        user_friendly_data = get_user_friendly_data(form_surname="Renovation", scenario_data=scenario_data)
+        user_friendly_data = get_user_friendly_data(
+            form_surname="Renovation",
+            scenario_data=scenario_data,
+        )
         extra_context = {
             "id": f"scenario{scenario_id}box",
-            "href": reverse("heat:renovation_request", kwargs={"scenario": f"scenario{scenario_id}"}),
+            "href": reverse(
+                "heat:renovation_request",
+                kwargs={"scenario": f"scenario{scenario_id}"},
+            ),
             "title": f"Szenario {scenario_id}",
             "text": ", ".join(user_friendly_data),
         }
@@ -247,7 +256,6 @@ def get_all_scenario_data(request):
 
 def get_user_friendly_data(form_surname, scenario_data):
     user_friendly_data = []
-
     flow_forms = [
         form_class()
         for name, form_class in inspect.getmembers(forms, inspect.isclass)
@@ -258,7 +266,6 @@ def get_user_friendly_data(form_surname, scenario_data):
         for field_name, field in form.fields.items():
             if scenario_data.get(field_name):
                 value = scenario_data[field_name]
-
                 if isinstance(value, list):  # For multiple-choice fields
                     labels = [dict(field.choices).get(v) for v in value if v in dict(field.choices)]
                     user_friendly_data.extend(labels)
@@ -290,9 +297,99 @@ class Results(SidebarNavigationMixin, TemplateView):
         "next_url": "heat:next_steps",
     }
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        consumption_data = {
+            "scenario1": {
+                "change_heating": -50,
+                "renovate_facade": -50,
+            },
+            "scenario2": {
+                "change_heating": -88,
+                "renovate_facade": -50,
+                "renovate_roof": -45,
+            },
+        }
+
+        investment_data = {
+            "scenario1": {
+                "investment": 95800,
+                "contribution": -13800,
+            },
+            "scenario2": {
+                "investment": 167280,
+                "contribution": -25090,
+            },
+        }
+
+        summary_data = {
+            "scenario1": {
+                "investments": {
+                    "air_heat_pump": 20700,
+                    "thermal_storage": 2980,
+                    "heat_meter": 260,
+                    "heating_system_pump": 480,
+                    "ventilation_system": 9620,
+                    "insulate_outer_facade": 36890,
+                },
+                "subsidies": {
+                    "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
+                    "Wohnungsgebäude (BEG EM) (Nr. 458) (Zuschuss inkl. Klima-Bonus)": 23158.07,
+                },
+            },
+            "scenario2": {
+                "investments": {
+                    "air_heat_pump": 28700,
+                    "thermal_storage": 1980,
+                    "heat_meter": 260,
+                    "heating_system_pump": 480,
+                    "ventilation_system": 9620,
+                    "insulate_roof": 38980,
+                    "insulate_outer_facade": 36890,
+                },
+                "subsidies": {
+                    "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
+                    "Wohnungsgebäude (BEG EM) (Nr. 458) (Zuschuss inkl. Klima-Bonus)": 23158.07,
+                    "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
+                    "Wohnungsgebäude (BEG EM) (Nr. 458) (Effizienz-Bonus)": 1931.93,
+                },
+            },
+        }
+
+        scenario_list = []
+        for i, (scenario_name, scenario_data) in enumerate(summary_data.items(), start=1):
+            scenario_id = f"tab_scenario{i}"
+            investment_table = tables.InvestmentTable(scenario_data).to_html(f"{scenario_name} summary_table")
+            subsidies_table = tables.SubsidiesTable(scenario_data).to_html(f"{scenario_name} summary_table")
+            total_cost_table = tables.TotalCostTable(scenario_data).to_html(f"{scenario_name} summary_table")
+
+            scenario_list.append(
+                {
+                    "index": i,
+                    "id": scenario_id,
+                    "label": f"Szenario {i}",
+                    "investment_table": investment_table,
+                    "subsidies_table": subsidies_table,
+                    "total_cost_table": total_cost_table,
+                },
+            )
+
+        consumption_table = tables.ConsumptionTable(consumption_data)
+        consumption_table_html = consumption_table.to_html(title="consumption_table")
+        investment_summary_table = tables.InvestmentSummaryTable(investment_data)
+        investment_summary_table_html = investment_summary_table.to_html(title="investment_table")
+        # Kontext hinzufügen
+        context["html_content"] = "<Hallo>"
+        context["hectare_scenario1"] = 2.2
+        context["hectare_scenario2"] = 1.3
+        context["consumption_table_html"] = consumption_table_html
+        context["investment_summary_table_html"] = investment_summary_table_html
+        context["scenarios"] = scenario_list
+        return context
+
 
 class NextSteps(SidebarNavigationMixin, TemplateView):
-    template_name = "pages/next_steps.html"
     extra_context = {
         "back_url": "heat:results",
     }
