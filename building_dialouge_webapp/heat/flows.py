@@ -764,13 +764,13 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
             Next("end"),
         )
 
-        self.end = EndState(self, url="heat:consumption_input")
+        self.end = EndState(self, url="heat:consumption_overview")
 
 
 class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/consumption_input.html"
     extra_context = {
-        "back_url": "heat:hotwater_heating",
+        "back_url": "heat:consumption_overview",
         "next_includes": "#consumption_input",
     }
 
@@ -1040,7 +1040,7 @@ class VentilationSystemFlow(SidebarNavigationMixin, Flow):
 class RenovationRequestFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/renovation_request.html"
     extra_context = {
-        "back_url": "heat:intro_renovation",
+        "back_url": "heat:renovation_overview",
         "next_includes": (
             "#primary_heating,#renovation_biomass,#renovation_heatpump,"
             "#renovation_pvsolar,#renovation_solar,#renovation_details"

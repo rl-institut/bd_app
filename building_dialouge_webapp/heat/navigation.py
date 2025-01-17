@@ -17,7 +17,7 @@ class SidebarNavigationMixin:
                 if (
                     isinstance(step["object"], list)
                     and any(isinstance(self, obj) for obj in step["object"])
-                    or isinstance(self, step["object"])
+                    or step["object"] == type(self)
                 ):
                     step["index_state"] = "active"
                     active_step_found = True
@@ -48,13 +48,8 @@ class SidebarNavigationMixin:
                         "url": "heat:hotwater_heating",
                     },
                     {
-                        "name": "Verbrauchseingabe",
-                        "object": flows.ConsumptionInputFlow,
-                        "url": "heat:consumption_input",
-                    },
-                    {
                         "name": "Verbrauchsanalyse Übersicht",
-                        "object": views.ConsumptionOverview,
+                        "object": [views.ConsumptionOverview, flows.ConsumptionInputFlow],
                         "url": "heat:consumption_overview",
                     },
                     {
