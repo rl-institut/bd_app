@@ -41,27 +41,4 @@
       hx-trigger="keyup change delay:500ms"
       hx-include="this">{{ heating_storage.content | safe }}</div>
   </section>
-<script>
-    // Listen for HTMX events and handle stop if user hasn't filled out entire form
-    document.addEventListener('htmx:beforeRequest', (event) => {
-        console.log("inside beforeRequest")
-        const form = event.target.closest('#heating_details');
-        if (!form) return;
-        console.log(form)
-
-        const requiredFields = form.querySelectorAll('input[required]');
-        let allValid = true;
-
-        requiredFields.forEach(field => {
-            const group = form.querySelectorAll(`input[name="${field.name}"]`);
-            if (!Array.from(group).some(input => input.checked)) {
-                allValid = false;
-            }
-        });
-
-        if (!allValid) {
-            event.preventDefault(); // Prevent the HTMX request
-        }
-    });
-  </script>
 {% endblock content %}
