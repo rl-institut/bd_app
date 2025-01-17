@@ -14,7 +14,11 @@ class SidebarNavigationMixin:
                 category["index_state"] = ""
 
             for step in category["steps"]:
-                if step["object"] == type(self):
+                if (
+                    isinstance(step["object"], list)
+                    and any(isinstance(self, obj) for obj in step["object"])
+                    or isinstance(self, step["object"])
+                ):
                     step["index_state"] = "active"
                     active_step_found = True
                 elif not active_step_found:
@@ -83,13 +87,8 @@ class SidebarNavigationMixin:
                 "url": "heat:intro_renovation",
                 "steps": [
                     {
-                        "name": "Sanierungswunsch",
-                        "object": flows.RenovationRequestFlow,
-                        "url": "heat:renovation_request",
-                    },
-                    {
                         "name": "Sanierungsübersicht",
-                        "object": views.RenovationOverview,
+                        "object": [views.RenovationOverview, flows.RenovationRequestFlow],
                         "url": "heat:renovation_overview",
                     },
                     {"name": "Förderung", "object": flows.FinancialSupporFlow, "url": "heat:financial_support"},

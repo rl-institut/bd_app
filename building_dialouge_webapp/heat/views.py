@@ -187,7 +187,7 @@ class IntroRenovation(SidebarNavigationMixin, TemplateView):
     template_name = "pages/intro_renovation.html"
     extra_context = {
         "back_url": "heat:ventilation_system",
-        "next_url": "heat:renovation_request",
+        "next_url": "heat:renovation_overview",
     }
 
 

@@ -1113,7 +1113,7 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
 class FinancialSupporFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/financial_support.html"
     extra_context = {
-        "back_url": "heat:renovation_request",
+        "back_url": "heat:renovation_overview",
         "next_includes": "#financial_support",
         "back_kwargs": "scenario1",
     }
