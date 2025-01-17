@@ -771,15 +771,31 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/consumption_input.html"
     extra_context = {
         "back_url": "heat:consumption_overview",
-        "next_includes": "#consumption_input",
+        "next_includes": "#consumption_type, #consumption_power, #consumption_heating",
     }
 
     def __init__(self, prefix=None):
         super().__init__(prefix=prefix)
-        self.start = FormInfoState(
+        self.start = FormState(
             self,
-            name="consumption_input",
-            form_class=forms.ConsumptionInputForm,
+            name="consumption_type",
+            form_class=forms.ConsumptionTypeForm,
+        ).transition(
+            Switch("consumption_type").case("power", "consumption_power").default("consumption_heating"),
+        )
+
+        self.consumption_power = FormState(
+            self,
+            name="consumption_power",
+            form_class=forms.ConsumptionPowerForm,
+        ).transition(
+            Next("end"),
+        )
+
+        self.consumption_heating = FormInfoState(
+            self,
+            name="consumption_heating",
+            form_class=forms.ConsumptionHeatingForm,
             info_text={"next_button": ("Speichern", "Weiter")},
         ).transition(
             Next("end"),

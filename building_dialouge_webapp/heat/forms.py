@@ -210,7 +210,18 @@ class HotwaterHeatingSolarDetailsForm(forms.Form):
     )
 
 
-class ConsumptionInputForm(forms.Form):
+class ConsumptionTypeForm(forms.Form):
+    consumption_type = forms.ChoiceField(
+        label="Welche Art von Verbrauchseingabe?",
+        choices=[
+            ("heating", "Wärmeverbrauch"),
+            ("power", "Stromverbrauch"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class ConsumptionHeatingForm(forms.Form):
     heating_consumption_period_start = forms.DateField(
         label="Zeitraum von:",
         widget=forms.DateInput(attrs={"type": "date"}),
@@ -265,6 +276,42 @@ class ConsumptionInputForm(forms.Form):
         cleaned_data = super().clean()
         start = cleaned_data.get("heating_consumption_period_start")
         end = cleaned_data.get("heating_consumption_period_end")
+
+        if start and end:
+            if end <= start:
+                raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
+
+
+class ConsumptionPowerForm(forms.Form):
+    power_consumption_period_start = forms.DateField(
+        label="Zeitraum von:",
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+    power_consumption_period_end = forms.DateField(
+        label="bis:",
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+    power_consumption = forms.IntegerField(
+        label="Stromverbrauch",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    power_cost = forms.FloatField(
+        label="Stromkosten in €",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+    def clean_power_consumption_period_start(self):
+        date_value = self.cleaned_data["power_consumption_period_start"]
+        return date_value.isoformat()
+
+    def clean_power_consumption_period_end(self):
+        date_value = self.cleaned_data["power_consumption_period_end"]
+        return date_value.isoformat()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start = cleaned_data.get("power_consumption_period_start")
+        end = cleaned_data.get("power_consumption_period_end")
 
         if start and end:
             if end <= start:
