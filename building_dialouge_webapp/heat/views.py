@@ -73,7 +73,7 @@ def consumption_year(request, year=None):
 def get_new_year(request):
     """Goes through years and checks if they have finished."""
     year_id = 1
-    while year_id < YEAR_MAX:
+    while year_id <= YEAR_MAX:
         flow = ConsumptionInputFlow(prefix=f"year{year_id}")
         if not flow.finished(request):
             break
@@ -218,7 +218,7 @@ def renovation_scenario(request, scenario=None):
 def get_new_scenario(request):
     """Goes through scenarios and checks if they have finished."""
     scenario_id = 1
-    while scenario_id < SCENARIO_MAX:
+    while scenario_id <= SCENARIO_MAX:
         flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
         if not flow.finished(request):
             break
