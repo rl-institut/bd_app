@@ -18,7 +18,7 @@
     <div class="d-flex justify-content-between">
       <form action="{% url 'heat:consumption_input' year='new_year' %}"
             method="get">
-        <button class="btn btn-primary" {% if max_reached %}disabled{% endif %}>Weitere Verbrauchsanalyse</button>
+        <button class="btn btn-primary" {% if max_reached %}disabled{% endif %}>Verbauch hinzufügen</button>
       </form>
     </div>
   </section>
