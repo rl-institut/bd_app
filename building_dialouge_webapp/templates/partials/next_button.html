@@ -12,7 +12,7 @@
   {# Next button in flow is always a HTMX call to current page including several form inputs. #}
   {# Used in flow when first loading the Button or loading it with stop state. #}
     <a class="btn btn-primary {% if next_disabled %}disabled{% endif %}"
-      hx-get=""
+      hx-post=""
       {% if hx_vals %}
       hx-vals='{{ hx_vals }}'
       {% endif %}
