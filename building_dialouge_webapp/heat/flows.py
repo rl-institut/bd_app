@@ -598,7 +598,7 @@ class BuildingTypeFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/building_type.html"
     extra_context = {
         "back_url": "heat:intro_consumption",
-        "next_includes": "#building_type,#monument_protection",
+        "next_disabled": True,
     }
 
     def __init__(self):
@@ -618,13 +618,23 @@ class BuildingTypeFlow(SidebarNavigationMixin, Flow):
             form_class=forms.BuildingTypeProtectionForm,
             template_name="partials/building_type_protection_help.html",
         ).transition(
-            Switch("monument_protection").case("yes", "dead_end_monument_protection").default("end"),
+            Switch("monument_protection").case("yes", "dead_end_monument_protection").default("stop"),
         )
 
         self.dead_end_monument_protection = EndState(
             self,
             url="heat:dead_end_monument_protection",
         )
+
+        self.stop = TemplateState(
+            self,
+            target="next_button",
+            template_name="partials/next_button.html",
+            context={
+                "hx_vals": '{"building_type_done": "True"}',
+            },
+            lookup="building_type_done",
+        ).transition(Next("end"))
 
         self.end = EndState(self, url="heat:building_data")
 
@@ -633,7 +643,7 @@ class BuildingDataFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/building_data.html"
     extra_context = {
         "back_url": "heat:building_type",
-        "next_includes": "#building_data",
+        "next_disabled": True,
     }
 
     def __init__(self):
@@ -644,8 +654,18 @@ class BuildingDataFlow(SidebarNavigationMixin, Flow):
             form_class=forms.BuildingDataForm,
             template_name="partials/building_data_help.html",
         ).transition(
-            Next("end"),
+            Next("stop"),
         )
+
+        self.stop = TemplateState(
+            self,
+            target="next_button",
+            template_name="partials/next_button.html",
+            context={
+                "hx_vals": '{"building_data_done": "True"}',
+            },
+            lookup="building_data_done",
+        ).transition(Next("end"))
 
         self.end = EndState(self, url="heat:cellar")
 
@@ -654,7 +674,7 @@ class CellarFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/cellar.html"
     extra_context = {
         "back_url": "heat:building_data",
-        "next_includes": "#cellar_heating,#cellar_details,#cellar_insulation_exists,#cellar_insulation_year",
+        "next_disabled": True,
     }
 
     def __init__(self):
@@ -664,7 +684,7 @@ class CellarFlow(SidebarNavigationMixin, Flow):
             target="cellar_heating",
             form_class=forms.CellarHeatingForm,
         ).transition(
-            Switch("cellar_heating").case("no_cellar", "end").default("cellar_details"),
+            Switch("cellar_heating").case("no_cellar", "stop").default("cellar_details"),
         )
 
         self.cellar_details = FormState(
@@ -680,7 +700,7 @@ class CellarFlow(SidebarNavigationMixin, Flow):
             target="cellar_insulation_exists",
             form_class=forms.CellarInsulationForm,
         ).transition(
-            Switch("cellar_ceiling_insulation_exists").case("doesnt_exist", "end").default("cellar_insulation_year"),
+            Switch("cellar_ceiling_insulation_exists").case("doesnt_exist", "stop").default("cellar_insulation_year"),
         )
 
         self.cellar_insulation_year = FormState(
@@ -688,8 +708,18 @@ class CellarFlow(SidebarNavigationMixin, Flow):
             target="cellar_insulation_year",
             form_class=forms.CellarInsulationYearForm,
         ).transition(
-            Next("end"),
+            Next("stop"),
         )
+
+        self.stop = TemplateState(
+            self,
+            target="next_button",
+            template_name="partials/next_button.html",
+            context={
+                "hx_vals": '{"cellar_done": "True"}',
+            },
+            lookup="cellar_done",
+        ).transition(Next("end"))
 
         self.end = EndState(self, url="heat:hotwater_heating")
 
@@ -698,11 +728,7 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/hotwater_heating.html"
     extra_context = {
         "back_url": "heat:cellar",
-        "next_includes": (
-            "#heating_system,#heating_source,#hotwater_heating_system,"
-            "#hotwater_measured,#solar_thermal_exists,#solar_thermal_energy_known,"
-            "#solar_thermal_energy,#solar_thermal_details"
-        ),
+        "next_disabled": True,
     }
 
     def __init__(self):
@@ -749,7 +775,7 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
             target="solar_thermal_exists",
             form_class=forms.HotwaterHeatingSolarExistsForm,
         ).transition(
-            Switch("solar_thermal_exists").case("doesnt_exist", "end").default("solar_thermal_energy_known"),
+            Switch("solar_thermal_exists").case("doesnt_exist", "stop").default("solar_thermal_energy_known"),
         )
 
         self.solar_thermal_energy_known = FormState(
@@ -768,7 +794,7 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
             target="solar_thermal_energy",
             form_class=forms.HotwaterHeatingSolarEnergyForm,
         ).transition(
-            Next("end"),
+            Next("stop"),
         )
 
         self.solar_thermal_details = FormState(
@@ -776,8 +802,18 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
             target="solar_thermal_details",
             form_class=forms.HotwaterHeatingSolarDetailsForm,
         ).transition(
-            Next("end"),
+            Next("stop"),
         )
+
+        self.stop = TemplateState(
+            self,
+            target="next_button",
+            template_name="partials/next_button.html",
+            context={
+                "hx_vals": '{"hotwater_heating_done": "True"}',
+            },
+            lookup="hotwater_heating_done",
+        ).transition(Next("end"))
 
         self.end = EndState(self, url="heat:consumption_input")
 
@@ -786,7 +822,7 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/consumption_input.html"
     extra_context = {
         "back_url": "heat:hotwater_heating",
-        "next_includes": "#consumption_input",
+        "next_disabled": True,
     }
 
     def __init__(self, prefix=None):
@@ -797,8 +833,18 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
             form_class=forms.ConsumptionInputForm,
             info_text={"next_button": ("Speichern", "Weiter")},
         ).transition(
-            Next("end"),
+            Next("stop"),
         )
+
+        self.stop = TemplateState(
+            self,
+            target="next_button",
+            template_name="partials/next_button.html",
+            context={
+                "hx_vals": '{"consumption_input_done": "True"}',
+            },
+            lookup="consumption_input_done",
+        ).transition(Next("end"))
 
         self.end = EndState(self, url="heat:consumption_overview")
 
@@ -812,9 +858,7 @@ class RoofFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/roof.html"
     extra_context = {
         "back_url": "heat:home",
-        "next_includes": (
-            "#roof_type,#roof_details,#roof_usage_now,#roof_usage_future,#roof_insulation,#roof_insulation_year"
-        ),
+        "next_disabled": True,
     }
 
     def __init__(self):
@@ -827,7 +871,7 @@ class RoofFlow(SidebarNavigationMixin, Flow):
         ).transition(
             Switch("roof_type").case("flachdach", "roof_insulation").default("roof_details"),
         )
-        # roof_type results going to roof_details and roof_usage
+
         self.roof_details = FormState(
             self,
             target="roof_details",
@@ -835,6 +879,7 @@ class RoofFlow(SidebarNavigationMixin, Flow):
         ).transition(
             Next("roof_usage_now"),
         )
+
         self.roof_usage_now = FormInfoState(
             self,
             target="roof_usage_now",
@@ -843,25 +888,37 @@ class RoofFlow(SidebarNavigationMixin, Flow):
         ).transition(
             Switch("roof_usage_now").case("all_used", "roof_insulation").default("roof_usage_future"),
         )
-        # roof_usage results going to future usage
+
         self.roof_usage_future = FormState(
             self,
             target="roof_usage_future",
             form_class=forms.RoofUsageFutureForm,
         ).transition(Next("roof_insulation"))
-        # last Form is Insulation
+
         self.roof_insulation = FormState(
             self,
             target="roof_insulation",
             form_class=forms.RoofInsulationForm,
-        ).transition(Switch("roof_insulation_exists").case("yes", "roof_insulation_year").default("end"))
+        ).transition(Switch("roof_insulation_exists").case("yes", "roof_insulation_year").default("stop"))
+
         self.roof_insulation_year = FormState(
             self,
             target="roof_insulation_year",
             form_class=forms.RoofInsulationYearForm,
         ).transition(
-            Next("end"),
+            Next("stop"),
         )
+
+        self.stop = TemplateState(
+            self,
+            target="next_button",
+            template_name="partials/next_button.html",
+            context={
+                "hx_vals": '{"roof_done": "True"}',
+            },
+            lookup="roof_done",
+        ).transition(Next("end"))
+
         self.end = EndState(self, url="heat:window")
 
 
@@ -869,7 +926,7 @@ class WindowFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/window.html"
     extra_context = {
         "back_url": "heat:roof",
-        "next_includes": "#window_area,#window_details",
+        "next_disabled": True,
     }
 
     def __init__(self):
@@ -888,8 +945,18 @@ class WindowFlow(SidebarNavigationMixin, Flow):
             form_class=forms.WindowDetailsForm,
             template_name="partials/window_details_help.html",
         ).transition(
-            Next("end"),
+            Next("stop"),
         )
+
+        self.stop = TemplateState(
+            self,
+            target="next_button",
+            template_name="partials/next_button.html",
+            context={
+                "hx_vals": '{"window_done": "True"}',
+            },
+            lookup="window_done",
+        ).transition(Next("end"))
 
         self.end = EndState(self, url="heat:facade")
 
@@ -898,7 +965,7 @@ class FacadeFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/facade.html"
     extra_context = {
         "back_url": "heat:window",
-        "next_includes": "#facade_details,#facade_insulation_exists,#facade_insulation_year",
+        "next_disabled": True,
     }
 
     def __init__(self):
@@ -917,7 +984,7 @@ class FacadeFlow(SidebarNavigationMixin, Flow):
             form_class=forms.FacadeInsulationForm,
             template_name="partials/facade_insulation_help.html",
         ).transition(
-            Switch("facade_insulation_exists").case("exists", "facade_insulation_year").default("end"),
+            Switch("facade_insulation_exists").case("exists", "facade_insulation_year").default("stop"),
         )
 
         self.facade_insulation_year = FormState(
@@ -925,8 +992,18 @@ class FacadeFlow(SidebarNavigationMixin, Flow):
             target="facade_insulation_year",
             form_class=forms.FacadeInsulationYearForm,
         ).transition(
-            Next("end"),
+            Next("stop"),
         )
+
+        self.stop = TemplateState(
+            self,
+            target="next_button",
+            template_name="partials/next_button.html",
+            context={
+                "hx_vals": '{"facade_done": "True"}',
+            },
+            lookup="facade_done",
+        ).transition(Next("end"))
 
         self.end = EndState(self, url="heat:heating")
 
@@ -935,7 +1012,7 @@ class HeatingFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/heating.html"
     extra_context = {
         "back_url": "heat:facade",
-        "next_includes": "#heating,#heating_hydraulic,#heating_details,#heating_storage",
+        "next_disabled": True,
     }
 
     def __init__(self):
@@ -971,8 +1048,18 @@ class HeatingFlow(SidebarNavigationMixin, Flow):
             form_class=forms.HeatingStorageForm,
             template_name="partials/heating_storage_help.html",
         ).transition(
-            Next("end"),
+            Next("stop"),
         )
+
+        self.stop = TemplateState(
+            self,
+            target="next_button",
+            template_name="partials/next_button.html",
+            context={
+                "hx_vals": '{"heating_done": "True"}',
+            },
+            lookup="heating_done",
+        ).transition(Next("end"))
 
         self.end = EndState(self, url="heat:pv_system")
 
@@ -981,7 +1068,7 @@ class PVSystemFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/pv_system.html"
     extra_context = {
         "back_url": "heat:heating",
-        "next_includes": "#pv_system,#pv_system_planned,#pv_system_details,#pv_system_battery",
+        "next_disabled": True,
     }
 
     def __init__(self):
@@ -999,7 +1086,7 @@ class PVSystemFlow(SidebarNavigationMixin, Flow):
             target="pv_system_planned",
             form_class=forms.PVSystemPlannedForm,
         ).transition(
-            Next("end"),
+            Next("stop"),
         )
 
         self.pv_system_details = FormState(
@@ -1017,7 +1104,7 @@ class PVSystemFlow(SidebarNavigationMixin, Flow):
             form_class=forms.PVSystemBatteryForm,
             template_name="partials/pv_system_battery_help.html",
         ).transition(
-            Next("end"),
+            Next("stop"),
         )
 
         self.stop = TemplateState(
@@ -1076,6 +1163,7 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/renovation_request.html"
     extra_context = {
         "back_url": "heat:intro_renovation",
+        "next_disabled": True,
     }
 
     def __init__(self, prefix=None):
@@ -1130,8 +1218,18 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
             form_class=forms.RenovationRequestForm,
             info_text={"next_button_text": ("Speichern", "Weiter")},
         ).transition(
-            Next("end"),
+            Next("stop"),
         )
+
+        self.stop = TemplateState(
+            self,
+            target="next_button",
+            template_name="partials/next_button.html",
+            context={
+                "hx_vals": '{"renovation_request_done": "True"}',
+            },
+            lookup="renovation_request_done",
+        ).transition(Next("end"))
 
         self.end = EndState(self, url="heat:renovation_overview")
 

@@ -21,10 +21,17 @@
         <div class="help"></div>
       </div>
     </div>
-    <div id="facade_insulation_exists">{{ facade_insulation_exists.content | safe }}</div>
+    <div id="facade_insulation_exists"
+      hx-post=""
+      hx-trigger="change"
+      hx-include="this">{{ facade_insulation_exists.content | safe }}</div>
     <div class="step-question">
       <div class="step-container">
-        <div id="facade_insulation_year" class="main">{{ facade_insulation_year.content | safe }}</div>
+        <div id="facade_insulation_year"
+          hx-post=""
+          hx-trigger="keyup change delay:500ms"
+          hx-include="this"
+          class="main">{{ facade_insulation_year.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>

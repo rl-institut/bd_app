@@ -13,7 +13,11 @@
     </div>
     <div class="step-question">
       <div class="step-container">
-        <div id="consumption_input" class="main">{{ consumption_input.content | safe }}</div>
+        <div id="consumption_input"
+          hx-post=""
+          hx-trigger="keyup change delay:500ms"
+          hx-include="this"
+          class="main">{{ consumption_input.content | safe }}</div>
         <div class="help" id="flow-instance-boxes">
           {% for box in year_boxes %}
             <c-flow-instance-box id="{{ box.id }}" href="{{ box.href }}" title="{{ box.title }}" text="{{ box.text }}" />
