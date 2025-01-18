@@ -34,6 +34,16 @@
       box-shadow: $grey-800;
     }
 
+    &.heating {
+      background-color: lighten(red, 40%); // A dull red background
+      border-color: darken(red, 20%);
+    }
+
+    &.power {
+        background-color: lighten(blue, 40%); // A dull blue background
+        border-color: darken(blue, 20%);
+    }
+
     .flow-instance-box-header {
       align-items: center;
       justify-content: space-between;
