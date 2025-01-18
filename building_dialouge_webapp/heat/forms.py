@@ -266,11 +266,11 @@ class ConsumptionHeatingForm(forms.Form):
 
     def clean_heating_consumption_period_start(self):
         date_value = self.cleaned_data["heating_consumption_period_start"]
-        return date_value.isoformat()
+        return date_value.strftime("%d.%m.%Y")  # makes 01.01.2010
 
     def clean_heating_consumption_period_end(self):
         date_value = self.cleaned_data["heating_consumption_period_end"]
-        return date_value.isoformat()
+        return date_value.strftime("%d.%m.%Y")
 
     def clean(self):
         cleaned_data = super().clean()
@@ -302,11 +302,11 @@ class ConsumptionPowerForm(forms.Form):
 
     def clean_power_consumption_period_start(self):
         date_value = self.cleaned_data["power_consumption_period_start"]
-        return date_value.isoformat()
+        return date_value.strftime("%d.%m.%Y")  # makes 01.01.2010
 
     def clean_power_consumption_period_end(self):
         date_value = self.cleaned_data["power_consumption_period_end"]
-        return date_value.isoformat()
+        return date_value.strftime("%d.%m.%Y")
 
     def clean(self):
         cleaned_data = super().clean()

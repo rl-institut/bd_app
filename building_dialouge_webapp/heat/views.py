@@ -111,16 +111,40 @@ def get_all_year_data(request):
         if not flow.finished(request):
             year_id += 1
             continue
-
+        title, text = get_user_friendly_data_consumption(flow.data(request))
         extra_context = {
             "id": f"year{year_id}box",
             "href": reverse("heat:consumption_input", kwargs={"year": f"year{year_id}"}),
-            "title": f"Zeitraum {year_id}",
-            "text": "",
+            "title": f"{year_id} {title}",
+            "text": text,
         }
         year_data_list.append(extra_context)
         year_id += 1
     return year_data_list
+
+
+def get_user_friendly_data_consumption(scenario_data):
+    """What I need to output here:
+    either: heating_consumption + heating_consumption_unit and duration
+     or: power_consumption + kWh and duration"""
+    user_friendly_data = []
+
+    if scenario_data["consumption_type"] == "heating":
+        title = "Wärmeverbrauch"
+        consumption_value = scenario_data["heating_consumption"]
+        consumption_unit = scenario_data["heating_consumption_unit"]
+        start_date = scenario_data["heating_consumption_period_start"]
+        end_date = scenario_data["heating_consumption_period_end"]
+    else:
+        title = "Stromverbrauch"
+        consumption_value = scenario_data["power_consumption"]
+        consumption_unit = "kwH"
+        start_date = scenario_data["power_consumption_period_start"]
+        end_date = scenario_data["power_consumption_period_end"]
+    user_friendly_data.append(f"{start_date} - {end_date}")
+    user_friendly_data.append(f"{consumption_value} {consumption_unit}")
+
+    return title, user_friendly_data
 
 
 class ConsumptionOverview(SidebarNavigationMixin, TemplateView):
