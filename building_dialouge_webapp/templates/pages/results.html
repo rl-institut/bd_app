@@ -72,7 +72,7 @@
                   aria-expanded="false"
                   aria-controls="panelsStayOpen-collapseTwo">
             Kosten
-            <div id="cost_chart"></div>
+            <div id="cost_chart" class="chart_small"></div>
           </button>
         </h2>
         <div id="panelsStayOpen-collapseTwo"
@@ -137,7 +137,10 @@
                     data-bs-toggle="collapse"
                     data-bs-target="#panelsStayOpen-collapseThree"
                     aria-expanded="false"
-                    aria-controls="panelsStayOpen-collapseThree">Emissionen</button>
+                    aria-controls="panelsStayOpen-collapseThree">
+              Emissionen
+              <div id="emission_chart" class="chart_small"></div>
+            </button>
           </h2>
           <div id="panelsStayOpen-collapseThree"
                class="accordion-collapse collapse"
@@ -185,4 +188,5 @@
 
 {% block inline_javascript %}
   {{ cost_chart_data|json_script:"cost_chart_data" }}
+  {{ emission_chart_data|json_script:"emission_chart_data" }}
 {% endblock inline_javascript %}

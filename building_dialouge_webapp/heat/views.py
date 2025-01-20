@@ -392,6 +392,11 @@ class Results(SidebarNavigationMixin, TemplateView):
             unit="€",
             data=cost_emission_chart.EXAMPLE_COST_DATA,
         )
+        context["emission_chart_data"] = cost_emission_chart.create_echarts_cost_emission(
+            title="Emissionen",
+            unit="t/a",
+            data=cost_emission_chart.EXAMPLE_EMISSION_DATA,
+        )
         return context
 
 
