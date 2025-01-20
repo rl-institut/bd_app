@@ -259,3 +259,8 @@ table.consumption_table td.no-entry {
 #tab_scenario2:checked ~ .tabs-content .tab_scenario2 {
     display: block;
 }
+
+#cost_chart {
+  width: 300px;
+  height: 100px;
+}
