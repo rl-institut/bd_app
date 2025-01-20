@@ -48,12 +48,7 @@
                   // For text, number, or other inputs
                   if (!field.value.trim()) allValid = false;
               }
-
-              const parent = field.closest('fieldset') || field.closest('div') || field;
-              if (!allValid) {
-              }
           });
-
           if (!allValid) {
               event.preventDefault(); // Stop the HTMX request
           }
