@@ -34,7 +34,7 @@
       {% endcompress %}
     {% endblock javascript %}
   </head>
-  <body class="{% block bodyclass %}{% endblock bodyclass %} d-flex flex-column h-100">
+  <body class="{% block bodyclass %}{% endblock bodyclass %} d-flex flex-column h-100" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% block body %}
       <div class="flex-shrink-0">
         <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom">
