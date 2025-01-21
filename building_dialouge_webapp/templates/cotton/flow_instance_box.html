@@ -1,4 +1,5 @@
-<div class="flow-instance-box {{ type }}" id="{{ id }}">
+<div class="flow-instance-box {% if request.path == href %}active{% endif %} {{ type }}"
+     id="{{ id }}">
   <div class="flow-instance-box-header">
     <svg width="24"
          height="24"
