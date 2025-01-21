@@ -821,7 +821,7 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
 class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/consumption_input.html"
     extra_context = {
-        "back_url": "heat:hotwater_heating",
+        "back_url": "heat:consumption_overview",
         "next_disabled": True,
     }
 
@@ -874,7 +874,7 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
 class RoofFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/roof.html"
     extra_context = {
-        "back_url": "heat:home",
+        "back_url": "heat:intro_inventory",
         "next_disabled": True,
     }
 
@@ -1179,7 +1179,7 @@ class VentilationSystemFlow(SidebarNavigationMixin, Flow):
 class RenovationRequestFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/renovation_request.html"
     extra_context = {
-        "back_url": "heat:intro_renovation",
+        "back_url": "heat:renovation_overview",
         "next_disabled": True,
     }
 
@@ -1259,7 +1259,7 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
 class FinancialSupporFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/financial_support.html"
     extra_context = {
-        "back_url": "heat:renovation_request",
+        "back_url": "heat:renovation_overview",
         "next_disabled": True,
         "back_kwargs": "scenario1",
     }

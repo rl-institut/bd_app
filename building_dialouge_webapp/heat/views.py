@@ -208,7 +208,7 @@ class ConsumptionOverview(SidebarNavigationMixin, TemplateView):
 class ConsumptionResult(SidebarNavigationMixin, TemplateView):
     template_name = "pages/consumption_result.html"
     extra_context = {
-        "back_url": "heat:consumption_input",
+        "back_url": "heat:consumption_overview",
         "next_url": "heat:intro_inventory",
     }
 
