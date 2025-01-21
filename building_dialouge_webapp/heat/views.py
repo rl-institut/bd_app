@@ -1,6 +1,7 @@
 import inspect
 from urllib.parse import urlparse
 
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
@@ -15,7 +16,9 @@ from . import tables
 from .navigation import SidebarNavigationMixin
 
 SCENARIO_MAX = 3
-YEAR_MAX = 4
+YEAR_MAX = 6
+POWER_MAX = 3
+HEATING_MAX = 3
 
 
 class LandingPage(TemplateView):
@@ -54,19 +57,44 @@ class DeadEndHeating(TemplateView):
 def consumption_year(request, year=None):
     # year is none when consumption_input first called or when opened via navigation sidebar or back-button
     year_changed = False
+
+    # Count existing heating and power instances
+    year_data = get_all_year_data(request)
+    heating_count = sum(1 for data in year_data if data["type_class"] == "heating")
+    power_count = sum(1 for data in year_data if data["type_class"] == "power")
+
     if year is None or year == "new_year":
         year = get_new_year(request)
         year_changed = True
-    # Check if year ID is lower than max years
-    year_index = int(year[4:])
-    if year_index > YEAR_MAX:
-        return JsonResponse({"error": "Maximum number of years reached."}, status=400)
 
     if year_changed:
         # If we return flow.dispatch(prefix=year), URL is not changed!
         return HttpResponseRedirect(reverse("heat:consumption_input", kwargs={"year": year}))
     flow = ConsumptionInputFlow(prefix=year)
-    flow.extra_context.update({"year_boxes": get_all_year_data(request)})
+
+    # Check if adding another instance would exceed the maximum limits
+    if heating_count >= HEATING_MAX and power_count < POWER_MAX:
+        messages.add_message(
+            request,
+            messages.INFO,
+            (
+                "Maximale Anzahl an Wärmeverbraucheingaben erreicht, "
+                "Sie können nur noch Stromverbraucheingaben hinzufügen."
+            ),
+        )
+    if heating_count < HEATING_MAX and power_count >= POWER_MAX:
+        messages.add_message(
+            request,
+            messages.INFO,
+            (
+                "Maximale Anzahl an Stromverbraucheingaben erreicht, "
+                "Sie können nur noch Wärmeverbraucheingaben hinzufügen."
+            ),
+        )
+    if heating_count >= HEATING_MAX and power_count >= POWER_MAX:
+        # user shouldn't be able to reach this, since button will be disabled
+        return JsonResponse({"warning": "Maximum number (3) of heating and power instances reached."}, status=400)
+    flow.extra_context.update({"year_boxes": year_data})
     return flow.dispatch(request)
 
 
@@ -106,12 +134,27 @@ def get_all_year_data(request):
     """Goes through years and gets their data if finished."""
     year_data_list = []
     year_id = 1
+    heating_count = 0
+    power_count = 0
     while year_id <= YEAR_MAX:
         flow = ConsumptionInputFlow(prefix=f"year{year_id}")
         if not flow.finished(request):
             year_id += 1
             continue
+
         class_type, title, text = get_user_friendly_data_consumption(flow.data(request))
+
+        if class_type == "heating":
+            if heating_count >= HEATING_MAX:
+                year_id += 1
+                continue  # Skip if max heating flows reached
+            heating_count += 1
+        elif class_type == "power":
+            if power_count >= POWER_MAX:
+                year_id += 1
+                continue  # Skip if max power flows reached
+            power_count += 1
+
         extra_context = {
             "type_class": class_type,
             "id": f"year{year_id}box",

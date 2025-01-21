@@ -274,6 +274,8 @@ class ConsumptionHeatingForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
+
+        # check if end date is after start date
         start = cleaned_data.get("heating_consumption_period_start")
         end = cleaned_data.get("heating_consumption_period_end")
 
