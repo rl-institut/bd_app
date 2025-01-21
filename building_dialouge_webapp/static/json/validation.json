@@ -44,6 +44,12 @@
           "max_value": 100
       }
   },
+  "RoofInsulationYearForm": {
+    "roof_insulation_year": {
+     "min_value": 1900,
+     "max_value": 2023
+    }
+   },
   "WindowDetailsForm": {
       "seperate_year": {
           "min_value": 1900,
