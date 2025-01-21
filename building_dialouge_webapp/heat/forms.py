@@ -6,7 +6,8 @@ from django.core.validators import MinValueValidator
 
 
 class ValidationForm(forms.Form):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, request=None, **kwargs):
+        self.request = request
         super().__init__(*args, **kwargs)
 
         with open("building_dialouge_webapp/static/json/validation.json") as file:  # noqa: PTH123
@@ -24,6 +25,17 @@ class ValidationForm(forms.Form):
                         elif rule == "max_value":
                             field.widget.attrs["max"] = value
                             field.validators.append(MaxValueValidator(value))
+        if self.request:
+            self.validate_with_session()
+
+    def validate_with_session(self):
+        """
+        Override this method in subclasses to add custom validations
+        using data that was saved to the session (using request).
+        this is how its saved:
+            value = self.flow.request.POST[self.name]
+            session_data = self.flow.request.session.get("django_htmx_flow", {})
+        """
 
 
 class BuildingTypeForm(ValidationForm):
@@ -48,8 +60,6 @@ class BuildingDataForm(ValidationForm):
     construction_year = forms.IntegerField(
         label="construction_year",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,
-        min_value=1850,
     )
     number_persons = forms.IntegerField(
         label="number_persons",
@@ -84,6 +94,33 @@ class BuildingDataForm(ValidationForm):
         ],
         widget=forms.RadioSelect,
     )
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+
+        min_max_defaults = {
+            "single_family": {
+                "number_persons": {"min": 1, "max": 10},
+                "number_flats": {"min": 1, "max": 2},
+                "living_space": {"min": 200, "max": 400},
+                "number_floors": {"min": 1, "max": 3},
+            },
+            "apartment_building": {
+                "number_persons": {"min": 2, "max": 100},
+                "number_flats": {"min": 2, "max": 20},
+                "living_space": {"min": 400, "max": 1000},
+                "number_floors": {"min": 1, "max": 10},
+            },
+        }
+
+        field_rules = min_max_defaults.get(data["building_type"])
+        for field_name, rules in field_rules.items():
+            if field_name in self.fields:
+                self.fields[field_name].widget.attrs.update(
+                    {"min": rules["min"], "max": rules["max"]},
+                )
+                self.fields[field_name].validators.append(MinValueValidator(rules["min"]))
+                self.fields[field_name].validators.append(MaxValueValidator(rules["max"]))
 
 
 class CellarHeatingForm(ValidationForm):
