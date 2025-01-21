@@ -320,6 +320,24 @@ class ConsumptionInputForm(ValidationForm):
         date_value = self.cleaned_data["heating_consumption_period_end"]
         return date_value.isoformat()
 
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+
+        energy_source_unit = {
+            "gas": "cbm",
+            "oil": "l",
+            "district_heating": "kwh",
+            "liquid_gas": "cbm",
+            "wood_pellets": "t",
+            "geothermal_pump": "kwh",
+            "air_heat_pump": "kwh",
+            "groundwater": "kwh",
+            "heating_rod": "kwh",
+        }
+
+        unit = energy_source_unit.get(data["energy_source"])
+        self.fields["heating_consumption_unit"].initial = unit
+
 
 class RoofTypeForm(ValidationForm):
     roof_type = forms.ChoiceField(
