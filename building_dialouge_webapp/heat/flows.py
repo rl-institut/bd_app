@@ -835,19 +835,20 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
             Switch("consumption_type").case("power", "consumption_power").default("consumption_heating"),
         )
 
-        self.consumption_power = FormState(
+        self.consumption_power = FormInfoState(
             self,
             target="consumption_power",
             form_class=forms.ConsumptionPowerForm,
+            info_text={"next_button_text": ("Speichern", "Weiter")},
         ).transition(
             Next("stop"),
         )
 
         self.consumption_heating = FormInfoState(
             self,
-            target="consumption_input",
-            form_class=forms.ConsumptionInputForm,
-            info_text={"next_button": ("Speichern", "Weiter")},
+            target="consumption_heating",
+            form_class=forms.ConsumptionHeatingForm,
+            info_text={"next_button_text": ("Speichern", "Weiter")},
         ).transition(
             Next("stop"),
         )
