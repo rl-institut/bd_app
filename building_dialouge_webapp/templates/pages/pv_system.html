@@ -23,11 +23,21 @@
     </div>
     <div class="step-question">
       <div class="step-container">
-        <div id="pv_system_planned" class="main">{{ pv_system_planned.content | safe }}</div>
+        <div id="pv_system_planned"
+          hx-post=""
+          hx-trigger="change"
+          hx-include="this"
+          class="main">{{ pv_system_planned.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>
-    <div id="pv_system_details">{{ pv_system_details.content | safe }}</div>
-    <div id="pv_system_battery">{{ pv_system_battery.content | safe }}</div>
+    <div id="pv_system_details"
+      hx-post=""
+      hx-trigger="keyup change delay:500ms"
+      hx-include="this">{{ pv_system_details.content | safe }}</div>
+    <div id="pv_system_battery"
+      hx-post=""
+      hx-trigger="keyup change delay:500ms, change"
+      hx-include="this">{{ pv_system_battery.content | safe }}</div>
   </section>
 {% endblock content %}
