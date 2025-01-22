@@ -295,18 +295,6 @@ class ConsumptionInputForm(ValidationForm):
         label="Brennstoffkosten in €",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-    hotwater_consumption = forms.FloatField(
-        label="Warmwasserverbrauch",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
-    hotwater_consumption_unit = forms.ChoiceField(
-        label="Einheit",
-        choices=[
-            ("kwh", "Kilowattstunden / kWh"),
-            ("l", "Liter / l"),
-            ("cbm", "Kubikmeter / m³"),
-        ],
-    )
     hotwater_temperature = forms.IntegerField(
         label="Warmwassertemperatur in °C",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
@@ -323,6 +311,7 @@ class ConsumptionInputForm(ValidationForm):
     def validate_with_session(self):
         data = self.request.session.get("django_htmx_flow", {})
 
+        # energy source unit depends on energy_source from HotwaterHeating
         energy_source_unit = {
             "gas": "cbm",
             "oil": "l",
@@ -337,6 +326,21 @@ class ConsumptionInputForm(ValidationForm):
 
         unit = energy_source_unit.get(data["energy_source"])
         self.fields["heating_consumption_unit"].initial = unit
+
+        # hotwater_consumption and unit are only needed, if hotwater_measured in HotwaterHeating
+        if data["hotwater_measured"] == "True":
+            self.fields["hotwater_consumption"] = forms.FloatField(
+                label="Warmwasserverbrauch",
+                widget=forms.NumberInput(attrs={"class": "form-control"}),
+            )
+            self.fields["hotwater_consumption_unit"] = forms.ChoiceField(
+                label="Einheit",
+                choices=[
+                    ("kwh", "Kilowattstunden / kWh"),
+                    ("l", "Liter / l"),
+                    ("cbm", "Kubikmeter / m³"),
+                ],
+            )
 
 
 class RoofTypeForm(ValidationForm):
