@@ -1100,6 +1100,11 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
         return super().dispatch(request, *args, **kwargs)
 
 
+def check_roof(self):
+    """Example switch check."""
+    return self.flow.request.session["django_htmx_flow"].get("roof_type", "satteldach") == "satteldach"
+
+
 class FinancialSupporFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/financial_support.html"
     extra_context = {
@@ -1116,7 +1121,7 @@ class FinancialSupporFlow(SidebarNavigationMixin, Flow):
             form_class=forms.FinancialSupportForm,
             template_name="partials/financial_support_help.html",
         ).transition(
-            Next("end"),
+            Switch(check_roof).case(value=True, state_name="end").default("roof_end"),
         )
-
+        self.roof_end = EndState(self, url="heat:roof")
         self.end = EndState(self, url="heat:results")
