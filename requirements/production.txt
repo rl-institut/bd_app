@@ -9,6 +9,7 @@ argon2-cffi-bindings==21.2.0
 asgiref==3.8.1
     # via
     #   django
+    #   django-allauth
     #   django-htmx
 async-timeout==5.0.1
     # via redis
@@ -24,7 +25,9 @@ certifi==2024.12.14
     #   requests
     #   sentry-sdk
 cffi==1.17.1
-    # via argon2-cffi-bindings
+    # via
+    #   argon2-cffi-bindings
+    #   cryptography
 charset-normalizer==3.4.1
     # via requests
 click==8.1.8
@@ -39,11 +42,13 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-crispy-bootstrap5==2024.2
+crispy-bootstrap5==2024.10
     # via -r requirements/base.in
 cron-descriptor==1.4.5
     # via django-celery-beat
-django==4.2.12
+cryptography==44.0.0
+    # via fido2
+django==5.1.5
     # via
     #   -r requirements/base.in
     #   crispy-bootstrap5
@@ -51,47 +56,50 @@ django==4.2.12
     #   django-anymail
     #   django-appconf
     #   django-celery-beat
+    #   django-compressor
     #   django-cotton
     #   django-crispy-forms
     #   django-htmx
     #   django-model-utils
     #   django-redis
     #   django-timezone-field
-django-allauth==0.62.1
+django-allauth==65.3.1
     # via -r requirements/base.in
-django-anymail==10.3
+django-anymail==12.0
     # via -r requirements/production.in
 django-appconf==1.0.6
     # via django-compressor
-django-celery-beat==2.6.0
+django-celery-beat==2.7.0
     # via -r requirements/base.in
-django-compressor==4.4
+django-compressor==4.5.1
     # via
     #   -r requirements/base.in
     #   django-libsass
-django-cotton==1.5.1
+django-cotton==1.5.2
     # via -r requirements/base.in
-django-crispy-forms==2.1
+django-crispy-forms==2.3
     # via
     #   -r requirements/base.in
     #   crispy-bootstrap5
-django-environ==0.11.2
+django-environ==0.12.0
     # via -r requirements/base.in
 django-htmx==1.21.0
     # via -r requirements/base.in
 django-libsass==0.9
     # via -r requirements/base.in
-django-model-utils==4.5.1
+django-model-utils==5.0.0
     # via -r requirements/base.in
 django-redis==5.4.0
     # via -r requirements/base.in
-django-timezone-field==7.0
+django-timezone-field==7.1
     # via django-celery-beat
+fido2==1.2.0
+    # via django-allauth
 flower==2.0.1
     # via -r requirements/base.in
-gunicorn==22.0.0
+gunicorn==23.0.0
     # via -r requirements/production.in
-hiredis==2.3.2
+hiredis==3.1.0
     # via -r requirements/base.in
 humanize==4.11.0
     # via flower
@@ -107,15 +115,15 @@ packaging==24.2
     # via gunicorn
 pandas==2.2.3
     # via -r requirements/base.in
-pillow==10.3.0
+pillow==11.1.0
     # via -r requirements/base.in
 prometheus-client==0.21.1
     # via flower
-prompt-toolkit==3.0.48
+prompt-toolkit==3.0.50
     # via click-repl
-psycopg==3.1.18
+psycopg==3.2.4
     # via -r requirements/production.in
-psycopg-c==3.1.18
+psycopg-c==3.2.4
     # via psycopg
 pycparser==2.22
     # via cffi
@@ -134,19 +142,19 @@ pytz==2024.2
     #   pandas
 qrcode==8.0
     # via django-allauth
-rcssmin==1.1.1
+rcssmin==1.1.2
     # via
     #   -r requirements/base.in
     #   django-compressor
-redis==5.0.4
+redis==5.2.1
     # via
     #   -r requirements/base.in
     #   django-redis
 requests==2.32.3
     # via django-anymail
-rjsmin==1.2.1
+rjsmin==1.2.2
     # via django-compressor
-sentry-sdk==2.1.1
+sentry-sdk==2.20.0
     # via -r requirements/production.in
 six==1.17.0
     # via python-dateutil
@@ -160,7 +168,7 @@ typing-extensions==4.12.2
     # via
     #   asgiref
     #   psycopg
-tzdata==2024.2
+tzdata==2025.1
     # via
     #   celery
     #   django-celery-beat
@@ -178,5 +186,5 @@ vine==5.1.0
     #   kombu
 wcwidth==0.2.13
     # via prompt-toolkit
-whitenoise==6.6.0
+whitenoise==6.8.2
     # via -r requirements/base.in
