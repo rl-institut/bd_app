@@ -1,3 +1,4 @@
+import datetime
 import inspect
 from urllib.parse import urlparse
 
@@ -178,19 +179,26 @@ def get_user_friendly_data_consumption(scenario_data):
         title = "Wärmeverbrauch"
         consumption_value = scenario_data["heating_consumption"]
         consumption_unit = scenario_data["heating_consumption_unit"]
-        start_date = scenario_data["heating_consumption_period_start"]
-        end_date = scenario_data["heating_consumption_period_end"]
+        start_date = format_date_output(scenario_data["heating_consumption_period_start"])
+        end_date = format_date_output(scenario_data["heating_consumption_period_end"])
     else:
         class_type = "power"
         title = "Stromverbrauch"
         consumption_value = scenario_data["power_consumption"]
         consumption_unit = "kwH"
-        start_date = scenario_data["power_consumption_period_start"]
-        end_date = scenario_data["power_consumption_period_end"]
+        start_date = format_date_output(scenario_data["power_consumption_period_start"])
+        end_date = format_date_output(scenario_data["power_consumption_period_end"])
     user_friendly_data.append(f"{start_date} - {end_date}")
     user_friendly_data.append(f"{consumption_value} {consumption_unit}")
 
     return class_type, title, user_friendly_data
+
+
+def format_date_output(date: str):
+    """Adjust all date outputs in the same way."""
+    date_object = datetime.date.fromisoformat(date)
+    # strftime("%d.%m.%Y") makes 01.01.2010
+    return date_object.strftime("%d.%m.%Y")
 
 
 class ConsumptionOverview(SidebarNavigationMixin, TemplateView):
