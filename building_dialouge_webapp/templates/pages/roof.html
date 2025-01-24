@@ -14,7 +14,19 @@
     <div id="roof_type" hx-post="" hx-trigger="change" hx-include="this">{{ roof_type.content | safe }}</div>
     <div class="step-question">
       <div class="step-container">
-        <div id="roof_details" class="main">{{ roof_details.content | safe }}</div>
+        <div id="roof_area" class="main">{{ roof_area.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="roof_orientation" class="main">{{ roof_orientation.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="roof_windows" class="main">{{ roof_windows.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>

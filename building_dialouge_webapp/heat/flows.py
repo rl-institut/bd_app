@@ -771,7 +771,8 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
 
 
 def check_hotwater_measured(self):
-    """Checks input of hotwater_measured for fields in Consumption Input depending on this."""
+    """Checks input of hotwater_measured from HotwaterHeatingFlow
+    for fields in Consumption Input depending on this."""
     return self.flow.request.session["django_htmx_flow"].get("hotwater_measured", "False") == "True"
 
 
@@ -812,11 +813,20 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
         self.end = EndState(self, url="heat:consumption_result")
 
 
+def check_prev_roof_orientation(self):
+    """Checks input of solar_thermal_energy_known from HotwaterHeatingFlow
+    for fields in Consumption Input depending on this."""
+    return self.flow.request.session["django_htmx_flow"].get("solar_thermal_energy_known", "unknown") == "known"
+
+
 class RoofFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/roof.html"
     extra_context = {
         "back_url": "heat:home",
-        "next_includes": "#roof_type,#roof_details,#roof_usage_now,#roof_usage_future,#roof_insulation",
+        "next_includes": (
+            "#roof_type,#roof_area,#roof_orientation,#roof_windows,"
+            "#roof_usage_now,#roof_usage_future,#roof_insulation"
+        ),
     }
 
     def __init__(self):
@@ -827,13 +837,28 @@ class RoofFlow(SidebarNavigationMixin, Flow):
             form_class=forms.RoofTypeForm,
             template_name="partials/roof_help.html",
         ).transition(
-            Switch("roof_type").case("flachdach", "roof_insulation").default("roof_details"),
+            Switch("roof_type").case("flachdach", "roof_insulation").default("roof_area"),
         )
-        # roof_type results going to roof_details and roof_usage
-        self.roof_details = FormState(
+        self.roof_area = FormState(
             self,
-            name="roof_details",
-            form_class=forms.RoofDetailsForm,
+            name="roof_area",
+            form_class=forms.RoofAreaForm,
+        ).transition(
+            Switch(check_prev_roof_orientation)
+            .case(value=True, state_name="roof_orientation")
+            .default("roof_windows"),
+        )
+        self.roof_orientation = FormState(
+            self,
+            name="roof_orientation",
+            form_class=forms.RoofOrientationForm,
+        ).transition(
+            Next("roof_windows"),
+        )
+        self.roof_windows = FormState(
+            self,
+            name="roof_windows",
+            form_class=forms.RoofWindowsForm,
         ).transition(
             Next("roof_usage_now"),
         )

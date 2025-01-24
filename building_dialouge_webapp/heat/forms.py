@@ -359,11 +359,14 @@ class RoofTypeForm(ValidationForm):
     )
 
 
-class RoofDetailsForm(ValidationForm):
+class RoofAreaForm(ValidationForm):
     roof_area = forms.IntegerField(
         label="Dachfläche in m² (gesamt)",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
+
+
+class RoofOrientationForm(ValidationForm):
     roof_orientation = forms.ChoiceField(
         label="In welcher Richtung ist ihr Dach ausgerichtet?",
         choices=[
@@ -378,6 +381,9 @@ class RoofDetailsForm(ValidationForm):
         ],
         widget=forms.RadioSelect,
     )
+
+
+class RoofWindowsForm(ValidationForm):
     number_roof_windows = forms.IntegerField(
         label="Anzahl der Dachfenster oder Dachgauben",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
