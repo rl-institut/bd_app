@@ -770,11 +770,16 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
         self.end = EndState(self, url="heat:consumption_input")
 
 
+def check_hotwater_measured(self):
+    """Checks input of hotwater_measured for fields in Consumption Input depending on this."""
+    return self.flow.request.session["django_htmx_flow"].get("hotwater_measured", "False") == "True"
+
+
 class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/consumption_input.html"
     extra_context = {
         "back_url": "heat:hotwater_heating",
-        "next_includes": "#consumption_input",
+        "next_includes": "#consumption_input, #consumption_hotwater, #consumption_hotwater_temp",
     }
 
     def __init__(self):
@@ -783,6 +788,23 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
             self,
             name="consumption_input",
             form_class=forms.ConsumptionInputForm,
+        ).transition(
+            Switch(check_hotwater_measured)
+            .case(value=True, state_name="consumption_hotwater")
+            .default("consumption_hotwater_temp"),
+        )
+        self.consumption_hotwater = FormState(
+            self,
+            name="consumption_hotwater",
+            form_class=forms.ConsumptionHotwaterForm,
+        ).transition(
+            Next("consumption_hotwater_temp"),
+        )
+
+        self.consumption_hotwater_temp = FormState(
+            self,
+            name="consumption_hotwater_temp",
+            form_class=forms.ConsumptionWatertemperaturForm,
         ).transition(
             Next("end"),
         )

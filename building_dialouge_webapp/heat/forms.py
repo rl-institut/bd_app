@@ -295,10 +295,6 @@ class ConsumptionInputForm(ValidationForm):
         label="Brennstoffkosten in €",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-    hotwater_temperature = forms.IntegerField(
-        label="Warmwassertemperatur in °C",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
 
     def clean_heating_consumption_period_start(self):
         date_value = self.cleaned_data["heating_consumption_period_start"]
@@ -327,20 +323,27 @@ class ConsumptionInputForm(ValidationForm):
         unit = energy_source_unit.get(data["energy_source"])
         self.fields["heating_consumption_unit"].initial = unit
 
-        # hotwater_consumption and unit are only needed, if hotwater_measured in HotwaterHeating
-        if data["hotwater_measured"] == "True":
-            self.fields["hotwater_consumption"] = forms.FloatField(
-                label="Warmwasserverbrauch",
-                widget=forms.NumberInput(attrs={"class": "form-control"}),
-            )
-            self.fields["hotwater_consumption_unit"] = forms.ChoiceField(
-                label="Einheit",
-                choices=[
-                    ("kwh", "Kilowattstunden / kWh"),
-                    ("l", "Liter / l"),
-                    ("cbm", "Kubikmeter / m³"),
-                ],
-            )
+
+class ConsumptionHotwaterForm(ValidationForm):
+    hotwater_consumption = forms.FloatField(
+        label="Warmwasserverbrauch",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    hotwater_consumption_unit = forms.ChoiceField(
+        label="Einheit",
+        choices=[
+            ("kwh", "Kilowattstunden / kWh"),
+            ("l", "Liter / l"),
+            ("cbm", "Kubikmeter / m³"),
+        ],
+    )
+
+
+class ConsumptionWatertemperaturForm(ValidationForm):
+    hotwater_temperature = forms.IntegerField(
+        label="Warmwassertemperatur in °C",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
 
 
 class RoofTypeForm(ValidationForm):
