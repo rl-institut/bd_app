@@ -111,24 +111,40 @@ def get_new_year(request):
 
 
 def delete_flow(request):
-    """Delete the selected year or scenario."""
-    # get only the "name" part of the url for reversing
+    """
+    Delete the selected year or scenario.
+    Handles 2 different use cases:
+    1 - if url_instance is not part of flow id we are deleting a different object and want to stay on page
+    2 - we are deleting the object we are currently editing, we want to go to overview
+    """
     current_url = request.headers.get("hx-current-url")
     parsed_url = urlparse(current_url)
     url_path = parsed_url.path.strip("/").split("/")
-    url_name = url_path[-2] if len(url_path) > 1 else url_path[0]
+    # url_instance comes from the request, it is the page from wich we are calling delete
+    url_instance = url_path[-1] if len(url_path) > 1 else url_path[0]
 
+    # flow_id comes from the object that we are deleting
     flow_id = request.POST.get("delete_flow")
-
     if flow_id.startswith("year"):
         prefix = flow_id[:5]
         flow = ConsumptionInputFlow(prefix=prefix)
-    elif flow_id.startswith("scenario"):
+        flow.reset(request)
+
+        if not flow_id.startswith(url_instance):
+            return HttpResponseClientRedirect(reverse("heat:consumption_input", kwargs={"year": url_instance}))
+        return HttpResponseClientRedirect(reverse("heat:consumption_overview"))
+    if flow_id.startswith("scenario"):
         prefix = flow_id[:9]
         flow = RenovationRequestFlow(prefix=prefix)
+        flow.reset(request)
 
-    flow.reset(request)
-    return HttpResponseClientRedirect(reverse(f"heat:{url_name}"))
+        if not flow_id.startswith(url_instance):
+            return HttpResponseClientRedirect(reverse("heat:renovation_request", kwargs={"scenario": url_instance}))
+        return HttpResponseClientRedirect(reverse("heat:renovation_overview"))
+    return JsonResponse(
+        {"error": "flow_id not valid."},
+        status=400,
+    )
 
 
 def get_all_year_data(request):
