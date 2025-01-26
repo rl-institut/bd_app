@@ -10,6 +10,7 @@ from django_htmx.http import HttpResponseClientRedirect
 from building_dialouge_webapp.heat.flows import ConsumptionInputFlow
 from building_dialouge_webapp.heat.flows import RenovationRequestFlow
 
+from . import flows
 from . import forms
 from . import tables
 from .navigation import SidebarNavigationMixin
@@ -288,6 +289,44 @@ class RenovationOverview(SidebarNavigationMixin, TemplateView):
         context["scenario_boxes"] = get_all_scenario_data(self.request)
         context["max_reached"] = int(get_new_scenario(self.request)[8:]) > SCENARIO_MAX
         return context
+
+
+def all_flows_finished(request):
+    """
+    Checks all Flows if they are finished. Either returns a all_flows_finished = True flag or Flase
+    and a list with the Flows that need more input.
+    """
+    all_flows = [
+        flow()
+        for _, flow in inspect.getmembers(flows, inspect.isclass)
+        if flow.__name__ not in {"ConsumptionInputFlow", "RenovationRequestFlow"}
+    ]
+    not_finished = []
+    not_finished = [flow for flow in all_flows if not flow.finished(request)]
+    return (True, []) if not not_finished else (False, not_finished)
+
+
+class OptimizationStart(SidebarNavigationMixin, TemplateView):
+    template_name = "pages/optimization_start.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_url"] = "heat:financial_support"
+        context["next_url"] = "heat:results"
+        all_finished, not_finished = all_flows_finished(self.request)
+        context["all_flows_finished"] = all_finished
+        context["not_finished_flows"] = not_finished
+        return context
+
+
+def simluate(request):
+    """
+    Takes all data from Session and calculates the results.
+    """
+    # TODO: implement functionality
+    # get data from session, flag for finishing for testing the button, return flag in context
+    # try "next_disabled": True, for the next button to only work after sim finished
+    # maybe some UI shit for showing that sth is happening in the back
 
 
 class Results(SidebarNavigationMixin, TemplateView):
