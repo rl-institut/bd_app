@@ -1,5 +1,10 @@
 
-.PHONY : update_vendor_assets
+.PHONY : update_vendor_assets,compile_dependencies
+
+compile_dependencies:
+	uv pip compile -q requirements/base.in -o requirements/base.txt
+	uv pip compile -q requirements/local.in -o requirements/local.txt
+	uv pip compile -q requirements/production.in -o requirements/production.txt
 
 update_vendor_assets:
 	# Note: call this command from the same folder your Makefile is located
