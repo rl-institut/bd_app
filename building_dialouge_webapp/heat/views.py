@@ -301,6 +301,8 @@ def all_flows_finished(request):
         for name, flow in inspect.getmembers(flows, inspect.isclass)
         if name.endswith("Flow") and name not in {"Flow", "ConsumptionInputFlow", "RenovationRequestFlow"}
     ]
+    # since there is no minimum for how many renovation scenarios are needed I omited testing that
+    # TODO: after consumption merge, use minimum of consumption_overview to see if the are not_finished
     not_finished = [name for name, flow in all_flows if not flow.finished(request)]
     return (True, []) if not not_finished else (False, not_finished)
 
@@ -323,9 +325,8 @@ def simluate(request):
     Takes all data from Session and calculates the results.
     """
     # TODO: implement functionality
-    # get data from session, flag for finishing for testing the button, return flag in context
     # try "next_disabled": True, for the next button to only work after sim finished
-    # maybe some UI shit for showing that sth is happening in the back
+    # maybe some UI stuff for showing that sth is happening in the back
 
 
 class Results(SidebarNavigationMixin, TemplateView):

@@ -9,20 +9,19 @@
         <p>
             Mit Klick auf den "Starten"-Button beginnt die Simulation der Daten. Sobald die Simulation abgeschlossen ist, kann es weiter gehen zu der Seite "Ergebnisse". Bis dahin bleibt der "Weiter"-Button inaktiv.
         </p>
+        <div class="d-flex justify-content-between">
+          <form action="{% url 'heat:simulate' %}"
+                method="get">
+            <button class="btn btn-primary" {% if not all_flows_finished %}disabled{% endif %}>Starten</button>
+          </form>
+        </div>
     {% else %}
-        <p>Die folgenden Eingaben fehlen noch:</p>
+        <p>Leider fehlen die folgenden Eingaben noch:</p>
         <ul>
             {% for flow in not_finished_flows %}
                 <li>{{ flow }}</li>
             {% endfor %}
         </ul>
     {% endif %}
-
-    <div class="d-flex justify-content-between">
-      <form action="{% url 'heat:simulate' %}"
-            method="get">
-        <button class="btn btn-primary" {% if not all_flows_finished %}disabled{% endif %}>Starten</button>
-      </form>
-    </div>
   </div>
 {% endblock content %}
