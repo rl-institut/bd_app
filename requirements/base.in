@@ -28,3 +28,4 @@ pandas
 # Custom packages
 # ------------------------------------------------------------------------------
 django-oemof
+oemof.tabular
