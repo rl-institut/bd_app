@@ -13,7 +13,7 @@
         <p>Die folgenden Eingaben fehlen noch:</p>
         <ul>
             {% for flow in not_finished_flows %}
-                <li>{{ flow.name }}</li>
+                <li>{{ flow }}</li>
             {% endfor %}
         </ul>
     {% endif %}

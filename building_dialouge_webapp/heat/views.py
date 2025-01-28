@@ -297,12 +297,11 @@ def all_flows_finished(request):
     and a list with the Flows that need more input.
     """
     all_flows = [
-        flow()
-        for _, flow in inspect.getmembers(flows, inspect.isclass)
-        if flow.__name__ not in {"ConsumptionInputFlow", "RenovationRequestFlow"}
+        (name, flow())
+        for name, flow in inspect.getmembers(flows, inspect.isclass)
+        if name.endswith("Flow") and name not in {"Flow", "ConsumptionInputFlow", "RenovationRequestFlow"}
     ]
-    not_finished = []
-    not_finished = [flow for flow in all_flows if not flow.finished(request)]
+    not_finished = [name for name, flow in all_flows if not flow.finished(request)]
     return (True, []) if not not_finished else (False, not_finished)
 
 
