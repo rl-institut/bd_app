@@ -119,7 +119,7 @@ def delete_flow(request):
     """
     current_url = request.headers.get("hx-current-url")
     parsed_url = urlparse(current_url)
-    url_path = parsed_url.path.strip("/").split("/")
+    url_path = parsed_url.path.strip("/").split("/")  # len(url_path > 1 if coming from flow, otherwise 1)
     # url_instance comes from the request, it is the page from wich we are calling delete
     url_instance = url_path[-1] if len(url_path) > 1 else url_path[0]
 
@@ -130,21 +130,22 @@ def delete_flow(request):
         flow = ConsumptionInputFlow(prefix=prefix)
         flow.reset(request)
 
+        if len(url_path) == 1:
+            return HttpResponseClientRedirect(reverse("heat:consumption_overview"))
         if not flow_id.startswith(url_instance):
             return HttpResponseClientRedirect(reverse("heat:consumption_input", kwargs={"year": url_instance}))
-        return HttpResponseClientRedirect(reverse("heat:consumption_overview"))
+        overview_url = "heat:consumption_overview"
     if flow_id.startswith("scenario"):
         prefix = flow_id[:9]
         flow = RenovationRequestFlow(prefix=prefix)
         flow.reset(request)
 
+        if len(url_path) == 1:
+            return HttpResponseClientRedirect(reverse("heat:renovation_overview"))
         if not flow_id.startswith(url_instance):
             return HttpResponseClientRedirect(reverse("heat:renovation_request", kwargs={"scenario": url_instance}))
-        return HttpResponseClientRedirect(reverse("heat:renovation_overview"))
-    return JsonResponse(
-        {"error": "flow_id not valid."},
-        status=400,
-    )
+        overview_url = "heat:renovation_overview"
+    return HttpResponseClientRedirect(reverse(overview_url))
 
 
 def get_all_year_data(request):
