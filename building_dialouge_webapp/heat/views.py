@@ -92,7 +92,7 @@ def consumption_year(request, year=None):
                 "Sie können nur noch Wärmeverbraucheingaben hinzufügen."
             ),
         )
-    if heating_count >= HEATING_MAX and power_count >= POWER_MAX:
+    if heating_count > HEATING_MAX and power_count > POWER_MAX:
         # user shouldn't be able to reach this, since button will be disabled
         return JsonResponse({"warning": "Maximum number (3) of heating and power instances reached."}, status=400)
     flow.extra_context.update({"year_boxes": year_data})
@@ -225,6 +225,10 @@ class ConsumptionOverview(SidebarNavigationMixin, TemplateView):
         context["back_url"] = "heat:hotwater_heating"
         context["next_url"] = "heat:consumption_result"
         context["year_boxes"] = get_all_year_data(self.request)
+        has_power = any(box.get("type_class") == "power" for box in context["year_boxes"])
+        has_heating = any(box.get("type_class") == "heating" for box in context["year_boxes"])
+        next_disabled = True if not has_power or not has_heating else False  # noqa: SIM210
+        context["next_disabled"] = next_disabled
         context["max_reached"] = int(get_new_year(self.request)[4:]) > YEAR_MAX
         return context
 
