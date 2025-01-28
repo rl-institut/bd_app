@@ -22,3 +22,7 @@ django-redis  # https://github.com/jazzband/django-redis
 django-libsass
 django-htmx
 django-cotton
+
+# Custom packages
+# ------------------------------------------------------------------------------
+django-oemof
