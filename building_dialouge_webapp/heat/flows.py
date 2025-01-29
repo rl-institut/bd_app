@@ -1243,7 +1243,7 @@ class FinancialSupporFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/financial_support.html"
     extra_context = {
         "back_url": "heat:renovation_request",
-        "next_disabled": True,
+        "next_disabled": False,
         "back_kwargs": "scenario1",
     }
 

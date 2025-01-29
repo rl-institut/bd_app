@@ -24,3 +24,14 @@ document.addEventListener("htmx:beforeRequest", (event) => {
     event.preventDefault(); // Stop the HTMX request
   }
 });
+
+// extra check for Checkboxe in RenovationRequest - RenovationDetailsForm
+document.addEventListener("htmx:beforeSend", function(event) {
+  let checkboxes = document.querySelectorAll('input[name="roof_renovation_details"]');
+  let hiddenInput = document.querySelector('input[name="roof_renovation_details_hidden"]');
+
+  let anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+  if (!anyChecked) {
+      hiddenInput.value = "none";
+  }
+});
