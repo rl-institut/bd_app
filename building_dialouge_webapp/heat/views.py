@@ -265,6 +265,8 @@ def get_user_friendly_data(form_surname, scenario_data):
     # add labels from forms for easier readability
     for form in flow_forms:
         for field_name, field in form.fields.items():
+            if field_name.endswith("hidden"):
+                break
             if scenario_data.get(field_name):
                 value = scenario_data[field_name]
                 if isinstance(value, list):  # For multiple-choice fields
