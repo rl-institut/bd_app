@@ -1266,4 +1266,4 @@ class FinancialSupporFlow(SidebarNavigationMixin, Flow):
             },
             lookup="financial_support_done",
         ).transition(Next("end"))
-        self.end = EndState(self, url="heat:results")
+        self.end = EndState(self, url="heat:optimization_start")
