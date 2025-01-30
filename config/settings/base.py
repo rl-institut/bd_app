@@ -81,6 +81,7 @@ THIRD_PARTY_APPS = [
     "django_celery_beat",
     "django_cotton",
     "django_htmx",
+    "django_oemof",
 ]
 
 LOCAL_APPS = [
