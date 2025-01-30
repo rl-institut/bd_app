@@ -334,3 +334,4 @@ building_dialouge_webapp/data/
 .env
 .envs/*
 !.envs/.local/
+/building_dialouge_webapp/data/
