@@ -333,3 +333,4 @@ building_dialouge_webapp/media/
 .env
 .envs/*
 !.envs/.local/
+/building_dialouge_webapp/data/
