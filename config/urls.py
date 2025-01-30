@@ -12,6 +12,7 @@ from building_dialouge_webapp.heat import views
 urlpatterns = [
     path("", include("building_dialouge_webapp.heat.urls", namespace="heat")),
     path("reset_session/", views.reset_session),
+    path("oemof/", include("django_oemof.urls")),
     path(
         "about/",
         TemplateView.as_view(template_name="pages/about.html"),

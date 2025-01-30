@@ -1,6 +1,8 @@
 import inspect
 from urllib.parse import urlparse
 
+import heat.settings as heat_settings
+
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
