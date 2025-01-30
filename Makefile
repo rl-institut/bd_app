@@ -1,6 +1,12 @@
 
 .PHONY : update_vendor_assets,compile_dependencies
 
+DJANGO_READ_DOT_ENV_FILE=True
+export
+
+celery:
+	redis-server --port 6379 & celery -A config.celery_app worker -l INFO
+
 compile_dependencies:
 	uv pip compile -q requirements/base.in -o requirements/base.txt
 	uv pip compile -q requirements/local.in -o requirements/local.txt
