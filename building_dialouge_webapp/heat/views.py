@@ -5,6 +5,8 @@ from urllib.parse import urlparse
 import heat.settings as heat_settings
 from django.contrib import messages
 from django.contrib.messages import get_messages
+import requests
+from django.http import HttpRequest
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
@@ -18,6 +20,10 @@ from . import flows
 from . import forms
 from . import tables
 from .navigation import SidebarNavigationMixin
+
+SCENARIO_MAX = 3
+YEAR_MAX = 4
+OEMOF_SCENARIO = "oeprom"
 
 
 class LandingPage(TemplateView):
@@ -580,3 +586,20 @@ class NextSteps(SidebarNavigationMixin, TemplateView):
     extra_context = {
         "back_url": "heat:results",
     }
+
+
+def simulate(request: HttpRequest) -> JsonResponse:
+    """
+    Runs oemof simulation using session flow data as parameters.
+
+    Flow session data can be adapted/used later in hooks
+    in order to set up oeprom datapackage with inputs from user.
+    """
+    parameters = request.session.get("django_htmx_flow", {})
+    django_oemof_url = f"{request.scheme}://{request.get_host()}"
+    response = requests.post(
+        f"{django_oemof_url}/oemof/simulate",
+        data={"scenario": OEMOF_SCENARIO, "parameters": parameters},
+        timeout=60,
+    )
+    return JsonResponse(response.json())
