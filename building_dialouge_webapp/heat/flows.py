@@ -1243,7 +1243,7 @@ class FinancialSupporFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/financial_support.html"
     extra_context = {
         "back_url": "heat:renovation_request",
-        "next_disabled": True,
+        "next_disabled": False,
         "back_kwargs": "scenario1",
     }
 
@@ -1266,4 +1266,4 @@ class FinancialSupporFlow(SidebarNavigationMixin, Flow):
             },
             lookup="financial_support_done",
         ).transition(Next("end"))
-        self.end = EndState(self, url="heat:results")
+        self.end = EndState(self, url="heat:optimization_start")

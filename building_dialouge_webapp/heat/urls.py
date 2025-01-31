@@ -35,6 +35,8 @@ urlpatterns = [
     path("renovation_request/<str:scenario>", views.renovation_scenario, name="renovation_request"),
     path("renovation_overview/", views.RenovationOverview.as_view(), name="renovation_overview"),
     path("financial_support/", flows.FinancialSupporFlow.as_view(), name="financial_support"),
+    path("optimization_start/", views.OptimizationStart.as_view(), name="optimization_start"),
+    path("simulate/", views.simluate, name="simulate"),
     path("results/", views.Results.as_view(), name="results"),
     path("next_steps/", views.NextSteps.as_view(), name="next_steps"),
     # htmx redirected views
