@@ -87,6 +87,11 @@ class SidebarNavigationMixin:
                         "url": "heat:renovation_overview",
                     },
                     {"name": "Förderung", "object": flows.FinancialSupporFlow, "url": "heat:financial_support"},
+                    {
+                        "name": "Optimierung starten",
+                        "object": views.OptimizationStart,
+                        "url": "heat:optimization_start",
+                    },
                 ],
             },
             {

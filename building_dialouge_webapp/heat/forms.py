@@ -629,6 +629,7 @@ class RenovationSolarForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
 
 class RenovationPVSolarForm(forms.Form):
@@ -641,6 +642,7 @@ class RenovationPVSolarForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
 
 class RenovationBioMassForm(forms.Form):
@@ -661,6 +663,7 @@ class RenovationBioMassForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
 
 class RenovationHeatPumpForm(forms.Form):
@@ -684,6 +687,7 @@ class RenovationHeatPumpForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
 
 class RenovationRequestForm(forms.Form):
@@ -714,6 +718,7 @@ class RenovationRequestForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    roof_renovation_details_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
     window_renovation = forms.BooleanField(
         label="Fenster austauschen",
         required=False,
@@ -767,6 +772,7 @@ class FinancialSupportForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    subsidy_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
     promotional_loan = forms.MultipleChoiceField(
         label="Förderkredit",
         choices=[
@@ -775,3 +781,4 @@ class FinancialSupportForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    promotional_loan_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")

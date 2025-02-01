@@ -12,6 +12,7 @@ from django_htmx.http import HttpResponseClientRedirect
 from building_dialouge_webapp.heat.flows import ConsumptionInputFlow
 from building_dialouge_webapp.heat.flows import RenovationRequestFlow
 
+from . import flows
 from . import forms
 from . import tables
 from .navigation import SidebarNavigationMixin
@@ -363,6 +364,8 @@ def get_user_friendly_data(form_surname, scenario_data):
     # add labels from forms for easier readability
     for form in flow_forms:
         for field_name, field in form.fields.items():
+            if field_name.endswith("hidden"):
+                break
             if scenario_data.get(field_name):
                 value = scenario_data[field_name]
                 if isinstance(value, list):  # For multiple-choice fields
@@ -387,6 +390,44 @@ class RenovationOverview(SidebarNavigationMixin, TemplateView):
         context["scenario_boxes"] = get_all_scenario_data(self.request)
         context["max_reached"] = int(get_new_scenario(self.request)[8:]) > SCENARIO_MAX
         return context
+
+
+def all_flows_finished(request):
+    """
+    Checks all Flows if they are finished. Either returns a all_flows_finished = True flag or Flase
+    and a list with the Flows that need more input.
+    """
+    all_flows = [
+        (name, flow())
+        for name, flow in inspect.getmembers(flows, inspect.isclass)
+        if name.endswith("Flow") and name not in {"Flow", "ConsumptionInputFlow", "RenovationRequestFlow"}
+    ]
+    # since there is no minimum for how many renovation scenarios are needed I omited testing that
+    # TODO: after consumption merge, use minimum of consumption_overview to see if the are not_finished
+    not_finished = [name for name, flow in all_flows if not flow.finished(request)]
+    return (True, []) if not not_finished else (False, not_finished)
+
+
+class OptimizationStart(SidebarNavigationMixin, TemplateView):
+    template_name = "pages/optimization_start.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_url"] = "heat:financial_support"
+        context["next_url"] = "heat:results"
+        all_finished, not_finished = all_flows_finished(self.request)
+        context["all_flows_finished"] = all_finished
+        context["not_finished_flows"] = not_finished
+        return context
+
+
+def simluate(request):
+    """
+    Takes all data from Session and calculates the results.
+    """
+    # TODO: implement functionality
+    # try "next_disabled": True, for the next button to only work after sim finished
+    # maybe some UI stuff for showing that sth is happening in the back
 
 
 class Results(SidebarNavigationMixin, TemplateView):
