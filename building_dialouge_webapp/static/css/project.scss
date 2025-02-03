@@ -3,7 +3,10 @@
 @import 'components/buttons';
 @import 'components/forms';
 @import 'components/nav';
+@import 'components/flow_instance_box';
 @import 'layouts/questions';
+@import 'layouts/consumption_result';
+@import 'layouts/results';
 
 .alert-debug {
   color: black;
@@ -15,4 +18,8 @@
   color: #b94a48;
   background-color: #f2dede;
   border-color: #eed3d7;
+}
+
+a.disabled {
+    pointer-events: none;
 }

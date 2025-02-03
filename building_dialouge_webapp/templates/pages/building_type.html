@@ -1,4 +1,4 @@
-{% extends "base_flow.html" %}
+{% extends "base_footer_button.html" %}
 
 {% block content %}
   <section class="position-relative h-100 flex-grow-1 pb-5">
@@ -12,6 +12,9 @@
       <div class="help"></div>
     </div>
     <div id="building_type" hx-post="" hx-trigger="change" hx-include="this">{{ building_type.content | safe }}</div>
-    <div id="monument_protection">{{ monument_protection.content | safe }}</div>
+    <div id="monument_protection"
+      hx-post=""
+      hx-trigger="change"
+      hx-include="this">{{ monument_protection.content | safe }}</div>
   </section>
 {% endblock content %}

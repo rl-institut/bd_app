@@ -1,0 +1,32 @@
+<div class="flow-instance-box {% if request.path == href %}active{% endif %} {{ type }}"
+     id="{{ id }}">
+  <div class="flow-instance-box-header">
+    <svg width="24"
+         height="24"
+         version="1.1"
+         viewBox="0 0 100 100"
+         xmlns="http://www.w3.org/2000/svg">
+      <path d="{{ icon_path }}" />
+    </svg>
+    <h2>{{ title }}</h2>
+  </div>
+  <div class="button-container">
+    <a href="{{ href }}" class="edit-flow-instance-link">
+      {% csrf_token %}
+      <button type="submit"
+              name="edit_flow"
+              value="{{ id }}"
+              class="edit-flow-instance-button">E</button>
+    </a>
+    <form hx-post="{% url 'heat:delete_flow' %}"
+          hx-target="body"
+          class="delete-flow-instance-form">
+      {% csrf_token %}
+      <button type="submit"
+              name="delete_flow"
+              value="{{ id }}"
+              class="delete-flow-instance-button">X</button>
+    </form>
+  </div>
+  <div class="flow-instance-box-text">{{ text }}</div>
+</div>

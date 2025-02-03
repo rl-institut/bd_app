@@ -34,7 +34,7 @@
       {% endcompress %}
     {% endblock javascript %}
   </head>
-  <body class="{% block bodyclass %}{% endblock bodyclass %} d-flex flex-column h-100">
+  <body class="{% block bodyclass %}{% endblock bodyclass %} d-flex flex-column h-100" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% block body %}
       <div class="flex-shrink-0">
         <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom">
@@ -85,7 +85,7 @@
             <div class="d-flex flex-row justify-content-between h-100">
               <section class="sidebar border-end px-4 py-3 h-100">
                 <div>
-                  <a class="btn btn-light" href="">
+                  <a class="btn btn-light" href="{% url 'heat:home' %}">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          width="16"
                          height="16"
@@ -94,71 +94,25 @@
                          viewBox="0 0 16 16">
                       <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
                     </svg>
-                    Abbrechen
+                    Start
                   </a>
                 </div>
                 <div class="sidebar-nav pt-4">
                   <ul class="ps-0">
-                    <li class="sidebar-nav__category visited">
-                      <a href="">1. Verbrauchsanalyse</a>
-                    </li>
-                    <li class="sidebar-nav__step visited">
-                      <a href="">Gebäudeart</a>
-                    </li>
-                    <li class="sidebar-nav__step visited">
-                      <a href="">Angaben zu Gebäude</a>
-                    </li>
-                    <li class="sidebar-nav__step active">
-                      <a href="">Keller</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Heizung & Warmwasser</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Verbrauchseingabe</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Verbrauchsergebnis</a>
-                    </li>
-                  </ul>
-                  <ul class="ps-0">
-                    <li class="sidebar-nav__category">
-                      <a href="">2. Bestandsanalyse</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Dach</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Fenster</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Fassade</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Heizung</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">PV-Anlage</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Lüftungsanlage</a>
-                    </li>
-                  </ul>
-                  <ul class="ps-0">
-                    <li class="sidebar-nav__category">
-                      <a href="">3. Sanierung</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Sanierungswunsch</a>
-                    </li>
-                    <li class="sidebar-nav__step">
-                      <a href="">Förderung</a>
-                    </li>
-                  </ul>
-                  <ul class="ps-0">
-                    <li class="sidebar-nav__category">
-                      <a href="">4. Ergebnisse</a>
-                    </li>
+                    {% for category in index %}
+                      <li class="sidebar-nav__category {{ category.index_state }}">
+                        <a href="{% url category.url %}">{{ category.category }}</a>
+                      </li>
+                      {% for step in category.steps %}
+                        <li class="sidebar-nav__step {{ step.index_state }}">
+                          {% if step.kwargs %}
+                            <a href="{% url step.url scenario=step.kwargs %}">{{ step.name }}</a>
+                          {% else %}
+                            <a href="{% url step.url %}">{{ step.name }}</a>
+                          {% endif %}
+                        </li>
+                      {% endfor %}
+                    {% endfor %}
                   </ul>
                 </div>
               </section>

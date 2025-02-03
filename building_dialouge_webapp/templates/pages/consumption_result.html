@@ -1,7 +1,85 @@
-{% extends "base_view.html" %}
+{% extends "base_footer_button.html" %}
+
+{% load static %}
 
 {% block content %}
-  <div class="container my-5">
-    <h2>Ergebnis Ihrer Verbrauchsanalyse</h2>
-  </div>
+  <section class="position-relative h-100 flex-grow-1 pb-5">
+    <div class="help-background"></div>
+    <div class="step-title">
+      <div class="step-container">
+        <div class="main">
+          <h1>Ergebnis Ihrer Verbrauchsanalyse</h1>
+        </div>
+      </div>
+      <div class="help"></div>
+    </div>
+    <div class="container_house">
+      <!-- djlint:off H021 -->
+      <svg class="house"
+           data-name="Layer 2"
+           viewBox="0 0 91.9 61.021028"
+           style="position: relative;
+                  left: {{ house_position }}"
+           x="0px"
+           y="0px"
+           version="1.1"
+           id="svg286"
+           sodipodi:docname="house.svg"
+           inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+           width="91.900002"
+           height="61.021027"
+           xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+           xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+           xmlns="http://www.w3.org/2000/svg"
+           xmlns:svg="http://www.w3.org/2000/svg"
+           xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+           xmlns:cc="http://creativecommons.org/ns#"
+           xmlns:dc="http://purl.org/dc/elements/1.1/">
+        <defs id="defs290">
+        <linearGradient id="linearGradient1598" inkscape:swatch="solid">
+        <stop style="stop-color:#000000;stop-opacity:1;" offset="0" id="stop1596" />
+        </linearGradient>
+        </defs>
+        <sodipodi:namedview id="namedview288" pagecolor="#505050" bordercolor="#eeeeee" borderopacity="1" inkscape:showpageshadow="0" inkscape:pageopacity="0" inkscape:pagecheckerboard="0" inkscape:deskcolor="#505050" showgrid="false" inkscape:zoom="11.15517" inkscape:cx="34.602791" inkscape:cy="38.278217" inkscape:window-width="1920" inkscape:window-height="1022" inkscape:window-x="0" inkscape:window-y="0" inkscape:window-maximized="1" inkscape:current-layer="svg286" />
+        <title id="title214">House5</title>
+        <rect x="-60.783394" y="0.8481878" width="1" height="90" transform="rotate(-89.85)" id="rect216" />
+        <path d="m 76.19,31.24 h -11 v -11 h 11 z m -10,-1 h 9 v -9 h -9 z" id="path228" />
+        <path d="m 51.19,60.24 h -11 v -16 h 11 z m -10,-1 h 9 v -14 h -9 z" id="path238" />
+        <path d="m 31.19,60.24 h -21 v -16 h 21 z m -20,-1 h 19 v -14 h -19 z" id="path240" />
+        <path d="M 5.69,60.74" id="path242" />
+        <polygon points="85.19,40.25 89.49,40.25 85.49,36.25 55.18,36.25 55.63,15.48 70.69,5.14 85.45,15.25 90,15.25 85.21,1 36.2,1 31.39,15.25 36.19,15.25 36.19,26.25 6.05,26.25 1.39,40.25 6.19,40.25 6.19,60.75 5.19,60.75 5.19,41.25 0,41.25 5.33,25.25 35.19,25.25 35.19,16.25 30,16.25 35.48,0 85.93,0 91.39,16.25 85.14,16.25 70.69,6.35 56.62,16.01 56.2,35.25 85.9,35.25 91.9,41.25 86.19,41.25 86.19,60.75 85.19,60.75 " id="polygon252" />
+        <rect x="5.6900001" y="40.25" width="80" height="1" id="rect254" />
+        <rect x="35.689999" y="35.25" width="50" height="1" id="rect256" />
+        <rect x="85.190002" y="15.75" width="1" height="20" id="rect258" />
+        <rect x="35.689999" y="15.25" width="20.440001" height="1" id="rect260" />
+        <rect x="-7.1087627" y="50.010479" width="7.0700002" height="1" transform="rotate(-45)" id="rect262" />
+        <rect x="35.189999" y="25.75" width="1" height="10" id="rect264" />
+        <rect x="35.189999" y="40.75" width="1" height="19.67" id="rect266" />
+        <g id="g662" style="fill:#000000">
+        <g id="roof" style="fill: {{ roof_color }}">
+        <path d="M 35.443332,0.05625011 85.997133,0.03165244 91.39054,16.223464 85.123351,16.232429 70.731994,6.3709912 56.138333,16.28615 30.019384,16.316135 Z" id="path560" sodipodi:nodetypes="cccccccc" />
+        <path d="M 0.05953573,41.15533 5.3065567,25.258486 35.226562,25.156138 l -0.01765,10.044089 38.10398,0.01434 12.86787,0.05331 0.05213,0.359667 5.57884,5.565252 z" id="path658" sodipodi:nodetypes="ccccccccc" />
+        </g>
+        </g>
+        <metadata id="metadata837">
+        <rdf:RDF>
+        <cc:Work rdf:about="">
+        <dc:title>House5</dc:title>
+        </cc:Work>
+        </rdf:RDF>
+        </metadata>
+        <path style="fill:#000000;stroke-width:0.126777;fill-opacity:0" d="m 40.314933,25.989186 v -4.690731 h 5.578167 5.578167 v 4.690731 4.690732 H 45.8931 40.314933 Z" id="path696" />
+        <path style="opacity:1;fill:#000000;fill-opacity:0;stroke:#000000;stroke-opacity:1" d="m 40.296995,31.101228 -0.08256,-10.364139 11.059875,0.06992 -0.07195,10.317583 c -3.688466,-0.04267 -6.327386,0.06509 -10.905365,-0.02336 z" id="path2431" sodipodi:nodetypes="ccccc" />
+        <path style="opacity:1;fill:#000000;fill-opacity:0;stroke:#000000;stroke-opacity:1" d="m 61.343443,46.994261 0.09417,8.213888 17.666496,-0.07088 0.0045,-8.234045 z" id="path2433" sodipodi:nodetypes="ccccc" />
+        <path style="opacity:1;fill:#000000;fill-opacity:0;stroke:#000000;stroke-opacity:1" d="m 55.641342,41.204648 -0.03383,18.933414" id="path2484" sodipodi:nodetypes="cc" />
+      </svg>
+      <!-- djlint:on -->
+    </div>
+    <div class="energy-bar">
+      <div class="section-a">A</div>
+      <div class="section-b">B</div>
+      <div class="section-c">C</div>
+      <div class="section-d">D</div>
+    </div>
+  </section>
 {% endblock content %}

@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import ValidationError
 
 
 class BuildingTypeForm(forms.Form):
@@ -15,7 +16,7 @@ class BuildingTypeForm(forms.Form):
 class BuildingTypeProtectionForm(forms.Form):
     monument_protection = forms.ChoiceField(
         label="monument_protection",
-        choices=[("yes", "Ja"), ("no", "Nein")],
+        choices=[("no", "Nein"), ("yes", "Ja")],
     )
 
 
@@ -66,8 +67,8 @@ class CellarHeatingForm(forms.Form):
         label="cellar_heating",
         choices=[
             ("no_cellar", "Kein Keller"),
-            ("without_heating", "Keller ohne Heizung"),
-            ("with_heating", "Keller mit Heizung"),
+            ("without_heating", "Keller unbeheizt"),
+            ("with_heating", "Keller beheizt"),
         ],
         widget=forms.RadioSelect,
     )
@@ -142,8 +143,8 @@ class HotwaterHeatingSystemForm(forms.Form):
     hotwater_heating_system = forms.ChoiceField(
         label="Warmwasserbereitung erfolgt in ",
         choices=[
-            ("boiler", "Boiler / Durchlauferhitzer"),
             ("heater", "Heizanlage"),
+            ("boiler", "Boiler / Durchlauferhitzer"),
         ],
         widget=forms.RadioSelect,
     )
@@ -187,7 +188,7 @@ class HotwaterHeatingSolarDetailsForm(forms.Form):
         label="Kollektorfläche in m²",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-    roof_pitch = forms.IntegerField(
+    roof_inclination = forms.IntegerField(
         label="Dachneigung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         min_value=0,
@@ -209,7 +210,18 @@ class HotwaterHeatingSolarDetailsForm(forms.Form):
     )
 
 
-class ConsumptionInputForm(forms.Form):
+class ConsumptionTypeForm(forms.Form):
+    consumption_type = forms.ChoiceField(
+        label="Welche Art von Verbrauchseingabe?",
+        choices=[
+            ("heating", "Wärmeverbrauch"),
+            ("power", "Stromverbrauch"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class ConsumptionHeatingForm(forms.Form):
     heating_consumption_period_start = forms.DateField(
         label="Zeitraum von:",
         widget=forms.DateInput(attrs={"type": "date"}),
@@ -219,19 +231,36 @@ class ConsumptionInputForm(forms.Form):
         widget=forms.DateInput(attrs={"type": "date"}),
     )
     heating_consumption = forms.IntegerField(
-        label="Heizenergieverbrauch in kWh",
+        label="Heizenergieverbrauch",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    heating_consumption_unit = forms.ChoiceField(
+        label="Einheit",
+        choices=[
+            ("kwh", "Kilowattstunden / kWh"),
+            ("l", "Liter / l"),
+            ("cbm", "Kubikmeter / m³"),
+            ("t", "Tonnen / t"),
+        ],
     )
     heating_energy_source_cost = forms.FloatField(
         label="Brennstoffkosten in €",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     hotwater_consumption = forms.FloatField(
-        label="Warmwasser: Verbrauch m³ pro kWh",
+        label="Warmwasserverbrauch",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
+    hotwater_consumption_unit = forms.ChoiceField(
+        label="Einheit",
+        choices=[
+            ("kwh", "Kilowattstunden / kWh"),
+            ("l", "Liter / l"),
+            ("cbm", "Kubikmeter / m³"),
+        ],
+    )
     hotwater_temperature = forms.IntegerField(
-        label="Warmwasser: Temperatur",
+        label="Warmwassertemperatur in °C",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
@@ -242,6 +271,53 @@ class ConsumptionInputForm(forms.Form):
     def clean_heating_consumption_period_end(self):
         date_value = self.cleaned_data["heating_consumption_period_end"]
         return date_value.isoformat()
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # check if end date is after start date
+        start = cleaned_data.get("heating_consumption_period_start")
+        end = cleaned_data.get("heating_consumption_period_end")
+
+        if start and end:
+            if end <= start:
+                raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
+
+
+class ConsumptionPowerForm(forms.Form):
+    power_consumption_period_start = forms.DateField(
+        label="Zeitraum von:",
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+    power_consumption_period_end = forms.DateField(
+        label="bis:",
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+    power_consumption = forms.IntegerField(
+        label="Stromverbrauch",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    power_cost = forms.FloatField(
+        label="Stromkosten in €",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+    def clean_power_consumption_period_start(self):
+        date_value = self.cleaned_data["power_consumption_period_start"]
+        return date_value.isoformat()
+
+    def clean_power_consumption_period_end(self):
+        date_value = self.cleaned_data["power_consumption_period_end"]
+        return date_value.isoformat()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start = cleaned_data.get("power_consumption_period_start")
+        end = cleaned_data.get("power_consumption_period_end")
+
+        if start and end:
+            if end <= start:
+                raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
 
 
 class RoofTypeForm(forms.Form):
@@ -259,25 +335,25 @@ class RoofTypeForm(forms.Form):
 
 class RoofDetailsForm(forms.Form):
     roof_area = forms.IntegerField(
-        label="roof_area",
+        label="Dachfläche in m² (gesamt)",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     roof_orientation = forms.ChoiceField(
         label="In welcher Richtung ist ihr Dach ausgerichtet?",
         choices=[
             ("n", "N"),
-            ("no", "NO"),
-            ("o", "O"),
-            ("so", "SO"),
-            ("sw", "SW"),
+            ("ne", "NO"),
+            ("e", "O"),
+            ("se", "SO"),
             ("s", "S"),
+            ("sw", "SW"),
             ("w", "W"),
             ("nw", "NW"),
         ],
         widget=forms.RadioSelect,
     )
     number_roof_windows = forms.IntegerField(
-        label="number_of_windows",
+        label="Anzahl der Dachfenster oder Dachgauben",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
@@ -314,7 +390,15 @@ class RoofUsageFutureForm(forms.Form):
 class RoofInsulationForm(forms.Form):
     roof_insulation_exists = forms.ChoiceField(
         label="roof_insulation_exists",
-        choices=[(True, "Ja"), (False, "Nein")],
+        choices=[("yes", "Ja"), ("no", "Nein"), ("unknown", "Unbekannt")],
+    )
+
+
+class RoofInsulationYearForm(forms.Form):
+    roof_insulation_year = forms.IntegerField(
+        label="Jahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
     )
 
 
@@ -323,7 +407,7 @@ class WindowAreaForm(forms.Form):
         label="Umfang Fensterflächen",
         choices=[
             ("small", "Niedrig (wenige Fensterflächen)"),
-            ("medium", "Mittel (durchschnittlich große Fensterflächen)"),
+            ("medium", "Mittel (durchschnittlich viele Fensterflächen)"),
             ("large", "Hoch (viele Fensterfächen)"),
         ],
         widget=forms.RadioSelect,
@@ -342,7 +426,7 @@ class WindowDetailsForm(forms.Form):
         widget=forms.RadioSelect,
     )
     window_construction_year = forms.ChoiceField(
-        label="Fenstertyp",
+        label="Jahr des Einbaus",
         choices=[
             ("unkown", "Unbekannt"),
             ("like_building", "wie Gebäude"),
@@ -521,6 +605,147 @@ class VentilationSystemYearForm(forms.Form):
     )
 
 
+class RenovationTechnologyForm(forms.Form):
+    primary_heating = forms.ChoiceField(
+        label="Heizungstechnologie",
+        choices=[
+            ("district_heating", "Fernwärme"),
+            ("bio_mass", "Biomasseheizung"),
+            ("heat_pump", "Wärmepumpe"),
+            ("oil_heating", "Effiziente Öl- und Gasheizung"),
+            ("heating_rod", "Heizstab"),
+            ("bhkw", "BHKW"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class RenovationSolarForm(forms.Form):
+    secondary_heating = forms.MultipleChoiceField(
+        label="Zusätzliche Erzeuger",
+        choices=[
+            ("solar", "Solarthermie"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+    secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
+
+
+class RenovationPVSolarForm(forms.Form):
+    secondary_heating = forms.MultipleChoiceField(
+        label="Zusätzliche Erzeuger",
+        choices=[
+            ("pv", "PV-Anlage"),
+            ("solar", "Solarthermie"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+    secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
+
+
+class RenovationBioMassForm(forms.Form):
+    bio_mass_source = forms.ChoiceField(
+        label="Energieträger",
+        choices=[
+            ("wood_pellets", "Holzpellets"),
+            ("wood_chips", "Hackschnitzel"),
+            ("firewood", "Scheitholz"),
+        ],
+        widget=forms.RadioSelect,
+    )
+    secondary_heating = forms.MultipleChoiceField(
+        label="Zusätzliche Erzeuger",
+        choices=[
+            ("solar", "Solarthermie"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+    secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
+
+
+class RenovationHeatPumpForm(forms.Form):
+    heat_pump_type = forms.ChoiceField(
+        label="Wärmepumpentyp",
+        choices=[
+            ("geothermal_pump", "Erdwärmepumpe"),
+            ("air_heat_pump", "Luftwärmepumpe"),
+            ("groundwater", "Grundwasser-/Solewärmepumpe"),
+        ],
+        widget=forms.RadioSelect,
+    )
+    secondary_heating = forms.MultipleChoiceField(
+        label="Zusätzliche Erzeuger",
+        choices=[
+            ("oil_heating", "Effiziente Öl- und Gasheizung"),
+            ("heating_rod", "Heizstab"),
+            ("pv", "PV-Anlage"),
+            ("solar", "Solarthermie"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+    secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
+
+
+class RenovationRequestForm(forms.Form):
+    facade_renovation = forms.BooleanField(
+        label="Fassade sanieren",
+        required=False,
+    )
+    facade_renovation_details = forms.ChoiceField(
+        label="",
+        choices=[
+            ("paint", "streichen"),
+            ("plaster", "verputzen"),
+            ("insulate", "dämmen"),
+        ],
+        widget=forms.RadioSelect,
+        required=False,
+    )
+    roof_renovation = forms.BooleanField(
+        label="Dach sanieren",
+        required=False,
+    )
+    roof_renovation_details = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("cover", "decken"),
+            ("expand", "ausbauen"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+    roof_renovation_details_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
+    window_renovation = forms.BooleanField(
+        label="Fenster austauschen",
+        required=False,
+    )
+    cellar_renovation = forms.BooleanField(
+        label="Kellerdeckendämmung",
+        required=False,
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        errors = {}
+
+        if cleaned_data.get("facade_renovation") and not cleaned_data.get("facade_renovation_details"):
+            errors["facade_renovation_details"] = (
+                "Bitte mindestens eine Spezifikation fürs Fassade sanieren auswählen."
+            )
+
+        if cleaned_data.get("roof_renovation") and not cleaned_data.get("roof_renovation_details"):
+            errors["roof_renovation_details"] = "Bitte mindestens eine Spezifikation fürs Dach sanieren auswählen."
+
+        if errors:
+            raise forms.ValidationError(errors)
+
+        return cleaned_data
+
+
 class FinancialSupportForm(forms.Form):
     subsidy = forms.MultipleChoiceField(
         label="Zuschüsse",
@@ -547,6 +772,7 @@ class FinancialSupportForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    subsidy_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
     promotional_loan = forms.MultipleChoiceField(
         label="Förderkredit",
         choices=[
@@ -555,3 +781,4 @@ class FinancialSupportForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    promotional_loan_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")

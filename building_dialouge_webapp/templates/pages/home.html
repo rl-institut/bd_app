@@ -12,18 +12,19 @@
       <div class="col-12 col-md-6">
         <div class="border p-4 h-100">
           <div class="mb-3">
-            <p>Ich bin:</p>
             <ul>
               <li>Ich bin Hauseigentümer*in</li>
               <li>Ich bin Vermieter*in</li>
-              <li>Ich gehöre zu einer WohnungseigentümerInnengemeinschaft oder Wohnungsverwaltungen</li>
+              <li>Ich gehöre zu einer Wohnungseigentümer*innengemeinschaft oder Wohnungsverwaltung</li>
             </ul>
           </div>
           <div class="input-group">
             <input type="text"
                    id="postalCode"
                    class="form-control"
-                   placeholder="Bsp: 45328" />
+                   placeholder="Bsp: 45328"
+                   title="Ihre Postleitzahl erhöht die Berechnungsgenauigkeit. Sie wird ausschließlich für präzisere Wetterdaten verwendet."
+                   alt="Text der erklärt, wofür die Postleitzahl genutzt wird" />
             <a href="{% url 'heat:intro_consumption' %}" class="btn btn-dark">Starten</a>
           </div>
         </div>
@@ -31,7 +32,6 @@
       <div class="col-12 col-md-6">
         <div class="border p-4 h-100 d-flex flex-column align-items-left justify-content-between">
           <div class="text-left">
-            <p>Ich bin:</p>
             <ul>
               <li>Ich bin Mieter*in</li>
             </ul>

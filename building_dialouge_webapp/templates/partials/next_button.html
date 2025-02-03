@@ -1,0 +1,30 @@
+{% if next_url %}
+  {# Used in views. #}
+    {% if next_kwargs %}
+    {# KWARGS are True on when next page has prefix. #}
+      <a class="btn btn-primary {% if next_disabled %}disabled{% endif %}"
+         href="{% url next_url scenario=next_kwargs %}">
+    {% else %}
+      <a class="btn btn-primary {% if next_disabled %}disabled{% endif %}"
+         href="{% url next_url %}">
+    {% endif %}
+{% else %}
+  {# Next button in flow is always a HTMX call to current page including several form inputs. #}
+  {# Used in flow when first loading the Button or loading it with stop state. #}
+    <a class="btn btn-primary {% if next_disabled %}disabled{% endif %}"
+      hx-post=""
+      {% if hx_vals %}
+      hx-vals='{{ hx_vals }}'
+      {% endif %}
+    >
+{% endif %}
+  <span class="ps-2" id="next_button_text">Weiter</span>
+  <svg xmlns="http://www.w3.org/2000/svg"
+       width="16"
+       height="16"
+       fill="currentColor"
+       class="bi bi-arrow-right"
+       viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
+  </svg>
+</a>

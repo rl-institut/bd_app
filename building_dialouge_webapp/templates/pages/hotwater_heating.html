@@ -1,4 +1,4 @@
-{% extends "base_flow.html" %}
+{% extends "base_footer_button.html" %}
 
 {% block content %}
   <section class="position-relative h-100 flex-grow-1 pb-5">
@@ -11,7 +11,10 @@
       </div>
       <div class="help"></div>
     </div>
-    <div id="heating_system">{{ heating_system.content | safe }}</div>
+    <div id="heating_system"
+      hx-post=""
+      hx-trigger="change"
+      hx-include="this">{{ heating_system.content | safe }}</div>
     <div id="heating_source" hx-post="" hx-trigger="change" hx-include="this">{{ heating_source.content | safe }}</div>
     <div id="hotwater_heating_system"
          hx-post=""
@@ -29,7 +32,11 @@
     </div>
     <div class="step-question">
       <div class="step-container">
-        <div id="solar_thermal_exists" class="main">{{ solar_thermal_exists.content | safe }}</div>
+        <div id="solar_thermal_exists"
+          hx-post=""
+          hx-trigger="change"
+          hx-include="this"
+          class="main">{{ solar_thermal_exists.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>
@@ -39,13 +46,21 @@
          hx-include="this">{{ solar_thermal_energy_known.content | safe }}</div>
     <div class="step-question">
       <div class="step-container">
-        <div id="solar_thermal_energy" class="main">{{ solar_thermal_energy.content | safe }}</div>
+        <div id="solar_thermal_energy"
+          hx-post=""
+          hx-trigger="keyup change delay:500ms"
+          hx-include="this"
+          class="main">{{ solar_thermal_energy.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>
     <div class="step-question">
       <div class="step-container">
-        <div id="solar_thermal_details" class="main">{{ solar_thermal_details.content | safe }}</div>
+        <div id="solar_thermal_details"
+          hx-post=""
+          hx-trigger="keyup change delay:500ms, change"
+          hx-include="this"
+          class="main">{{ solar_thermal_details.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>

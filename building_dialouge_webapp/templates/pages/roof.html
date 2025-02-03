@@ -1,4 +1,4 @@
-{% extends "base_flow.html" %}
+{% extends "base_footer_button.html" %}
 
 {% block content %}
   <section class="position-relative h-100 flex-grow-1 pb-5">
@@ -14,7 +14,11 @@
     <div id="roof_type" hx-post="" hx-trigger="change" hx-include="this">{{ roof_type.content | safe }}</div>
     <div class="step-question">
       <div class="step-container">
-        <div id="roof_details" class="main">{{ roof_details.content | safe }}</div>
+        <div id="roof_details"
+          hx-post=""
+          hx-trigger="keyup change delay:500ms"
+          hx-include="this"
+          class="main">{{ roof_details.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>
@@ -30,13 +34,31 @@
     </div>
     <div class="step-question">
       <div class="step-container">
-        <div id="roof_usage_future" class="main">{{ roof_usage_future.content | safe }}</div>
+        <div id="roof_usage_future"
+          hx-post=""
+          hx-trigger="keyup change delay:500ms"
+          hx-include="this"
+          class="main">{{ roof_usage_future.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>
     <div class="step-question">
       <div class="step-container">
-        <div id="roof_insulation" class="main">{{ roof_insulation.content | safe }}</div>
+        <div id="roof_insulation"
+          hx-post=""
+          hx-trigger="change"
+          hx-include="this"
+          class="main">{{ roof_insulation.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="roof_insulation_year"
+          hx-post=""
+          hx-trigger="keyup change delay:500ms"
+          hx-include="this"
+          class="main">{{ roof_insulation_year.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>

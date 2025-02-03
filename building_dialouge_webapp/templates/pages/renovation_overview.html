@@ -1,0 +1,25 @@
+{% extends "base_footer_button.html" %}
+
+{% block content %}
+  <section class="position-relative h-100 flex-grow-1 pb-5">
+    <div class="help-background"></div>
+    <div class="step-title">
+      <div class="step-container">
+        <div class="main">
+          <h1>Sanierungsübersicht</h1>
+        </div>
+      </div>
+      <div class="help" id="flow-instance-boxes">
+        {% for box in scenario_boxes %}
+          <c-flow-instance-box id="{{ box.id }}" href="{{ box.href }}" title="{{ box.title }}" text="{{ box.text }}" />
+        {% endfor %}
+      </div>
+    </div>
+    <div class="d-flex justify-content-between">
+      <form action="{% url 'heat:renovation_request' scenario='new_scenario' %}"
+            method="get">
+        <button class="btn btn-primary" {% if max_reached %}disabled{% endif %}>Weiteres Heizszenario</button>
+      </form>
+    </div>
+  </section>
+{% endblock content %}
