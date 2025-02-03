@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import datetime
 from datetime import timedelta
 
@@ -281,6 +282,23 @@ class ConsumptionTypeForm(ValidationForm):
         ],
         widget=forms.RadioSelect,
     )
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+        # Count occurrences of "heating" and "power" as consumption_type in session
+        pattern = re.compile(r"^year[1-6]-consumption_type$")
+        relevant_data = {k: v for k, v in data.items() if pattern.match(k)}
+
+        heating_count = sum(1 for v in relevant_data.values() if v == "heating")
+        power_count = sum(1 for v in relevant_data.values() if v == "power")
+        count_max = 3
+        # Determine initial value and whether to disable the field
+        if heating_count >= count_max:
+            self.fields["consumption_type"].initial = "power"
+            self.fields["consumption_type"].widget.attrs["disabled"] = True
+        elif power_count >= count_max:
+            self.fields["consumption_type"].initial = "heating"
+            self.fields["consumption_type"].widget.attrs["disabled"] = True
 
 
 class ConsumptionHeatingForm(ValidationForm):
