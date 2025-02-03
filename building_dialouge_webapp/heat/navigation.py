@@ -14,7 +14,11 @@ class SidebarNavigationMixin:
                 category["index_state"] = ""
 
             for step in category["steps"]:
-                if step["object"] == type(self):
+                if (
+                    isinstance(step["object"], list)
+                    and any(isinstance(self, obj) for obj in step["object"])
+                    or step["object"] == type(self)
+                ):
                     step["index_state"] = "active"
                     active_step_found = True
                 elif not active_step_found:
@@ -44,9 +48,9 @@ class SidebarNavigationMixin:
                         "url": "heat:hotwater_heating",
                     },
                     {
-                        "name": "Verbrauchseingabe",
-                        "object": flows.ConsumptionInputFlow,
-                        "url": "heat:consumption_input",
+                        "name": "Verbrauchsanalyse Übersicht",
+                        "object": [views.ConsumptionOverview, flows.ConsumptionInputFlow],
+                        "url": "heat:consumption_overview",
                     },
                     {
                         "name": "Verbrauchsergebnis",
@@ -78,17 +82,16 @@ class SidebarNavigationMixin:
                 "url": "heat:intro_renovation",
                 "steps": [
                     {
-                        "name": "Sanierungswunsch",
-                        "object": flows.RenovationRequestFlow,
-                        "url": "heat:renovation_request",
-                        "kwargs": "scenario1",
-                    },
-                    {
                         "name": "Sanierungsübersicht",
-                        "object": views.RenovationOverview,
+                        "object": [views.RenovationOverview, flows.RenovationRequestFlow],
                         "url": "heat:renovation_overview",
                     },
                     {"name": "Förderung", "object": flows.FinancialSupporFlow, "url": "heat:financial_support"},
+                    {
+                        "name": "Optimierung starten",
+                        "object": views.OptimizationStart,
+                        "url": "heat:optimization_start",
+                    },
                 ],
             },
             {

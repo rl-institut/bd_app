@@ -21,6 +21,9 @@
         <div class="help"></div>
       </div>
     </div>
-    <div id="window_details">{{ window_details.content | safe }}</div>
+    <div id="window_details"
+      hx-post=""
+      hx-trigger="keyup change delay:500ms"
+      hx-include="this">{{ window_details.content | safe }}</div>
   </section>
 {% endblock content %}

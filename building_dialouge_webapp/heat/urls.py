@@ -17,7 +17,9 @@ urlpatterns = [
     path("cellar/", flows.CellarFlow.as_view(), name="cellar"),
     path("hotwater_heating/", flows.HotwaterHeatingFlow.as_view(), name="hotwater_heating"),
     path("dead_end_heating/", views.DeadEndHeating.as_view(), name="dead_end_heating"),
-    path("consumption_input/", flows.ConsumptionInputFlow.as_view(), name="consumption_input"),
+    path("consumption_input/", views.consumption_year, name="consumption_input"),
+    path("consumption_input/<str:year>", views.consumption_year, name="consumption_input"),
+    path("consumption_overview/", views.ConsumptionOverview.as_view(), name="consumption_overview"),
     path("consumption_result/", views.ConsumptionResult.as_view(), name="consumption_result"),
     # step 2 inventory analysis
     path("intro_inventory/", views.IntroInventory.as_view(), name="intro_inventory"),
@@ -31,9 +33,12 @@ urlpatterns = [
     path("intro_renovation/", views.IntroRenovation.as_view(), name="intro_renovation"),
     path("renovation_request/", views.renovation_scenario, name="renovation_request"),
     path("renovation_request/<str:scenario>", views.renovation_scenario, name="renovation_request"),
-    path("renovation_delete/", views.delete_scenario, name="renovation_delete"),
     path("renovation_overview/", views.RenovationOverview.as_view(), name="renovation_overview"),
     path("financial_support/", flows.FinancialSupporFlow.as_view(), name="financial_support"),
+    path("optimization_start/", views.OptimizationStart.as_view(), name="optimization_start"),
+    path("simulate/", views.simluate, name="simulate"),
     path("results/", views.Results.as_view(), name="results"),
     path("next_steps/", views.NextSteps.as_view(), name="next_steps"),
+    # htmx redirected views
+    path("delete_flow/", views.delete_flow, name="delete_flow"),
 ]

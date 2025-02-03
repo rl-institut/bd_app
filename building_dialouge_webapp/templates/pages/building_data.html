@@ -11,6 +11,9 @@
       </div>
       <div class="help"></div>
     </div>
-    <div id="building_data">{{ building_data.content | safe }}</div>
+    <div id="building_data"
+      hx-post=""
+      hx-trigger="keyup change delay:500ms, change"
+      hx-include="this">{{ building_data.content | safe }}</div>
   </section>
 {% endblock content %}

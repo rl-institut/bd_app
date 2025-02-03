@@ -1,0 +1,261 @@
+body {
+  color: #545f71;
+}
+.energy_efficiency {
+  margin-left: 20px;
+  width: 60%;
+}
+
+.accordion {
+  width: 50%;
+  margin-right: 20%;
+  color: #545f71;
+}
+
+.accordion-item {
+  margin-bottom: 5%;
+}
+
+.accordion-button {
+  position: relative;
+  font-size: 40px;
+  color: #545f71;
+  font-weight: bold;
+  padding-left: 90px;
+  border: 5px solid #e3e3e3;
+}
+
+.accordion-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 60px;
+  background-color: white;
+  border: 5px solid #e3e3e3;
+  border-radius: 5px;
+  z-index: 0;
+}
+
+.accordion-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%) rotate(180deg);
+  width: 60px;
+  height: 60px;
+  background-color: #e3e3e3; /* Dunkelgrau für das Dreieck */
+  clip-path: polygon(50% 20%, 80% 70%, 20% 70%);
+  z-index: 1;
+  transition: transform 0.3s ease;
+}
+
+.accordion-button:not(.collapsed)::after {
+  transform: translateY(-50%) rotate(0deg);
+}
+
+.accordion .accordion-button:not(.collapsed) {
+  background-color: white !important;
+  color: #545f71;
+  box-shadow: none !important;
+  border-bottom: none;
+}
+
+.accordion-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.accordion-body {
+  border: 5px solid #e3e3e3;
+  border-top: none;
+  color: #545f71;
+}
+/* --------------------------------------------- */
+/* TABLE-STYLES                                  */
+/* --------------------------------------------- */
+table.consumption_table,
+table.investment_table {
+  border: 1px solid #b9b9b9;
+  border-radius: 12px;
+  width: 100%;
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+table.consumption_table th,
+table.consumption_table td,
+table.investment_table th,
+table.investment_table td {
+  border: 1px solid #b9b9b9;
+  padding: 10px;
+  vertical-align: middle;
+}
+
+table.consumption_table th,
+table.investment_table th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+  text-align: left;
+  padding-left: 10px;
+  color: #000;
+}
+
+.scenario1 {
+  background-color: #1b9e77;
+  color: #fff;
+  padding: 5px;
+}
+
+.scenario2 {
+  background-color: #7570b3;
+  color: #fff;
+  padding: 5px;
+}
+
+table.consumption_table td {
+}
+
+table.consumption_table td.no-entry {
+  color: #b9b9b9;
+}
+
+.investment_table th.scenario1 span,
+.consumption_table th.scenario1 span {
+  background-color: #1b9e77;
+  padding: 5px 15px;
+}
+
+.investment_table th.scenario2 span,
+.consumption_table th.scenario2 span{
+  background-color: #7570b3;
+  padding: 5px 15px;
+}
+
+.investment_table th.scenario3 span,
+.consumption_table th.scenario3 span {
+  background-color: #ff9900;
+  padding: 5px 15px;
+}
+.consumption_table td.no-entry {
+  color: #A9A9A9;
+  }
+
+.investment_table th, td {
+  border: 1px solid grey;
+  padding: 10px;
+  text-align: center;
+  }
+
+.investment_table tr:last-child td {
+  font-weight: bold;
+  }
+
+.maintenance {
+  background-color: #fdb462;
+  font-weight: bold;
+  padding: 5px;
+  }
+
+.renovation {
+  background-color: #80b1d3;
+  font-weight: bold;
+  padding: 5px;
+  }
+
+.electricity {
+  background-color: #b3de69;
+  font-weight: bold;
+  padding: 5px;
+  }
+
+.heating {
+  background-color: #fb8072;
+  font-weight: bold;
+  padding: 5px;
+  }
+
+.saving_forest {
+  background-color: #f9f9f9;
+  padding: 10px;
+}
+
+.saving_emission {
+  background-color: #00604e;
+  color: #fff;
+  padding: 5px;
+}
+
+.hectare {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.plant_in_hand {
+  position: relative;
+  height: 40px;
+  margin-left: 80px;
+  margin-dowm: 20px;
+  z-index: 10;
+}
+
+.tabs-container input[type="radio"] {
+    display: none;
+}
+
+.tabs-container .tab-label {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 10px 20px;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.tabs-container .tab-1 {
+    background-color: #1b9e77;
+}
+
+.tabs-container .tab-2 {
+    background-color: #7570b3;
+}
+
+.tab-content table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.tabs-content {
+    margin-top: 20px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content table th:first-child,
+.tab-content table td:first-child {
+  width: 80%;
+  text-align: left;
+  vertical-align: top;
+  word-wrap: break-word;
+}
+
+.tab-content table th:last-child,
+.tab-content table td:last-child {
+  width: 20%;
+  text-align: right;
+  vertical-align: middle;
+}
+
+#tab_scenario1:checked ~ .tabs-content .tab_scenario1 {
+    display: block;
+}
+
+#tab_scenario2:checked ~ .tabs-content .tab_scenario2 {
+    display: block;
+}

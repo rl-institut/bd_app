@@ -11,6 +11,10 @@
       </div>
       <div class="help"></div>
     </div>
-    <div id="financial_support">{{ financial_support.content | safe }}</div>
+    <div id="financial_support"
+         hx-post=""
+         hx-trigger="change"
+         hx-include="this"
+    >{{ financial_support.content | safe }}</div>
   </section>
 {% endblock content %}

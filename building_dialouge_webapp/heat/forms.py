@@ -3,6 +3,7 @@ import json
 from django import forms
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
+from django.forms import ValidationError
 
 
 class ValidationForm(forms.Form):
@@ -269,7 +270,18 @@ class HotwaterHeatingSolarDetailsForm(ValidationForm):
     )
 
 
-class ConsumptionInputForm(ValidationForm):
+class ConsumptionTypeForm(ValidationForm):
+    consumption_type = forms.ChoiceField(
+        label="Welche Art von Verbrauchseingabe?",
+        choices=[
+            ("heating", "Wärmeverbrauch"),
+            ("power", "Stromverbrauch"),
+        ],
+        widget=forms.RadioSelect,
+    )
+
+
+class ConsumptionHeatingForm(ValidationForm):
     heating_consumption_period_start = forms.DateField(
         label="Zeitraum von:",
         widget=forms.DateInput(attrs={"type": "date"}),
@@ -345,8 +357,59 @@ class ConsumptionWatertemperaturForm(ValidationForm):
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
+    def clean_heating_consumption_period_end(self):
+        date_value = self.cleaned_data["heating_consumption_period_end"]
+        return date_value.isoformat()
 
-class RoofTypeForm(ValidationForm):
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # check if end date is after start date
+        start = cleaned_data.get("heating_consumption_period_start")
+        end = cleaned_data.get("heating_consumption_period_end")
+
+        if start and end:
+            if end <= start:
+                raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
+
+
+class ConsumptionPowerForm(forms.Form):
+    power_consumption_period_start = forms.DateField(
+        label="Zeitraum von:",
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+    power_consumption_period_end = forms.DateField(
+        label="bis:",
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+    power_consumption = forms.IntegerField(
+        label="Stromverbrauch",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    power_cost = forms.FloatField(
+        label="Stromkosten in €",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+    def clean_power_consumption_period_start(self):
+        date_value = self.cleaned_data["power_consumption_period_start"]
+        return date_value.isoformat()
+
+    def clean_power_consumption_period_end(self):
+        date_value = self.cleaned_data["power_consumption_period_end"]
+        return date_value.isoformat()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start = cleaned_data.get("power_consumption_period_start")
+        end = cleaned_data.get("power_consumption_period_end")
+
+        if start and end:
+            if end <= start:
+                raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
+
+
+class RoofTypeForm(forms.Form):
     roof_type = forms.ChoiceField(
         label="roof_type",
         choices=[
@@ -420,7 +483,15 @@ class RoofUsageFutureForm(ValidationForm):
 class RoofInsulationForm(ValidationForm):
     roof_insulation_exists = forms.ChoiceField(
         label="roof_insulation_exists",
-        choices=[(True, "Ja"), (False, "Nein")],
+        choices=[("yes", "Ja"), ("no", "Nein"), ("unknown", "Unbekannt")],
+    )
+
+
+class RoofInsulationYearForm(forms.Form):
+    roof_insulation_year = forms.IntegerField(
+        label="Jahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
     )
 
 
@@ -639,6 +710,7 @@ class RenovationSolarForm(ValidationForm):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
 
 class RenovationPVSolarForm(ValidationForm):
@@ -651,6 +723,7 @@ class RenovationPVSolarForm(ValidationForm):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
 
 class RenovationBioMassForm(ValidationForm):
@@ -671,6 +744,7 @@ class RenovationBioMassForm(ValidationForm):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
 
 class RenovationHeatPumpForm(ValidationForm):
@@ -694,6 +768,7 @@ class RenovationHeatPumpForm(ValidationForm):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
 
 class RenovationRequestForm(ValidationForm):
@@ -701,14 +776,14 @@ class RenovationRequestForm(ValidationForm):
         label="Fassade sanieren",
         required=False,
     )
-    facade_renovation_details = forms.MultipleChoiceField(
+    facade_renovation_details = forms.ChoiceField(
         label="",
         choices=[
             ("paint", "streichen"),
             ("plaster", "verputzen"),
             ("insulate", "dämmen"),
         ],
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.RadioSelect,
         required=False,
     )
     roof_renovation = forms.BooleanField(
@@ -724,6 +799,7 @@ class RenovationRequestForm(ValidationForm):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    roof_renovation_details_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
     window_renovation = forms.BooleanField(
         label="Fenster austauschen",
         required=False,
@@ -777,6 +853,7 @@ class FinancialSupportForm(ValidationForm):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    subsidy_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
     promotional_loan = forms.MultipleChoiceField(
         label="Förderkredit",
         choices=[
@@ -785,3 +862,4 @@ class FinancialSupportForm(ValidationForm):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    promotional_loan_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
