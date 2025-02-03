@@ -365,6 +365,25 @@ class ConsumptionHotwaterForm(ValidationForm):
         ],
     )
 
+    def clean(self):
+        cleaned_data = super().clean()
+        consumption = cleaned_data.get("hotwater_consumption")
+        unit = cleaned_data.get("hotwater_consumption_unit")
+        if unit and consumption:
+            if unit != "kwh":
+                consumption = consumption  # noqa: PLW0127 TODO: hotwater_consumption needs to be converted to kwh
+
+            data = self.request.session.get("django_htmx_flow", {})
+            living_space = data["living_space"]
+            heating_consumption_spec = 40  # TODO: needs to be added to session, data["heating_consumption_spec"]
+
+            hotwater_consumption_spec = consumption / living_space
+            if hotwater_consumption_spec > heating_consumption_spec * 0.3:
+                raise ValidationError("Hotwater Consumption seems too high.")  # noqa: TRY003, EM101
+            if hotwater_consumption_spec < heating_consumption_spec * 0.1:
+                raise ValidationError("Hotwater Consumption seems too low.")  # noqa: TRY003, EM101
+        return cleaned_data
+
 
 class ConsumptionWatertemperaturForm(ValidationForm):
     hotwater_temperature = forms.IntegerField(
