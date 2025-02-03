@@ -1,4 +1,6 @@
 import json
+from datetime import datetime
+from datetime import timedelta
 
 from django import forms
 from django.core.validators import MaxValueValidator
@@ -316,6 +318,19 @@ class ConsumptionHeatingForm(ValidationForm):
         date_value = self.cleaned_data["heating_consumption_period_end"]
         return date_value.isoformat()
 
+    def clean(self):
+        cleaned_data = super().clean()
+        # check if end date is after start date
+        start_str = cleaned_data.get("heating_consumption_period_start")
+        end_str = cleaned_data.get("heating_consumption_period_end")
+        if start_str and end_str:
+            start = datetime.fromisoformat(start_str).date()
+            end = datetime.fromisoformat(end_str).date()
+            if end <= start:
+                raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
+            if (end - start) < timedelta(days=90):
+                raise ValidationError("End date needs to be at least 90 days after start date.")  # noqa: TRY003, EM101
+
     def validate_with_session(self):
         data = self.request.session.get("django_htmx_flow", {})
 
@@ -357,21 +372,6 @@ class ConsumptionWatertemperaturForm(ValidationForm):
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
-    def clean_heating_consumption_period_end(self):
-        date_value = self.cleaned_data["heating_consumption_period_end"]
-        return date_value.isoformat()
-
-    def clean(self):
-        cleaned_data = super().clean()
-
-        # check if end date is after start date
-        start = cleaned_data.get("heating_consumption_period_start")
-        end = cleaned_data.get("heating_consumption_period_end")
-
-        if start and end:
-            if end <= start:
-                raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
-
 
 class ConsumptionPowerForm(forms.Form):
     power_consumption_period_start = forms.DateField(
@@ -401,12 +401,15 @@ class ConsumptionPowerForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        start = cleaned_data.get("power_consumption_period_start")
-        end = cleaned_data.get("power_consumption_period_end")
-
-        if start and end:
+        start_str = cleaned_data.get("power_consumption_period_start")
+        end_str = cleaned_data.get("power_consumption_period_end")
+        if start_str and end_str:
+            start = datetime.fromisoformat(start_str).date()
+            end = datetime.fromisoformat(end_str).date()
             if end <= start:
                 raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
+            if (end - start) < timedelta(days=90):
+                raise ValidationError("End date needs to be at least 90 days after start date.")  # noqa: TRY003, EM101
 
 
 class RoofTypeForm(forms.Form):
