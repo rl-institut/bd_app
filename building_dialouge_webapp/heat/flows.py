@@ -815,23 +815,40 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
             lookup="hotwater_heating_done",
         ).transition(Next("end"))
 
-        self.end = EndState(self, url="heat:consumption_input")
+        self.end = EndState(self, url="heat:consumption_overview")
 
 
 class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/consumption_input.html"
     extra_context = {
-        "back_url": "heat:hotwater_heating",
+        "back_url": "heat:consumption_overview",
         "next_disabled": True,
     }
 
     def __init__(self, prefix=None):
         super().__init__(prefix=prefix)
-        self.start = FormInfoState(
+        self.start = FormState(
             self,
-            target="consumption_input",
-            form_class=forms.ConsumptionInputForm,
-            info_text={"next_button": ("Speichern", "Weiter")},
+            target="consumption_type",
+            form_class=forms.ConsumptionTypeForm,
+        ).transition(
+            Switch("consumption_type").case("power", "consumption_power").default("consumption_heating"),
+        )
+
+        self.consumption_power = FormInfoState(
+            self,
+            target="consumption_power",
+            form_class=forms.ConsumptionPowerForm,
+            info_text={"next_button_text": ("Speichern", "Weiter")},
+        ).transition(
+            Next("stop"),
+        )
+
+        self.consumption_heating = FormInfoState(
+            self,
+            target="consumption_heating",
+            form_class=forms.ConsumptionHeatingForm,
+            info_text={"next_button_text": ("Speichern", "Weiter")},
         ).transition(
             Next("stop"),
         )
@@ -857,7 +874,7 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
 class RoofFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/roof.html"
     extra_context = {
-        "back_url": "heat:home",
+        "back_url": "heat:intro_inventory",
         "next_disabled": True,
     }
 
@@ -1162,7 +1179,7 @@ class VentilationSystemFlow(SidebarNavigationMixin, Flow):
 class RenovationRequestFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/renovation_request.html"
     extra_context = {
-        "back_url": "heat:intro_renovation",
+        "back_url": "heat:renovation_overview",
         "next_disabled": True,
     }
 
@@ -1242,7 +1259,7 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
 class FinancialSupporFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/financial_support.html"
     extra_context = {
-        "back_url": "heat:renovation_request",
+        "back_url": "heat:renovation_overview",
         "next_disabled": False,
         "back_kwargs": "scenario1",
     }

@@ -34,6 +34,21 @@
       box-shadow: $grey-800;
     }
 
+    &.active {
+      transform: scale(1.1);
+      box-shadow: $grey-800;
+    }
+
+    &.heating {
+      background-color: lighten(red, 40%);
+      border-color: darken(red, 20%);
+    }
+
+    &.power {
+        background-color: lighten(blue, 40%);
+        border-color: darken(blue, 20%);
+    }
+
     .flow-instance-box-header {
       align-items: center;
       justify-content: space-between;
