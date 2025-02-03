@@ -880,16 +880,12 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
             template_name="partials/next_button.html",
             context={
                 "hx_vals": '{"consumption_input_done": "True"}',
+                "next_btn_text": "Speichern",
             },
             lookup="consumption_input_done",
         ).transition(Next("end"))
 
         self.end = EndState(self, url="heat:consumption_overview")
-
-        def dispatch(self, request, *args, **kwargs):
-            # Retrieve the prefix dynamically
-            self.prefix = kwargs.get("scenario", self.prefix)
-            return super().dispatch(request, *args, **kwargs)
 
 
 def check_prev_roof_orientation(self):

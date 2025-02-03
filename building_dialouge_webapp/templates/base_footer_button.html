@@ -24,7 +24,11 @@
             </svg>
             <span class="ps-2">Zurück</span>
           </a>
-          <div id="next_button">{% include "partials/next_button.html" %}</div>
+          {% if next_button %}
+            {{ next_button.content | safe }}
+          {% else %}
+            <div id="next_button">{% include "partials/next_button.html" %}</div>
+          {% endif %}
         </div>
       </div>
     </div>
