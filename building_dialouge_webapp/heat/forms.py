@@ -331,6 +331,22 @@ class ConsumptionHeatingForm(ValidationForm):
             if (end - start) < timedelta(days=90):
                 raise ValidationError("End date needs to be at least 90 days after start date.")  # noqa: TRY003, EM101
 
+        # Validation for heating_consumption
+        heating_consumption = cleaned_data.get("heating_consumption")
+        heating_consumption_unit = cleaned_data.get("heating_consumption_unit")
+        if heating_consumption and heating_consumption_unit:
+            data = self.request.session.get("django_htmx_flow", {})
+            energy_source = 0.9  # TODO: get numeral value from data["energy_source"]
+            heating_consumption_unit = 1  # TODO: get numeral value from heating_consumption_unit
+            living_space = data["living_space"]
+            heating_consumption_kwh = heating_consumption * energy_source * heating_consumption_unit
+            # TODO: might need "Extrapolation mit Gradtagszahlen"
+            # TODO: "Witterungsbereinigung mit Gradtagszahlen"
+            heating_consumption_spec = heating_consumption_kwh / living_space
+            comparison_value = 500
+            if heating_consumption_spec > comparison_value:
+                raise ValidationError("Heating Consumption seems too high.")  # noqa: TRY003, EM101
+
     def validate_with_session(self):
         data = self.request.session.get("django_htmx_flow", {})
 
@@ -429,6 +445,13 @@ class ConsumptionPowerForm(forms.Form):
                 raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
             if (end - start) < timedelta(days=90):
                 raise ValidationError("End date needs to be at least 90 days after start date.")  # noqa: TRY003, EM101
+
+    def validate_with_session(self):
+        # TODO: there might be subtractions from power_consumption depending
+        # on the energy source and hotwater_heating_system
+        data = self.request.session.get("django_htmx_flow", {})
+        energy_source = data["energy_source"]  # noqa: F841
+        hotwater_heating_system = data["hotwater_heating_system"]  # noqa: F841
 
 
 class RoofTypeForm(forms.Form):
