@@ -147,7 +147,7 @@ POSTGRES_DB=building_dialouge_webapp
 POSTGRES_USER=bd_user
 POSTGRES_PASSWORD=my_bd_user_pass
 
-DATABASE_URL=postgis://bd_user:GWzBcADhGhvhY0VRQvm9dD2LTMnEIplVmzNjAEkZNoF2T87leMSiRHiSReK2hlmC@localhost:5432/building_dialouge_webapp
+DATABASE_URL=postgres://bd_user:GWzBcADhGhvhY0VRQvm9dD2LTMnEIplVmzNjAEkZNoF2T87leMSiRHiSReK2hlmC@localhost:5432/building_dialouge_webapp
 ```
 (make sure you use the same password in `POSTGRES_PASSWORD` as in step 2)
 
