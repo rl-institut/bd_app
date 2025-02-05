@@ -1,6 +1,8 @@
 {
   "esversion": 8,
-  "globals": {},
+  "globals": {
+    "echarts": false
+  },
   "strict": "implied",
   "browser": true
 }

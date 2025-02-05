@@ -15,6 +15,7 @@ from building_dialouge_webapp.heat.flows import RenovationRequestFlow
 from . import flows
 from . import forms
 from . import tables
+from .charts import cost_emission_chart
 from .navigation import SidebarNavigationMixin
 
 SCENARIO_MAX = 3
@@ -526,6 +527,16 @@ class Results(SidebarNavigationMixin, TemplateView):
         context["consumption_table_html"] = consumption_table_html
         context["investment_summary_table_html"] = investment_summary_table_html
         context["scenarios"] = scenario_list
+        context["cost_chart_data"] = cost_emission_chart.create_echarts_cost_emission(
+            title="Kosten",
+            unit="€",
+            data=cost_emission_chart.EXAMPLE_COST_DATA,
+        )
+        context["emission_chart_data"] = cost_emission_chart.create_echarts_cost_emission(
+            title="Emissionen",
+            unit="t/a",
+            data=cost_emission_chart.EXAMPLE_EMISSION_DATA,
+        )
         return context
 
 
