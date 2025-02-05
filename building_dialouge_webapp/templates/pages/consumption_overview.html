@@ -10,6 +10,15 @@
           Für die Bewertung und weitere Berechnungen werden Wärme- und Stromverbrauchsdaten für jeweils mindestens einen Abrechnungszeitraum benötigt.
           <br />
           Rechts kannst du mit klick auf "X" Verbrauchsabrechnungen wieder löschen und mit klick auf "E" deine Daten bearbeiten. Du kannst jeweils bis zu 3 Zeiträume an Wärme- und Stromverbrauchsdaten eingeben.
+          {% if not_finished_flows %}
+            <br /> <br />
+            <p>Leider fehlen die folgenden Eingaben noch, um eine Verbrauchsabrechnungen hinzuzufügen:</p>
+            <ul>
+              {% for flow in not_finished_flows %}
+                <li>{{ flow }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
         </div>
       </div>
       <div class="help" id="flow-instance-boxes">
@@ -21,7 +30,7 @@
     <div class="d-flex justify-content-between">
       <form action="{% url 'heat:consumption_input' year='new_year' %}"
             method="get">
-        <button class="btn btn-primary" {% if max_reached %}disabled{% endif %}>Verbrauch hinzufügen</button>
+        <button class="btn btn-primary" {% if max_reached or not_finished_flows %}disabled{% endif %}>Verbrauch hinzufügen</button>
       </form>
     </div>
   </section>

@@ -221,12 +221,27 @@ class ConsumptionOverview(SidebarNavigationMixin, TemplateView):
         context["back_url"] = "heat:hotwater_heating"
         context["next_url"] = "heat:consumption_result"
         context["year_boxes"] = get_all_year_data(self.request)
-        has_power = any(box.get("type_class") == "power" for box in context["year_boxes"])
-        has_heating = any(box.get("type_class") == "heating" for box in context["year_boxes"])
-        next_disabled = True if not has_power or not has_heating else False  # noqa: SIM210
+        next_disabled, not_finished = check_if_new_year_possible(self.request, context["year_boxes"])
         context["next_disabled"] = next_disabled
         context["max_reached"] = int(get_new_year(self.request)[4:]) > COONSUMPTION_MAX
+        context["not_finished_flows"] = not_finished
         return context
+
+
+def check_if_new_year_possible(request, year_boxes):
+    needed_flows = [
+        (name, flow())
+        for name, flow in inspect.getmembers(flows, inspect.isclass)
+        if name in {"HotwaterHeatingFlow", "BuildingDataFlow"}
+    ]
+    not_finished = [name for name, flow in needed_flows if not flow.finished(request)]
+    if not_finished:
+        next_disabled = True
+        return next_disabled, not_finished
+    has_power = any(box.get("type_class") == "power" for box in year_boxes)
+    has_heating = any(box.get("type_class") == "heating" for box in year_boxes)
+    next_disabled = True if not has_power or not has_heating else False  # noqa: SIM210
+    return next_disabled, []
 
 
 class ConsumptionResult(SidebarNavigationMixin, TemplateView):
