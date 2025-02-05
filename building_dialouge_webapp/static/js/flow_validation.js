@@ -26,7 +26,7 @@ document.addEventListener("htmx:beforeRequest", (event) => {
 });
 
 // extra check for Checkboxes in RenovationRequest - RenovationDetailsForm
-document.addEventListener("htmx:beforeSend", function(event) {
+/* document.addEventListener("htmx:beforeSend", function(event) {
   let checkboxes = document.querySelectorAll('input[name="roof_renovation_details"]');
   let hiddenInput = document.querySelector('input[name="roof_renovation_details_hidden"]');
 
@@ -34,13 +34,4 @@ document.addEventListener("htmx:beforeSend", function(event) {
   if (!anyChecked) {
       hiddenInput.value = "none";
   }
-});
-
-
-// extra Check for ConsumptionInput Type, when one type cannot be added anymore
-document.addEventListener("DOMContentLoaded", function() {
-    let disabledInput = document.querySelector("[name='consumption_type']:disabled");
-    if (disabledInput) {
-        htmx.trigger(disabledInput.form, "htmx:change");
-    }
-});
+}); */

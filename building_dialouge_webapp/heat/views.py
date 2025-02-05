@@ -126,8 +126,6 @@ def consumption_year(request, year=None):
         )
         if message_text not in existing_messages:
             messages.add_message(request, messages.INFO, message_text)
-    if heating_count >= HEATING_MAX and power_count >= POWER_MAX:
-        return JsonResponse({"warning": "Maximum number (3) of heating and power instances reached."}, status=400)
     flow = ConsumptionInputFlow(prefix=year)
     flow.extra_context.update({"year_boxes": year_data})
     return flow.dispatch(request)

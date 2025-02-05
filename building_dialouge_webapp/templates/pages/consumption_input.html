@@ -1,5 +1,7 @@
 {% extends "base_footer_button.html" %}
 
+{% load static %}
+
 {% block content %}
   <section class="position-relative h-100 flex-grow-1 pb-5">
     <div class="help-background"></div>
@@ -67,3 +69,8 @@
     </div>
   </section>
 {% endblock content %}
+
+{% block javascript %}
+  {{ block.super }}
+  <script defer src="{% static 'js/consumption_disabled_trigger.js' %}"></script>
+{% endblock javascript %}
