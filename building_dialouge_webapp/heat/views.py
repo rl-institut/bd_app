@@ -415,9 +415,12 @@ def all_flows_finished(request):
         for name, flow in inspect.getmembers(flows, inspect.isclass)
         if name.endswith("Flow") and name not in {"Flow", "ConsumptionInputFlow", "RenovationRequestFlow"}
     ]
+
     # since there is no minimum for how many renovation scenarios are needed I omited testing that
-    # TODO: after consumption merge, use minimum of consumption_overview to see if the are not_finished
     not_finished = [name for name, flow in all_flows if not flow.finished(request)]
+    next_disabled, needed_for_consumption = check_if_new_year_possible(request, get_all_year_data(request))
+    if next_disabled:
+        not_finished.append("ConsumptionInputFlow")
     return (True, []) if not not_finished else (False, not_finished)
 
 
@@ -434,7 +437,7 @@ class OptimizationStart(SidebarNavigationMixin, TemplateView):
         return context
 
 
-def simluate(request):
+def simulate(request):
     """
     Takes all data from Session and calculates the results.
     """
