@@ -32,7 +32,7 @@
           "max_value": 80
       }
   },
-  "ConsumptionInputForm": {
+  "ConsumptionWatertemperaturForm": {
       "hotwater_temperature": {
           "min_value": 30,
           "max_value": 90

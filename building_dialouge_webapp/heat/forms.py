@@ -2,6 +2,7 @@ import json
 import re
 from datetime import datetime
 from datetime import timedelta
+from datetime import timezone
 
 from django import forms
 from django.core.validators import MaxValueValidator
@@ -344,6 +345,9 @@ class ConsumptionHeatingForm(ValidationForm):
         if start_str and end_str:
             start = datetime.fromisoformat(start_str).date()
             end = datetime.fromisoformat(end_str).date()
+            max_date = datetime(2023, 12, 31, tzinfo=timezone(timedelta(hours=1))).date()
+            if start > max_date or end > max_date:
+                raise ValidationError("Dates have to be on or before 31.12.2023.")  # noqa: TRY003, EM101
             if end <= start:
                 raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
             if (end - start) < timedelta(days=90):
@@ -459,6 +463,9 @@ class ConsumptionPowerForm(forms.Form):
         if start_str and end_str:
             start = datetime.fromisoformat(start_str).date()
             end = datetime.fromisoformat(end_str).date()
+            max_date = datetime(2023, 12, 31, tzinfo=timezone(timedelta(hours=1))).date()
+            if start > max_date or end > max_date:
+                raise ValidationError("Dates have to be on or before 31.12.2023.")  # noqa: TRY003, EM101
             if end <= start:
                 raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
             if (end - start) < timedelta(days=90):

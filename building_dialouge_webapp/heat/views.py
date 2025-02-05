@@ -217,7 +217,6 @@ class ConsumptionOverview(SidebarNavigationMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         context["back_url"] = "heat:hotwater_heating"
         context["next_url"] = "heat:consumption_result"
         context["year_boxes"] = get_all_year_data(self.request)
@@ -229,6 +228,11 @@ class ConsumptionOverview(SidebarNavigationMixin, TemplateView):
 
 
 def check_if_new_year_possible(request, year_boxes):
+    """
+    Checks Flows that are necessary for Consumption Input Validation if they are finished.
+    And checks if there are at least one of power and one of heating instances already.
+    returns next_disabled = True, if one of these conditions fail.
+    """
     needed_flows = [
         (name, flow())
         for name, flow in inspect.getmembers(flows, inspect.isclass)
