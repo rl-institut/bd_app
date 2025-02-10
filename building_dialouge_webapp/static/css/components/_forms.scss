@@ -22,6 +22,7 @@
 
 fieldset legend {
   font-size: $font-size-md;
+  color: $grey-500;
 }
 
 .step-question {
@@ -39,7 +40,7 @@ fieldset legend {
     display: inline-flex;
     align-items: center;
     font-size: $font-size-md;
-    color: $grey-500;
+    color: $grey-800;
     cursor: pointer;
     margin-right: 0.5rem;
   }
@@ -95,7 +96,8 @@ fieldset legend {
     position: relative;
   }
 
-  input[type="number"] {
+  input[type="number"],
+  select {
     width: 100%;
     padding: 0.5rem;
     font-size: $font-size-md;
@@ -104,11 +106,29 @@ fieldset legend {
     margin-top: 0.25rem;
     outline: none;
     box-sizing: border-box;
+    background: $color-white;
+    color: $grey-700;
+    appearance: none;
+    position: relative;
   }
 
-  input[type="number"]:focus {
+  input[type="number"]:focus,
+  select:focus {
     border-color: $green-500;
     box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+  }
+
+  select {
+    background-image: linear-gradient(45deg, transparent 50%, $grey-500 50%), 
+                      linear-gradient(135deg, $grey-500 50%, transparent 50%);
+    background-position: calc(100% - 1rem) 50%, calc(100% - 0.75rem) 50%; /* Center the arrow vertically */
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 1.5rem; /* Space for the arrow */
+  }
+
+  select::-ms-expand {
+    display: none; /* Hide the dropdown arrow for IE */
   }
 
   .number-group {
