@@ -108,7 +108,8 @@ main .step-title {
   @include step-item(4rem 4rem 1.5rem);
 
   h1 {
-    font-size: $font-size-2xl;
+    font-size: $font-size-xl;
+    color: $primary-color
   }
 }
 
