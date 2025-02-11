@@ -36,9 +36,9 @@
   }
 
   .help {
-    background-color: $grey-100;
+    background-color: $color-white;
     height: auto;
-    width: 28rem;
+    width: 18rem;
     font-size: $font-size-sm;
     display: none;
 
@@ -48,11 +48,7 @@
     }
 
     @media screen and (min-width: $breakpoint-2xl) {
-      width: 32rem;
-    }
-
-    @media screen and (min-width: $breakpoint-3xl) {
-      width: 40rem;
+      width: 24rem;
     }
   }
 }
@@ -127,29 +123,5 @@ main .step-question {
     span {
       font-weight: $font-weight-bold;
     }
-  }
-}
-
-.help-background {
-  position: absolute;
-  top:0;
-  right:0;
-  width: 28rem;
-  background-color: $grey-100;
-  height: 100%;
-  z-index: -1;
-  display: none;
-
-  @media screen and (min-width: $breakpoint-md) {
-    display: block;
-    width: 20rem;
-  }
-
-  @media screen and (min-width: $breakpoint-2xl) {
-    width: 32rem;
-  }
-
-  @media screen and (min-width: $breakpoint-3xl) {
-    width: 40rem;
   }
 }
