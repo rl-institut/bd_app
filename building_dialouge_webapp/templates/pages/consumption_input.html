@@ -1,5 +1,7 @@
 {% extends "base_footer_button.html" %}
 
+{% load static %}
+
 {% block content %}
   <section class="position-relative h-100 flex-grow-1 pb-5">
     <div class="help-background"></div>
@@ -45,5 +47,30 @@
         <div class="help"></div>
       </div>
     </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="consumption_hotwater"
+          hx-post=""
+          hx-trigger="change"
+          hx-include="this"
+          class="main">{{ consumption_hotwater.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="consumption_hotwater_temp"
+          hx-post=""
+          hx-trigger="keyup change delay:500ms"
+          hx-include="this"
+          class="main">{{ consumption_hotwater_temp.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
   </section>
 {% endblock content %}
+
+{% block javascript %}
+  {{ block.super }}
+  <script defer src="{% static 'js/consumption_disabled_trigger.js' %}"></script>
+{% endblock javascript %}

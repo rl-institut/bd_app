@@ -3,6 +3,7 @@ import inspect
 from urllib.parse import urlparse
 
 from django.contrib import messages
+from django.contrib.messages import get_messages
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
@@ -18,7 +19,7 @@ from . import tables
 from .navigation import SidebarNavigationMixin
 
 SCENARIO_MAX = 3
-YEAR_MAX = 6
+COONSUMPTION_MAX = 6
 POWER_MAX = 3
 HEATING_MAX = 3
 
@@ -54,61 +55,6 @@ class DeadEndHeating(TemplateView):
     extra_context = {
         "back_url": "heat:hotwater_heating",
     }
-
-
-def consumption_year(request, year=None):
-    # year is none when consumption_input first called or when opened via navigation sidebar or back-button
-    year_changed = False
-
-    # Count existing heating and power instances
-    year_data = get_all_year_data(request)
-    heating_count = sum(1 for data in year_data if data["type_class"] == "heating")
-    power_count = sum(1 for data in year_data if data["type_class"] == "power")
-
-    if year is None or year == "new_year":
-        year = get_new_year(request)
-        year_changed = True
-
-    if year_changed:
-        # If we return flow.dispatch(prefix=year), URL is not changed!
-        return HttpResponseRedirect(reverse("heat:consumption_input", kwargs={"year": year}))
-    flow = ConsumptionInputFlow(prefix=year)
-
-    # Check if adding another instance would exceed the maximum limits
-    if heating_count >= HEATING_MAX and power_count < POWER_MAX:
-        messages.add_message(
-            request,
-            messages.INFO,
-            (
-                "Maximale Anzahl an Wärmeverbraucheingaben erreicht, "
-                "Sie können nur noch Stromverbraucheingaben hinzufügen."
-            ),
-        )
-    if heating_count < HEATING_MAX and power_count >= POWER_MAX:
-        messages.add_message(
-            request,
-            messages.INFO,
-            (
-                "Maximale Anzahl an Stromverbraucheingaben erreicht, "
-                "Sie können nur noch Wärmeverbraucheingaben hinzufügen."
-            ),
-        )
-    if heating_count > HEATING_MAX and power_count > POWER_MAX:
-        # user shouldn't be able to reach this, since button will be disabled
-        return JsonResponse({"warning": "Maximum number (3) of heating and power instances reached."}, status=400)
-    flow.extra_context.update({"year_boxes": year_data})
-    return flow.dispatch(request)
-
-
-def get_new_year(request):
-    """Goes through years and checks if they have finished."""
-    year_id = 1
-    while year_id <= YEAR_MAX:
-        flow = ConsumptionInputFlow(prefix=f"year{year_id}")
-        if not flow.finished(request):
-            break
-        year_id += 1
-    return f"year{year_id}"
 
 
 def delete_flow(request):
@@ -149,13 +95,60 @@ def delete_flow(request):
     return HttpResponseClientRedirect(reverse(overview_url))
 
 
+def consumption_year(request, year=None):
+    # year is none when consumption_input first called or when opened via navigation sidebar or back-button
+    year_changed = False
+
+    # Count existing heating and power instances
+    year_data = get_all_year_data(request)
+    heating_count = sum(1 for data in year_data if data["type_class"] == "heating")
+    power_count = sum(1 for data in year_data if data["type_class"] == "power")
+
+    if year is None or year == "new_year":
+        year = get_new_year(request)
+        year_changed = True
+
+    if year_changed:
+        return HttpResponseRedirect(reverse("heat:consumption_input", kwargs={"year": year}))
+    # Check if adding another instance would exceed the maximum limits
+    existing_messages = [m.message for m in get_messages(request)]
+    if heating_count >= HEATING_MAX and power_count < POWER_MAX:
+        message_text = (
+            "Maximale Anzahl an Wärmeverbraucheingaben erreicht, "
+            "Sie können nur noch Stromverbraucheingaben hinzufügen."
+        )
+        if message_text not in existing_messages:
+            messages.add_message(request, messages.INFO, message_text)
+    if heating_count < HEATING_MAX and power_count >= POWER_MAX:
+        message_text = (
+            "Maximale Anzahl an Stromverbraucheingaben erreicht, "
+            "Sie können nur noch Wärmeverbraucheingaben hinzufügen."
+        )
+        if message_text not in existing_messages:
+            messages.add_message(request, messages.INFO, message_text)
+    flow = ConsumptionInputFlow(prefix=year)
+    flow.extra_context.update({"year_boxes": year_data})
+    return flow.dispatch(request)
+
+
+def get_new_year(request):
+    """Goes through years and checks if they have finished."""
+    year_id = 1
+    while year_id <= COONSUMPTION_MAX:
+        flow = ConsumptionInputFlow(prefix=f"year{year_id}")
+        if not flow.finished(request):
+            break
+        year_id += 1
+    return f"year{year_id}"
+
+
 def get_all_year_data(request):
     """Goes through years and gets their data if finished."""
     year_data_list = []
     year_id = 1
     heating_count = 0
     power_count = 0
-    while year_id <= YEAR_MAX:
+    while year_id <= COONSUMPTION_MAX:
         flow = ConsumptionInputFlow(prefix=f"year{year_id}")
         if not flow.finished(request):
             year_id += 1
@@ -227,12 +220,32 @@ class ConsumptionOverview(SidebarNavigationMixin, TemplateView):
         context["back_url"] = "heat:hotwater_heating"
         context["next_url"] = "heat:consumption_result"
         context["year_boxes"] = get_all_year_data(self.request)
-        has_power = any(box.get("type_class") == "power" for box in context["year_boxes"])
-        has_heating = any(box.get("type_class") == "heating" for box in context["year_boxes"])
-        next_disabled = True if not has_power or not has_heating else False  # noqa: SIM210
+        next_disabled, not_finished = check_if_new_year_possible(self.request, context["year_boxes"])
         context["next_disabled"] = next_disabled
-        context["max_reached"] = int(get_new_year(self.request)[4:]) > YEAR_MAX
+        context["max_reached"] = int(get_new_year(self.request)[4:]) > COONSUMPTION_MAX
+        context["not_finished_flows"] = not_finished
         return context
+
+
+def check_if_new_year_possible(request, year_boxes):
+    """
+    Checks Flows that are necessary for Consumption Input Validation if they are finished.
+    And checks if there are at least one of power and one of heating instances already.
+    returns next_disabled = True, if one of these conditions fail.
+    """
+    needed_flows = [
+        (name, flow())
+        for name, flow in inspect.getmembers(flows, inspect.isclass)
+        if name in {"HotwaterHeatingFlow", "BuildingDataFlow"}
+    ]
+    not_finished = [name for name, flow in needed_flows if not flow.finished(request)]
+    if not_finished:
+        next_disabled = True
+        return next_disabled, not_finished
+    has_power = any(box.get("type_class") == "power" for box in year_boxes)
+    has_heating = any(box.get("type_class") == "heating" for box in year_boxes)
+    next_disabled = True if not has_power or not has_heating else False  # noqa: SIM210
+    return next_disabled, []
 
 
 class ConsumptionResult(SidebarNavigationMixin, TemplateView):
@@ -402,9 +415,12 @@ def all_flows_finished(request):
         for name, flow in inspect.getmembers(flows, inspect.isclass)
         if name.endswith("Flow") and name not in {"Flow", "ConsumptionInputFlow", "RenovationRequestFlow"}
     ]
+
     # since there is no minimum for how many renovation scenarios are needed I omited testing that
-    # TODO: after consumption merge, use minimum of consumption_overview to see if the are not_finished
     not_finished = [name for name, flow in all_flows if not flow.finished(request)]
+    next_disabled, needed_for_consumption = check_if_new_year_possible(request, get_all_year_data(request))
+    if next_disabled:
+        not_finished.append("ConsumptionInputFlow")
     return (True, []) if not not_finished else (False, not_finished)
 
 
@@ -421,7 +437,7 @@ class OptimizationStart(SidebarNavigationMixin, TemplateView):
         return context
 
 
-def simluate(request):
+def simulate(request):
     """
     Takes all data from Session and calculates the results.
     """

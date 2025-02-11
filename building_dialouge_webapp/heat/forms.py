@@ -1,8 +1,49 @@
+import json
+import re
+from datetime import datetime
+from datetime import timedelta
+from datetime import timezone
+
 from django import forms
+from django.core.validators import MaxValueValidator
+from django.core.validators import MinValueValidator
 from django.forms import ValidationError
 
 
-class BuildingTypeForm(forms.Form):
+class ValidationForm(forms.Form):
+    def __init__(self, *args, request=None, **kwargs):
+        self.request = request
+        super().__init__(*args, **kwargs)
+
+        with open("building_dialouge_webapp/static/json/validation.json") as file:  # noqa: PTH123
+            dynamic_rules = json.load(file)
+            form_rules = dynamic_rules.get(self.__class__.__name__, {})
+        if form_rules:
+            for field_name, rules in form_rules.items():
+                if field_name in self.fields:
+                    field = self.fields[field_name]
+                    for rule, value in rules.items():
+                        setattr(field, rule, value)
+                        if rule == "min_value":
+                            field.widget.attrs["min"] = value
+                            field.validators.append(MinValueValidator(value))
+                        elif rule == "max_value":
+                            field.widget.attrs["max"] = value
+                            field.validators.append(MaxValueValidator(value))
+        if self.request:
+            self.validate_with_session()
+
+    def validate_with_session(self):
+        """
+        Override this method in subclasses to add custom validations
+        using data that was saved to the session (using request).
+        this is how its saved:
+            value = self.flow.request.POST[self.name]
+            session_data = self.flow.request.session.get("django_htmx_flow", {})
+        """
+
+
+class BuildingTypeForm(ValidationForm):
     building_type = forms.ChoiceField(
         label="building_type",
         choices=[
@@ -13,19 +54,17 @@ class BuildingTypeForm(forms.Form):
     )
 
 
-class BuildingTypeProtectionForm(forms.Form):
+class BuildingTypeProtectionForm(ValidationForm):
     monument_protection = forms.ChoiceField(
         label="monument_protection",
         choices=[("no", "Nein"), ("yes", "Ja")],
     )
 
 
-class BuildingDataForm(forms.Form):
+class BuildingDataForm(ValidationForm):
     construction_year = forms.IntegerField(
         label="construction_year",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,
-        min_value=1850,
     )
     number_persons = forms.IntegerField(
         label="number_persons",
@@ -61,8 +100,35 @@ class BuildingDataForm(forms.Form):
         widget=forms.RadioSelect,
     )
 
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
 
-class CellarHeatingForm(forms.Form):
+        min_max_defaults = {
+            "single_family": {
+                "number_persons": {"min": 1, "max": 10},
+                "number_flats": {"min": 1, "max": 2},
+                "living_space": {"min": 200, "max": 400},
+                "number_floors": {"min": 1, "max": 3},
+            },
+            "apartment_building": {
+                "number_persons": {"min": 2, "max": 100},
+                "number_flats": {"min": 2, "max": 20},
+                "living_space": {"min": 400, "max": 1000},
+                "number_floors": {"min": 1, "max": 10},
+            },
+        }
+
+        field_rules = min_max_defaults.get(data["building_type"])
+        for field_name, rules in field_rules.items():
+            if field_name in self.fields:
+                self.fields[field_name].widget.attrs.update(
+                    {"min": rules["min"], "max": rules["max"]},
+                )
+                self.fields[field_name].validators.append(MinValueValidator(rules["min"]))
+                self.fields[field_name].validators.append(MaxValueValidator(rules["max"]))
+
+
+class CellarHeatingForm(ValidationForm):
     cellar_heating = forms.ChoiceField(
         label="cellar_heating",
         choices=[
@@ -74,7 +140,7 @@ class CellarHeatingForm(forms.Form):
     )
 
 
-class CellarDetailsForm(forms.Form):
+class CellarDetailsForm(ValidationForm):
     cellar_ceiling = forms.ChoiceField(
         label="cellar_ceiling",
         choices=[
@@ -93,23 +159,21 @@ class CellarDetailsForm(forms.Form):
     )
 
 
-class CellarInsulationForm(forms.Form):
+class CellarInsulationForm(ValidationForm):
     cellar_ceiling_insulation_exists = forms.ChoiceField(
         label="cellar_ceiling_insulation_exists",
         choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
     )
 
 
-class CellarInsulationYearForm(forms.Form):
+class CellarInsulationYearForm(ValidationForm):
     cellar_insulation_year = forms.IntegerField(
         label="cellar_insulation_year",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,  # aktuelles Jahr per python bekommen?
-        min_value=1850,
     )
 
 
-class HeatingSystemForm(forms.Form):
+class HeatingSystemForm(ValidationForm):
     heating_system = forms.ChoiceField(
         label="Heizungsart",
         choices=[
@@ -121,7 +185,7 @@ class HeatingSystemForm(forms.Form):
     )
 
 
-class HeatingSourceForm(forms.Form):
+class HeatingSourceForm(ValidationForm):
     energy_source = forms.ChoiceField(
         label="Technologie / Energieträger",
         choices=[
@@ -139,7 +203,7 @@ class HeatingSourceForm(forms.Form):
     )
 
 
-class HotwaterHeatingSystemForm(forms.Form):
+class HotwaterHeatingSystemForm(ValidationForm):
     hotwater_heating_system = forms.ChoiceField(
         label="Warmwasserbereitung erfolgt in ",
         choices=[
@@ -150,14 +214,14 @@ class HotwaterHeatingSystemForm(forms.Form):
     )
 
 
-class HotwaterHeatingMeasuredForm(forms.Form):
+class HotwaterHeatingMeasuredForm(ValidationForm):
     hotwater_measured = forms.ChoiceField(
         label="Wird der WW Verbrauch separat gemessen?",
         choices=[(True, "Ja"), (False, "Nein")],
     )
 
 
-class HotwaterHeatingSolarExistsForm(forms.Form):
+class HotwaterHeatingSolarExistsForm(ValidationForm):
     solar_thermal_exists = forms.ChoiceField(
         label="Solarthermieanlage vorhanden?",
         choices=[
@@ -169,21 +233,21 @@ class HotwaterHeatingSolarExistsForm(forms.Form):
     )
 
 
-class HotwaterHeatingSolarKnownForm(forms.Form):
+class HotwaterHeatingSolarKnownForm(ValidationForm):
     solar_thermal_energy_known = forms.ChoiceField(
         label="Heizenergie bekannt?",
         choices=[("known", "Ja"), ("unknown", "Unbekannt")],
     )
 
 
-class HotwaterHeatingSolarEnergyForm(forms.Form):
+class HotwaterHeatingSolarEnergyForm(ValidationForm):
     solar_thermal_energy = forms.IntegerField(
         label="Heizenergie",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
 
-class HotwaterHeatingSolarDetailsForm(forms.Form):
+class HotwaterHeatingSolarDetailsForm(ValidationForm):
     solar_thermal_area = forms.FloatField(
         label="Kollektorfläche in m²",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
@@ -210,7 +274,7 @@ class HotwaterHeatingSolarDetailsForm(forms.Form):
     )
 
 
-class ConsumptionTypeForm(forms.Form):
+class ConsumptionTypeForm(ValidationForm):
     consumption_type = forms.ChoiceField(
         label="Welche Art von Verbrauchseingabe?",
         choices=[
@@ -220,8 +284,25 @@ class ConsumptionTypeForm(forms.Form):
         widget=forms.RadioSelect,
     )
 
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+        # Count occurrences of "heating" and "power" as consumption_type in session
+        pattern = re.compile(r"^year[1-6]-consumption_type$")
+        relevant_data = {k: v for k, v in data.items() if pattern.match(k)}
 
-class ConsumptionHeatingForm(forms.Form):
+        heating_count = sum(1 for v in relevant_data.values() if v == "heating")
+        power_count = sum(1 for v in relevant_data.values() if v == "power")
+        count_max = 3
+        # Determine initial value and whether to disable the field
+        if heating_count >= count_max:
+            self.fields["consumption_type"].initial = "power"
+            self.fields["consumption_type"].widget.attrs["disabled"] = True
+        elif power_count >= count_max:
+            self.fields["consumption_type"].initial = "heating"
+            self.fields["consumption_type"].widget.attrs["disabled"] = True
+
+
+class ConsumptionHeatingForm(ValidationForm):
     heating_consumption_period_start = forms.DateField(
         label="Zeitraum von:",
         widget=forms.DateInput(attrs={"type": "date"}),
@@ -247,6 +328,68 @@ class ConsumptionHeatingForm(forms.Form):
         label="Brennstoffkosten in €",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
+
+    def clean_heating_consumption_period_start(self):
+        date_value = self.cleaned_data["heating_consumption_period_start"]
+        return date_value.isoformat()
+
+    def clean_heating_consumption_period_end(self):
+        date_value = self.cleaned_data["heating_consumption_period_end"]
+        return date_value.isoformat()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # check if end date is after start date
+        start_str = cleaned_data.get("heating_consumption_period_start")
+        end_str = cleaned_data.get("heating_consumption_period_end")
+        if start_str and end_str:
+            start = datetime.fromisoformat(start_str).date()
+            end = datetime.fromisoformat(end_str).date()
+            max_date = datetime(2023, 12, 31, tzinfo=timezone(timedelta(hours=1))).date()
+            if start > max_date or end > max_date:
+                raise ValidationError("Dates have to be on or before 31.12.2023.")  # noqa: TRY003, EM101
+            if end <= start:
+                raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
+            if (end - start) < timedelta(days=90):
+                raise ValidationError("End date needs to be at least 90 days after start date.")  # noqa: TRY003, EM101
+
+        # Validation for heating_consumption
+        heating_consumption = cleaned_data.get("heating_consumption")
+        heating_consumption_unit = cleaned_data.get("heating_consumption_unit")
+        if heating_consumption and heating_consumption_unit:
+            data = self.request.session.get("django_htmx_flow", {})
+            energy_source = 0.9  # TODO: get numeral value from data["energy_source"]
+            heating_consumption_unit = 1  # TODO: get numeral value from heating_consumption_unit
+            living_space = data["living_space"]
+            heating_consumption_kwh = heating_consumption * energy_source * heating_consumption_unit
+            # TODO: might need "Extrapolation mit Gradtagszahlen"
+            # TODO: "Witterungsbereinigung mit Gradtagszahlen"
+            heating_consumption_spec = heating_consumption_kwh / living_space
+            comparison_value = 500
+            if heating_consumption_spec > comparison_value:
+                raise ValidationError("Heating Consumption seems too high.")  # noqa: TRY003, EM101
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+
+        # energy source unit depends on energy_source from HotwaterHeating
+        energy_source_unit = {
+            "gas": "cbm",
+            "oil": "l",
+            "district_heating": "kwh",
+            "liquid_gas": "cbm",
+            "wood_pellets": "t",
+            "geothermal_pump": "kwh",
+            "air_heat_pump": "kwh",
+            "groundwater": "kwh",
+            "heating_rod": "kwh",
+        }
+
+        unit = energy_source_unit.get(data["energy_source"])
+        self.fields["heating_consumption_unit"].initial = unit
+
+
+class ConsumptionHotwaterForm(ValidationForm):
     hotwater_consumption = forms.FloatField(
         label="Warmwasserverbrauch",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
@@ -259,29 +402,32 @@ class ConsumptionHeatingForm(forms.Form):
             ("cbm", "Kubikmeter / m³"),
         ],
     )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        consumption = cleaned_data.get("hotwater_consumption")
+        unit = cleaned_data.get("hotwater_consumption_unit")
+        if unit and consumption:
+            if unit != "kwh":
+                consumption = consumption  # noqa: PLW0127 TODO: hotwater_consumption needs to be converted to kwh
+
+            data = self.request.session.get("django_htmx_flow", {})
+            living_space = data["living_space"]
+            heating_consumption_spec = 40  # TODO: needs to be added to session, data["heating_consumption_spec"]
+
+            hotwater_consumption_spec = consumption / living_space
+            if hotwater_consumption_spec > heating_consumption_spec * 0.3:
+                raise ValidationError("Hotwater Consumption seems too high.")  # noqa: TRY003, EM101
+            if hotwater_consumption_spec < heating_consumption_spec * 0.1:
+                raise ValidationError("Hotwater Consumption seems too low.")  # noqa: TRY003, EM101
+        return cleaned_data
+
+
+class ConsumptionWatertemperaturForm(ValidationForm):
     hotwater_temperature = forms.IntegerField(
         label="Warmwassertemperatur in °C",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-
-    def clean_heating_consumption_period_start(self):
-        date_value = self.cleaned_data["heating_consumption_period_start"]
-        return date_value.isoformat()
-
-    def clean_heating_consumption_period_end(self):
-        date_value = self.cleaned_data["heating_consumption_period_end"]
-        return date_value.isoformat()
-
-    def clean(self):
-        cleaned_data = super().clean()
-
-        # check if end date is after start date
-        start = cleaned_data.get("heating_consumption_period_start")
-        end = cleaned_data.get("heating_consumption_period_end")
-
-        if start and end:
-            if end <= start:
-                raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
 
 
 class ConsumptionPowerForm(forms.Form):
@@ -312,12 +458,25 @@ class ConsumptionPowerForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        start = cleaned_data.get("power_consumption_period_start")
-        end = cleaned_data.get("power_consumption_period_end")
-
-        if start and end:
+        start_str = cleaned_data.get("power_consumption_period_start")
+        end_str = cleaned_data.get("power_consumption_period_end")
+        if start_str and end_str:
+            start = datetime.fromisoformat(start_str).date()
+            end = datetime.fromisoformat(end_str).date()
+            max_date = datetime(2023, 12, 31, tzinfo=timezone(timedelta(hours=1))).date()
+            if start > max_date or end > max_date:
+                raise ValidationError("Dates have to be on or before 31.12.2023.")  # noqa: TRY003, EM101
             if end <= start:
                 raise ValidationError("End date must be after start date.")  # noqa: TRY003, EM101
+            if (end - start) < timedelta(days=90):
+                raise ValidationError("End date needs to be at least 90 days after start date.")  # noqa: TRY003, EM101
+
+    def validate_with_session(self):
+        # TODO: there might be subtractions from power_consumption depending
+        # on the energy source and hotwater_heating_system
+        data = self.request.session.get("django_htmx_flow", {})
+        energy_source = data["energy_source"]  # noqa: F841
+        hotwater_heating_system = data["hotwater_heating_system"]  # noqa: F841
 
 
 class RoofTypeForm(forms.Form):
@@ -333,11 +492,14 @@ class RoofTypeForm(forms.Form):
     )
 
 
-class RoofDetailsForm(forms.Form):
+class RoofAreaForm(ValidationForm):
     roof_area = forms.IntegerField(
         label="Dachfläche in m² (gesamt)",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
+
+
+class RoofOrientationForm(ValidationForm):
     roof_orientation = forms.ChoiceField(
         label="In welcher Richtung ist ihr Dach ausgerichtet?",
         choices=[
@@ -352,13 +514,16 @@ class RoofDetailsForm(forms.Form):
         ],
         widget=forms.RadioSelect,
     )
+
+
+class RoofWindowsForm(ValidationForm):
     number_roof_windows = forms.IntegerField(
         label="Anzahl der Dachfenster oder Dachgauben",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
 
-class RoofUsageNowForm(forms.Form):
+class RoofUsageNowForm(ValidationForm):
     roof_usage_now = forms.ChoiceField(
         label="roof_usage_now",
         choices=[
@@ -370,7 +535,7 @@ class RoofUsageNowForm(forms.Form):
     )
 
 
-class RoofUsageFutureForm(forms.Form):
+class RoofUsageFutureForm(ValidationForm):
     roof_usage_planned = forms.ChoiceField(
         label="roof_usage_planned",
         choices=[
@@ -382,12 +547,10 @@ class RoofUsageFutureForm(forms.Form):
     roof_usage_share = forms.IntegerField(
         label="roof_usage_share in %",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=100,
-        min_value=0,
     )
 
 
-class RoofInsulationForm(forms.Form):
+class RoofInsulationForm(ValidationForm):
     roof_insulation_exists = forms.ChoiceField(
         label="roof_insulation_exists",
         choices=[("yes", "Ja"), ("no", "Nein"), ("unknown", "Unbekannt")],
@@ -402,7 +565,7 @@ class RoofInsulationYearForm(forms.Form):
     )
 
 
-class WindowAreaForm(forms.Form):
+class WindowAreaForm(ValidationForm):
     window_area = forms.ChoiceField(
         label="Umfang Fensterflächen",
         choices=[
@@ -414,7 +577,7 @@ class WindowAreaForm(forms.Form):
     )
 
 
-class WindowDetailsForm(forms.Form):
+class WindowDetailsForm(ValidationForm):
     window_type = forms.ChoiceField(
         label="Fenstertyp",
         choices=[
@@ -438,14 +601,10 @@ class WindowDetailsForm(forms.Form):
         label="",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         required=False,
-        max_value=2030,
-        min_value=1850,
     )
     window_share = forms.IntegerField(
         label="prozentualer Anteil (bei mehreren Typen)",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=100,
-        min_value=0,
     )
 
     def clean(self):
@@ -459,7 +618,7 @@ class WindowDetailsForm(forms.Form):
         return cleaned_data
 
 
-class FacadeForm(forms.Form):
+class FacadeForm(ValidationForm):
     facade_type = forms.ChoiceField(
         label="Bauweise",
         choices=[
@@ -479,28 +638,24 @@ class FacadeForm(forms.Form):
     )
 
 
-class FacadeInsulationForm(forms.Form):
+class FacadeInsulationForm(ValidationForm):
     facade_insulation_exists = forms.ChoiceField(
         label="Dämmung vorhanden?",
         choices=[("exists", "Ja"), ("doesnt_exist", "Nein"), ("unkown", "Unbekannt")],
     )
 
 
-class FacadeInsulationYearForm(forms.Form):
+class FacadeInsulationYearForm(ValidationForm):
     facade_construction_year = forms.IntegerField(
         label="Jahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,
-        min_value=1850,
     )
 
 
-class HeatingForm(forms.Form):
+class HeatingForm(ValidationForm):
     heating_system_construction_year = forms.IntegerField(
         label="Baujahr Heizung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,
-        min_value=1850,
     )
     condensing_boiler_exists = forms.ChoiceField(
         label="Brennwerttechnik vorhanden?",
@@ -509,7 +664,7 @@ class HeatingForm(forms.Form):
     )
 
 
-class HeatingHydraulicForm(forms.Form):
+class HeatingHydraulicForm(ValidationForm):
     hydraulic_balancing_done = forms.ChoiceField(
         label="Hydraulischer Abgleich durchgeführt?",
         choices=[(True, "Ja"), (False, "Nein"), ("unkown", "Unbekannt")],
@@ -517,7 +672,7 @@ class HeatingHydraulicForm(forms.Form):
     )
 
 
-class HeatingDetailsForm(forms.Form):
+class HeatingDetailsForm(ValidationForm):
     pipe_insulation_exists = forms.ChoiceField(
         label="Rohre gedämmt?",
         choices=[(True, "Ja"), (False, "Nein")],
@@ -535,14 +690,14 @@ class HeatingDetailsForm(forms.Form):
     )
 
 
-class HeatingStorageForm(forms.Form):
+class HeatingStorageForm(ValidationForm):
     heating_storage_capacity = forms.IntegerField(
         label="Wärmespeicher Fassungsvermögen in l",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
 
-class PVSystemForm(forms.Form):
+class PVSystemForm(ValidationForm):
     pv_exists = forms.ChoiceField(
         label="PV-Anlage vorhanden?",
         choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
@@ -550,7 +705,7 @@ class PVSystemForm(forms.Form):
     )
 
 
-class PVSystemPlannedForm(forms.Form):
+class PVSystemPlannedForm(ValidationForm):
     pv_planned = forms.ChoiceField(
         label="Beabsichtigen Sie, eine zu installieren?",
         choices=[(True, "Ja"), (False, "Nein")],
@@ -558,12 +713,10 @@ class PVSystemPlannedForm(forms.Form):
     )
 
 
-class PVSystemDetailsForm(forms.Form):
+class PVSystemDetailsForm(ValidationForm):
     pv_construction_year = forms.IntegerField(
         label="Baujahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,
-        min_value=1850,
     )
     pv_capacity = forms.IntegerField(
         label="Leistung in kWp",
@@ -571,7 +724,7 @@ class PVSystemDetailsForm(forms.Form):
     )
 
 
-class PVSystemBatteryForm(forms.Form):
+class PVSystemBatteryForm(ValidationForm):
     battery_exists = forms.ChoiceField(
         label="Batterie vorhanden?",
         choices=[(True, "Ja"), (False, "Nein")],
@@ -588,7 +741,7 @@ class PVSystemBatteryForm(forms.Form):
     )
 
 
-class VentilationSystemForm(forms.Form):
+class VentilationSystemForm(ValidationForm):
     ventilation_system_exists = forms.ChoiceField(
         label="Lüftungsanlage mit Wärmerückgewinnung vorhanden?",
         choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
@@ -596,16 +749,14 @@ class VentilationSystemForm(forms.Form):
     )
 
 
-class VentilationSystemYearForm(forms.Form):
+class VentilationSystemYearForm(ValidationForm):
     ventilation_system_construction_year = forms.IntegerField(
         label="Baujahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        max_value=2030,
-        min_value=1850,
     )
 
 
-class RenovationTechnologyForm(forms.Form):
+class RenovationTechnologyForm(ValidationForm):
     primary_heating = forms.ChoiceField(
         label="Heizungstechnologie",
         choices=[
@@ -620,7 +771,7 @@ class RenovationTechnologyForm(forms.Form):
     )
 
 
-class RenovationSolarForm(forms.Form):
+class RenovationSolarForm(ValidationForm):
     secondary_heating = forms.MultipleChoiceField(
         label="Zusätzliche Erzeuger",
         choices=[
@@ -632,7 +783,7 @@ class RenovationSolarForm(forms.Form):
     secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
 
-class RenovationPVSolarForm(forms.Form):
+class RenovationPVSolarForm(ValidationForm):
     secondary_heating = forms.MultipleChoiceField(
         label="Zusätzliche Erzeuger",
         choices=[
@@ -645,7 +796,7 @@ class RenovationPVSolarForm(forms.Form):
     secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
 
-class RenovationBioMassForm(forms.Form):
+class RenovationBioMassForm(ValidationForm):
     bio_mass_source = forms.ChoiceField(
         label="Energieträger",
         choices=[
@@ -666,7 +817,7 @@ class RenovationBioMassForm(forms.Form):
     secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
 
-class RenovationHeatPumpForm(forms.Form):
+class RenovationHeatPumpForm(ValidationForm):
     heat_pump_type = forms.ChoiceField(
         label="Wärmepumpentyp",
         choices=[
@@ -690,7 +841,7 @@ class RenovationHeatPumpForm(forms.Form):
     secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
 
-class RenovationRequestForm(forms.Form):
+class RenovationRequestForm(ValidationForm):
     facade_renovation = forms.BooleanField(
         label="Fassade sanieren",
         required=False,
@@ -746,7 +897,7 @@ class RenovationRequestForm(forms.Form):
         return cleaned_data
 
 
-class FinancialSupportForm(forms.Form):
+class FinancialSupportForm(ValidationForm):
     subsidy = forms.MultipleChoiceField(
         label="Zuschüsse",
         choices=[

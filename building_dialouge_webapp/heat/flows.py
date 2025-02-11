@@ -285,23 +285,29 @@ class FormState(TemplateState):
         self,
         flow: Flow,
         target: str,
-        form_class: type[Form],
+        form_class: type[forms.ValidationForm],
         template_name: str | None = None,
         label: str | None = None,
     ):
         super().__init__(flow, target, template_name, label)
         self.form_class = form_class
 
+    def _init_form(self, data: dict[str, Any] | None = None) -> Form:
+        if "request" in self.form_class.__init__.__code__.co_varnames:
+            return self.form_class(data, prefix=self.flow.prefix, request=self.flow.request)
+        return self.form_class(data, prefix=self.flow.prefix)
+
     def _render_form(self, data):
         context = self.get_context_data()
         if self.template_name is None:
             csrf_token = csrf(self.flow.request)["csrf_token"]
+            form_instance = self._init_form(data)
             rendered_form = (
-                f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">\n'
-                f"{self.form_class(data, prefix=self.flow.prefix).as_div()}"
+                f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">\n {form_instance.as_div()}'
             )
             return {self.target: HTMLStateResponse(rendered_form)}
-        context["form"] = self.form_class(data, prefix=self.flow.prefix)
+        form_instance = self._init_form(data)
+        context["form"] = form_instance
         return {
             self.target: HTMLStateResponse(
                 get_template(self.template_name).render(
@@ -327,10 +333,7 @@ class FormState(TemplateState):
         """Stores each form field's input value to the session."""
         if self.flow.request.method == "POST":
             session_data = self.flow.request.session.get("django_htmx_flow", {})
-            form_instance = self.form_class(
-                self.flow.request.POST,
-                prefix=self.flow.prefix,
-            )
+            form_instance = self._init_form(self.flow.request.POST)
             if form_instance.is_valid():
                 form_data = form_instance.cleaned_data
                 for field_name, value in form_data.items():
@@ -342,7 +345,7 @@ class FormState(TemplateState):
     def remove_state(self):
         """Removes each form field's stored value from the session."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        form_instance = self.form_class(prefix=self.flow.prefix)
+        form_instance = self._init_form()
         for field in form_instance.fields:
             key = field if self.flow.prefix is None else f"{self.flow.prefix}-{field}"
             if key in session_data:
@@ -357,7 +360,7 @@ class FormState(TemplateState):
             field_name if self.flow.prefix is None else f"{self.flow.prefix}-{field_name}"
             for field_name, field in self.form_class.base_fields.items()
         ]
-        form = self.form_class(self.flow.request.POST, prefix=self.flow.prefix)
+        form = self._init_form(self.flow.request.POST)
 
         if not form.is_valid():
             if any(field in required_fields for field in self.flow.request.POST):
@@ -389,7 +392,7 @@ class FormState(TemplateState):
     def data(self) -> dict[str, Any]:
         """Return cleaned data of the form with data from the session."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        form = self.form_class(session_data, prefix=self.flow.prefix)
+        form = self._init_form(session_data)
         if form.is_valid():
             return form.cleaned_data
         error_msg = f"Invalid data in flow '{self.target}': {form.errors}."
@@ -814,8 +817,13 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
             },
             lookup="hotwater_heating_done",
         ).transition(Next("end"))
-
         self.end = EndState(self, url="heat:consumption_overview")
+
+
+def check_hotwater_measured(self):
+    """Checks input of hotwater_measured from HotwaterHeatingFlow
+    for fields in Consumption Input depending on this."""
+    return self.flow.request.session["django_htmx_flow"].get("hotwater_measured", "False") == "True"
 
 
 class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
@@ -834,7 +842,6 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
         ).transition(
             Switch("consumption_type").case("power", "consumption_power").default("consumption_heating"),
         )
-
         self.consumption_power = FormInfoState(
             self,
             target="consumption_power",
@@ -843,16 +850,30 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
         ).transition(
             Next("stop"),
         )
-
         self.consumption_heating = FormInfoState(
             self,
             target="consumption_heating",
             form_class=forms.ConsumptionHeatingForm,
             info_text={"next_button_text": ("Speichern", "Weiter")},
         ).transition(
+            Switch(check_hotwater_measured)
+            .case(value=True, state_name="consumption_hotwater")
+            .default("consumption_hotwater_temp"),
+        )
+        self.consumption_hotwater = FormState(
+            self,
+            target="consumption_hotwater",
+            form_class=forms.ConsumptionHotwaterForm,
+        ).transition(
+            Next("consumption_hotwater_temp"),
+        )
+        self.consumption_hotwater_temp = FormState(
+            self,
+            target="consumption_hotwater_temp",
+            form_class=forms.ConsumptionWatertemperaturForm,
+        ).transition(
             Next("stop"),
         )
-
         self.stop = TemplateState(
             self,
             target="next_button",
@@ -871,6 +892,12 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
             return super().dispatch(request, *args, **kwargs)
 
 
+def check_prev_roof_orientation(self):
+    """Checks input of solar_thermal_energy_known from HotwaterHeatingFlow
+    for fields in Consumption Input depending on this."""
+    return self.flow.request.session["django_htmx_flow"].get("solar_thermal_energy_known", "unknown") == "known"
+
+
 class RoofFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/roof.html"
     extra_context = {
@@ -886,13 +913,28 @@ class RoofFlow(SidebarNavigationMixin, Flow):
             form_class=forms.RoofTypeForm,
             template_name="partials/roof_help.html",
         ).transition(
-            Switch("roof_type").case("flachdach", "roof_insulation").default("roof_details"),
+            Switch("roof_type").case("flachdach", "roof_insulation").default("roof_area"),
         )
-
-        self.roof_details = FormState(
+        self.roof_area = FormState(
             self,
-            target="roof_details",
-            form_class=forms.RoofDetailsForm,
+            target="roof_area",
+            form_class=forms.RoofAreaForm,
+        ).transition(
+            Switch(check_prev_roof_orientation)
+            .case(value=True, state_name="roof_orientation")
+            .default("roof_windows"),
+        )
+        self.roof_orientation = FormState(
+            self,
+            target="roof_orientation",
+            form_class=forms.RoofOrientationForm,
+        ).transition(
+            Next("roof_windows"),
+        )
+        self.roof_windows = FormState(
+            self,
+            target="roof_windows",
+            form_class=forms.RoofWindowsForm,
         ).transition(
             Next("roof_usage_now"),
         )
