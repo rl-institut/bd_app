@@ -157,7 +157,7 @@ main .step-text {
 }
 
 main .step-question {
-  @include step-item(4rem 2rem 1.5rem 4rem);
+  @include step-item(0 2rem 1.5rem 4rem);
 
   @media screen and (min-width: $breakpoint-3xl) {
     @include step-item(4rem 4rem 1.5rem 6rem);
@@ -170,6 +170,14 @@ main .step-question {
     span {
       font-weight: $font-weight-bold;
     }
+  }
+}
+
+.step-button {
+  padding: 0 2rem 0 4rem;
+
+  @media screen and (min-width: $breakpoint-3xl) {
+    padding: 0 4rem 0 6rem;
   }
 }
 
