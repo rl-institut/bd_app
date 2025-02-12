@@ -75,12 +75,15 @@
 
 main .sidebar {
   width: 18rem;
+  min-width: 18rem;
   background-color: $grey-050;
   overflow-y: auto;
   display: none;
 
   @media screen and (min-width: $breakpoint-lg) {
     display: block;
+    width: 20rem;
+    min-width: 20rem;
   }
 
   a {
