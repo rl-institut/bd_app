@@ -1,0 +1,25 @@
+.category-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 1.5rem;
+  border-bottom: 4px solid $green-400;
+  margin-bottom: 2rem;
+}
+
+.category-title {
+  color: $body-color;
+
+  &__step {
+    display: block;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-light;
+  }
+
+  &__name {
+    display: block;
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+  }
+}

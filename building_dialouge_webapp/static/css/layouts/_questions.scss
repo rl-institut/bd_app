@@ -151,3 +151,20 @@ main .step-question {
     }
   }
 }
+
+.main-content {
+  display: flex;
+  justify-content: flex-start;
+  flex: 1;
+  padding-top: 3rem;
+  padding-left: 6rem;
+  padding-right: 2rem;
+
+  div {
+    max-width: 860px;
+
+    @media screen and (min-width: $breakpoint-2xl) {
+      max-width: 1200px;
+    }
+  }
+}
