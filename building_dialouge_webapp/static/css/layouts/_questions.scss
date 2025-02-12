@@ -132,6 +132,13 @@ main .step-title {
     font-size: $font-size-xl;
     color: $primary-color
   }
+
+  .info-box {
+    background-color: $grey-050;
+    font-size: $font-size-sm;
+    color: $grey-500;
+    padding: 1rem;
+  }
 }
 
 main .step-text {
