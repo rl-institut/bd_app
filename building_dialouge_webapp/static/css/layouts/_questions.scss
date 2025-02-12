@@ -45,7 +45,7 @@
   .step-container {
     flex: 1;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .main {
@@ -129,7 +129,11 @@ main .sidebar {
 }
 
 main .step-title {
-  @include step-item(4rem 4rem 1.5rem);
+  @include step-item(4rem 2rem 1.5rem 4rem);
+
+  @media screen and (min-width: $breakpoint-3xl) {
+    @include step-item(4rem 4rem 1.5rem 6rem);
+  }
 
   h1 {
     font-size: $font-size-xl;
@@ -145,11 +149,19 @@ main .step-title {
 }
 
 main .step-text {
-  @include step-item(0 4rem 1.5rem);
+  @include step-item(4rem 2rem 1.5rem 4rem);
+
+  @media screen and (min-width: $breakpoint-3xl) {
+    @include step-item(4rem 4rem 1.5rem 6rem);
+  }
 }
 
 main .step-question {
-  @include step-item(0 4rem 1.5rem);
+  @include step-item(4rem 2rem 1.5rem 4rem);
+
+  @media screen and (min-width: $breakpoint-3xl) {
+    @include step-item(4rem 4rem 1.5rem 6rem);
+  }
 
   .help {
     padding: 0 2rem 1.5rem;
@@ -169,7 +181,7 @@ main .step-question {
   padding-left: 4rem;
   padding-right: 4rem;
 
-  @media screen and (min-width: $breakpoint-2xl) {
+  @media screen and (min-width: $breakpoint-3xl) {
     padding-left: 6rem;
     padding-right: 4rem;
   }
