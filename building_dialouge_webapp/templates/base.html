@@ -82,8 +82,8 @@
         {% endif %}
         {% block main %}
           {% block sidebar %}
-            <div class="d-flex flex-row justify-content-between h-100">
-              <section class="sidebar px-4 py-3 h-100">
+            <div class="d-flex flex-row justify-content-between" style="min-height:100%">
+              <section class="sidebar px-4 py-3">
                 <div>
                   <a class="btn btn-light" href="{% url 'heat:home' %}">
                     <svg xmlns="http://www.w3.org/2000/svg"

@@ -75,7 +75,6 @@
 
 main .sidebar {
   width: 18rem;
-  height: 100%;
   background-color: $grey-050;
   overflow-y: auto;
   display: none;
@@ -157,8 +156,13 @@ main .step-question {
   justify-content: flex-start;
   flex: 1;
   padding-top: 3rem;
-  padding-left: 6rem;
-  padding-right: 2rem;
+  padding-left: 4rem;
+  padding-right: 4rem;
+
+  @media screen and (min-width: $breakpoint-2xl) {
+    padding-left: 6rem;
+    padding-right: 4rem;
+  }
 
   div {
     max-width: 860px;
