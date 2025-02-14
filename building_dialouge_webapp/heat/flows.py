@@ -237,8 +237,12 @@ class TemplateState(State):
         lookup: str | None = None,
         label: str | None = None,
         context: dict[str, Any] | None = None,
+        reset_template_name: str | None = None,
+        reset_context: dict[str, Any] | None = None,
     ):
         self.template_name = template_name
+        self.reset_template_name = reset_template_name
+        self.reset_context = reset_context
         super().__init__(flow, target, label, lookup)
         if context:
             self.extra_context.update(context)
@@ -261,11 +265,38 @@ class TemplateState(State):
     @property
     def reset_response(self) -> dict[str, StateResponse]:
         """Return HTML including HTMX swap-oob in order to remove/reset HTML for current target."""
+        if self.reset_template_name:
+            return {
+                self.target: SwapHTMLStateResponse(
+                    f'<div id="{self.target}" hx-swap-oob="innerHTML">'
+                    f"{get_template(self.reset_template_name).render(self.reset_context)}"
+                    f"</div>",
+                ),
+            }
         return {
             self.target: SwapHTMLStateResponse(
                 f'<div id="{self.target}" hx-swap-oob="innerHTML"></div>',
             ),
         }
+
+
+class StopState(TemplateState):
+    def __init__(self, flow, lookup: str, next_botton_text: str = "Weiter"):
+        super().__init__(
+            flow=flow,
+            target="next_button",
+            template_name="partials/next_button.html",
+            context={
+                "hx_vals": f'{{"{lookup}": "True"}}',
+                "next_btn_text": next_botton_text,
+            },
+            reset_template_name="partials/next_button.html",
+            reset_context={
+                "next_disabled": True,
+                "next_btn_text": next_botton_text,
+            },
+            lookup=lookup,
+        )
 
 
 class FormState(TemplateState):
@@ -629,16 +660,7 @@ class BuildingTypeFlow(SidebarNavigationMixin, Flow):
             url="heat:dead_end_monument_protection",
         )
 
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"building_type_done": "True"}',
-            },
-            lookup="building_type_done",
-        ).transition(Next("end"))
-
+        self.stop = StopState(self, lookup="building_type_done", next_botton_text="Speichern").transition(Next("end"))
         self.end = EndState(self, url="heat:building_data")
 
 
@@ -660,16 +682,7 @@ class BuildingDataFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"building_data_done": "True"}',
-            },
-            lookup="building_data_done",
-        ).transition(Next("end"))
-
+        self.stop = StopState(self, lookup="building_data_done", next_botton_text="Speichern").transition(Next("end"))
         self.end = EndState(self, url="heat:cellar")
 
 
@@ -714,16 +727,7 @@ class CellarFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"cellar_done": "True"}',
-            },
-            lookup="cellar_done",
-        ).transition(Next("end"))
-
+        self.stop = StopState(self, lookup="cellar_done", next_botton_text="Speichern").transition(Next("end"))
         self.end = EndState(self, url="heat:hotwater_heating")
 
 
@@ -808,14 +812,10 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = TemplateState(
+        self.stop = StopState(
             self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"hotwater_heating_done": "True"}',
-            },
             lookup="hotwater_heating_done",
+            next_botton_text="Speichern",
         ).transition(Next("end"))
         self.end = EndState(self, url="heat:consumption_overview")
 
@@ -842,19 +842,19 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
         ).transition(
             Switch("consumption_type").case("power", "consumption_power").default("consumption_heating"),
         )
-        self.consumption_power = FormInfoState(
+
+        self.consumption_power = FormState(
             self,
             target="consumption_power",
             form_class=forms.ConsumptionPowerForm,
-            info_text={"next_button_text": ("Speichern", "Weiter")},
         ).transition(
             Next("stop"),
         )
-        self.consumption_heating = FormInfoState(
+
+        self.consumption_heating = FormState(
             self,
             target="consumption_heating",
             form_class=forms.ConsumptionHeatingForm,
-            info_text={"next_button_text": ("Speichern", "Weiter")},
         ).transition(
             Switch(check_hotwater_measured)
             .case(value=True, state_name="consumption_hotwater")
@@ -874,22 +874,13 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
         ).transition(
             Next("stop"),
         )
-        self.stop = TemplateState(
+
+        self.stop = StopState(
             self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"consumption_input_done": "True"}',
-            },
             lookup="consumption_input_done",
+            next_botton_text="Speichern",
         ).transition(Next("end"))
-
         self.end = EndState(self, url="heat:consumption_overview")
-
-        def dispatch(self, request, *args, **kwargs):
-            # Retrieve the prefix dynamically
-            self.prefix = kwargs.get("scenario", self.prefix)
-            return super().dispatch(request, *args, **kwargs)
 
 
 def check_prev_roof_orientation(self):
@@ -958,7 +949,9 @@ class RoofFlow(SidebarNavigationMixin, Flow):
             self,
             target="roof_insulation",
             form_class=forms.RoofInsulationForm,
-        ).transition(Switch("roof_insulation_exists").case("yes", "roof_insulation_year").default("stop"))
+        ).transition(
+            Switch("roof_insulation_exists").case("yes", "roof_insulation_year").default("stop"),
+        )
 
         self.roof_insulation_year = FormState(
             self,
@@ -968,16 +961,7 @@ class RoofFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"roof_done": "True"}',
-            },
-            lookup="roof_done",
-        ).transition(Next("end"))
-
+        self.stop = StopState(self, lookup="roof_done", next_botton_text="Speichern").transition(Next("end"))
         self.end = EndState(self, url="heat:window")
 
 
@@ -1007,16 +991,7 @@ class WindowFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"window_done": "True"}',
-            },
-            lookup="window_done",
-        ).transition(Next("end"))
-
+        self.stop = StopState(self, lookup="window_done", next_botton_text="Speichern").transition(Next("end"))
         self.end = EndState(self, url="heat:facade")
 
 
@@ -1054,16 +1029,7 @@ class FacadeFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"facade_done": "True"}',
-            },
-            lookup="facade_done",
-        ).transition(Next("end"))
-
+        self.stop = StopState(self, lookup="facade_done", next_botton_text="Speichern").transition(Next("end"))
         self.end = EndState(self, url="heat:heating")
 
 
@@ -1110,16 +1076,7 @@ class HeatingFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"heating_done": "True"}',
-            },
-            lookup="heating_done",
-        ).transition(Next("end"))
-
+        self.stop = StopState(self, lookup="heating_done", next_botton_text="Speichern").transition(Next("end"))
         self.end = EndState(self, url="heat:pv_system")
 
 
@@ -1166,16 +1123,7 @@ class PVSystemFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"pv_system_done": "True"}',
-            },
-            lookup="pv_system_done",
-        ).transition(Next("end"))
-
+        self.stop = StopState(self, lookup="v", next_botton_text="Speichern").transition(Next("end"))
         self.end = EndState(self, url="heat:ventilation_system")
 
 
@@ -1205,16 +1153,9 @@ class VentilationSystemFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"ventilation_system_done": "True"}',
-            },
-            lookup="ventilation_system_done",
-        ).transition(Next("end"))
-
+        self.stop = StopState(self, lookup="ventilation_system_done", next_botton_text="Speichern").transition(
+            Next("end"),
+        )
         self.end = EndState(self, url="heat:intro_renovation")
 
 
@@ -1280,16 +1221,9 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"renovation_request_done": "True"}',
-            },
-            lookup="renovation_request_done",
-        ).transition(Next("end"))
-
+        self.stop = StopState(self, lookup="renovation_request_done", next_botton_text="Speichern").transition(
+            Next("end"),
+        )
         self.end = EndState(self, url="heat:renovation_overview")
 
     def dispatch(self, request, *args, **kwargs):
@@ -1298,7 +1232,7 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
         return super().dispatch(request, *args, **kwargs)
 
 
-class FinancialSupporFlow(SidebarNavigationMixin, Flow):
+class FinancialSupportFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/financial_support.html"
     extra_context = {
         "back_url": "heat:renovation_overview",
@@ -1316,13 +1250,7 @@ class FinancialSupporFlow(SidebarNavigationMixin, Flow):
         ).transition(
             Next("stop"),
         )
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"financial_support_done": "True"}',
-            },
-            lookup="financial_support_done",
-        ).transition(Next("end"))
+        self.stop = StopState(self, lookup="financial_support_done", next_botton_text="Speichern").transition(
+            Next("end"),
+        )
         self.end = EndState(self, url="heat:optimization_start")
