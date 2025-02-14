@@ -58,6 +58,7 @@ class BuildingTypeProtectionForm(ValidationForm):
     monument_protection = forms.ChoiceField(
         label="monument_protection",
         choices=[("no", "Nein"), ("yes", "Ja")],
+        widget=forms.RadioSelect,
     )
 
 
@@ -152,6 +153,7 @@ class CellarDetailsForm(ValidationForm):
     cellar_vault = forms.ChoiceField(
         label="cellar_vault",
         choices=[(True, "Ja"), (False, "Nein")],
+        widget=forms.RadioSelect,
     )
     cellar_height = forms.FloatField(
         label="cellar_height",
@@ -163,6 +165,7 @@ class CellarInsulationForm(ValidationForm):
     cellar_ceiling_insulation_exists = forms.ChoiceField(
         label="cellar_ceiling_insulation_exists",
         choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
+        widget=forms.RadioSelect,
     )
 
 
@@ -218,6 +221,7 @@ class HotwaterHeatingMeasuredForm(ValidationForm):
     hotwater_measured = forms.ChoiceField(
         label="Wird der WW Verbrauch separat gemessen?",
         choices=[(True, "Ja"), (False, "Nein")],
+        widget=forms.RadioSelect,
     )
 
 
@@ -237,6 +241,7 @@ class HotwaterHeatingSolarKnownForm(ValidationForm):
     solar_thermal_energy_known = forms.ChoiceField(
         label="Heizenergie bekannt?",
         choices=[("known", "Ja"), ("unknown", "Unbekannt")],
+        widget=forms.RadioSelect,
     )
 
 
@@ -323,6 +328,7 @@ class ConsumptionHeatingForm(ValidationForm):
             ("cbm", "Kubikmeter / m³"),
             ("t", "Tonnen / t"),
         ],
+        widget=forms.RadioSelect,
     )
     heating_energy_source_cost = forms.FloatField(
         label="Brennstoffkosten in €",
@@ -401,6 +407,7 @@ class ConsumptionHotwaterForm(ValidationForm):
             ("l", "Liter / l"),
             ("cbm", "Kubikmeter / m³"),
         ],
+        widget=forms.RadioSelect,
     )
 
     def clean(self):
@@ -554,6 +561,7 @@ class RoofInsulationForm(ValidationForm):
     roof_insulation_exists = forms.ChoiceField(
         label="roof_insulation_exists",
         choices=[("yes", "Ja"), ("no", "Nein"), ("unknown", "Unbekannt")],
+        widget=forms.RadioSelect,
     )
 
 
@@ -642,6 +650,7 @@ class FacadeInsulationForm(ValidationForm):
     facade_insulation_exists = forms.ChoiceField(
         label="Dämmung vorhanden?",
         choices=[("exists", "Ja"), ("doesnt_exist", "Nein"), ("unkown", "Unbekannt")],
+        widget=forms.RadioSelect,
     )
 
 
