@@ -11,7 +11,28 @@
       </div>
       <div class="help" id="flow-instance-boxes">
         {% for box in scenario_boxes %}
-          <c-flow-instance-box id="{{ box.id }}" href="{{ box.href }}" title="{{ box.title }}" text="{{ box.text }}" />
+          <c-flow-instance-box id="{{ box.id }}" href="{{ box.href }}" title="{{ box.title }}">
+          <div class="flow-instance-box-text-heating">
+            {% if box.heating_choices %}
+                <h4>Heizungstechnologien</h4>
+                <ul>
+                    {% for choice in box.heating_choices %}
+                            <li>{{ choice }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+          </div>
+          <div class="flow-instance-box-text-renovation">
+            {% if box.renovation_choices %}
+                <h4>Sanierungsmaßnahmen</h4>
+                <ul>
+                    {% for choice in box.renovation_choices %}
+                            <li>{{ choice }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+          </div>
+        </c-renovation-instance-box>
         {% endfor %}
       </div>
     </div>

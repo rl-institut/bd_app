@@ -22,7 +22,9 @@
           class="main">{{ consumption_type.content | safe }}</div>
         <div class="help" id="flow-instance-boxes">
           {% for box in year_boxes %}
-            <c-flow-instance-box type="{{ box.type_class }}" id="{{ box.id }}" href="{{ box.href }}" title="{{ box.title }}" text="{{ box.text }}" />
+            <c-flow-instance-box type="{{ box.type_class }}" id="{{ box.id }}" href="{{ box.href }}" title="{{ box.title }}">
+            {{ box.text }}
+            </c-flow-instance-box>
           {% endfor %}
         </div>
       </div>
