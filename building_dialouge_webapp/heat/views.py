@@ -403,7 +403,8 @@ def get_user_friendly_data(form_surname, scenario_data):
 
                 if category == "heating":
                     heating_choices.extend(labels)
-                renovation_choices.extend(labels)
+                else:
+                    renovation_choices.extend(labels)
 
     return heating_choices, renovation_choices
 
