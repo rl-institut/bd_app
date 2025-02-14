@@ -546,6 +546,7 @@ class Results(SidebarNavigationMixin, TemplateView):
 
 
 class NextSteps(SidebarNavigationMixin, TemplateView):
+    template_name = "pages/next_steps.html"
     extra_context = {
         "back_url": "heat:results",
     }
