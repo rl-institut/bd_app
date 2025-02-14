@@ -2,7 +2,6 @@
 
 {% block content %}
   <section class="position-relative h-100 flex-grow-1 pb-5">
-    <div class="help-background"></div>
     <div class="step-title">
       <div class="step-container">
         <div class="main">
@@ -27,7 +26,7 @@
         {% endfor %}
       </div>
     </div>
-    <div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-between step-button">
       <form action="{% url 'heat:consumption_input' year='new_year' %}"
             method="get">
         <button class="btn btn-primary" {% if max_reached or not_finished_flows %}disabled{% endif %}>Verbrauch hinzufügen</button>

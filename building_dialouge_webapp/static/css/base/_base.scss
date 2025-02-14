@@ -4,3 +4,34 @@ body {
   font-family: Roboto, system-ui, 'Open Sans', 'Helvetica Neue', sans-serif;
   color: $body-color;
 }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1; /* This ensures that the main content grows and pushes the footer down */
+  overflow: auto; /* Allows scrolling if content overflows */
+}
+
+.footer {
+  flex-shrink: 0;
+  height: 3.5rem;
+
+  &--base {
+    height: auto;
+
+    a {
+      font-size: $font-size-sm;
+      color: $grey-600 !important;
+    }
+  }
+}
