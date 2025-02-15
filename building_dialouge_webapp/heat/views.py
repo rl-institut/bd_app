@@ -2,6 +2,7 @@ import datetime
 import inspect
 from urllib.parse import urlparse
 
+import heat.settings as heat_settings
 from django.contrib import messages
 from django.contrib.messages import get_messages
 from django.http import HttpResponseRedirect
@@ -17,11 +18,6 @@ from . import flows
 from . import forms
 from . import tables
 from .navigation import SidebarNavigationMixin
-
-SCENARIO_MAX = 3
-COONSUMPTION_MAX = 6
-POWER_MAX = 3
-HEATING_MAX = 3
 
 
 class LandingPage(TemplateView):
@@ -96,6 +92,9 @@ def delete_flow(request):
 
 
 def consumption_year(request, year=None):
+    heating_max = heat_settings.HEATING_MAX
+    power_max = heat_settings.POWER_MAX
+
     # year is none when consumption_input first called or when opened via navigation sidebar or back-button
     year_changed = False
 
@@ -112,14 +111,14 @@ def consumption_year(request, year=None):
         return HttpResponseRedirect(reverse("heat:consumption_input", kwargs={"year": year}))
     # Check if adding another instance would exceed the maximum limits
     existing_messages = [m.message for m in get_messages(request)]
-    if heating_count >= HEATING_MAX and power_count < POWER_MAX:
+    if heating_count >= heating_max and power_count < power_max:
         message_text = (
             "Maximale Anzahl an Wärmeverbraucheingaben erreicht, "
             "Sie können nur noch Stromverbraucheingaben hinzufügen."
         )
         if message_text not in existing_messages:
             messages.add_message(request, messages.INFO, message_text)
-    if heating_count < HEATING_MAX and power_count >= POWER_MAX:
+    if heating_count < heating_max and power_count >= power_max:
         message_text = (
             "Maximale Anzahl an Stromverbraucheingaben erreicht, "
             "Sie können nur noch Wärmeverbraucheingaben hinzufügen."
@@ -133,8 +132,9 @@ def consumption_year(request, year=None):
 
 def get_new_year(request):
     """Goes through years and checks if they have finished."""
+    consumption_max = heat_settings.CONSUMPTION_MAX
     year_id = 1
-    while year_id <= COONSUMPTION_MAX:
+    while year_id <= consumption_max:
         flow = ConsumptionInputFlow(prefix=f"year{year_id}")
         if not flow.finished(request):
             break
@@ -144,11 +144,14 @@ def get_new_year(request):
 
 def get_all_year_data(request):
     """Goes through years and gets their data if finished."""
+    consumption_max = heat_settings.CONSUMPTION_MAX
+    heating_max = heat_settings.HEATING_MAX
+    power_max = heat_settings.POWER_MAX
     year_data_list = []
     year_id = 1
     heating_count = 0
     power_count = 0
-    while year_id <= COONSUMPTION_MAX:
+    while year_id <= consumption_max:
         flow = ConsumptionInputFlow(prefix=f"year{year_id}")
         if not flow.finished(request):
             year_id += 1
@@ -157,12 +160,12 @@ def get_all_year_data(request):
         class_type, title, text = get_user_friendly_data_consumption(flow.data(request))
 
         if class_type == "heating":
-            if heating_count >= HEATING_MAX:
+            if heating_count >= heating_max:
                 year_id += 1
                 continue  # Skip if max heating flows reached
             heating_count += 1
         elif class_type == "power":
-            if power_count >= POWER_MAX:
+            if power_count >= power_max:
                 year_id += 1
                 continue  # Skip if max power flows reached
             power_count += 1
@@ -216,13 +219,14 @@ class ConsumptionOverview(SidebarNavigationMixin, TemplateView):
     template_name = "pages/consumption_overview.html"
 
     def get_context_data(self, **kwargs):
+        consumption_max = heat_settings.CONSUMPTION_MAX
         context = super().get_context_data(**kwargs)
         context["back_url"] = "heat:hotwater_heating"
         context["next_url"] = "heat:consumption_result"
         context["year_boxes"] = get_all_year_data(self.request)
         next_disabled, not_finished = check_if_new_year_possible(self.request, context["year_boxes"])
         context["next_disabled"] = next_disabled
-        context["max_reached"] = int(get_new_year(self.request)[4:]) > COONSUMPTION_MAX
+        context["max_reached"] = int(get_new_year(self.request)[4:]) > consumption_max
         context["not_finished_flows"] = not_finished
         return context
 
@@ -305,6 +309,7 @@ class IntroRenovation(SidebarNavigationMixin, TemplateView):
 
 
 def renovation_scenario(request, scenario=None):
+    scenario_max = heat_settings.SCENARIO_MAX
     # Needed to adapt URL via redirect if necessary
     scenario_changed = False
     # scenario is none when renovation_request first called or when opened via back-button
@@ -313,7 +318,7 @@ def renovation_scenario(request, scenario=None):
         scenario_changed = True
     # Check if scenario ID is lower than max scenarios
     scenario_index = int(scenario[8:])
-    if scenario_index > SCENARIO_MAX:
+    if scenario_index > scenario_max:
         return JsonResponse(
             {"error": "Maximum number of scenarios reached."},
             status=400,
@@ -330,8 +335,9 @@ def renovation_scenario(request, scenario=None):
 
 def get_new_scenario(request):
     """Goes through scenarios and checks if they have finished."""
+    scenario_max = heat_settings.SCENARIO_MAX
     scenario_id = 1
-    while scenario_id <= SCENARIO_MAX:
+    while scenario_id <= scenario_max:
         flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
         if not flow.finished(request):
             break
@@ -341,9 +347,10 @@ def get_new_scenario(request):
 
 def get_all_scenario_data(request):
     """Goes through scenarios and gets their data if finished."""
+    scenario_max = heat_settings.SCENARIO_MAX
     scenario_data_list = []
     scenario_id = 1
-    while scenario_id <= SCENARIO_MAX:
+    while scenario_id <= scenario_max:
         flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
         if not flow.finished(request):
             scenario_id += 1
@@ -397,11 +404,12 @@ class RenovationOverview(SidebarNavigationMixin, TemplateView):
     template_name = "pages/renovation_overview.html"
 
     def get_context_data(self, **kwargs):
+        scenario_max = heat_settings.SCENARIO_MAX
         context = super().get_context_data(**kwargs)
         context["back_url"] = "heat:renovation_request"
         context["next_url"] = "heat:financial_support"
         context["scenario_boxes"] = get_all_scenario_data(self.request)
-        context["max_reached"] = int(get_new_scenario(self.request)[8:]) > SCENARIO_MAX
+        context["max_reached"] = int(get_new_scenario(self.request)[8:]) > scenario_max
         return context
 
 
