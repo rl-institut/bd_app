@@ -4,6 +4,7 @@ from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 
+import heat.settings as heat_settings
 from django import forms
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
@@ -290,6 +291,8 @@ class ConsumptionTypeForm(ValidationForm):
     )
 
     def validate_with_session(self):
+        heating_max = heat_settings.HEATING_MAX
+        power_max = heat_settings.POWER_MAX
         data = self.request.session.get("django_htmx_flow", {})
         # Count occurrences of "heating" and "power" as consumption_type in session
         pattern = re.compile(r"^year[1-6]-consumption_type$")
@@ -297,12 +300,12 @@ class ConsumptionTypeForm(ValidationForm):
 
         heating_count = sum(1 for v in relevant_data.values() if v == "heating")
         power_count = sum(1 for v in relevant_data.values() if v == "power")
-        count_max = 3
+
         # Determine initial value and whether to disable the field
-        if heating_count >= count_max:
+        if heating_count >= heating_max:
             self.fields["consumption_type"].initial = "power"
             self.fields["consumption_type"].widget.attrs["disabled"] = True
-        elif power_count >= count_max:
+        elif power_count >= power_max:
             self.fields["consumption_type"].initial = "heating"
             self.fields["consumption_type"].widget.attrs["disabled"] = True
 
