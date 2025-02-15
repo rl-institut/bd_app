@@ -749,6 +749,17 @@ class PVSystemBatteryForm(ValidationForm):
         widget=forms.RadioSelect,
     )
 
+    def __init__(self, *args, **kwargs):
+        """
+        Adjusts the required attribute of battery_capacity based on
+        the initial or submitted value of `battery_exists`.
+        """
+        super().__init__(*args, **kwargs)
+        battery_exists_value = self.data.get("battery_exists") or self.initial.get("battery_exists")
+
+        if battery_exists_value in [False, "False", "0", None, ""]:
+            self.fields["battery_capacity"].required = False
+
 
 class VentilationSystemForm(ValidationForm):
     ventilation_system_exists = forms.ChoiceField(
