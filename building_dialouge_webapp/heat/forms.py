@@ -46,7 +46,7 @@ class ValidationForm(forms.Form):
 
 class BuildingTypeForm(ValidationForm):
     building_type = forms.ChoiceField(
-        label="building_type",
+        label="Gebäudeart",
         choices=[
             ("single_family", "Einfamlienhaus"),
             ("apartment_building", "Mehrfamilienhaus"),
@@ -57,7 +57,7 @@ class BuildingTypeForm(ValidationForm):
 
 class BuildingTypeProtectionForm(ValidationForm):
     monument_protection = forms.ChoiceField(
-        label="monument_protection",
+        label="Denkmalschutz?",
         choices=[("no", "Nein"), ("yes", "Ja")],
         widget=forms.RadioSelect,
     )
@@ -65,27 +65,27 @@ class BuildingTypeProtectionForm(ValidationForm):
 
 class BuildingDataForm(ValidationForm):
     construction_year = forms.IntegerField(
-        label="construction_year",
+        label="Baujahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     number_persons = forms.IntegerField(
-        label="number_persons",
+        label="Anzahl Personen",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     number_flats = forms.IntegerField(
-        label="number_flats",
+        label="Anzahl Wohneinheiten",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     living_space = forms.IntegerField(
-        label="living_space",
+        label="Wohnfläche",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     number_floors = forms.IntegerField(
-        label="number_floors",
+        label="Anzahl Vollgeschosse",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     adjoining_building = forms.ChoiceField(
-        label="adjoining_building",
+        label="Angrenzendes Gebäude",
         choices=[
             ("no", "Nein / Freistehend"),
             ("1_side", "Eine Seite / Reihenendhaus"),
@@ -94,7 +94,7 @@ class BuildingDataForm(ValidationForm):
         widget=forms.RadioSelect,
     )
     floor_plan = forms.ChoiceField(
-        label="floor_plan",
+        label="Grundriss",
         choices=[
             ("compact", "Kompakt"),
             ("complex", "Langgestreckt, gewinkelt, komplex, angrenzend"),
@@ -132,7 +132,7 @@ class BuildingDataForm(ValidationForm):
 
 class CellarHeatingForm(ValidationForm):
     cellar_heating = forms.ChoiceField(
-        label="cellar_heating",
+        label="Beheizung",
         choices=[
             ("no_cellar", "Kein Keller"),
             ("without_heating", "Keller unbeheizt"),
@@ -144,7 +144,7 @@ class CellarHeatingForm(ValidationForm):
 
 class CellarDetailsForm(ValidationForm):
     cellar_ceiling = forms.ChoiceField(
-        label="cellar_ceiling",
+        label="Decke",
         choices=[
             ("solid", "Massiv"),
             ("other", "Andere (Holz)"),
@@ -152,19 +152,19 @@ class CellarDetailsForm(ValidationForm):
         widget=forms.RadioSelect,
     )
     cellar_vault = forms.ChoiceField(
-        label="cellar_vault",
+        label="Gewölbekeller",
         choices=[(True, "Ja"), (False, "Nein")],
         widget=forms.RadioSelect,
     )
     cellar_height = forms.FloatField(
-        label="cellar_height",
+        label="Raumhöhe",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
 
 class CellarInsulationForm(ValidationForm):
     cellar_ceiling_insulation_exists = forms.ChoiceField(
-        label="cellar_ceiling_insulation_exists",
+        label="Deckendämmung vorhanden?",
         choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
         widget=forms.RadioSelect,
     )
@@ -172,7 +172,7 @@ class CellarInsulationForm(ValidationForm):
 
 class CellarInsulationYearForm(ValidationForm):
     cellar_insulation_year = forms.IntegerField(
-        label="cellar_insulation_year",
+        label="Baujahr der Deckendämmung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
@@ -491,7 +491,7 @@ class ConsumptionPowerForm(forms.Form):
 
 class RoofTypeForm(forms.Form):
     roof_type = forms.ChoiceField(
-        label="roof_type",
+        label="Dachform",
         choices=[
             ("flachdach", "Flachdach"),
             ("satteldach", "Satteldach"),
@@ -535,7 +535,7 @@ class RoofWindowsForm(ValidationForm):
 
 class RoofUsageNowForm(ValidationForm):
     roof_usage_now = forms.ChoiceField(
-        label="roof_usage_now",
+        label="Dachnutzung",
         choices=[
             ("all_used", "Vollständig genutzt/beheizt"),
             ("part_used", "Teilweise genutzt/beheizt"),
@@ -547,7 +547,7 @@ class RoofUsageNowForm(ValidationForm):
 
 class RoofUsageFutureForm(ValidationForm):
     roof_usage_planned = forms.ChoiceField(
-        label="roof_usage_planned",
+        label="Zukünftige Nutzung",
         choices=[
             ("all_used", "Keine Nutzung/Beheizung"),
             ("part_used", "Ausbauen und Nutzen"),
@@ -555,14 +555,14 @@ class RoofUsageFutureForm(ValidationForm):
         widget=forms.RadioSelect,
     )
     roof_usage_share = forms.IntegerField(
-        label="roof_usage_share in %",
+        label="Ausbauen und Nutzen in %",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
 
 class RoofInsulationForm(ValidationForm):
     roof_insulation_exists = forms.ChoiceField(
-        label="roof_insulation_exists",
+        label="Dämmung vorhanden?",
         choices=[("yes", "Ja"), ("no", "Nein"), ("unknown", "Unbekannt")],
         widget=forms.RadioSelect,
     )
@@ -570,7 +570,7 @@ class RoofInsulationForm(ValidationForm):
 
 class RoofInsulationYearForm(forms.Form):
     roof_insulation_year = forms.IntegerField(
-        label="Jahr",
+        label="Baujahr der Dämmung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         required=False,
     )
@@ -659,7 +659,7 @@ class FacadeInsulationForm(ValidationForm):
 
 class FacadeInsulationYearForm(ValidationForm):
     facade_construction_year = forms.IntegerField(
-        label="Jahr",
+        label="Baujahr der Dämmung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
