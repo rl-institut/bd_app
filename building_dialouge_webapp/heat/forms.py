@@ -4,6 +4,7 @@ from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 
+import heat.settings as heat_settings
 from django import forms
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
@@ -45,7 +46,7 @@ class ValidationForm(forms.Form):
 
 class BuildingTypeForm(ValidationForm):
     building_type = forms.ChoiceField(
-        label="building_type",
+        label="Gebäudeart",
         choices=[
             ("single_family", "Einfamlienhaus"),
             ("apartment_building", "Mehrfamilienhaus"),
@@ -56,34 +57,35 @@ class BuildingTypeForm(ValidationForm):
 
 class BuildingTypeProtectionForm(ValidationForm):
     monument_protection = forms.ChoiceField(
-        label="monument_protection",
+        label="Denkmalschutz?",
         choices=[("no", "Nein"), ("yes", "Ja")],
+        widget=forms.RadioSelect,
     )
 
 
 class BuildingDataForm(ValidationForm):
     construction_year = forms.IntegerField(
-        label="construction_year",
+        label="Baujahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     number_persons = forms.IntegerField(
-        label="number_persons",
+        label="Anzahl Personen",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     number_flats = forms.IntegerField(
-        label="number_flats",
+        label="Anzahl Wohneinheiten",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     living_space = forms.IntegerField(
-        label="living_space",
+        label="Wohnfläche",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     number_floors = forms.IntegerField(
-        label="number_floors",
+        label="Anzahl Vollgeschosse",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     adjoining_building = forms.ChoiceField(
-        label="adjoining_building",
+        label="Angrenzendes Gebäude",
         choices=[
             ("no", "Nein / Freistehend"),
             ("1_side", "Eine Seite / Reihenendhaus"),
@@ -92,7 +94,7 @@ class BuildingDataForm(ValidationForm):
         widget=forms.RadioSelect,
     )
     floor_plan = forms.ChoiceField(
-        label="floor_plan",
+        label="Grundriss",
         choices=[
             ("compact", "Kompakt"),
             ("complex", "Langgestreckt, gewinkelt, komplex, angrenzend"),
@@ -130,7 +132,7 @@ class BuildingDataForm(ValidationForm):
 
 class CellarHeatingForm(ValidationForm):
     cellar_heating = forms.ChoiceField(
-        label="cellar_heating",
+        label="Beheizung",
         choices=[
             ("no_cellar", "Kein Keller"),
             ("without_heating", "Keller unbeheizt"),
@@ -142,7 +144,7 @@ class CellarHeatingForm(ValidationForm):
 
 class CellarDetailsForm(ValidationForm):
     cellar_ceiling = forms.ChoiceField(
-        label="cellar_ceiling",
+        label="Decke",
         choices=[
             ("solid", "Massiv"),
             ("other", "Andere (Holz)"),
@@ -150,25 +152,27 @@ class CellarDetailsForm(ValidationForm):
         widget=forms.RadioSelect,
     )
     cellar_vault = forms.ChoiceField(
-        label="cellar_vault",
+        label="Gewölbekeller",
         choices=[(True, "Ja"), (False, "Nein")],
+        widget=forms.RadioSelect,
     )
     cellar_height = forms.FloatField(
-        label="cellar_height",
+        label="Raumhöhe",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
 
 class CellarInsulationForm(ValidationForm):
     cellar_ceiling_insulation_exists = forms.ChoiceField(
-        label="cellar_ceiling_insulation_exists",
+        label="Deckendämmung vorhanden?",
         choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
+        widget=forms.RadioSelect,
     )
 
 
 class CellarInsulationYearForm(ValidationForm):
     cellar_insulation_year = forms.IntegerField(
-        label="cellar_insulation_year",
+        label="Baujahr der Deckendämmung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
@@ -218,6 +222,7 @@ class HotwaterHeatingMeasuredForm(ValidationForm):
     hotwater_measured = forms.ChoiceField(
         label="Wird der WW Verbrauch separat gemessen?",
         choices=[(True, "Ja"), (False, "Nein")],
+        widget=forms.RadioSelect,
     )
 
 
@@ -237,6 +242,7 @@ class HotwaterHeatingSolarKnownForm(ValidationForm):
     solar_thermal_energy_known = forms.ChoiceField(
         label="Heizenergie bekannt?",
         choices=[("known", "Ja"), ("unknown", "Unbekannt")],
+        widget=forms.RadioSelect,
     )
 
 
@@ -285,6 +291,8 @@ class ConsumptionTypeForm(ValidationForm):
     )
 
     def validate_with_session(self):
+        heating_max = heat_settings.HEATING_MAX
+        power_max = heat_settings.POWER_MAX
         data = self.request.session.get("django_htmx_flow", {})
         # Count occurrences of "heating" and "power" as consumption_type in session
         pattern = re.compile(r"^year[1-6]-consumption_type$")
@@ -292,12 +300,12 @@ class ConsumptionTypeForm(ValidationForm):
 
         heating_count = sum(1 for v in relevant_data.values() if v == "heating")
         power_count = sum(1 for v in relevant_data.values() if v == "power")
-        count_max = 3
+
         # Determine initial value and whether to disable the field
-        if heating_count >= count_max:
+        if heating_count >= heating_max:
             self.fields["consumption_type"].initial = "power"
             self.fields["consumption_type"].widget.attrs["disabled"] = True
-        elif power_count >= count_max:
+        elif power_count >= power_max:
             self.fields["consumption_type"].initial = "heating"
             self.fields["consumption_type"].widget.attrs["disabled"] = True
 
@@ -323,6 +331,7 @@ class ConsumptionHeatingForm(ValidationForm):
             ("cbm", "Kubikmeter / m³"),
             ("t", "Tonnen / t"),
         ],
+        widget=forms.RadioSelect,
     )
     heating_energy_source_cost = forms.FloatField(
         label="Brennstoffkosten in €",
@@ -401,6 +410,7 @@ class ConsumptionHotwaterForm(ValidationForm):
             ("l", "Liter / l"),
             ("cbm", "Kubikmeter / m³"),
         ],
+        widget=forms.RadioSelect,
     )
 
     def clean(self):
@@ -481,7 +491,7 @@ class ConsumptionPowerForm(forms.Form):
 
 class RoofTypeForm(forms.Form):
     roof_type = forms.ChoiceField(
-        label="roof_type",
+        label="Dachform",
         choices=[
             ("flachdach", "Flachdach"),
             ("satteldach", "Satteldach"),
@@ -525,7 +535,7 @@ class RoofWindowsForm(ValidationForm):
 
 class RoofUsageNowForm(ValidationForm):
     roof_usage_now = forms.ChoiceField(
-        label="roof_usage_now",
+        label="Dachnutzung",
         choices=[
             ("all_used", "Vollständig genutzt/beheizt"),
             ("part_used", "Teilweise genutzt/beheizt"),
@@ -537,7 +547,7 @@ class RoofUsageNowForm(ValidationForm):
 
 class RoofUsageFutureForm(ValidationForm):
     roof_usage_planned = forms.ChoiceField(
-        label="roof_usage_planned",
+        label="Zukünftige Nutzung",
         choices=[
             ("all_used", "Keine Nutzung/Beheizung"),
             ("part_used", "Ausbauen und Nutzen"),
@@ -545,21 +555,22 @@ class RoofUsageFutureForm(ValidationForm):
         widget=forms.RadioSelect,
     )
     roof_usage_share = forms.IntegerField(
-        label="roof_usage_share in %",
+        label="Ausbauen und Nutzen in %",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
 
 class RoofInsulationForm(ValidationForm):
     roof_insulation_exists = forms.ChoiceField(
-        label="roof_insulation_exists",
+        label="Dämmung vorhanden?",
         choices=[("yes", "Ja"), ("no", "Nein"), ("unknown", "Unbekannt")],
+        widget=forms.RadioSelect,
     )
 
 
 class RoofInsulationYearForm(forms.Form):
     roof_insulation_year = forms.IntegerField(
-        label="Jahr",
+        label="Baujahr der Dämmung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         required=False,
     )
@@ -642,12 +653,13 @@ class FacadeInsulationForm(ValidationForm):
     facade_insulation_exists = forms.ChoiceField(
         label="Dämmung vorhanden?",
         choices=[("exists", "Ja"), ("doesnt_exist", "Nein"), ("unkown", "Unbekannt")],
+        widget=forms.RadioSelect,
     )
 
 
 class FacadeInsulationYearForm(ValidationForm):
     facade_construction_year = forms.IntegerField(
-        label="Jahr",
+        label="Baujahr der Dämmung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
@@ -739,6 +751,17 @@ class PVSystemBatteryForm(ValidationForm):
         choices=[(True, "Ja"), (False, "Nein")],
         widget=forms.RadioSelect,
     )
+
+    def __init__(self, *args, **kwargs):
+        """
+        Adjusts the required attribute of battery_capacity based on
+        the initial or submitted value of `battery_exists`.
+        """
+        super().__init__(*args, **kwargs)
+        battery_exists_value = self.data.get("battery_exists") or self.initial.get("battery_exists")
+
+        if battery_exists_value in [False, "False", "0", None, ""]:
+            self.fields["battery_capacity"].required = False
 
 
 class VentilationSystemForm(ValidationForm):
