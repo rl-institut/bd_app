@@ -1,0 +1,22 @@
+<c-layouts.flow-instance-box>
+    <div class="flow-instance-box-text-heating">
+        {% if box.heating_choices %}
+            <h4>Heizungstechnologien</h4>
+            <ul>
+                {% for choice in box.heating_choices %}
+                        <li>{{ choice }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        </div>
+        <div class="flow-instance-box-text-renovation">
+        {% if box.renovation_choices %}
+            <h4>Sanierungsmaßnahmen</h4>
+            <ul>
+                {% for choice in box.renovation_choices %}
+                        <li>{{ choice }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</c-layouts.flow-instance-box>

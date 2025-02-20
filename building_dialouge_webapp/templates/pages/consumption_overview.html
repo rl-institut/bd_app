@@ -23,9 +23,7 @@
       </div>
       <div class="help" id="flow-instance-boxes">
         {% for box in year_boxes %}
-          <c-flow-instance-box type="{{ box.type_class }}" id="{{ box.id }}" href="{{ box.href }}" title="{{ box.title }}">
-            {{ box.text }}
-            </c-flow-instance-box>
+          <c-layouts.consumption :box="box"></c-layouts.consumption>
         {% endfor %}
       </div>
     </div>
