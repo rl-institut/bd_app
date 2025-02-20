@@ -14,8 +14,8 @@ def read_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dic
     return {}
 
 
-def get_renovation_data(renovation_request: dict) -> dict:
-    """Get renovation data from KfW."""
+def get_renovation_data(flow_data: dict) -> dict:
+    """Get renovation data from KfW based on flow data."""
     # Get cluster ID from KfW clustering
     # TODO: Get cluster ID from lookup table. Currently hardcoded.
     # https://github.com/rl-institut/bd_app/issues/90
