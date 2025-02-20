@@ -233,11 +233,11 @@ def check_if_new_year_possible(request, year_boxes):
     And checks if there are at least one of power and one of heating instances already.
     returns next_disabled = True, if one of these conditions fail.
     """
-    needed_flows = [
-        (name, flow())
-        for name, flow in inspect.getmembers(flows, inspect.isclass)
-        if name in {"HotwaterHeatingFlow", "BuildingDataFlow"}
+    needed_flow_classes = [
+        ("HotwaterHeatingFlow", flows.HotwaterHeatingFlow),
+        ("BuildingDataFlow", flows.BuildingDataFlow),
     ]
+    needed_flows = [(name, form_class()) for name, form_class in needed_flow_classes]
     not_finished = [name for name, flow in needed_flows if not flow.finished(request)]
     if not_finished:
         next_disabled = True
