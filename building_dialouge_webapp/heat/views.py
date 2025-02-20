@@ -237,11 +237,11 @@ def check_if_new_year_possible(request, year_boxes):
     And checks if there are at least one of power and one of heating instances already.
     returns next_disabled = True, if one of these conditions fail.
     """
-    needed_flows = [
-        (name, flow())
-        for name, flow in inspect.getmembers(flows, inspect.isclass)
-        if name in {"HotwaterHeatingFlow", "BuildingDataFlow"}
+    needed_flow_classes = [
+        ("HotwaterHeatingFlow", flows.HotwaterHeatingFlow),
+        ("BuildingDataFlow", flows.BuildingDataFlow),
     ]
+    needed_flows = [(name, form_class()) for name, form_class in needed_flow_classes]
     not_finished = [name for name, flow in needed_flows if not flow.finished(request)]
     if not_finished:
         next_disabled = True
@@ -356,10 +356,7 @@ def get_all_scenario_data(request):
             scenario_id += 1
             continue
         scenario_data = flow.data(request)
-        user_friendly_data = get_user_friendly_data(
-            form_surname="Renovation",
-            scenario_data=scenario_data,
-        )
+        heating_choices, renovation_choices = get_user_friendly_data(scenario_data=scenario_data)
         extra_context = {
             "id": f"scenario{scenario_id}box",
             "href": reverse(
@@ -367,37 +364,62 @@ def get_all_scenario_data(request):
                 kwargs={"scenario": f"scenario{scenario_id}"},
             ),
             "title": f"Szenario {scenario_id}",
-            "text": ", ".join(user_friendly_data),
+            "heating_choices": heating_choices,
+            "renovation_choices": renovation_choices,
         }
         scenario_data_list.append(extra_context)
         scenario_id += 1
     return scenario_data_list
 
 
-def get_user_friendly_data(form_surname, scenario_data):
-    user_friendly_data = []
-    flow_forms = [
-        form_class()
-        for name, form_class in inspect.getmembers(forms, inspect.isclass)
-        if name.startswith(form_surname)
+def get_user_friendly_data(scenario_data):
+    """
+    Instantiate the Forms for RenovationRequestFlow and get all checked / chosen
+    labels for easier readability.
+    Seperate choices for heating and renovation so that they can be displayed in
+    their own lists. Only choices from heating_fields are heating choices, the rest of the
+    fields contain renovation choices.
+    """
+    heating_fields = {"primary_heating", "secondary_heating", "biomass_source", "heat_pump_type"}
+
+    heating_choices = []
+    renovation_choices = []
+
+    renovation_form_classes = [
+        forms.RenovationRequestForm,
+        forms.RenovationHeatPumpForm,
+        forms.RenovationBioMassForm,
+        forms.RenovationPVSolarForm,
+        forms.RenovationSolarForm,
+        forms.RenovationTechnologyForm,
     ]
-    # add labels from forms for easier readability
-    for form in flow_forms:
+    renovation_forms = [form_class() for form_class in renovation_form_classes]
+
+    for form in renovation_forms:
+        category = "renovation"
         for field_name, field in form.fields.items():
             if field_name.endswith("hidden"):
-                break
+                continue
+            if field_name in heating_fields:
+                category = "heating"
+
             if scenario_data.get(field_name):
                 value = scenario_data[field_name]
-                if isinstance(value, list):  # For multiple-choice fields
+                if isinstance(value, list):  # Multiple-choice fields
                     labels = [dict(field.choices).get(v) for v in value if v in dict(field.choices)]
-                    user_friendly_data.extend(labels)
                 elif isinstance(value, bool):
-                    user_friendly_data.append(field.label)
-                else:  # for select-fields / radiobuttons
-                    label = dict(field.choices).get(value)
-                    if label:
-                        user_friendly_data.append(label)
-    return list(set(user_friendly_data))
+                    labels = [field.label]
+                else:  # Select-fields / Radiobuttons
+                    labels = [dict(field.choices).get(value)] if value in dict(field.choices) else []
+
+                if category == "heating":
+                    heating_choices.extend(labels)
+                else:
+                    renovation_choices.extend(labels)
+    # remove duplicates
+    heating_choices = list(dict.fromkeys(heating_choices))
+    renovation_choices = list(dict.fromkeys(renovation_choices))
+    return heating_choices, renovation_choices
 
 
 class RenovationOverview(SidebarNavigationMixin, TemplateView):

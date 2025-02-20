@@ -10,7 +10,7 @@
       </div>
       <div class="help" id="flow-instance-boxes">
         {% for box in scenario_boxes %}
-          <c-flow-instance-box id="{{ box.id }}" href="{{ box.href }}" title="{{ box.title }}" text="{{ box.text }}" />
+          <c-layouts.renovation :box="box"></c-layouts.renovation>
         {% endfor %}
       </div>
     </div>
