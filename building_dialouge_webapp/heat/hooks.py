@@ -1,4 +1,7 @@
+import json
+
 from django.http import HttpRequest
+from settings import DATA_DIR
 
 
 def read_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dict:
@@ -9,3 +12,14 @@ def read_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dic
     # Gather data from all flows in one dict
     # Return dict
     return {}
+
+
+def get_renovation_data(renovation_request: dict) -> dict:
+    """Get renovation data from KfW."""
+    # Get cluster ID from KfW clustering
+    # TODO: Get cluster ID from lookup table. Currently hardcoded.
+    # https://github.com/rl-institut/bd_app/issues/90
+    cluster_id = 1
+
+    with (DATA_DIR / "renovations" / f"{cluster_id}.json").open("r", encoding="utf-8") as f:
+        return json.load(f)
