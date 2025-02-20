@@ -8,7 +8,6 @@ app_name = "heat"
 urlpatterns = [
     # sorted by appearance in view flow
     path("", views.LandingPage.as_view(), name="home"),
-    path("simulate", views.simulate, name="simulate"),
     path("dead_end_tenant/", views.DeadEndTenant.as_view(), name="dead_end_tenant"),
     # step 1 inventory analysis
     path("intro_inventory/", views.IntroInventory.as_view(), name="intro_inventory"),
