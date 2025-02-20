@@ -349,10 +349,7 @@ def get_all_scenario_data(request):
             scenario_id += 1
             continue
         scenario_data = flow.data(request)
-        heating_choices, renovation_choices = get_user_friendly_data(
-            form_surname="Renovation",
-            scenario_data=scenario_data,
-        )
+        heating_choices, renovation_choices = get_user_friendly_data(scenario_data=scenario_data)
         extra_context = {
             "id": f"scenario{scenario_id}box",
             "href": reverse(
@@ -368,24 +365,31 @@ def get_all_scenario_data(request):
     return scenario_data_list
 
 
-def get_user_friendly_data(form_surname, scenario_data):
+def get_user_friendly_data(scenario_data):
+    """
+    Instantiate the Forms for RenovationRequestFlow and get all checked / chosen
+    labels for easier readability.
+    Seperate choices for heating and renovation so that they can be displayed in
+    their own lists. Only choices from heating_fields are heating choices, the rest of the
+    fields contain renovation choices.
+    """
     heating_fields = {"primary_heating", "secondary_heating", "biomass_source", "heat_pump_type"}
-    renovation_form_name = "RenovationRequestForm"
 
     heating_choices = []
     renovation_choices = []
 
-    flow_forms = [
-        form_class()
-        for name, form_class in inspect.getmembers(forms, inspect.isclass)
-        if name.startswith(form_surname)
+    renovation_form_classes = [
+        forms.RenovationRequestForm,
+        forms.RenovationHeatPumpForm,
+        forms.RenovationBioMassForm,
+        forms.RenovationPVSolarForm,
+        forms.RenovationSolarForm,
+        forms.RenovationTechnologyForm,
     ]
+    renovation_forms = [form_class() for form_class in renovation_form_classes]
 
-    for form in flow_forms:
-        category = None
-        if form.__class__.__name__ == renovation_form_name:
-            category = "renovation"
-
+    for form in renovation_forms:
+        category = "renovation"
         for field_name, field in form.fields.items():
             if field_name.endswith("hidden"):
                 continue
@@ -405,7 +409,9 @@ def get_user_friendly_data(form_surname, scenario_data):
                     heating_choices.extend(labels)
                 else:
                     renovation_choices.extend(labels)
-
+    # remove duplicates
+    heating_choices = list(dict.fromkeys(heating_choices))
+    renovation_choices = list(dict.fromkeys(renovation_choices))
     return heating_choices, renovation_choices
 
 
