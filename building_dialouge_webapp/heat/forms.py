@@ -5,6 +5,8 @@ from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.forms.widgets import RadioSelect
 
+from . import settings as heat_settings
+
 
 class ValidationForm(forms.Form):
     def __init__(self, *args, request=None, **kwargs):
