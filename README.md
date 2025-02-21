@@ -109,8 +109,10 @@ import requests
 URL = "http://localhost:8000/oemof/simulate"
 SCENARIO = "oeprom"
 PARAMETERS = {}
+SESSION_ID = "lqttrapsbrwdowjb9w5x392mdgkaibk5"  # look up in browser
 
-response = requests.post(URL, data={"scenario": SCENARIO, "parameters": PARAMETERS})
+data = {"scenario": SCENARIO, "parameters": PARAMETERS}
+response = requests.post(URL, data=data, headers={"Cookie": f"sessionid={SESSION_ID}"})
 print(response.status_code, response.text)
 ```
 
