@@ -97,6 +97,7 @@ python manage.py runserver
 6. Clone oeprom oemof datapackage into `building_dialouge_webapp/media/oemof`
 
 ```shell
+cd building_dialouge_webapp/media/oemof
 git clone https://github.com/elmo-z/buildingDialogue.git
 ```
 
