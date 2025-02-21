@@ -94,7 +94,13 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-6. In order to use django-oemof, you must start celery and redis parallel to runserver. You can use `make` command to do so
+6. Clone oeprom oemof datapackage into `building_dialouge_webapp/media/oemof`
+
+```shell
+git clone https://github.com/elmo-z/buildingDialogue.git
+```
+
+7. In order to use django-oemof, you must start celery and redis parallel to runserver. You can use `make` command to do so
 
 ```shell
 make celery
