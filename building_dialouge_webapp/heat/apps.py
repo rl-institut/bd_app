@@ -17,3 +17,13 @@ class HeatConfig(AppConfig):
             hooks.HookType.SETUP,
             hooks.Hook(scenario=hooks.ALL_SCENARIOS, function=bd_hooks.read_flow_data),
         )
+
+        hooks.register_hook(
+            hooks.HookType.SETUP,
+            hooks.Hook(scenario=hooks.ALL_SCENARIOS, function=bd_hooks.get_renovation_data),
+        )
+
+        hooks.register_hook(
+            hooks.HookType.SETUP,
+            hooks.Hook(scenario=hooks.ALL_SCENARIOS, function=bd_hooks.calculate_energy_demand),
+        )

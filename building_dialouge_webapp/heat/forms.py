@@ -4,11 +4,12 @@ from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
 
-import heat.settings as heat_settings
 from django import forms
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.forms import ValidationError
+
+from . import settings as heat_settings
 
 
 class ValidationForm(forms.Form):

@@ -2,7 +2,6 @@ import datetime
 import inspect
 from urllib.parse import urlparse
 
-import settings as heat_settings
 from django.contrib import messages
 from django.contrib.messages import get_messages
 from django.http import HttpResponseRedirect
@@ -16,6 +15,7 @@ from building_dialouge_webapp.heat.flows import RenovationRequestFlow
 
 from . import flows
 from . import forms
+from . import settings as heat_settings
 from . import tables
 from .navigation import SidebarNavigationMixin
 
