@@ -1,24 +1,14 @@
-import os
+from pathlib import Path
 
 import pandas as pd
 
-"""
-TO-DO:
-- resample -> Question: not all modules have a timestamp-csv and its a different file setup?
-                        just use, what is given and use this file instead of the raw_data file?
-- types in pv function -> Question: what about type?
-- option of csv choosing in sth function -> Question: csv files STH_load and STH_heat have the
-                                                        same column names atm, could not figure out
-                                                        what the differnet use is. do we need both?
-"""
-
 # define the paths
-DATA_PATH = os.path.abspath(os.path.dirname(__file__))
+DATA_PATH = Path(Path(__file__).parent)
 # should be something like: DATA_PATH = '/home/miria/git_repos/bd_app/building_dialouge_webapp/heat'
 
 
 def full_path(filename):
-    return os.path.join(DATA_PATH, "data/data_raw", filename)
+    return Path(DATA_PATH) / "data/data_raw" / filename
 
 
 cop_air_path = full_path("profile_cop_air_raw.csv")
@@ -35,7 +25,7 @@ sth_heat_path = full_path("profile_STH_heat_raw.csv")
 sth_load_path = full_path("profile_STH_load_raw.csv")
 
 
-def coefficient_of_performance(medium: int, type_temp: int) -> pd.Series:
+def coefficient_of_performance(medium: str, type_temp: str) -> pd.Series:
     """
     This function returns the coefficient of
     performance (COP) depending on medium and type (temperature dependent).
@@ -56,9 +46,11 @@ def coefficient_of_performance(medium: int, type_temp: int) -> pd.Series:
 
     # checking allowed types
     if medium not in allowed_medium:
-        raise ValueError(f"Invalid medium {medium}. Allowed mediums: {allowed_medium}")
+        msg = f"Invalid medium {medium}. Allowed mediums: {allowed_medium}"
+        raise ValueError(msg)
     if type_temp not in allowed_type_temp:
-        raise ValueError(f"Invalid temperature {medium}. Allowed temperatures: {allowed_type_temp}")
+        msg = f"Invalid temperature {medium}. Allowed temperatures: {allowed_type_temp}"
+        raise ValueError(msg)
 
     # read csv-file according to medium given
     df_medium = pd.read_csv(medium_paths[medium])
@@ -68,16 +60,11 @@ def coefficient_of_performance(medium: int, type_temp: int) -> pd.Series:
 
     # checking coulmn name
     if column_name not in df_medium.columns:
-        raise ValueError(f"Invalid temperature {type_temp} for medium {medium}. Column name {column_name} not found.")
+        msg = f"Invalid temperature {type_temp} for medium {medium}. Column name {column_name} not found."
+        raise ValueError(msg)
 
-    # extract desired column as timeseries
-    cop_timeseries = df_medium[column_name]
-
-    return cop_timeseries
-
-
-# example
-# print(coefficient_of_performance('fish', 'VL75C'))
+    # extract desired column as timeseries and return it
+    return df_medium[column_name]
 
 
 def hotwater_per_person(number_people: int) -> pd.Series:
@@ -96,25 +83,19 @@ def hotwater_per_person(number_people: int) -> pd.Series:
 
     # checking allowed type
     if number_people not in allowed_number_people:
-        raise ValueError(
-            f"Invalid number of people: {number_people}. Allowed number of people: {allowed_number_people}"
-        )
+        msg = f"Invalid number of people: {number_people}. Allowed number of people: {allowed_number_people}"
+        raise ValueError(msg)
 
     # column name for column to be read
     column_name = f"HW-{number_people}P-60C"
 
     # checking column name
     if column_name not in df_hotwater.columns:
-        raise ValueError(f"Invalid number of people {number_people}. Column name {column_name} not found.")
+        msg = f"Invalid number of people {number_people}. Column name {column_name} not found."
+        raise ValueError
 
-    # extract desired column as timeseries
-    hotwater_timeseries = df_hotwater[column_name]
-
-    return hotwater_timeseries
-
-
-# example
-# print(hotwater_per_person(3))
+    # extract desired column as timeseries and return it
+    return df_hotwater[column_name]
 
 
 def load(number_people: int, eec: int) -> pd.Series:
@@ -136,29 +117,23 @@ def load(number_people: int, eec: int) -> pd.Series:
 
     # checking allowed types
     if number_people not in allowed_number_people:
-        raise ValueError(
-            f"Invalid number of people {number_people}. Allowed number of people: {allowed_number_people}"
-        )
+        msg = f"Invalid number of people {number_people}. Allowed number of people: {allowed_number_people}"
+        raise ValueError(msg)
     if eec not in allowed_eec:
-        raise ValueError(f"Invalid energy efficency class {eec}. Allowed energy efficency classes: {allowed_eec}")
+        msg = f"Invalid energy efficency class {eec}. Allowed energy efficency classes: {allowed_eec}"
+        raise ValueError(msg)
 
     # column name for column to be read
     column_name = f"EL-SEK{eec}P{number_people}"
 
     # checking coulmn name
     if column_name not in df_load.columns:
-        raise ValueError(
-            f"Invalid energy efficency class {eec} for chosen number of people {number_people}. Column name {column_name} not found."
-        )
+        msg = f"Invalid energy efficency class {eec} for chosen number of people {number_people}. \
+                Column name {column_name} not found."
+        raise ValueError(msg)
 
-    # extract desired column as timeseries
-    load_timeseries = df_load[column_name]
-
-    return load_timeseries
-
-
-# example
-# print(load(3, 9))
+    # extract desired column as timeseries and return it
+    return df_load[column_name]
 
 
 def photovoltaic(elev_angle: int, direc_angle: int) -> pd.Series:
@@ -182,72 +157,75 @@ def photovoltaic(elev_angle: int, direc_angle: int) -> pd.Series:
 
     # checking allowed types
     if elev_angle not in allowed_elev_angle:
-        raise ValueError(f"Invalid elevation angle {elev_angle}. Allowed elevation angles: {allowed_elev_angle}")
+        msg = f"Invalid elevation angle {elev_angle}. Allowed elevation angles: {allowed_elev_angle}"
+        raise ValueError(msg)
     if direc_angle not in allowed_direc_angle:
-        raise ValueError(f"Invalid directional angle {direc_angle}. Allowed directional angles: {allowed_direc_angle}")
+        msg = f"Invalid directional angle {direc_angle}. Allowed directional angles: {allowed_direc_angle}"
+        raise ValueError(msg)
 
     # column name for column to be read
     column_name = f"PV-H{elev_angle}-A{direc_angle}"
 
     # checking coulmn name
     if column_name not in df_pv.columns:
-        raise ValueError(
-            f"Invalid elevation angle {elev_angle} for chosen directional angle {direc_angle}. Column name {column_name} not found."
-        )
+        msg = f"Invalid elevation angle {elev_angle} for chosen directional angle {direc_angle}. \
+                Column name {column_name} not found."
+        raise ValueError(msg)
 
-    # extract desired column as timeseries
-    pv_timeseries = df_pv[column_name]
-
-    return pv_timeseries
+    # extract desired column as timeseries and return it
+    return df_pv[column_name]
 
 
-# example
-# print(photovoltaic(10,210))
-
-
-def solarthermal(type_temp: int, elev_angle: int, direc_angle: int) -> pd.Series:
+def solarthermal(type_sth: str, type_temp: int, elev_angle: int, direc_angle: int) -> pd.Series:
     """
     This function returns the energy output from
     solarthermal per elevation angle, directional angle
     and type (temperature dependent).
 
+    Allowed type of solarthermal: 'heat', 'load'
     Alowed type depending on temperature: 40, 75
     Allowed elevation angles: 0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90
     Allowed directional angle: 0, 120, 150, 180, 210, 240, 270, 30, 300, 330, 360, 60, 90
     """
     # csv files STH_load and STH_heat have the same column names atm
+    # file paths corresponding to type
 
-    # read csv-files
-    df_sth_load = pd.read_csv(sth_load_path)
-    # df_sth_heat = pd.read_csv(sth_heat_path) -> for what is it needed?
+    type_paths = {
+        "load": sth_load_path,
+        "heat": sth_heat_path,
+    }
 
     # dicts for checking allowed types
+    alllowed_type = {"heat", "load"}
     allowed_type_temp = {40, 75}
     allowed_elev_angle = {0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90}
     allowed_direc_angle = {0, 120, 150, 180, 210, 240, 270, 30, 300, 330, 360, 60, 90}
 
     # checking allowed types
-    if type not in allowed_type_temp:
-        raise ValueError(f"Invalid type {type_temp}. Allowed types: {allowed_type_temp}")
+    if type_sth not in alllowed_type:
+        msg = f"Invalid type {type_sth}. Allowed types: {alllowed_type}"
+        raise ValueError(msg)
+    if type_temp not in allowed_type_temp:
+        msg = f"Invalid type of temperature {type_temp}. Allowed types: {allowed_type_temp}"
+        raise ValueError(msg)
     if elev_angle not in allowed_elev_angle:
-        raise ValueError(f"Invalid elevation angle {elev_angle}. Allowed elevation angles: {allowed_elev_angle}")
+        msg = f"Invalid elevation angle {elev_angle}. Allowed elevation angles: {allowed_elev_angle}"
+        raise ValueError(msg)
     if direc_angle not in allowed_direc_angle:
-        raise ValueError(f"Invalid directional angle {direc_angle}. Allowed directional angles: {allowed_direc_angle}")
+        msg = f"Invalid directional angle {direc_angle}. Allowed directional angles: {allowed_direc_angle}"
+        raise ValueError(msg)
+
+    # read csv-file according to type given
+    df_sth = pd.read_csv(type_paths[type_sth])
 
     # column name for column to be read
-    column_name = f"STH-VL{type}-H{elev_angle}-A{direc_angle}"
+    column_name = f"STH-VL{type_temp}-H{elev_angle}-A{direc_angle}"
 
     # checking coulmn name
-    if column_name not in df_sth_load.columns:
-        raise ValueError(
-            f"Invalid elevation angle {elev_angle} and directional angle {direc_angle} for chosen type {type_temp}. Column name {column_name} not found."
-        )
+    if column_name not in df_sth.columns:
+        msg = f"Invalid elevation angle {elev_angle} and directional angle {direc_angle} for chosen \
+                type {type_temp}. Column name {column_name} not found."
+        raise ValueError(msg)
 
-    # extract desired column as timeseries
-    sth_timeseries = df_sth_load[column_name]
-
-    return sth_timeseries
-
-
-# example
-# print(solarthermal(10,210,40))
+    # extract desired column as timeseries and return it
+    return df_sth[column_name]
