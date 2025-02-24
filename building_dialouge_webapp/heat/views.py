@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 import heat.settings as heat_settings
 from django.contrib import messages
 from django.contrib.messages import get_messages
+from django.http import HttpRequest
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
@@ -580,3 +581,8 @@ class NextSteps(SidebarNavigationMixin, TemplateView):
     extra_context = {
         "back_url": "heat:results",
     }
+
+
+def show_session(request: HttpRequest) -> JsonResponse:
+    """Show session. May be used by developers only."""
+    return JsonResponse(dict(request.session))
