@@ -66,11 +66,6 @@ class SidebarNavigationMixin:
                     {"name": "Dach", "object": flows.RoofFlow, "url": "heat:roof"},
                     {"name": "Heizung", "object": flows.HeatingFlow, "url": "heat:heating"},
                     {"name": "PV-Anlage", "object": flows.PVSystemFlow, "url": "heat:pv_system"},
-                    {
-                        "name": "Lüftungsanlage",
-                        "object": flows.VentilationSystemFlow,
-                        "url": "heat:ventilation_system",
-                    },
                 ],
             },
             {
