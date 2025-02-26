@@ -920,44 +920,6 @@ class RoofFlow(SidebarNavigationMixin, Flow):
         self.end = EndState(self, url="heat:window")
 
 
-class FacadeFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/facade.html"
-    extra_context = {
-        "back_url": "heat:window",
-        "next_disabled": True,
-    }
-
-    def __init__(self):
-        super().__init__()
-        self.start = FormState(
-            self,
-            target="facade_details",
-            form_class=forms.FacadeForm,
-        ).transition(
-            Next("facade_insulation_exists"),
-        )
-
-        self.facade_insulation_exists = FormState(
-            self,
-            target="facade_insulation_exists",
-            form_class=forms.FacadeInsulationForm,
-            template_name="partials/facade_insulation_help.html",
-        ).transition(
-            Switch("facade_insulation_exists").case("exists", "facade_insulation_year").default("stop"),
-        )
-
-        self.facade_insulation_year = FormState(
-            self,
-            target="facade_insulation_year",
-            form_class=forms.FacadeInsulationYearForm,
-        ).transition(
-            Next("stop"),
-        )
-
-        self.stop = StopState(self, lookup="facade_done", next_botton_text="Speichern").transition(Next("end"))
-        self.end = EndState(self, url="heat:heating")
-
-
 class HeatingFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/heating.html"
     extra_context = {

@@ -64,7 +64,6 @@ class SidebarNavigationMixin:
                 "url": "heat:intro_inventory",
                 "steps": [
                     {"name": "Dach", "object": flows.RoofFlow, "url": "heat:roof"},
-                    {"name": "Fassade", "object": flows.FacadeFlow, "url": "heat:facade"},
                     {"name": "Heizung", "object": flows.HeatingFlow, "url": "heat:heating"},
                     {"name": "PV-Anlage", "object": flows.PVSystemFlow, "url": "heat:pv_system"},
                     {
