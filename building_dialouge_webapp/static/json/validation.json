@@ -29,16 +29,13 @@
       "max_value": 5
     }
     },
-  "HotwaterHeatingSolarEnergyForm": {
-    "solar_thermal_energy": {
-      "min_value": 1
-    }
+  "HotwaterHeatingSolarAreaForm": {
+    "solar_thermal_area": {
+        "min_value": 1,
+        "max_value": 1000
+      }
   },
   "HotwaterHeatingSolarDetailsForm": {
-    "solar_thermal_area": {
-      "min_value": 1,
-      "max_value": 1000
-    },
     "roof_pitch": {
       "min_value": 0,
       "max_value": 80

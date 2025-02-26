@@ -718,37 +718,9 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
         super().__init__()
         self.start = FormState(
             self,
-            target="heating_system",
-            form_class=forms.HeatingSystemForm,
-            template_name="partials/heating_system_help.html",
-        ).transition(
-            Switch("heating_system").case("central_heating", "heating_source").default("dead_end_heating"),
-        )
-
-        self.dead_end_heating = EndState(self, url="heat:dead_end_heating")
-
-        self.heating_source = FormState(
-            self,
             target="heating_source",
             form_class=forms.HeatingSourceForm,
             template_name="partials/heating_source_help.html",
-        ).transition(
-            Next("hotwater_heating_system"),
-        )
-
-        self.hotwater_heating_system = FormState(
-            self,
-            target="hotwater_heating_system",
-            form_class=forms.HotwaterHeatingSystemForm,
-            template_name="partials/hotwater_heating_system_help.html",
-        ).transition(
-            Switch("hotwater_heating_system").case("boiler", "solar_thermal_exists").default("hotwater_measured"),
-        )
-
-        self.hotwater_measured = FormState(
-            self,
-            target="hotwater_measured",
-            form_class=forms.HotwaterHeatingMeasuredForm,
         ).transition(
             Next("solar_thermal_exists"),
         )
@@ -758,32 +730,21 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
             target="solar_thermal_exists",
             form_class=forms.HotwaterHeatingSolarExistsForm,
         ).transition(
-            Switch("solar_thermal_exists").case("doesnt_exist", "stop").default("solar_thermal_energy_known"),
+            Switch("solar_thermal_exists").case("doesnt_exist", "stop").default("solar_thermal_area_known"),
         )
 
-        self.solar_thermal_energy_known = FormState(
+        self.solar_thermal_area_known = FormState(
             self,
-            target="solar_thermal_energy_known",
+            target="solar_thermal_area_known",
             form_class=forms.HotwaterHeatingSolarKnownForm,
-            template_name="partials/solar_thermal_energy_known_help.html",
         ).transition(
-            Switch("solar_thermal_energy_known")
-            .case("known", "solar_thermal_energy")
-            .default("solar_thermal_details"),
+            Switch("solar_thermal_area_known").case("known", "solar_thermal_area").default("stop"),
         )
 
-        self.solar_thermal_energy = FormState(
+        self.solar_thermal_area = FormState(
             self,
-            target="solar_thermal_energy",
-            form_class=forms.HotwaterHeatingSolarEnergyForm,
-        ).transition(
-            Next("stop"),
-        )
-
-        self.solar_thermal_details = FormState(
-            self,
-            target="solar_thermal_details",
-            form_class=forms.HotwaterHeatingSolarDetailsForm,
+            target="solar_thermal_area",
+            form_class=forms.HotwaterHeatingSolarAreaForm,
         ).transition(
             Next("stop"),
         )
@@ -793,7 +754,7 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
             lookup="hotwater_heating_done",
             next_botton_text="Speichern",
         ).transition(Next("end"))
-        self.end = EndState(self, url="heat:consumption_overview")
+        self.end = EndState(self, url="heat:roof")
 
 
 def check_hotwater_measured(self):

@@ -192,18 +192,6 @@ class CellarInsulationYearForm(ValidationForm):
     )
 
 
-class HeatingSystemForm(ValidationForm):
-    heating_system = forms.ChoiceField(
-        label="Heizungsart",
-        choices=[
-            ("central_heating", "Zentralheizung"),
-            ("level_heating", "Etagenheizung"),
-            ("night_storage", "Nachtspeicherheizung"),
-        ],
-        widget=forms.RadioSelect,
-    )
-
-
 class HeatingSourceForm(ValidationForm):
     energy_source = forms.ChoiceField(
         label="Technologie / Energieträger",
@@ -222,31 +210,11 @@ class HeatingSourceForm(ValidationForm):
     )
 
 
-class HotwaterHeatingSystemForm(ValidationForm):
-    hotwater_heating_system = forms.ChoiceField(
-        label="Warmwasserbereitung erfolgt in ",
-        choices=[
-            ("heater", "Heizanlage"),
-            ("boiler", "Boiler / Durchlauferhitzer"),
-        ],
-        widget=forms.RadioSelect,
-    )
-
-
-class HotwaterHeatingMeasuredForm(ValidationForm):
-    hotwater_measured = forms.ChoiceField(
-        label="Wird der WW Verbrauch separat gemessen?",
-        choices=[(True, "Ja"), (False, "Nein")],
-        widget=forms.RadioSelect,
-    )
-
-
 class HotwaterHeatingSolarExistsForm(ValidationForm):
     solar_thermal_exists = forms.ChoiceField(
         label="Solarthermieanlage vorhanden?",
         choices=[
-            ("only_hotwater", "Ja, für Warmwasser"),
-            ("both", "Ja, für WW und Heizung"),
+            ("exist", "Ja"),
             ("doesnt_exist", "Nein"),
         ],
         widget=forms.RadioSelect,
@@ -254,25 +222,21 @@ class HotwaterHeatingSolarExistsForm(ValidationForm):
 
 
 class HotwaterHeatingSolarKnownForm(ValidationForm):
-    solar_thermal_energy_known = forms.ChoiceField(
-        label="Heizenergie bekannt?",
+    solar_thermal_area_known = forms.ChoiceField(
+        label="Kollektorfläche bekannt?",
         choices=[("known", "Ja"), ("unknown", "Unbekannt")],
         widget=forms.RadioSelect,
     )
 
 
-class HotwaterHeatingSolarEnergyForm(ValidationForm):
-    solar_thermal_energy = forms.IntegerField(
-        label="Heizenergie",
+class HotwaterHeatingSolarAreaForm(ValidationForm):
+    solar_thermal_area = forms.FloatField(
+        label="Kollektorfläche in m²",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
 
 class HotwaterHeatingSolarDetailsForm(ValidationForm):
-    solar_thermal_area = forms.FloatField(
-        label="Kollektorfläche in m²",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
     roof_inclination = forms.IntegerField(
         label="Dachneigung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
