@@ -122,6 +122,29 @@ class BuildingDataForm(ValidationForm):
                 self.fields[field_name].validators.append(MaxValueValidator(rules["max"]))
 
 
+class InsulationForm(ValidationForm):
+    roof_insulation_year = forms.IntegerField(
+        label="Dach: Jahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+    upper_storey_ceiling_insulation_year = forms.IntegerField(
+        label="Obere Geschossdecke: Jahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+    cellar_insulation_year = forms.IntegerField(
+        label="Keller: Jahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+    facade_insulation_year = forms.IntegerField(
+        label="Fassade: Jahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+
+
 class CellarHeatingForm(ValidationForm):
     cellar_heating = forms.ChoiceField(
         label="Beheizung",

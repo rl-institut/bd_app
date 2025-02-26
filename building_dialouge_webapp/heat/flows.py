@@ -683,13 +683,34 @@ class BuildingDataFlow(SidebarNavigationMixin, Flow):
         )
 
         self.stop = StopState(self, lookup="building_data_done", next_botton_text="Speichern").transition(Next("end"))
-        self.end = EndState(self, url="heat:cellar")
+        self.end = EndState(self, url="heat:insulation")
+
+
+class InsulationFlow(SidebarNavigationMixin, Flow):
+    template_name = "pages/insulation.html"
+    extra_context = {
+        "back_url": "heat:building_data",
+        "next_disabled": True,
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.start = FormState(
+            self,
+            target="insulation",
+            form_class=forms.InsulationForm,
+        ).transition(
+            Next("stop"),
+        )
+
+        self.stop = StopState(self, lookup="insulation_done", next_botton_text="Speichern").transition(Next("end"))
+        self.end = EndState(self, url="heat:hotwater_heating")
 
 
 class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/hotwater_heating.html"
     extra_context = {
-        "back_url": "heat:cellar",
+        "back_url": "heat:insulation",
         "next_disabled": True,
     }
 
