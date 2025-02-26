@@ -686,51 +686,6 @@ class BuildingDataFlow(SidebarNavigationMixin, Flow):
         self.end = EndState(self, url="heat:cellar")
 
 
-class CellarFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/cellar.html"
-    extra_context = {
-        "back_url": "heat:building_data",
-        "next_disabled": True,
-    }
-
-    def __init__(self):
-        super().__init__()
-        self.start = FormState(
-            self,
-            target="cellar_heating",
-            form_class=forms.CellarHeatingForm,
-        ).transition(
-            Switch("cellar_heating").case("no_cellar", "stop").default("cellar_details"),
-        )
-
-        self.cellar_details = FormState(
-            self,
-            target="cellar_details",
-            form_class=forms.CellarDetailsForm,
-        ).transition(
-            Next("cellar_insulation_exists"),
-        )
-
-        self.cellar_insulation_exists = FormState(
-            self,
-            target="cellar_insulation_exists",
-            form_class=forms.CellarInsulationForm,
-        ).transition(
-            Switch("cellar_ceiling_insulation_exists").case("doesnt_exist", "stop").default("cellar_insulation_year"),
-        )
-
-        self.cellar_insulation_year = FormState(
-            self,
-            target="cellar_insulation_year",
-            form_class=forms.CellarInsulationYearForm,
-        ).transition(
-            Next("stop"),
-        )
-
-        self.stop = StopState(self, lookup="cellar_done", next_botton_text="Speichern").transition(Next("end"))
-        self.end = EndState(self, url="heat:hotwater_heating")
-
-
 class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/hotwater_heating.html"
     extra_context = {

@@ -41,7 +41,6 @@ class SidebarNavigationMixin:
                 "steps": [
                     {"name": "Gebäudeart", "object": flows.BuildingTypeFlow, "url": "heat:building_type"},
                     {"name": "Angaben zu Gebäude", "object": flows.BuildingDataFlow, "url": "heat:building_data"},
-                    {"name": "Keller", "object": flows.CellarFlow, "url": "heat:cellar"},
                     {
                         "name": "Heizung & Warmwasser",
                         "object": flows.HotwaterHeatingFlow,

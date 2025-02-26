@@ -14,7 +14,6 @@ urlpatterns = [
     path("building_type/", flows.BuildingTypeFlow.as_view(), name="building_type"),
     path("dead_end_monument/", views.DeadEndMonumentProtection.as_view(), name="dead_end_monument_protection"),
     path("building_data", flows.BuildingDataFlow.as_view(), name="building_data"),
-    path("cellar/", flows.CellarFlow.as_view(), name="cellar"),
     path("hotwater_heating/", flows.HotwaterHeatingFlow.as_view(), name="hotwater_heating"),
     path("dead_end_heating/", views.DeadEndHeating.as_view(), name="dead_end_heating"),
     path("consumption_input/", views.consumption_year, name="consumption_input"),
