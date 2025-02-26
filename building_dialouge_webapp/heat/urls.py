@@ -23,7 +23,6 @@ urlpatterns = [
     # step 2 inventory analysis
     path("intro_inventory/", views.IntroInventory.as_view(), name="intro_inventory"),
     path("roof/", flows.RoofFlow.as_view(), name="roof"),
-    path("window/", flows.WindowFlow.as_view(), name="window"),
     path("facade/", flows.FacadeFlow.as_view(), name="facade"),
     path("heating/", flows.HeatingFlow.as_view(), name="heating"),
     path("pv_system/", flows.PVSystemFlow.as_view(), name="pv_system"),

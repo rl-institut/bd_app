@@ -920,36 +920,6 @@ class RoofFlow(SidebarNavigationMixin, Flow):
         self.end = EndState(self, url="heat:window")
 
 
-class WindowFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/window.html"
-    extra_context = {
-        "back_url": "heat:roof",
-        "next_disabled": True,
-    }
-
-    def __init__(self):
-        super().__init__()
-        self.start = FormState(
-            self,
-            target="window_area",
-            form_class=forms.WindowAreaForm,
-        ).transition(
-            Next("window_details"),
-        )
-
-        self.window_details = FormState(
-            self,
-            target="window_details",
-            form_class=forms.WindowDetailsForm,
-            template_name="partials/window_details_help.html",
-        ).transition(
-            Next("stop"),
-        )
-
-        self.stop = StopState(self, lookup="window_done", next_botton_text="Speichern").transition(Next("end"))
-        self.end = EndState(self, url="heat:facade")
-
-
 class FacadeFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/facade.html"
     extra_context = {
