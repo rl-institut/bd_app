@@ -93,14 +93,6 @@ class BuildingDataForm(ValidationForm):
         ],
         widget=forms.RadioSelect,
     )
-    floor_plan = forms.ChoiceField(
-        label="Grundriss",
-        choices=[
-            ("compact", "Kompakt"),
-            ("complex", "Langgestreckt, gewinkelt, komplex, angrenzend"),
-        ],
-        widget=forms.RadioSelect,
-    )
 
     def validate_with_session(self):
         data = self.request.session.get("django_htmx_flow", {})
