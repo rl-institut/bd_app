@@ -328,6 +328,9 @@ dump.rdb
 ### Project template
 building_dialouge_webapp/media/
 
+# scripts
+scripts/
+
 .pytest_cache/
 .ipython/
 .env
