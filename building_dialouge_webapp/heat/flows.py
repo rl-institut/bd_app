@@ -1056,7 +1056,6 @@ class FinancialSupportFlow(SidebarNavigationMixin, Flow):
     extra_context = {
         "back_url": "heat:renovation_overview",
         "next_disabled": False,
-        "back_kwargs": "scenario1",
     }
 
     def __init__(self):

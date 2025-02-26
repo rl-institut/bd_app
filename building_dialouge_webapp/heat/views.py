@@ -413,7 +413,7 @@ class RenovationOverview(SidebarNavigationMixin, TemplateView):
     def get_context_data(self, **kwargs):
         scenario_max = heat_settings.SCENARIO_MAX
         context = super().get_context_data(**kwargs)
-        context["back_url"] = "heat:renovation_request"
+        context["back_url"] = "heat:intro_renovation"
         context["next_url"] = "heat:financial_support"
         context["scenario_boxes"] = get_all_scenario_data(self.request)
         context["max_reached"] = int(get_new_scenario(self.request)[8:]) > scenario_max
@@ -464,7 +464,7 @@ def simulate(request):
 class Results(SidebarNavigationMixin, TemplateView):
     template_name = "pages/results.html"
     extra_context = {
-        "back_url": "heat:financial_support",
+        "back_url": "heat:optimization_start",
         "next_url": "heat:next_steps",
     }
 
