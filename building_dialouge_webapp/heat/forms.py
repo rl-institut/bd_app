@@ -639,51 +639,42 @@ class PVSystemForm(ValidationForm):
     )
 
 
-class PVSystemPlannedForm(ValidationForm):
-    pv_planned = forms.ChoiceField(
-        label="Beabsichtigen Sie, eine zu installieren?",
-        choices=[(True, "Ja"), (False, "Nein")],
+class PVSystemCapacityKnownForm(ValidationForm):
+    pv_capacity_known = forms.ChoiceField(
+        label="Leistung bekannt?",
+        choices=[("known", "Ja"), ("unknown", "Unbekannt")],
         widget=forms.RadioSelect,
     )
 
 
-class PVSystemDetailsForm(ValidationForm):
-    pv_construction_year = forms.IntegerField(
-        label="Baujahr",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
+class PVSystemCapacityForm(ValidationForm):
     pv_capacity = forms.IntegerField(
-        label="Leistung in kWp",
+        label="Nennleistung in kWp",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
 
-class PVSystemBatteryForm(ValidationForm):
+class PVSystemBatteryExistsForm(ValidationForm):
     battery_exists = forms.ChoiceField(
         label="Batterie vorhanden?",
-        choices=[(True, "Ja"), (False, "Nein")],
+        choices=[("exists", "Ja"), ("doesnt_exist", "Nein")],
         widget=forms.RadioSelect,
     )
+
+
+class PVSystemBatteryCapacityKnownForm(ValidationForm):
+    battery_capacity_known = forms.ChoiceField(
+        label="Kapazität bekannt?",
+        choices=[("known", "Ja"), ("unknown", "Unbekannt")],
+        widget=forms.RadioSelect,
+    )
+
+
+class PVSystemBatteryCapacityForm(ValidationForm):
     battery_capacity = forms.IntegerField(
-        label="Leistung in kWh",
+        label="Speicherkapazität in kWh",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-    battery_planned = forms.ChoiceField(
-        label="Beabsichtigen Sie, diese zu erweitern?",
-        choices=[(True, "Ja"), (False, "Nein")],
-        widget=forms.RadioSelect,
-    )
-
-    def __init__(self, *args, **kwargs):
-        """
-        Adjusts the required attribute of battery_capacity based on
-        the initial or submitted value of `battery_exists`.
-        """
-        super().__init__(*args, **kwargs)
-        battery_exists_value = self.data.get("battery_exists") or self.initial.get("battery_exists")
-
-        if battery_exists_value in [False, "False", "0", None, ""]:
-            self.fields["battery_capacity"].required = False
 
 
 class VentilationSystemForm(ValidationForm):

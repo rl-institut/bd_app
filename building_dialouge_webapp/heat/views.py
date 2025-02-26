@@ -303,7 +303,7 @@ class IntroInventory(SidebarNavigationMixin, TemplateView):
 class IntroRenovation(SidebarNavigationMixin, TemplateView):
     template_name = "pages/intro_renovation.html"
     extra_context = {
-        "back_url": "heat:ventilation_system",
+        "back_url": "heat:pv_system",
         "next_url": "heat:renovation_overview",
     }
 

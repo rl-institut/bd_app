@@ -929,37 +929,53 @@ class PVSystemFlow(SidebarNavigationMixin, Flow):
             target="pv_system",
             form_class=forms.PVSystemForm,
         ).transition(
-            Switch("pv_exists").case("doesnt_exist", "pv_system_planned").default("pv_system_details"),
+            Switch("pv_exists").case("doesnt_exist", "stop").default("pv_capacity_known"),
         )
 
-        self.pv_system_planned = FormState(
+        self.pv_capacity_known = FormState(
             self,
-            target="pv_system_planned",
-            form_class=forms.PVSystemPlannedForm,
+            target="pv_capacity_known",
+            form_class=forms.PVSystemCapacityKnownForm,
         ).transition(
-            Next("stop"),
+            Switch("pv_capacity_known").case("known", "pv_capacity").default("pv_system_battery_exists"),
         )
 
-        self.pv_system_details = FormState(
+        self.pv_capacity = FormState(
             self,
-            target="pv_system_details",
-            form_class=forms.PVSystemDetailsForm,
-            template_name="partials/pv_system_details_help.html",
+            target="pv_capacity",
+            form_class=forms.PVSystemCapacityForm,
+            template_name="partials/pv_system_capacity_help.html",
         ).transition(
-            Next("pv_system_battery"),
+            Next("pv_system_battery_exists"),
+        )
+
+        self.pv_system_battery_exists = FormState(
+            self,
+            target="pv_system_battery_exists",
+            form_class=forms.PVSystemBatteryExistsForm,
+        ).transition(
+            Switch("battery_exists").case("exists", "pv_battery_capacity_known").default("stop"),
+        )
+
+        self.pv_battery_capacity_known = FormState(
+            self,
+            target="pv_battery_capacity_known",
+            form_class=forms.PVSystemBatteryCapacityKnownForm,
+        ).transition(
+            Switch("battery_capacity_known").case("known", "pv_system_battery").default("stop"),
         )
 
         self.pv_system_battery = FormState(
             self,
             target="pv_system_battery",
-            form_class=forms.PVSystemBatteryForm,
+            form_class=forms.PVSystemBatteryCapacityForm,
             template_name="partials/pv_system_battery_help.html",
         ).transition(
             Next("stop"),
         )
 
         self.stop = StopState(self, lookup="v", next_botton_text="Speichern").transition(Next("end"))
-        self.end = EndState(self, url="heat:ventilation_system")
+        self.end = EndState(self, url="heat:intro_renovation")
 
 
 class RenovationRequestFlow(SidebarNavigationMixin, Flow):
