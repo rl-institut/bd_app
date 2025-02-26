@@ -601,45 +601,30 @@ class FacadeInsulationYearForm(ValidationForm):
     )
 
 
-class HeatingForm(ValidationForm):
+class HeatingYearForm(ValidationForm):
     heating_system_construction_year = forms.IntegerField(
         label="Baujahr Heizung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-    condensing_boiler_exists = forms.ChoiceField(
-        label="Brennwerttechnik vorhanden?",
-        choices=[(True, "Ja"), (False, "Nein"), ("unkown", "Unbekannt")],
-        widget=forms.RadioSelect,
-    )
 
 
-class HeatingHydraulicForm(ValidationForm):
-    hydraulic_balancing_done = forms.ChoiceField(
-        label="Hydraulischer Abgleich durchgeführt?",
-        choices=[(True, "Ja"), (False, "Nein"), ("unkown", "Unbekannt")],
-        widget=forms.RadioSelect,
-    )
-
-
-class HeatingDetailsForm(ValidationForm):
-    pipe_insulation_exists = forms.ChoiceField(
-        label="Rohre gedämmt?",
-        choices=[(True, "Ja"), (False, "Nein")],
-        widget=forms.RadioSelect,
-    )
-    floor_heating_exists = forms.ChoiceField(
-        label="Fußbodenheizung",
-        choices=[(True, "Ja"), (False, "Nein")],
-        widget=forms.RadioSelect,
-    )
+class HeatingStorageExistsForm(ValidationForm):
     heating_storage_exists = forms.ChoiceField(
-        label="Wärmespeicher",
-        choices=[(True, "Ja"), (False, "Nein")],
+        label="Wärmespeicher vorhanden?",
+        choices=[("exists", "Ja"), ("doesnt_exist", "Nein")],
         widget=forms.RadioSelect,
     )
 
 
-class HeatingStorageForm(ValidationForm):
+class HeatingStorageKnownForm(ValidationForm):
+    heating_storage_capacity_known = forms.ChoiceField(
+        label="Fassungsvermögen des Wärmespeichers bekannt?",
+        choices=[("known", "Ja"), ("unknown", "Unbekannt")],
+        widget=forms.RadioSelect,
+    )
+
+
+class HeatingStorageCapacityForm(ValidationForm):
     heating_storage_capacity = forms.IntegerField(
         label="Wärmespeicher Fassungsvermögen in l",
         widget=forms.NumberInput(attrs={"class": "form-control"}),

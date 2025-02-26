@@ -69,11 +69,17 @@
       "max_value": 2023
     }
   },
-  "HeatingForm": {
+  "HeatingYearForm": {
     "heating_system_construction_year": {
       "min_value": 1900,
       "max_value": 2023
     }
+  },
+  "HeatingStorageCapacityForm": {
+    "heating_storage_capacity": {
+        "min_value": 1,
+        "max_value": 1000
+      }
   },
   "PVSystemDetailsForm": {
     "pv_construction_year": {

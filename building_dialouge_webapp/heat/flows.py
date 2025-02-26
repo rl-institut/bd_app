@@ -880,33 +880,32 @@ class HeatingFlow(SidebarNavigationMixin, Flow):
         super().__init__()
         self.start = FormState(
             self,
-            target="heating",
-            form_class=forms.HeatingForm,
+            target="heating_year",
+            form_class=forms.HeatingYearForm,
         ).transition(
-            Next("heating_hydraulic"),
+            Next("heating_storage_exists"),
         )
 
-        self.heating_hydraulic = FormState(
+        self.heating_storage_exists = FormState(
             self,
-            target="heating_hydraulic",
-            form_class=forms.HeatingHydraulicForm,
-            template_name="partials/heating_hydraulic_help.html",
+            target="heating_storage_exists",
+            form_class=forms.HeatingStorageExistsForm,
         ).transition(
-            Next("heating_details"),
+            Switch("heating_storage_exists").case("exists", "heating_storage_capacity_known").default("stop"),
         )
 
-        self.heating_details = FormState(
+        self.heating_storage_capacity_known = FormState(
             self,
-            target="heating_details",
-            form_class=forms.HeatingDetailsForm,
+            target="heating_storage_capacity_known",
+            form_class=forms.HeatingStorageKnownForm,
         ).transition(
-            Next("heating_storage"),
+            Switch("heating_storage_capacity_known").case("known", "heating_storage_capacity").default("stop"),
         )
 
-        self.heating_storage = FormState(
+        self.heating_storage_capacity = FormState(
             self,
-            target="heating_storage",
-            form_class=forms.HeatingStorageForm,
+            target="heating_storage_capacity",
+            form_class=forms.HeatingStorageCapacityForm,
             template_name="partials/heating_storage_help.html",
         ).transition(
             Next("stop"),
