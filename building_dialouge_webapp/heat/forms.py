@@ -145,53 +145,6 @@ class InsulationForm(ValidationForm):
     )
 
 
-class CellarHeatingForm(ValidationForm):
-    cellar_heating = forms.ChoiceField(
-        label="Beheizung",
-        choices=[
-            ("no_cellar", "Kein Keller"),
-            ("without_heating", "Keller unbeheizt"),
-            ("with_heating", "Keller beheizt"),
-        ],
-        widget=forms.RadioSelect,
-    )
-
-
-class CellarDetailsForm(ValidationForm):
-    cellar_ceiling = forms.ChoiceField(
-        label="Decke",
-        choices=[
-            ("solid", "Massiv"),
-            ("other", "Andere (Holz)"),
-        ],
-        widget=forms.RadioSelect,
-    )
-    cellar_vault = forms.ChoiceField(
-        label="Gewölbekeller",
-        choices=[(True, "Ja"), (False, "Nein")],
-        widget=forms.RadioSelect,
-    )
-    cellar_height = forms.FloatField(
-        label="Raumhöhe",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
-
-
-class CellarInsulationForm(ValidationForm):
-    cellar_ceiling_insulation_exists = forms.ChoiceField(
-        label="Deckendämmung vorhanden?",
-        choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
-        widget=forms.RadioSelect,
-    )
-
-
-class CellarInsulationYearForm(ValidationForm):
-    cellar_insulation_year = forms.IntegerField(
-        label="Baujahr der Deckendämmung",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
-
-
 class HeatingSourceForm(ValidationForm):
     energy_source = forms.ChoiceField(
         label="Technologie / Energieträger",
@@ -233,29 +186,6 @@ class HotwaterHeatingSolarAreaForm(ValidationForm):
     solar_thermal_area = forms.FloatField(
         label="Kollektorfläche in m²",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
-
-
-class HotwaterHeatingSolarDetailsForm(ValidationForm):
-    roof_inclination = forms.IntegerField(
-        label="Dachneigung",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        min_value=0,
-        max_value=360,
-    )
-    roof_orientation = forms.ChoiceField(
-        label="Ausrichtung",
-        choices=[
-            ("n", "N"),
-            ("ne", "NO"),
-            ("e", "O"),
-            ("se", "SO"),
-            ("s", "S"),
-            ("sw", "SW"),
-            ("w", "W"),
-            ("nw", "NW"),
-        ],
-        widget=forms.RadioSelect,
     )
 
 
@@ -513,94 +443,6 @@ class RoofInclinationForm(ValidationForm):
     )
 
 
-class WindowAreaForm(ValidationForm):
-    window_area = forms.ChoiceField(
-        label="Umfang Fensterflächen",
-        choices=[
-            ("small", "Niedrig (wenige Fensterflächen)"),
-            ("medium", "Mittel (durchschnittlich viele Fensterflächen)"),
-            ("large", "Hoch (viele Fensterfächen)"),
-        ],
-        widget=forms.RadioSelect,
-    )
-
-
-class WindowDetailsForm(ValidationForm):
-    window_type = forms.ChoiceField(
-        label="Fenstertyp",
-        choices=[
-            ("single_glazed", "Einfachverglast"),
-            ("double_glazed", "Zweifachverglast (Verbund- und Kastenfenster, luftisoliert)"),
-            ("double_heat_glazed", "Zweifach-Wärmeschutzverglasung"),
-            ("triple_glazed", "Dreifach-Wärmeschutzverglasung"),
-        ],
-        widget=forms.RadioSelect,
-    )
-    window_construction_year = forms.ChoiceField(
-        label="Jahr des Einbaus",
-        choices=[
-            ("unkown", "Unbekannt"),
-            ("like_building", "wie Gebäude"),
-            ("year", "Jahr: "),
-        ],
-        widget=forms.RadioSelect,
-    )
-    seperate_year = forms.IntegerField(
-        label="",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        required=False,
-    )
-    window_share = forms.IntegerField(
-        label="prozentualer Anteil (bei mehreren Typen)",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
-
-    def clean(self):
-        cleaned_data = super().clean()
-        choice = cleaned_data.get("window_construction_year")
-        year = cleaned_data.get("seperate_year")
-
-        if choice == "year" and not year:
-            self.add_error("seperate_year", "Bitte ein Jahr angeben.")
-
-        return cleaned_data
-
-
-class FacadeForm(ValidationForm):
-    facade_type = forms.ChoiceField(
-        label="Bauweise",
-        choices=[
-            ("wood", "Holz"),
-            ("solid", "Massiv"),
-        ],
-        widget=forms.RadioSelect,
-    )
-    facade_condition = forms.ChoiceField(
-        label="Zustand",
-        choices=[
-            ("no_damage", "Keine Schäden"),
-            ("needs_paintjob", "Neuer Anstrich erforderlich"),
-            ("small_cracks", "Kleine Risse / bröckelnder Putz: "),
-        ],
-        widget=forms.RadioSelect,
-    )
-
-
-class FacadeInsulationForm(ValidationForm):
-    facade_insulation_exists = forms.ChoiceField(
-        label="Dämmung vorhanden?",
-        choices=[("exists", "Ja"), ("doesnt_exist", "Nein"), ("unkown", "Unbekannt")],
-        widget=forms.RadioSelect,
-    )
-
-
-class FacadeInsulationYearForm(ValidationForm):
-    facade_construction_year = forms.IntegerField(
-        label="Baujahr der Dämmung",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
-
-
 class HeatingYearForm(ValidationForm):
     heating_system_construction_year = forms.IntegerField(
         label="Baujahr Heizung",
@@ -673,21 +515,6 @@ class PVSystemBatteryCapacityKnownForm(ValidationForm):
 class PVSystemBatteryCapacityForm(ValidationForm):
     battery_capacity = forms.IntegerField(
         label="Speicherkapazität in kWh",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
-
-
-class VentilationSystemForm(ValidationForm):
-    ventilation_system_exists = forms.ChoiceField(
-        label="Lüftungsanlage mit Wärmerückgewinnung vorhanden?",
-        choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
-        widget=forms.RadioSelect,
-    )
-
-
-class VentilationSystemYearForm(ValidationForm):
-    ventilation_system_construction_year = forms.IntegerField(
-        label="Baujahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
