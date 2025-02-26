@@ -1,18 +1,39 @@
+import inspect
 import json
 
 from django.http import HttpRequest
+from django_oemof.simulation import SimulationError
 
+from . import flows
 from .settings import DATA_DIR
+from .settings import SCENARIO_MAX
 
 
 def read_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dict:
     """Read flow data from session."""
-
+    # alternativ in settings.py ne Liste anlegen, mit allen Flows, die dann in views und hier genutzt werden kann
+    all_flows = [
+        (name, flow())
+        for name, flow in inspect.getmembers(flows, inspect.isclass)
+        if name.endswith("Flow") and name not in {"Flow", "ConsumptionInputFlow", "RenovationRequestFlow"}
+    ]
     flow_data = request.session.get("django_htmx_flow", {})
-    # Check if all flows are entered ready
-    # Check if all flowa are valid
-    # Gather data from all flows in one dict
-    # Return dict
+
+    for name, flow in all_flows:
+        if not flow.finished(request):
+            message = f"Flow '{name}' is not completed."
+            raise SimulationError(message)
+
+    # check if at least one RenovationRequestFlow instance is finished
+    scenario_id = 1
+    while scenario_id <= SCENARIO_MAX:
+        flow = flows.RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+        if flow.finished(request):
+            scenario_id += 1
+            break
+        message = "No completed 'RenovationRequestFlow' scenarios found."
+        raise SimulationError(message)
+
     return {"flow_data": flow_data}
 
 
