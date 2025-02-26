@@ -823,13 +823,13 @@ class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
 def check_prev_roof_orientation(self):
     """Checks input of solar_thermal_energy_known from HotwaterHeatingFlow
     for fields in Consumption Input depending on this."""
-    return self.flow.request.session["django_htmx_flow"].get("solar_thermal_energy_known", "unknown") == "known"
+    return self.flow.request.session["django_htmx_flow"].get("solar_thermal_area_known", "unknown") == "known"
 
 
 class RoofFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/roof.html"
     extra_context = {
-        "back_url": "heat:intro_inventory",
+        "back_url": "heat:hotwater_heating",
         "next_disabled": True,
     }
 
@@ -841,71 +841,38 @@ class RoofFlow(SidebarNavigationMixin, Flow):
             form_class=forms.RoofTypeForm,
             template_name="partials/roof_help.html",
         ).transition(
-            Switch("roof_type").case("flachdach", "roof_insulation").default("roof_area"),
-        )
-        self.roof_area = FormState(
-            self,
-            target="roof_area",
-            form_class=forms.RoofAreaForm,
-        ).transition(
-            Switch(check_prev_roof_orientation)
-            .case(value=True, state_name="roof_orientation")
-            .default("roof_windows"),
+            Switch("roof_type").case("flachdach", "stop").default("roof_orientation"),
         )
         self.roof_orientation = FormState(
             self,
             target="roof_orientation",
             form_class=forms.RoofOrientationForm,
         ).transition(
-            Next("roof_windows"),
-        )
-        self.roof_windows = FormState(
-            self,
-            target="roof_windows",
-            form_class=forms.RoofWindowsForm,
-        ).transition(
-            Next("roof_usage_now"),
+            Next("roof_inclination_known"),
         )
 
-        self.roof_usage_now = FormInfoState(
+        self.roof_inclination_known = FormState(
             self,
-            target="roof_usage_now",
-            form_class=forms.RoofUsageNowForm,
-            info_text="Dachnutzung",
+            target="roof_inclination_known",
+            form_class=forms.RoofInclinationKnownForm,
         ).transition(
-            Switch("roof_usage_now").case("all_used", "roof_insulation").default("roof_usage_future"),
+            Switch("roof_inclination_known").case("known", "roof_inclination").default("stop"),
         )
 
-        self.roof_usage_future = FormState(
+        self.roof_inclination = FormState(
             self,
-            target="roof_usage_future",
-            form_class=forms.RoofUsageFutureForm,
-        ).transition(Next("roof_insulation"))
-
-        self.roof_insulation = FormState(
-            self,
-            target="roof_insulation",
-            form_class=forms.RoofInsulationForm,
-        ).transition(
-            Switch("roof_insulation_exists").case("yes", "roof_insulation_year").default("stop"),
-        )
-
-        self.roof_insulation_year = FormState(
-            self,
-            target="roof_insulation_year",
-            form_class=forms.RoofInsulationYearForm,
-        ).transition(
-            Next("stop"),
-        )
+            target="roof_inclination",
+            form_class=forms.RoofInclinationForm,
+        ).transition(Next("stop"))
 
         self.stop = StopState(self, lookup="roof_done", next_botton_text="Speichern").transition(Next("end"))
-        self.end = EndState(self, url="heat:window")
+        self.end = EndState(self, url="heat:heating")
 
 
 class HeatingFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/heating.html"
     extra_context = {
-        "back_url": "heat:facade",
+        "back_url": "heat:roof",
         "next_disabled": True,
     }
 

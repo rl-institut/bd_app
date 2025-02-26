@@ -481,13 +481,6 @@ class RoofTypeForm(forms.Form):
     )
 
 
-class RoofAreaForm(ValidationForm):
-    roof_area = forms.IntegerField(
-        label="Dachfläche in m² (gesamt)",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
-
-
 class RoofOrientationForm(ValidationForm):
     roof_orientation = forms.ChoiceField(
         label="In welcher Richtung ist ihr Dach ausgerichtet?",
@@ -505,53 +498,18 @@ class RoofOrientationForm(ValidationForm):
     )
 
 
-class RoofWindowsForm(ValidationForm):
-    number_roof_windows = forms.IntegerField(
-        label="Anzahl der Dachfenster oder Dachgauben",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
-
-
-class RoofUsageNowForm(ValidationForm):
-    roof_usage_now = forms.ChoiceField(
-        label="Dachnutzung",
-        choices=[
-            ("all_used", "Vollständig genutzt/beheizt"),
-            ("part_used", "Teilweise genutzt/beheizt"),
-            ("not_used", "Nicht genutzt/beheizt"),
-        ],
+class RoofInclinationKnownForm(ValidationForm):
+    roof_inclination_known = forms.ChoiceField(
+        label="Dachneigung bekannt?",
+        choices=[("known", "Ja"), ("unknown", "Unbekannt")],
         widget=forms.RadioSelect,
     )
 
 
-class RoofUsageFutureForm(ValidationForm):
-    roof_usage_planned = forms.ChoiceField(
-        label="Zukünftige Nutzung",
-        choices=[
-            ("all_used", "Keine Nutzung/Beheizung"),
-            ("part_used", "Ausbauen und Nutzen"),
-        ],
-        widget=forms.RadioSelect,
-    )
-    roof_usage_share = forms.IntegerField(
-        label="Ausbauen und Nutzen in %",
+class RoofInclinationForm(ValidationForm):
+    roof_inclination = forms.IntegerField(
+        label="Dachneigung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
-
-
-class RoofInsulationForm(ValidationForm):
-    roof_insulation_exists = forms.ChoiceField(
-        label="Dämmung vorhanden?",
-        choices=[("yes", "Ja"), ("no", "Nein"), ("unknown", "Unbekannt")],
-        widget=forms.RadioSelect,
-    )
-
-
-class RoofInsulationYearForm(forms.Form):
-    roof_insulation_year = forms.IntegerField(
-        label="Baujahr der Dämmung",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        required=False,
     )
 
 

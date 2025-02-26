@@ -47,10 +47,10 @@
       "max_value": 90
     }
   },
-  "RoofUsageFutureForm": {
-    "roof_usage_share": {
+  "RoofInclinationForm": {
+    "roof_inclination": {
       "min_value": 0,
-      "max_value": 100
+      "max_value": 360
     }
   },
   "WindowDetailsForm": {
