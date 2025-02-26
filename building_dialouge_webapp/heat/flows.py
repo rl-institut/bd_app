@@ -631,7 +631,7 @@ class Flow(TemplateView):
 class BuildingTypeFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/building_type.html"
     extra_context = {
-        "back_url": "heat:intro_consumption",
+        "back_url": "heat:intro_inventory",
         "next_disabled": True,
     }
 

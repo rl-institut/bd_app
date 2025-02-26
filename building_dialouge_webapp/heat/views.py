@@ -31,8 +31,8 @@ class DeadEndTenant(TemplateView):
     }
 
 
-class IntroConsumption(SidebarNavigationMixin, TemplateView):
-    template_name = "pages/intro_consumption.html"
+class IntroInventory(SidebarNavigationMixin, TemplateView):
+    template_name = "pages/intro_inventory.html"
     extra_context = {
         "back_url": "heat:home",
         "next_url": "heat:building_type",
@@ -43,13 +43,6 @@ class DeadEndMonumentProtection(TemplateView):
     template_name = "pages/dead_end_monument_protection.html"
     extra_context = {
         "back_url": "heat:building_type",
-    }
-
-
-class DeadEndHeating(TemplateView):
-    template_name = "pages/dead_end_heating.html"
-    extra_context = {
-        "back_url": "heat:hotwater_heating",
     }
 
 
@@ -290,14 +283,6 @@ class ConsumptionResult(SidebarNavigationMixin, TemplateView):
         context["roof_color"] = roof_color
         context["house_position"] = house_position
         return context
-
-
-class IntroInventory(SidebarNavigationMixin, TemplateView):
-    template_name = "pages/intro_inventory.html"
-    extra_context = {
-        "back_url": "heat:consumption_result",
-        "next_url": "heat:roof",
-    }
 
 
 class IntroRenovation(SidebarNavigationMixin, TemplateView):

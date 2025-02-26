@@ -35,9 +35,9 @@ class SidebarNavigationMixin:
 
         return [
             {
-                "category": "1. Verbrauchsanalyse",
-                "object": views.IntroConsumption,
-                "url": "heat:intro_consumption",
+                "category": "1. Bestandsanalyse",
+                "object": views.IntroInventory,
+                "url": "heat:intro_inventory",
                 "steps": [
                     {"name": "Gebäudeart", "object": flows.BuildingTypeFlow, "url": "heat:building_type"},
                     {"name": "Angaben zu Gebäude", "object": flows.BuildingDataFlow, "url": "heat:building_data"},
@@ -52,25 +52,13 @@ class SidebarNavigationMixin:
                         "object": [views.ConsumptionOverview, flows.ConsumptionInputFlow],
                         "url": "heat:consumption_overview",
                     },
-                    {
-                        "name": "Verbrauchsergebnis",
-                        "object": views.ConsumptionResult,
-                        "url": "heat:consumption_result",
-                    },
-                ],
-            },
-            {
-                "category": "2. Bestandsanalyse",
-                "object": views.IntroInventory,
-                "url": "heat:intro_inventory",
-                "steps": [
                     {"name": "Dach", "object": flows.RoofFlow, "url": "heat:roof"},
                     {"name": "Heizung", "object": flows.HeatingFlow, "url": "heat:heating"},
                     {"name": "PV-Anlage", "object": flows.PVSystemFlow, "url": "heat:pv_system"},
                 ],
             },
             {
-                "category": "3. Sanierung",
+                "category": "2. Sanierung",
                 "object": views.IntroRenovation,
                 "url": "heat:intro_renovation",
                 "steps": [
@@ -88,7 +76,7 @@ class SidebarNavigationMixin:
                 ],
             },
             {
-                "category": "4. Ergebnisse",
+                "category": "3. Ergebnisse",
                 "object": views.Results,
                 "url": "heat:results",
                 "steps": [
