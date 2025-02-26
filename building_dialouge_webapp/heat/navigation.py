@@ -47,11 +47,6 @@ class SidebarNavigationMixin:
                         "object": flows.HotwaterHeatingFlow,
                         "url": "heat:hotwater_heating",
                     },
-                    {
-                        "name": "Verbrauchsanalyse Übersicht",
-                        "object": [views.ConsumptionOverview, flows.ConsumptionInputFlow],
-                        "url": "heat:consumption_overview",
-                    },
                     {"name": "Dach", "object": flows.RoofFlow, "url": "heat:roof"},
                     {"name": "Heizung", "object": flows.HeatingFlow, "url": "heat:heating"},
                     {"name": "PV-Anlage", "object": flows.PVSystemFlow, "url": "heat:pv_system"},

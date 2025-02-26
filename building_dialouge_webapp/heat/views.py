@@ -1,17 +1,13 @@
-import datetime
 import inspect
 from urllib.parse import urlparse
 
 import heat.settings as heat_settings
-from django.contrib import messages
-from django.contrib.messages import get_messages
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
 from django.views.generic import TemplateView
 from django_htmx.http import HttpResponseClientRedirect
 
-from building_dialouge_webapp.heat.flows import ConsumptionInputFlow
 from building_dialouge_webapp.heat.flows import RenovationRequestFlow
 
 from . import flows
@@ -61,16 +57,6 @@ def delete_flow(request):
 
     # flow_id comes from the object that we are deleting
     flow_id = request.POST.get("delete_flow")
-    if flow_id.startswith("year"):
-        prefix = flow_id[:5]
-        flow = ConsumptionInputFlow(prefix=prefix)
-        flow.reset(request)
-
-        if len(url_path) == 1:
-            return HttpResponseClientRedirect(reverse("heat:consumption_overview"))
-        if not flow_id.startswith(url_instance):
-            return HttpResponseClientRedirect(reverse("heat:consumption_input", kwargs={"year": url_instance}))
-        overview_url = "heat:consumption_overview"
     if flow_id.startswith("scenario"):
         prefix = flow_id[:9]
         flow = RenovationRequestFlow(prefix=prefix)
@@ -84,171 +70,10 @@ def delete_flow(request):
     return HttpResponseClientRedirect(reverse(overview_url))
 
 
-def consumption_year(request, year=None):
-    heating_max = heat_settings.HEATING_MAX
-    power_max = heat_settings.POWER_MAX
-
-    # year is none when consumption_input first called or when opened via navigation sidebar or back-button
-    year_changed = False
-
-    # Count existing heating and power instances
-    year_data = get_all_year_data(request)
-    heating_count = sum(1 for data in year_data if data["type_class"] == "heating")
-    power_count = sum(1 for data in year_data if data["type_class"] == "power")
-
-    if year is None or year == "new_year":
-        year = get_new_year(request)
-        year_changed = True
-
-    if year_changed:
-        return HttpResponseRedirect(reverse("heat:consumption_input", kwargs={"year": year}))
-    # Check if adding another instance would exceed the maximum limits
-    existing_messages = [m.message for m in get_messages(request)]
-    if heating_count >= heating_max and power_count < power_max:
-        message_text = (
-            "Maximale Anzahl an Wärmeverbraucheingaben erreicht, "
-            "Sie können nur noch Stromverbraucheingaben hinzufügen."
-        )
-        if message_text not in existing_messages:
-            messages.add_message(request, messages.INFO, message_text)
-    if heating_count < heating_max and power_count >= power_max:
-        message_text = (
-            "Maximale Anzahl an Stromverbraucheingaben erreicht, "
-            "Sie können nur noch Wärmeverbraucheingaben hinzufügen."
-        )
-        if message_text not in existing_messages:
-            messages.add_message(request, messages.INFO, message_text)
-    flow = ConsumptionInputFlow(prefix=year)
-    flow.extra_context.update({"year_boxes": year_data})
-    return flow.dispatch(request)
-
-
-def get_new_year(request):
-    """Goes through years and checks if they have finished."""
-    consumption_max = heat_settings.CONSUMPTION_MAX
-    year_id = 1
-    while year_id <= consumption_max:
-        flow = ConsumptionInputFlow(prefix=f"year{year_id}")
-        if not flow.finished(request):
-            break
-        year_id += 1
-    return f"year{year_id}"
-
-
-def get_all_year_data(request):
-    """Goes through years and gets their data if finished."""
-    consumption_max = heat_settings.CONSUMPTION_MAX
-    heating_max = heat_settings.HEATING_MAX
-    power_max = heat_settings.POWER_MAX
-    year_data_list = []
-    year_id = 1
-    heating_count = 0
-    power_count = 0
-    while year_id <= consumption_max:
-        flow = ConsumptionInputFlow(prefix=f"year{year_id}")
-        if not flow.finished(request):
-            year_id += 1
-            continue
-
-        class_type, title, text = get_user_friendly_data_consumption(flow.data(request))
-
-        if class_type == "heating":
-            if heating_count >= heating_max:
-                year_id += 1
-                continue  # Skip if max heating flows reached
-            heating_count += 1
-        elif class_type == "power":
-            if power_count >= power_max:
-                year_id += 1
-                continue  # Skip if max power flows reached
-            power_count += 1
-
-        extra_context = {
-            "type_class": class_type,
-            "id": f"year{year_id}box",
-            "href": reverse("heat:consumption_input", kwargs={"year": f"year{year_id}"}),
-            "title": f"{year_id} {title}",
-            "text": text,
-        }
-        year_data_list.append(extra_context)
-        year_id += 1
-    return year_data_list
-
-
-def get_user_friendly_data_consumption(scenario_data):
-    """What I need to output here:
-    either: heating_consumption + heating_consumption_unit and duration
-     or: power_consumption + kWh and duration"""
-    user_friendly_data = []
-
-    if scenario_data["consumption_type"] == "heating":
-        class_type = "heating"
-        title = "Wärmeverbrauch"
-        consumption_value = scenario_data["heating_consumption"]
-        consumption_unit = scenario_data["heating_consumption_unit"]
-        start_date = format_date_output(scenario_data["heating_consumption_period_start"])
-        end_date = format_date_output(scenario_data["heating_consumption_period_end"])
-    else:
-        class_type = "power"
-        title = "Stromverbrauch"
-        consumption_value = scenario_data["power_consumption"]
-        consumption_unit = "kwH"
-        start_date = format_date_output(scenario_data["power_consumption_period_start"])
-        end_date = format_date_output(scenario_data["power_consumption_period_end"])
-    user_friendly_data.append(f"{start_date} - {end_date}")
-    user_friendly_data.append(f"{consumption_value} {consumption_unit}")
-
-    return class_type, title, user_friendly_data
-
-
-def format_date_output(date: str):
-    """Adjust all date outputs in the same way."""
-    date_object = datetime.date.fromisoformat(date)
-    # strftime("%d.%m.%Y") makes 01.01.2010
-    return date_object.strftime("%d.%m.%Y")
-
-
-class ConsumptionOverview(SidebarNavigationMixin, TemplateView):
-    template_name = "pages/consumption_overview.html"
-
-    def get_context_data(self, **kwargs):
-        consumption_max = heat_settings.CONSUMPTION_MAX
-        context = super().get_context_data(**kwargs)
-        context["back_url"] = "heat:hotwater_heating"
-        context["next_url"] = "heat:consumption_result"
-        context["year_boxes"] = get_all_year_data(self.request)
-        next_disabled, not_finished = check_if_new_year_possible(self.request, context["year_boxes"])
-        context["next_disabled"] = next_disabled
-        context["max_reached"] = int(get_new_year(self.request)[4:]) > consumption_max
-        context["not_finished_flows"] = not_finished
-        return context
-
-
-def check_if_new_year_possible(request, year_boxes):
-    """
-    Checks Flows that are necessary for Consumption Input Validation if they are finished.
-    And checks if there are at least one of power and one of heating instances already.
-    returns next_disabled = True, if one of these conditions fail.
-    """
-    needed_flow_classes = [
-        ("HotwaterHeatingFlow", flows.HotwaterHeatingFlow),
-        ("BuildingDataFlow", flows.BuildingDataFlow),
-    ]
-    needed_flows = [(name, form_class()) for name, form_class in needed_flow_classes]
-    not_finished = [name for name, flow in needed_flows if not flow.finished(request)]
-    if not_finished:
-        next_disabled = True
-        return next_disabled, not_finished
-    has_power = any(box.get("type_class") == "power" for box in year_boxes)
-    has_heating = any(box.get("type_class") == "heating" for box in year_boxes)
-    next_disabled = True if not has_power or not has_heating else False  # noqa: SIM210
-    return next_disabled, []
-
-
 class ConsumptionResult(SidebarNavigationMixin, TemplateView):
     template_name = "pages/consumption_result.html"
     extra_context = {
-        "back_url": "heat:consumption_overview",
+        "back_url": "heat:intro_inventory",
         "next_url": "heat:intro_inventory",
     }
 
@@ -428,14 +253,11 @@ def all_flows_finished(request):
     all_flows = [
         (name, flow())
         for name, flow in inspect.getmembers(flows, inspect.isclass)
-        if name.endswith("Flow") and name not in {"Flow", "ConsumptionInputFlow", "RenovationRequestFlow"}
+        if name.endswith("Flow") and name not in {"Flow", "RenovationRequestFlow"}
     ]
 
     # since there is no minimum for how many renovation scenarios are needed I omited testing that
     not_finished = [name for name, flow in all_flows if not flow.finished(request)]
-    next_disabled, needed_for_consumption = check_if_new_year_possible(request, get_all_year_data(request))
-    if next_disabled:
-        not_finished.append("ConsumptionInputFlow")
     return (True, []) if not not_finished else (False, not_finished)
 
 
