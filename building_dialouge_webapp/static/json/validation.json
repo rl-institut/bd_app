@@ -23,50 +23,16 @@
         "max_value": 2023
       }
   },
-  "CellarDetailsForm": {
-    "cellar_height": {
-      "min_value": 1,
-      "max_value": 5
-    }
-    },
   "HotwaterHeatingSolarAreaForm": {
     "solar_thermal_area": {
         "min_value": 1,
         "max_value": 1000
       }
   },
-  "HotwaterHeatingSolarDetailsForm": {
-    "roof_pitch": {
-      "min_value": 0,
-      "max_value": 80
-    }
-  },
-  "ConsumptionWatertemperaturForm": {
-    "hotwater_temperature": {
-      "min_value": 30,
-      "max_value": 90
-    }
-  },
   "RoofInclinationForm": {
     "roof_inclination": {
       "min_value": 0,
-      "max_value": 360
-    }
-  },
-  "WindowDetailsForm": {
-    "seperate_year": {
-      "min_value": 1900,
-      "max_value": 2023
-    },
-    "window_share": {
-      "min_value": 0,
-      "max_value": 100
-    }
-  },
-  "FacadeInsulationYearForm": {
-    "facade_construction_year": {
-      "min_value": 1900,
-      "max_value": 2023
+      "max_value": 80
     }
   },
   "HeatingYearForm": {
@@ -81,16 +47,16 @@
         "max_value": 1000
       }
   },
-  "PVSystemDetailsForm": {
-    "pv_construction_year": {
-      "min_value": 1900,
-      "max_value": 2023
+  "PVSystemCapacityForm": {
+    "pv_capacity": {
+      "min_value": 1,
+      "max_value": 100
     }
   },
-  "VentilationSystemYearForm": {
-    "ventilation_system_construction_year": {
-      "min_value": 1900,
-      "max_value": 2023
+  "PVSystemBatteryCapacityForm": {
+    "battery_capacity": {
+      "min_value": 1,
+      "max_value": 100
     }
   }
 }
