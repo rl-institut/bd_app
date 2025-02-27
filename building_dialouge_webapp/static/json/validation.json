@@ -31,8 +31,8 @@
   },
   "RoofInclinationForm": {
     "roof_inclination": {
-      "min_value": 0,
-      "max_value": 80
+      "min_value": 5,
+      "max_value": 85
     }
   },
   "HeatingYearForm": {
@@ -43,8 +43,8 @@
   },
   "HeatingStorageCapacityForm": {
     "heating_storage_capacity": {
-        "min_value": 1,
-        "max_value": 1000
+        "min_value": 50,
+        "max_value": 10000
       }
   },
   "PVSystemCapacityForm": {
