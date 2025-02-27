@@ -391,33 +391,22 @@ class RenovationHeatPumpForm(ValidationForm):
 
 class RenovationRequestForm(ValidationForm):
     facade_renovation = forms.BooleanField(
-        label="Fassade sanieren",
-        required=False,
-    )
-    facade_renovation_details = forms.ChoiceField(
-        label="",
-        choices=[
-            ("paint", "streichen"),
-            ("plaster", "verputzen"),
-            ("insulate", "dämmen"),
-        ],
-        widget=forms.RadioSelect,
+        label="Fassade dämmen & verputzen",
         required=False,
     )
     roof_renovation = forms.BooleanField(
-        label="Dach sanieren",
+        label="Dach",
         required=False,
     )
-    roof_renovation_details = forms.MultipleChoiceField(
+    roof_renovation_details = forms.ChoiceField(
         label="",
         choices=[
             ("cover", "decken"),
             ("expand", "ausbauen"),
         ],
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.RadioSelect,
         required=False,
     )
-    roof_renovation_details_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
     window_renovation = forms.BooleanField(
         label="Fenster austauschen",
         required=False,
@@ -426,18 +415,17 @@ class RenovationRequestForm(ValidationForm):
         label="Kellerdeckendämmung",
         required=False,
     )
+    entrance_renovation = forms.BooleanField(
+        label="Eingangstür erneuern",
+        required=False,
+    )
 
     def clean(self):
         cleaned_data = super().clean()
         errors = {}
 
-        if cleaned_data.get("facade_renovation") and not cleaned_data.get("facade_renovation_details"):
-            errors["facade_renovation_details"] = (
-                "Bitte mindestens eine Spezifikation fürs Fassade sanieren auswählen."
-            )
-
         if cleaned_data.get("roof_renovation") and not cleaned_data.get("roof_renovation_details"):
-            errors["roof_renovation_details"] = "Bitte mindestens eine Spezifikation fürs Dach sanieren auswählen."
+            errors["roof_renovation_details"] = "Bitte eine Spezifikation fürs Dach sanieren auswählen."
 
         if errors:
             raise forms.ValidationError(errors)
