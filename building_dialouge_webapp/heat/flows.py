@@ -768,11 +768,11 @@ class RoofFlow(SidebarNavigationMixin, Flow):
         super().__init__()
         self.start = FormState(
             self,
-            target="roof_type",
+            target="flat_roof",
             form_class=forms.RoofTypeForm,
             template_name="partials/roof_help.html",
         ).transition(
-            Switch("roof_type").case("flachdach", "stop").default("roof_orientation"),
+            Switch("flat_roof").case("exists", "stop").default("roof_orientation"),
         )
         self.roof_orientation = FormState(
             self,

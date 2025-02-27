@@ -184,13 +184,11 @@ class HotwaterHeatingSolarAreaForm(ValidationForm):
 
 
 class RoofTypeForm(forms.Form):
-    roof_type = forms.ChoiceField(
-        label="Dachform",
+    flat_roof = forms.ChoiceField(
+        label="Besitzt ihr Gebäude ein Flachdach?",
         choices=[
-            ("flachdach", "Flachdach"),
-            ("satteldach", "Satteldach"),
-            ("walmdach", "Walmdach"),
-            ("other", "Andere Dachform"),
+            ("exists", "Ja"),
+            ("doesnt_exist", "Nein"),
         ],
         widget=forms.RadioSelect,
     )
