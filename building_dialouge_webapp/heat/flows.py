@@ -631,7 +631,7 @@ class Flow(TemplateView):
 class BuildingTypeFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/building_type.html"
     extra_context = {
-        "back_url": "heat:intro_consumption",
+        "back_url": "heat:intro_inventory",
         "next_disabled": True,
     }
 
@@ -683,11 +683,11 @@ class BuildingDataFlow(SidebarNavigationMixin, Flow):
         )
 
         self.stop = StopState(self, lookup="building_data_done", next_botton_text="Speichern").transition(Next("end"))
-        self.end = EndState(self, url="heat:cellar")
+        self.end = EndState(self, url="heat:insulation")
 
 
-class CellarFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/cellar.html"
+class InsulationFlow(SidebarNavigationMixin, Flow):
+    template_name = "pages/insulation.html"
     extra_context = {
         "back_url": "heat:building_data",
         "next_disabled": True,
@@ -697,44 +697,20 @@ class CellarFlow(SidebarNavigationMixin, Flow):
         super().__init__()
         self.start = FormState(
             self,
-            target="cellar_heating",
-            form_class=forms.CellarHeatingForm,
-        ).transition(
-            Switch("cellar_heating").case("no_cellar", "stop").default("cellar_details"),
-        )
-
-        self.cellar_details = FormState(
-            self,
-            target="cellar_details",
-            form_class=forms.CellarDetailsForm,
-        ).transition(
-            Next("cellar_insulation_exists"),
-        )
-
-        self.cellar_insulation_exists = FormState(
-            self,
-            target="cellar_insulation_exists",
-            form_class=forms.CellarInsulationForm,
-        ).transition(
-            Switch("cellar_ceiling_insulation_exists").case("doesnt_exist", "stop").default("cellar_insulation_year"),
-        )
-
-        self.cellar_insulation_year = FormState(
-            self,
-            target="cellar_insulation_year",
-            form_class=forms.CellarInsulationYearForm,
+            target="insulation",
+            form_class=forms.InsulationForm,
         ).transition(
             Next("stop"),
         )
 
-        self.stop = StopState(self, lookup="cellar_done", next_botton_text="Speichern").transition(Next("end"))
+        self.stop = StopState(self, lookup="insulation_done", next_botton_text="Speichern").transition(Next("end"))
         self.end = EndState(self, url="heat:hotwater_heating")
 
 
 class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/hotwater_heating.html"
     extra_context = {
-        "back_url": "heat:cellar",
+        "back_url": "heat:insulation",
         "next_disabled": True,
     }
 
@@ -742,37 +718,9 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
         super().__init__()
         self.start = FormState(
             self,
-            target="heating_system",
-            form_class=forms.HeatingSystemForm,
-            template_name="partials/heating_system_help.html",
-        ).transition(
-            Switch("heating_system").case("central_heating", "heating_source").default("dead_end_heating"),
-        )
-
-        self.dead_end_heating = EndState(self, url="heat:dead_end_heating")
-
-        self.heating_source = FormState(
-            self,
             target="heating_source",
             form_class=forms.HeatingSourceForm,
             template_name="partials/heating_source_help.html",
-        ).transition(
-            Next("hotwater_heating_system"),
-        )
-
-        self.hotwater_heating_system = FormState(
-            self,
-            target="hotwater_heating_system",
-            form_class=forms.HotwaterHeatingSystemForm,
-            template_name="partials/hotwater_heating_system_help.html",
-        ).transition(
-            Switch("hotwater_heating_system").case("boiler", "solar_thermal_exists").default("hotwater_measured"),
-        )
-
-        self.hotwater_measured = FormState(
-            self,
-            target="hotwater_measured",
-            form_class=forms.HotwaterHeatingMeasuredForm,
         ).transition(
             Next("solar_thermal_exists"),
         )
@@ -782,32 +730,21 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
             target="solar_thermal_exists",
             form_class=forms.HotwaterHeatingSolarExistsForm,
         ).transition(
-            Switch("solar_thermal_exists").case("doesnt_exist", "stop").default("solar_thermal_energy_known"),
+            Switch("solar_thermal_exists").case("doesnt_exist", "stop").default("solar_thermal_area_known"),
         )
 
-        self.solar_thermal_energy_known = FormState(
+        self.solar_thermal_area_known = FormState(
             self,
-            target="solar_thermal_energy_known",
+            target="solar_thermal_area_known",
             form_class=forms.HotwaterHeatingSolarKnownForm,
-            template_name="partials/solar_thermal_energy_known_help.html",
         ).transition(
-            Switch("solar_thermal_energy_known")
-            .case("known", "solar_thermal_energy")
-            .default("solar_thermal_details"),
+            Switch("solar_thermal_area_known").case("known", "solar_thermal_area").default("stop"),
         )
 
-        self.solar_thermal_energy = FormState(
+        self.solar_thermal_area = FormState(
             self,
-            target="solar_thermal_energy",
-            form_class=forms.HotwaterHeatingSolarEnergyForm,
-        ).transition(
-            Next("stop"),
-        )
-
-        self.solar_thermal_details = FormState(
-            self,
-            target="solar_thermal_details",
-            form_class=forms.HotwaterHeatingSolarDetailsForm,
+            target="solar_thermal_area",
+            form_class=forms.HotwaterHeatingSolarAreaForm,
         ).transition(
             Next("stop"),
         )
@@ -817,82 +754,13 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
             lookup="hotwater_heating_done",
             next_botton_text="Speichern",
         ).transition(Next("end"))
-        self.end = EndState(self, url="heat:consumption_overview")
-
-
-def check_hotwater_measured(self):
-    """Checks input of hotwater_measured from HotwaterHeatingFlow
-    for fields in Consumption Input depending on this."""
-    return self.flow.request.session["django_htmx_flow"].get("hotwater_measured", "False") == "True"
-
-
-class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/consumption_input.html"
-    extra_context = {
-        "back_url": "heat:consumption_overview",
-        "next_disabled": True,
-    }
-
-    def __init__(self, prefix=None):
-        super().__init__(prefix=prefix)
-        self.start = FormState(
-            self,
-            target="consumption_type",
-            form_class=forms.ConsumptionTypeForm,
-        ).transition(
-            Switch("consumption_type").case("power", "consumption_power").default("consumption_heating"),
-        )
-
-        self.consumption_power = FormState(
-            self,
-            target="consumption_power",
-            form_class=forms.ConsumptionPowerForm,
-        ).transition(
-            Next("stop"),
-        )
-
-        self.consumption_heating = FormState(
-            self,
-            target="consumption_heating",
-            form_class=forms.ConsumptionHeatingForm,
-        ).transition(
-            Switch(check_hotwater_measured)
-            .case(value=True, state_name="consumption_hotwater")
-            .default("consumption_hotwater_temp"),
-        )
-        self.consumption_hotwater = FormState(
-            self,
-            target="consumption_hotwater",
-            form_class=forms.ConsumptionHotwaterForm,
-        ).transition(
-            Next("consumption_hotwater_temp"),
-        )
-        self.consumption_hotwater_temp = FormState(
-            self,
-            target="consumption_hotwater_temp",
-            form_class=forms.ConsumptionWatertemperaturForm,
-        ).transition(
-            Next("stop"),
-        )
-
-        self.stop = StopState(
-            self,
-            lookup="consumption_input_done",
-            next_botton_text="Speichern",
-        ).transition(Next("end"))
-        self.end = EndState(self, url="heat:consumption_overview")
-
-
-def check_prev_roof_orientation(self):
-    """Checks input of solar_thermal_energy_known from HotwaterHeatingFlow
-    for fields in Consumption Input depending on this."""
-    return self.flow.request.session["django_htmx_flow"].get("solar_thermal_energy_known", "unknown") == "known"
+        self.end = EndState(self, url="heat:roof")
 
 
 class RoofFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/roof.html"
     extra_context = {
-        "back_url": "heat:intro_inventory",
+        "back_url": "heat:hotwater_heating",
         "next_disabled": True,
     }
 
@@ -900,73 +768,40 @@ class RoofFlow(SidebarNavigationMixin, Flow):
         super().__init__()
         self.start = FormState(
             self,
-            target="roof_type",
+            target="flat_roof",
             form_class=forms.RoofTypeForm,
             template_name="partials/roof_help.html",
         ).transition(
-            Switch("roof_type").case("flachdach", "roof_insulation").default("roof_area"),
-        )
-        self.roof_area = FormState(
-            self,
-            target="roof_area",
-            form_class=forms.RoofAreaForm,
-        ).transition(
-            Switch(check_prev_roof_orientation)
-            .case(value=True, state_name="roof_orientation")
-            .default("roof_windows"),
+            Switch("flat_roof").case("exists", "stop").default("roof_orientation"),
         )
         self.roof_orientation = FormState(
             self,
             target="roof_orientation",
             form_class=forms.RoofOrientationForm,
         ).transition(
-            Next("roof_windows"),
-        )
-        self.roof_windows = FormState(
-            self,
-            target="roof_windows",
-            form_class=forms.RoofWindowsForm,
-        ).transition(
-            Next("roof_usage_now"),
+            Next("roof_inclination_known"),
         )
 
-        self.roof_usage_now = FormInfoState(
+        self.roof_inclination_known = FormState(
             self,
-            target="roof_usage_now",
-            form_class=forms.RoofUsageNowForm,
-            info_text="Dachnutzung",
+            target="roof_inclination_known",
+            form_class=forms.RoofInclinationKnownForm,
         ).transition(
-            Switch("roof_usage_now").case("all_used", "roof_insulation").default("roof_usage_future"),
+            Switch("roof_inclination_known").case("known", "roof_inclination").default("stop"),
         )
 
-        self.roof_usage_future = FormState(
+        self.roof_inclination = FormState(
             self,
-            target="roof_usage_future",
-            form_class=forms.RoofUsageFutureForm,
-        ).transition(Next("roof_insulation"))
-
-        self.roof_insulation = FormState(
-            self,
-            target="roof_insulation",
-            form_class=forms.RoofInsulationForm,
-        ).transition(
-            Switch("roof_insulation_exists").case("yes", "roof_insulation_year").default("stop"),
-        )
-
-        self.roof_insulation_year = FormState(
-            self,
-            target="roof_insulation_year",
-            form_class=forms.RoofInsulationYearForm,
-        ).transition(
-            Next("stop"),
-        )
+            target="roof_inclination",
+            form_class=forms.RoofInclinationForm,
+        ).transition(Next("stop"))
 
         self.stop = StopState(self, lookup="roof_done", next_botton_text="Speichern").transition(Next("end"))
-        self.end = EndState(self, url="heat:window")
+        self.end = EndState(self, url="heat:heating")
 
 
-class WindowFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/window.html"
+class HeatingFlow(SidebarNavigationMixin, Flow):
+    template_name = "pages/heating.html"
     extra_context = {
         "back_url": "heat:roof",
         "next_disabled": True,
@@ -976,101 +811,32 @@ class WindowFlow(SidebarNavigationMixin, Flow):
         super().__init__()
         self.start = FormState(
             self,
-            target="window_area",
-            form_class=forms.WindowAreaForm,
+            target="heating_year",
+            form_class=forms.HeatingYearForm,
         ).transition(
-            Next("window_details"),
+            Next("heating_storage_exists"),
         )
 
-        self.window_details = FormState(
+        self.heating_storage_exists = FormState(
             self,
-            target="window_details",
-            form_class=forms.WindowDetailsForm,
-            template_name="partials/window_details_help.html",
+            target="heating_storage_exists",
+            form_class=forms.HeatingStorageExistsForm,
         ).transition(
-            Next("stop"),
+            Switch("heating_storage_exists").case("exists", "heating_storage_capacity_known").default("stop"),
         )
 
-        self.stop = StopState(self, lookup="window_done", next_botton_text="Speichern").transition(Next("end"))
-        self.end = EndState(self, url="heat:facade")
-
-
-class FacadeFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/facade.html"
-    extra_context = {
-        "back_url": "heat:window",
-        "next_disabled": True,
-    }
-
-    def __init__(self):
-        super().__init__()
-        self.start = FormState(
+        self.heating_storage_capacity_known = FormState(
             self,
-            target="facade_details",
-            form_class=forms.FacadeForm,
+            target="heating_storage_capacity_known",
+            form_class=forms.HeatingStorageKnownForm,
         ).transition(
-            Next("facade_insulation_exists"),
+            Switch("heating_storage_capacity_known").case("known", "heating_storage_capacity").default("stop"),
         )
 
-        self.facade_insulation_exists = FormState(
+        self.heating_storage_capacity = FormState(
             self,
-            target="facade_insulation_exists",
-            form_class=forms.FacadeInsulationForm,
-            template_name="partials/facade_insulation_help.html",
-        ).transition(
-            Switch("facade_insulation_exists").case("exists", "facade_insulation_year").default("stop"),
-        )
-
-        self.facade_insulation_year = FormState(
-            self,
-            target="facade_insulation_year",
-            form_class=forms.FacadeInsulationYearForm,
-        ).transition(
-            Next("stop"),
-        )
-
-        self.stop = StopState(self, lookup="facade_done", next_botton_text="Speichern").transition(Next("end"))
-        self.end = EndState(self, url="heat:heating")
-
-
-class HeatingFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/heating.html"
-    extra_context = {
-        "back_url": "heat:facade",
-        "next_disabled": True,
-    }
-
-    def __init__(self):
-        super().__init__()
-        self.start = FormState(
-            self,
-            target="heating",
-            form_class=forms.HeatingForm,
-        ).transition(
-            Next("heating_hydraulic"),
-        )
-
-        self.heating_hydraulic = FormState(
-            self,
-            target="heating_hydraulic",
-            form_class=forms.HeatingHydraulicForm,
-            template_name="partials/heating_hydraulic_help.html",
-        ).transition(
-            Next("heating_details"),
-        )
-
-        self.heating_details = FormState(
-            self,
-            target="heating_details",
-            form_class=forms.HeatingDetailsForm,
-        ).transition(
-            Next("heating_storage"),
-        )
-
-        self.heating_storage = FormState(
-            self,
-            target="heating_storage",
-            form_class=forms.HeatingStorageForm,
+            target="heating_storage_capacity",
+            form_class=forms.HeatingStorageCapacityForm,
             template_name="partials/heating_storage_help.html",
         ).transition(
             Next("stop"),
@@ -1094,68 +860,52 @@ class PVSystemFlow(SidebarNavigationMixin, Flow):
             target="pv_system",
             form_class=forms.PVSystemForm,
         ).transition(
-            Switch("pv_exists").case("doesnt_exist", "pv_system_planned").default("pv_system_details"),
+            Switch("pv_exists").case("doesnt_exist", "stop").default("pv_capacity_known"),
         )
 
-        self.pv_system_planned = FormState(
+        self.pv_capacity_known = FormState(
             self,
-            target="pv_system_planned",
-            form_class=forms.PVSystemPlannedForm,
+            target="pv_capacity_known",
+            form_class=forms.PVSystemCapacityKnownForm,
         ).transition(
-            Next("stop"),
+            Switch("pv_capacity_known").case("known", "pv_capacity").default("pv_system_battery_exists"),
         )
 
-        self.pv_system_details = FormState(
+        self.pv_capacity = FormState(
             self,
-            target="pv_system_details",
-            form_class=forms.PVSystemDetailsForm,
-            template_name="partials/pv_system_details_help.html",
+            target="pv_capacity",
+            form_class=forms.PVSystemCapacityForm,
+            template_name="partials/pv_system_capacity_help.html",
         ).transition(
-            Next("pv_system_battery"),
+            Next("pv_system_battery_exists"),
+        )
+
+        self.pv_system_battery_exists = FormState(
+            self,
+            target="pv_system_battery_exists",
+            form_class=forms.PVSystemBatteryExistsForm,
+        ).transition(
+            Switch("battery_exists").case("exists", "pv_battery_capacity_known").default("stop"),
+        )
+
+        self.pv_battery_capacity_known = FormState(
+            self,
+            target="pv_battery_capacity_known",
+            form_class=forms.PVSystemBatteryCapacityKnownForm,
+        ).transition(
+            Switch("battery_capacity_known").case("known", "pv_system_battery").default("stop"),
         )
 
         self.pv_system_battery = FormState(
             self,
             target="pv_system_battery",
-            form_class=forms.PVSystemBatteryForm,
+            form_class=forms.PVSystemBatteryCapacityForm,
             template_name="partials/pv_system_battery_help.html",
         ).transition(
             Next("stop"),
         )
 
         self.stop = StopState(self, lookup="v", next_botton_text="Speichern").transition(Next("end"))
-        self.end = EndState(self, url="heat:ventilation_system")
-
-
-class VentilationSystemFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/ventilation_system.html"
-    extra_context = {
-        "back_url": "heat:pv_system",
-        "next_disabled": True,
-    }
-
-    def __init__(self):
-        super().__init__()
-        self.start = FormState(
-            self,
-            target="ventilation_system_exists",
-            form_class=forms.VentilationSystemForm,
-            template_name="partials/ventilation_system_help.html",
-        ).transition(
-            Switch("ventilation_system_exists").case("doesnt_exist", "stop").default("ventilation_system_year"),
-        )
-
-        self.ventilation_system_year = FormState(
-            self,
-            target="ventilation_system_year",
-            form_class=forms.VentilationSystemYearForm,
-        ).transition(
-            Next("stop"),
-        )
-
-        self.stop = StopState(self, lookup="ventilation_system_done", next_botton_text="Speichern").transition(
-            Next("end"),
-        )
         self.end = EndState(self, url="heat:intro_renovation")
 
 
@@ -1237,7 +987,6 @@ class FinancialSupportFlow(SidebarNavigationMixin, Flow):
     extra_context = {
         "back_url": "heat:renovation_overview",
         "next_disabled": False,
-        "back_kwargs": "scenario1",
     }
 
     def __init__(self):

@@ -10,25 +10,7 @@
       </div>
       <div class="help"></div>
     </div>
-    <div id="heating_system"
-      hx-post=""
-      hx-trigger="change"
-      hx-include="this">{{ heating_system.content | safe }}</div>
     <div id="heating_source" hx-post="" hx-trigger="change" hx-include="this">{{ heating_source.content | safe }}</div>
-    <div id="hotwater_heating_system"
-         hx-post=""
-         hx-trigger="change"
-         hx-include="this">{{ hotwater_heating_system.content | safe }}</div>
-    <div class="step-question">
-      <div class="step-container">
-        <div id="hotwater_measured"
-             hx-post=""
-             hx-trigger="change"
-             hx-include="this"
-             class="main">{{ hotwater_measured.content | safe }}</div>
-        <div class="help"></div>
-      </div>
-    </div>
     <div class="step-question">
       <div class="step-container">
         <div id="solar_thermal_exists"
@@ -39,27 +21,23 @@
         <div class="help"></div>
       </div>
     </div>
-    <div id="solar_thermal_energy_known"
-         hx-post=""
-         hx-trigger="change"
-         hx-include="this">{{ solar_thermal_energy_known.content | safe }}</div>
     <div class="step-question">
       <div class="step-container">
-        <div id="solar_thermal_energy"
-          hx-post=""
-          hx-trigger="keyup change delay:500ms"
-          hx-include="this"
-          class="main">{{ solar_thermal_energy.content | safe }}</div>
+        <div id="solar_thermal_area_known"
+            hx-post=""
+            hx-trigger="change"
+            hx-include="this"
+            class="main">{{ solar_thermal_area_known.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>
     <div class="step-question">
       <div class="step-container">
-        <div id="solar_thermal_details"
+        <div id="solar_thermal_area"
           hx-post=""
-          hx-trigger="keyup change delay:500ms, change"
+          hx-trigger="keyup change delay:500ms"
           hx-include="this"
-          class="main">{{ solar_thermal_details.content | safe }}</div>
+          class="main">{{ solar_thermal_area.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>
