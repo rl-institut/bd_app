@@ -399,8 +399,8 @@ class RenovationRequestForm(ValidationForm):
     roof_renovation_details = forms.ChoiceField(
         label="",
         choices=[
-            ("cover", "decken"),
-            ("expand", "ausbauen"),
+            ("cover", "Dach decken"),
+            ("expand", "Dach ausbauen"),
         ],
         widget=forms.RadioSelect,
         required=False,
