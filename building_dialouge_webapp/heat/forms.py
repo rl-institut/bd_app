@@ -150,7 +150,7 @@ class HeatingSourceForm(ValidationForm):
             ("wood_pellets", "Holzpellets"),
             ("geothermal_pump", "Erdwärmepumpe"),
             ("air_heat_pump", "Luftwärmepumpe"),
-            ("groundwater", "Grundwasser-/Solewärmepumpe"),
+            ("groundwater", "Grundwasser- oder Solewärmepumpe"),
             ("heating_rod", "Heizstab"),
         ],
         widget=forms.RadioSelect,
@@ -369,7 +369,7 @@ class RenovationHeatPumpForm(ValidationForm):
         choices=[
             ("geothermal_pump", "Erdwärmepumpe"),
             ("air_heat_pump", "Luftwärmepumpe"),
-            ("groundwater", "Grundwasser-/Solewärmepumpe"),
+            ("groundwater", "Grundwasser- oder Solewärmepumpe"),
         ],
         widget=forms.RadioSelect,
     )
