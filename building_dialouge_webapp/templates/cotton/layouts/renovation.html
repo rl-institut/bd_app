@@ -1,20 +1,34 @@
+{% load static icons %}
+
 <c-layouts.flow-instance-box>
     <div class="flow-instance-box-text-heating">
         {% if box.heating_choices %}
-            <h4>Heizungstechnologien</h4>
+            <h3>Heizungstechnologien</h3>
             <ul>
                 {% for choice in box.heating_choices %}
-                        <li>{{ choice }}</li>
+                  <li>
+                    {% heating_icon choice as heating_icon_url %}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <image xlink:href="{% static heating_icon_url %}" width="24" height="24" />
+                    </svg>
+                    {{ choice }}
+                  </li>
                 {% endfor %}
             </ul>
         {% endif %}
         </div>
         <div class="flow-instance-box-text-renovation">
         {% if box.renovation_choices %}
-            <h4>Sanierungsmaßnahmen</h4>
+            <h3>Sanierungsmaßnahmen</h3>
             <ul>
                 {% for choice in box.renovation_choices %}
-                        <li>{{ choice }}</li>
+                  <li>
+                    {% renovation_icon choice as renovation_icon_url %}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <image xlink:href="{% static renovation_icon_url %}" width="24" height="24" />
+                    </svg>
+                    {{ choice }}
+                  </li>
                 {% endfor %}
             </ul>
         {% endif %}
