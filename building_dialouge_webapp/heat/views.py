@@ -190,7 +190,7 @@ def get_user_friendly_data(scenario_data):
     their own lists. Only choices from heating_fields are heating choices, the rest of the
     fields contain renovation choices.
     """
-    heating_fields = {"primary_heating", "secondary_heating", "biomass_source", "heat_pump_type"}
+    heating_fields = {"primary_heating", "secondary_heating", "bio_mass_source", "heat_pump_type"}
 
     heating_choices = []
     renovation_choices = []
@@ -206,8 +206,8 @@ def get_user_friendly_data(scenario_data):
     renovation_forms = [form_class() for form_class in renovation_form_classes]
 
     for form in renovation_forms:
-        category = "renovation"
         for field_name, field in form.fields.items():
+            category = "renovation"
             if field_name.endswith("hidden"):
                 continue
             if field_name in heating_fields:
