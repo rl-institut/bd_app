@@ -389,7 +389,7 @@ class RenovationHeatPumpForm(ValidationForm):
 
 class RenovationRequestForm(ValidationForm):
     facade_renovation = forms.BooleanField(
-        label="Fassade dämmen & verputzen",
+        label="Fassade dämmen",
         required=False,
     )
     roof_renovation = forms.BooleanField(
