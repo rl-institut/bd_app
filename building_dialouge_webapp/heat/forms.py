@@ -230,6 +230,7 @@ class HeatingYearForm(ValidationForm):
     heating_system_construction_year = forms.IntegerField(
         label="Baujahr Heizung",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
     )
 
 
