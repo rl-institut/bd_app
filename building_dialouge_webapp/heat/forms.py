@@ -417,6 +417,10 @@ class RenovationRequestForm(ValidationForm):
         label="Eingangstür erneuern",
         required=False,
     )
+    renovation_input_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
+
+    def clean_renovation_input_hidden(self):
+        return self.cleaned_data.get("renovation_input_hidden", "none")
 
     def clean(self):
         cleaned_data = super().clean()
