@@ -182,7 +182,7 @@ def get_all_scenario_data(request):
     return scenario_data_list
 
 
-def get_user_friendly_data(scenario_data):  # noqa: C901
+def get_user_friendly_data(scenario_data):
     """
     Instantiate the Forms for RenovationRequestFlow and get all checked / chosen
     labels for easier readability.
@@ -229,11 +229,16 @@ def get_user_friendly_data(scenario_data):  # noqa: C901
     # remove duplicates
     heating_choices = list(dict.fromkeys(heating_choices))
     renovation_choices = list(dict.fromkeys(renovation_choices))
-    if "Wärmepumpe" in heating_choices:
-        heating_choices.remove("Wärmepumpe")
-    if "Dach" in renovation_choices:
-        renovation_choices.remove("Dach")
-    return heating_choices, renovation_choices
+    return remove_top_category(heating_choices), remove_top_category(renovation_choices)
+
+
+def remove_top_category(choices_list: list) -> list:
+    """Remove the top category where secondary choices define the desired output."""
+    top_categories = ["Biomasseheizung", "Wärmepumpe", "Dach"]
+    for category in top_categories:
+        if category in choices_list:
+            choices_list.remove(category)
+    return choices_list
 
 
 class RenovationOverview(SidebarNavigationMixin, TemplateView):
