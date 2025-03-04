@@ -1,105 +1,139 @@
 // Container for all scenario boxes
 #flow-instance-boxes {
-    position: relative;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  width: 100%;
+
+  @media screen and (min-width: $breakpoint-md) {
+    flex-direction: column;
+    max-width: 20rem; // Match `help` width for consistency
+  }
+
+  @media screen and (min-width: $breakpoint-2xl) {
+    max-width: 32rem;
+    padding: 1.5rem;
+  }
+
+  @media screen and (min-width: $breakpoint-3xl) {
+    max-width: 40rem;
+  }
+}
+
+// Styling for individual scenario boxes
+$heating-bg: #FEF2F2;
+$renovation-bg: #F0FDFA;
+$text-dark: #374151;
+$text-muted: #64748b;
+
+.flow-instance-box {
+  background: $color-white;
+  border-radius: $border-radius;
+  border: 1px solid #bdbdbd;
+
+  .flow-instance-box-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #efefef;
+    padding: 0.5rem 1rem;
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
+
+    p {
+      font-size: $font-size-md;
+      font-weight: $font-weight-bold;
+      color: $body-color;
+      margin-bottom: 0;
+    }
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0 0 0 0.5rem;
+    }
+  }
+
+  .flow-instance-box-text {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    width: 100%;
-
-    @media screen and (min-width: $breakpoint-md) {
-      flex-direction: column;
-      max-width: 20rem; // Match `help` width for consistency
-    }
-
-    @media screen and (min-width: $breakpoint-2xl) {
-      max-width: 22rem;
-    }
-  }
-
-  // Styling for individual scenario boxes
-  .flow-instance-box {
-    border: 1px solid $grey-500;
-    background-color: $color-white;
-    display: flex;
-    flex-direction: column;
     padding: 1rem;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 
-    &:hover {
-      transform: scale(1.05);
-      box-shadow: $grey-800;
+    h3 {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-regular;
+      text-transform: uppercase;
+      color: #656565;
+      margin-bottom: 0.5rem;
     }
 
-    &.active {
-      transform: scale(1.1);
-      box-shadow: $grey-800;
-    }
-
-    &.heating {
-      background-color: lighten(red, 40%);
-      border-color: darken(red, 20%);
-    }
-
-    &.power {
-        background-color: lighten(blue, 40%);
-        border-color: darken(blue, 20%);
-    }
-
-    .flow-instance-box-header {
-      align-items: center;
-      justify-content: space-between;
-      position: relative;
-      padding-bottom: 0.5rem;
-
-      svg {
-        width: 1.5rem;
-        height: 1.5rem;
-      }
-
-      h2 {
-        margin-left: 0.5rem;
-        font-weight: $font-weight-bold;
-        color: $grey-900;
-      }
-    }
-
-    .flow-instance-box-text {
-      flex-grow: 1;
-      color: $grey-800;
-    }
-
-    // Container for buttons
-    .button-container {
-      position: absolute;
-      top: 4px;
-      right: 4px;
+    ul {
       display: flex;
-      gap: 4px;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      list-style: none;
+      padding: 0;
+      margin: 0;
     }
 
-    // Edit button styles
-    .edit-flow-instance-button {
-      background: none;
-      font-size: 16px;
-      color: $grey-800;
-      padding: 4px;
+    li {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.25rem;
+      border-radius: 100px;
+      font-size: 13px;
+      line-height: 16px;
+      font-weight: $font-weight-regular;
+      width: 7.75rem;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
 
-      &:hover {
-        color: $color-white;
-        background-color: $grey-800;
+      @media screen and (min-width: $breakpoint-2xl) {
+        width: 8.5rem;
       }
-    }
 
-    // Delete button styles
-    .delete-flow-instance-button {
-      background: none;
-      font-size: 16px;
-      color: $grey-800;
-      padding: 4px;
-
-      &:hover {
-        color: $color-white;
-        background-color: $grey-800;
+      @media screen and (min-width: $breakpoint-3xl) {
+        width: 11.25rem;
       }
     }
   }
+
+  .flow-instance-box-text-heating ul li {
+    background: $heating-bg;
+    color: #7b2525;
+
+    svg {
+      height: 24px !important;
+      width: 24px !important;
+    }
+
+    svg path {
+      stroke: #903939;
+    }
+  }
+
+  .flow-instance-box-text-renovation ul li {
+    background: $renovation-bg;
+    color: #1b6a68;
+
+    svg {
+      height: 24px !important;
+      width: 24px !important;
+    }
+
+    svg path {
+      stroke: #377b7a;
+    }
+  }
+}
