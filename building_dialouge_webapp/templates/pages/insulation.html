@@ -7,7 +7,7 @@
         <div class="main">
           <h1>Dämmungsmaßnahmen</h1>
           Wurde das Gebäude nachträglich gedämmt? <br>
-          Wenn ja, tragen Sie hier das Jahr der jeweiligen Maßnahme ein. Ein leeres Feld entspricht keine Dämmung.
+          Wenn ja, tragen Sie hier das Jahr der jeweiligen Maßnahme ein. Ein leeres Feld entspricht keiner Dämmung.
         </div>
       </div>
       <div class="help"></div>
@@ -16,7 +16,8 @@
       <div class="step-container">
         <div id="insulation"
         hx-post=""
-        hx-trigger="keyup change delay:500ms, change"
+        hx-trigger="keyup change delay:500ms"
+        hx-swap="show:bottom"
         hx-include="this">{{ insulation.content | safe }}</div>
       </div>
       <div class="help"></div>
