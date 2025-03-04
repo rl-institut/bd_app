@@ -166,7 +166,7 @@ def get_all_scenario_data(request):
             scenario_id += 1
             continue
         scenario_data = flow.data(request)
-        heating_choices, renovation_choices = get_user_friendly_data(scenario_data=scenario_data)
+
         extra_context = {
             "id": f"scenario{scenario_id}box",
             "href": reverse(
@@ -174,44 +174,51 @@ def get_all_scenario_data(request):
                 kwargs={"scenario": f"scenario{scenario_id}"},
             ),
             "title": f"Szenario {scenario_id}",
-            "heating_choices": heating_choices,
-            "renovation_choices": renovation_choices,
+            "heating_choices": get_heating_choices(scenario_data),
+            "renovation_choices": get_renovation_choices(scenario_data),
         }
         scenario_data_list.append(extra_context)
         scenario_id += 1
     return scenario_data_list
 
 
-def get_user_friendly_data(scenario_data):
+def get_heating_choices(scenario_data) -> list:
     """
-    Instantiate the Forms for RenovationRequestFlow and get all checked / chosen
-    labels for easier readability.
-    Seperate choices for heating and renovation so that they can be displayed in
-    their own lists. Only choices from heating_fields are heating choices, the rest of the
-    fields contain renovation choices.
+    Define wich form classes should be used for heating in scenario box.
     """
-    heating_fields = {"primary_heating", "secondary_heating", "bio_mass_source", "heat_pump_type"}
-
-    heating_choices = []
-    renovation_choices = []
-
-    renovation_form_classes = [
-        forms.RenovationRequestForm,
+    form_classes = [
+        forms.RenovationTechnologyForm,
         forms.RenovationHeatPumpForm,
         forms.RenovationBioMassForm,
         forms.RenovationPVSolarForm,
         forms.RenovationSolarForm,
-        forms.RenovationTechnologyForm,
     ]
-    renovation_forms = [form_class() for form_class in renovation_form_classes]
+    return get_user_friendly_data(scenario_data, form_classes)
+
+
+def get_renovation_choices(scenario_data) -> list:
+    """
+    Define wich form classes should be used for renovation in scenario box.
+    """
+    form_classes = [
+        forms.RenovationRequestForm,
+    ]
+    return get_user_friendly_data(scenario_data, form_classes)
+
+
+def get_user_friendly_data(scenario_data, form_classes: list) -> list:
+    """
+    Instantiate the Forms for RenovationRequestFlow and get all checked / chosen
+    labels for easier readability.
+    """
+    choices = []
+
+    renovation_forms = [form_class() for form_class in form_classes]
 
     for form in renovation_forms:
         for field_name, field in form.fields.items():
-            category = "renovation"
             if field_name.endswith("hidden"):
                 continue
-            if field_name in heating_fields:
-                category = "heating"
 
             if scenario_data.get(field_name):
                 value = scenario_data[field_name]
@@ -222,23 +229,15 @@ def get_user_friendly_data(scenario_data):
                 else:  # Select-fields / Radiobuttons
                     labels = [dict(field.choices).get(value)] if value in dict(field.choices) else []
 
-                if category == "heating":
-                    heating_choices.extend(labels)
-                else:
-                    renovation_choices.extend(labels)
+                choices.extend(labels)
     # remove duplicates
-    heating_choices = list(dict.fromkeys(heating_choices))
-    renovation_choices = list(dict.fromkeys(renovation_choices))
-    return remove_top_category(heating_choices), remove_top_category(renovation_choices)
-
-
-def remove_top_category(choices_list: list) -> list:
-    """Remove the top category where secondary choices define the desired output."""
+    choices = list(dict.fromkeys(choices))
+    # remove categories that have further specification
     top_categories = ["Biomasseheizung", "Wärmepumpe", "Dach"]
     for category in top_categories:
-        if category in choices_list:
-            choices_list.remove(category)
-    return choices_list
+        if category in choices:
+            choices.remove(category)
+    return choices
 
 
 class RenovationOverview(SidebarNavigationMixin, TemplateView):
