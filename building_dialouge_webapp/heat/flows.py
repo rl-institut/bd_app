@@ -111,7 +111,7 @@ class State:
     def remove_state(self):
         """Removes the current state's value from the session if it exists."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        if self.target in session_data:
+        if self.lookup in session_data:
             del session_data[self.lookup]
             self.flow.request.session["django_htmx_flow"] = session_data
 
@@ -148,21 +148,25 @@ class State:
         previous_state: StateStatus = StateStatus.Unchanged,
     ) -> dict[str, StateResponse]:
         """Sets or updates the state using check_state()."""
-        status = StateStatus.New if previous_state == StateStatus.Set else self.check_state()
+        status = self.check_state()
         if status == StateStatus.New:
             return self.response
         if status == StateStatus.Error:
-            return self.error_response
+            following_states = self.error_response
+            following_states.update(self.next().reset())
+            return following_states
         if status == StateStatus.Set:
+            # This line allows clearing of form errors after sending valid form and
+            # assures rendering of forms which have only non-required fields
+            following_states = self.response
             self.store_state()
-            following_states = self.next().set(status)
+            following_states.update(self.next().set(status))
         elif status == StateStatus.Unchanged:
             following_states = self.next().set(status)
         elif status == StateStatus.Changed:
             following_states = self.next().reset()
             self.store_state()
-            next_state = self.next()
-            following_states.update(next_state.response)
+            following_states.update(self.next().set(status))
         else:
             error_msg = f"Unknown state status '{status}'."
             raise FlowError(error_msg)
@@ -325,40 +329,44 @@ class FormState(TemplateState):
 
     def _init_form(self, data: dict[str, Any] | None = None) -> Form:
         if "request" in self.form_class.__init__.__code__.co_varnames:
-            return self.form_class(data, prefix=self.flow.prefix, request=self.flow.request)
+            return self.form_class(
+                data,
+                prefix=self.flow.prefix,
+                request=self.flow.request,
+            )
         return self.form_class(data, prefix=self.flow.prefix)
 
-    def _render_form(self, data):
+    def _render_form(self, data) -> str:
         context = self.get_context_data()
         if self.template_name is None:
             csrf_token = csrf(self.flow.request)["csrf_token"]
             form_instance = self._init_form(data)
-            rendered_form = (
-                f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">\n {form_instance.as_div()}'
-            )
-            return {self.target: HTMLStateResponse(rendered_form)}
+            return f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">\n {form_instance.as_div()}'
         form_instance = self._init_form(data)
         context["form"] = form_instance
-        return {
-            self.target: HTMLStateResponse(
-                get_template(self.template_name).render(
-                    context,
-                    request=self.flow.request,
-                ),
-            ),
-        }
+        return get_template(self.template_name).render(
+            context,
+            request=self.flow.request,
+        )
 
     @property
     def response(self) -> dict[str, StateResponse]:
         """Renders the form with data from the session if available; otherwise, renders a blank form."""
         status = self.check_state()
         data = None if status == StateStatus.New else self.flow.request.session.get("django_htmx_flow", {})
-        return self._render_form(data)
+        content = self._render_form(data)
+        if status in (StateStatus.Set, StateStatus.Changed):
+            return {
+                self.target: SwapHTMLStateResponse(
+                    f'<div id="{self.target}" hx-swap-oob="innerHTML">{content}</div>',
+                ),
+            }
+        return {self.target: HTMLStateResponse(content)}
 
     @property
     def error_response(self) -> dict[str, StateResponse]:
         """Renders the form with incorrect data from the request."""
-        return self._render_form(self.flow.request.POST)
+        return {self.target: HTMLStateResponse(self._render_form(self.flow.request.POST))}
 
     def store_state(self):
         """Stores each form field's input value to the session."""
@@ -660,7 +668,11 @@ class BuildingTypeFlow(SidebarNavigationMixin, Flow):
             url="heat:dead_end_monument_protection",
         )
 
-        self.stop = StopState(self, lookup="building_type_done", next_botton_text="Speichern").transition(Next("end"))
+        self.stop = StopState(
+            self,
+            lookup="building_type_done",
+            next_botton_text="Speichern",
+        ).transition(Next("end"))
         self.end = EndState(self, url="heat:building_data")
 
 
@@ -682,7 +694,11 @@ class BuildingDataFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = StopState(self, lookup="building_data_done", next_botton_text="Speichern").transition(Next("end"))
+        self.stop = StopState(
+            self,
+            lookup="building_data_done",
+            next_botton_text="Speichern",
+        ).transition(Next("end"))
         self.end = EndState(self, url="heat:insulation")
 
 
@@ -703,7 +719,11 @@ class InsulationFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = StopState(self, lookup="insulation_done", next_botton_text="Speichern").transition(Next("end"))
+        self.stop = StopState(
+            self,
+            lookup="insulation_done",
+            next_botton_text="Speichern",
+        ).transition(Next("end"))
         self.end = EndState(self, url="heat:hotwater_heating")
 
 
@@ -796,7 +816,11 @@ class RoofFlow(SidebarNavigationMixin, Flow):
             form_class=forms.RoofInclinationForm,
         ).transition(Next("stop"))
 
-        self.stop = StopState(self, lookup="roof_done", next_botton_text="Speichern").transition(Next("end"))
+        self.stop = StopState(
+            self,
+            lookup="roof_done",
+            next_botton_text="Speichern",
+        ).transition(Next("end"))
         self.end = EndState(self, url="heat:heating")
 
 
@@ -842,7 +866,11 @@ class HeatingFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = StopState(self, lookup="heating_done", next_botton_text="Speichern").transition(Next("end"))
+        self.stop = StopState(
+            self,
+            lookup="heating_done",
+            next_botton_text="Speichern",
+        ).transition(Next("end"))
         self.end = EndState(self, url="heat:pv_system")
 
 
@@ -905,7 +933,11 @@ class PVSystemFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = StopState(self, lookup="v", next_botton_text="Speichern").transition(Next("end"))
+        self.stop = StopState(
+            self,
+            lookup="v",
+            next_botton_text="Speichern",
+        ).transition(Next("end"))
         self.end = EndState(self, url="heat:intro_renovation")
 
 
@@ -971,7 +1003,11 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = StopState(self, lookup="renovation_request_done", next_botton_text="Speichern").transition(
+        self.stop = StopState(
+            self,
+            lookup="renovation_request_done",
+            next_botton_text="Speichern",
+        ).transition(
             Next("end"),
         )
         self.end = EndState(self, url="heat:renovation_overview")
@@ -999,7 +1035,11 @@ class FinancialSupportFlow(SidebarNavigationMixin, Flow):
         ).transition(
             Next("stop"),
         )
-        self.stop = StopState(self, lookup="financial_support_done", next_botton_text="Speichern").transition(
+        self.stop = StopState(
+            self,
+            lookup="financial_support_done",
+            next_botton_text="Speichern",
+        ).transition(
             Next("end"),
         )
         self.end = EndState(self, url="heat:optimization_start")
