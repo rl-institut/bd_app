@@ -10,10 +10,10 @@
       </div>
       <div class="help"></div>
     </div>
-    <div id="flat_roof" hx-post="" hx-trigger="change" hx-include="this">{{ flat_roof.content | safe }}</div>
+    <div id="flat_roof" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this">{{ flat_roof.content | safe }}</div>
     <div class="step-question">
       <div class="step-container">
-        <div id="roof_orientation" hx-post="" hx-trigger="change" hx-include="this" class="main">{{ roof_orientation.content | safe }}</div>
+        <div id="roof_orientation" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this" class="main">{{ roof_orientation.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>
@@ -22,6 +22,7 @@
         <div id="roof_inclination_known"
              hx-post=""
              hx-trigger="change"
+             hx-swap="show:bottom"
              hx-include="this"
              class="main">{{ roof_inclination_known.content | safe }}</div>
         <div class="help"></div>
@@ -32,6 +33,7 @@
         <div id="roof_inclination"
           hx-post=""
           hx-trigger="keyup change delay:500ms"
+          hx-swap="show:bottom"
           hx-include="this"
           class="main">{{ roof_inclination.content | safe }}</div>
         <div class="help"></div>

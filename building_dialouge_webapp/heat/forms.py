@@ -390,7 +390,7 @@ class RenovationHeatPumpForm(ValidationForm):
 
 class RenovationRequestForm(ValidationForm):
     facade_renovation = forms.BooleanField(
-        label="Fassade dämmen & verputzen",
+        label="Fassade dämmen",
         required=False,
     )
     roof_renovation = forms.BooleanField(
@@ -400,8 +400,8 @@ class RenovationRequestForm(ValidationForm):
     roof_renovation_details = forms.ChoiceField(
         label="",
         choices=[
-            ("cover", "decken"),
-            ("expand", "ausbauen"),
+            ("cover", "Dach decken"),
+            ("expand", "Dach ausbauen"),
         ],
         widget=forms.RadioSelect,
         required=False,
@@ -418,6 +418,10 @@ class RenovationRequestForm(ValidationForm):
         label="Eingangstür erneuern",
         required=False,
     )
+    renovation_input_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
+
+    def clean_renovation_input_hidden(self):
+        return self.cleaned_data.get("renovation_input_hidden", "none")
 
     def clean(self):
         cleaned_data = super().clean()
