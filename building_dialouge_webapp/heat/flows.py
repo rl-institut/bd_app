@@ -128,17 +128,14 @@ class State:
             return StateStatus.Changed
         return StateStatus.Unchanged
 
-    @property
-    def response(self) -> dict[str, StateResponse]:
+    def response(self, *, swap=False) -> dict[str, StateResponse]:
         """Return response of current state."""
         return {self.target: StateResponse(self.target)}
 
-    @property
     def reset_response(self) -> dict[str, StateResponse]:
         """Return response of current state in case of reset."""
         return {self.target: StateResponse(self.target)}
 
-    @property
     def error_response(self) -> dict[str, StateResponse]:
         """Return response of current state."""
         return {self.target: StateResponse("Something went wrong.")}
@@ -150,22 +147,23 @@ class State:
         """Sets or updates the state using check_state()."""
         status = self.check_state()
         if status == StateStatus.New:
-            return self.response
+            return self.response()
         if status == StateStatus.Error:
-            following_states = self.error_response
+            following_states = self.error_response()
             following_states.update(self.next().reset())
             return following_states
         if status == StateStatus.Set:
+            self.store_state()
             # This line allows clearing of form errors after sending valid form and
             # assures rendering of forms which have only non-required fields
-            following_states = self.response
-            self.store_state()
+            following_states = self.response(swap=True)
             following_states.update(self.next().set(status))
         elif status == StateStatus.Unchanged:
             following_states = self.next().set(status)
         elif status == StateStatus.Changed:
             following_states = self.next().reset()
             self.store_state()
+            following_states.update(self.response(swap=True))
             following_states.update(self.next().set(status))
         else:
             error_msg = f"Unknown state status '{status}'."
@@ -173,7 +171,7 @@ class State:
 
         if self.flow.request.htmx:
             return following_states
-        following_states.update(self.response)
+        following_states.update(self.response())
         return following_states
 
     def reset(self) -> dict[str, StateResponse]:
@@ -188,7 +186,7 @@ class State:
             following_states = {}
         else:
             following_states = following_node.reset()
-        following_states.update(self.reset_response)
+        following_states.update(self.reset_response())
         return following_states
 
     @property
@@ -214,17 +212,15 @@ class EndState(State):
         self,
         previous_state: StateStatus = StateStatus.Unchanged,
     ) -> dict[str, StateResponse]:
-        return self.response
+        return self.response()
 
     def reset(self) -> dict[str, StateResponse]:
-        return self.reset_response
+        return self.reset_response()
 
-    @property
-    def response(self) -> dict[str, StateResponse]:
+    def response(self, *, swap=False) -> dict[str, StateResponse]:
         """Return response of current state."""
         return {self.target: RedirectStateResponse(self.url)}
 
-    @property
     def reset_response(self) -> dict[str, StateResponse]:
         """Return response of current state."""
         return {}
@@ -257,16 +253,15 @@ class TemplateState(State):
             context.update(self.extra_context)
         return context
 
-    @property
-    def response(self) -> dict[str, StateResponse]:
+    def response(self, *, swap=False) -> dict[str, StateResponse]:
         context = self.get_context_data()
+        response_format = SwapHTMLStateResponse if swap else HTMLStateResponse
         return {
-            self.target: HTMLStateResponse(
+            self.target: response_format(
                 get_template(self.template_name).render(context),
             ),
         }
 
-    @property
     def reset_response(self) -> dict[str, StateResponse]:
         """Return HTML including HTMX swap-oob in order to remove/reset HTML for current target."""
         if self.reset_template_name:
@@ -349,13 +344,12 @@ class FormState(TemplateState):
             request=self.flow.request,
         )
 
-    @property
-    def response(self) -> dict[str, StateResponse]:
+    def response(self, *, swap=False) -> dict[str, StateResponse]:
         """Renders the form with data from the session if available; otherwise, renders a blank form."""
         status = self.check_state()
         data = None if status == StateStatus.New else self.flow.request.session.get("django_htmx_flow", {})
         content = self._render_form(data)
-        if status in (StateStatus.Set, StateStatus.Changed):
+        if swap:
             return {
                 self.target: SwapHTMLStateResponse(
                     f'<div id="{self.target}" hx-swap-oob="innerHTML">{content}</div>',
@@ -363,7 +357,6 @@ class FormState(TemplateState):
             }
         return {self.target: HTMLStateResponse(content)}
 
-    @property
     def error_response(self) -> dict[str, StateResponse]:
         """Renders the form with incorrect data from the request."""
         return {self.target: HTMLStateResponse(self._render_form(self.flow.request.POST))}
@@ -436,48 +429,6 @@ class FormState(TemplateState):
             return form.cleaned_data
         error_msg = f"Invalid data in flow '{self.target}': {form.errors}."
         raise FlowError(error_msg)
-
-
-class FormInfoState(FormState):
-    def __init__(  # noqa: PLR0913
-        self,
-        flow: Flow,
-        target: str,
-        form_class: type[Form],
-        info_text: str | dict[str, str | tuple[str, str]],
-        template_name: str | None = None,
-        label: str | None = None,
-    ):
-        super().__init__(flow, target, form_class, template_name, label)
-        # info text is mapped as {target: (response text, reset text)}
-        if isinstance(info_text, str):
-            self.info_text = {"_info": (info_text, "")}
-        else:
-            self.info_text = {
-                target: (value, "") if isinstance(value, str) else value for target, value in info_text.items()
-            }
-
-    @property
-    def response(self) -> dict[str, StateResponse]:
-        form_response = {
-            target: SwapHTMLStateResponse(
-                f'<div id="{target}" hx-swap-oob="innerHTML">{text[0]}</div>',
-            )
-            for target, text in self.info_text.items()
-        }
-        form_response.update(**super().response)
-        return form_response
-
-    @property
-    def reset_response(self) -> dict[str, StateResponse]:
-        form_response = {
-            target: SwapHTMLStateResponse(
-                f'<div id="{target}" hx-swap-oob="innerHTML">{text[1]}</div>',
-            )
-            for target, text in self.info_text.items()
-        }
-        form_response.update(**super().reset_response)
-        return form_response
 
 
 class Transition:
@@ -994,11 +945,10 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
             Next("renovation_details"),
         )
 
-        self.renovation_details = FormInfoState(
+        self.renovation_details = FormState(
             self,
             target="renovation_details",
             form_class=forms.RenovationRequestForm,
-            info_text={"next_button_text": ("Speichern", "Weiter")},
         ).transition(
             Next("stop"),
         )
