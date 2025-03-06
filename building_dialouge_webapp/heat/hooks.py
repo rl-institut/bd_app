@@ -15,7 +15,7 @@ def read_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dic
     all_flows = [
         (name, flow())
         for name, flow in inspect.getmembers(flows, inspect.isclass)
-        if name.endswith("Flow") and name not in {"Flow", "ConsumptionInputFlow", "RenovationRequestFlow"}
+        if name.endswith("Flow") and name not in {"Flow", "RenovationRequestFlow"}
     ]
     flow_data = request.session.get("django_htmx_flow", {})
 
