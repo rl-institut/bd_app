@@ -82,8 +82,8 @@
         {% endif %}
         {% block main %}
           {% block sidebar %}
-            <div class="d-flex flex-row justify-content-between h-100">
-              <section class="sidebar border-end px-4 py-3 h-100">
+            <div class="d-flex flex-row justify-content-between" style="min-height:100%">
+              <section class="sidebar px-4 py-3">
                 <div>
                   <a class="btn btn-light" href="{% url 'heat:home' %}">
                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -101,14 +101,14 @@
                   <ul class="ps-0">
                     {% for category in index %}
                       <li class="sidebar-nav__category {{ category.index_state }}">
-                        <a href="{% url category.url %}">{{ category.category }}</a>
+                        <a href="{% url category.url %}"><span class="checkbox"></span>{{ category.category }}</a>
                       </li>
                       {% for step in category.steps %}
                         <li class="sidebar-nav__step {{ step.index_state }}">
                           {% if step.kwargs %}
-                            <a href="{% url step.url scenario=step.kwargs %}">{{ step.name }}</a>
+                            <a href="{% url step.url scenario=step.kwargs %}"><span class="checkbox"></span>{{ step.name }}</a>
                           {% else %}
-                            <a href="{% url step.url %}">{{ step.name }}</a>
+                            <a href="{% url step.url %}"><span class="checkbox"></span>{{ step.name }}</a>
                           {% endif %}
                         </li>
                       {% endfor %}
@@ -118,7 +118,6 @@
               </section>
               {% block content %}
                 <section class="position-relative h-100 flex-grow-1 pb-5">
-                  <div class="help-background"></div>
                   <div class="step-title">
                     <div class="step-container">
                       <div class="main">
@@ -248,7 +247,7 @@
       </main>
       <footer class="footer mt-auto">
         {% block footer %}
-          <div class="footer bg-white border-top">
+          <div class="footer footer--base bg-white border-top">
             <div class="container-fluid d-flex justify-content-end py-2 px-4">
               <ul>
                 <li class="ps-3">

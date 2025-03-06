@@ -223,7 +223,6 @@ use this base structure:
 
     {% block content %}
     <section class="position-relative h-100 flex-grow-1 pb-5">
-        <div class="help-background"></div>
         <div class="step-title">
             <div class="step-container">
                 <div class="main">

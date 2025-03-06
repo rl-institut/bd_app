@@ -25,8 +25,8 @@ document.addEventListener("htmx:beforeRequest", (event) => {
   }
 });
 
-// extra check for Checkboxe in RenovationRequest - RenovationDetailsForm
-document.addEventListener("htmx:beforeSend", function(event) {
+// extra check for Checkboxes in RenovationRequest - RenovationDetailsForm
+/* document.addEventListener("htmx:beforeSend", function(event) {
   let checkboxes = document.querySelectorAll('input[name="roof_renovation_details"]');
   let hiddenInput = document.querySelector('input[name="roof_renovation_details_hidden"]');
 
@@ -34,4 +34,4 @@ document.addEventListener("htmx:beforeSend", function(event) {
   if (!anyChecked) {
       hiddenInput.value = "none";
   }
-});
+}); */

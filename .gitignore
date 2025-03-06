@@ -155,7 +155,6 @@ typings/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
-!.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
 
@@ -328,6 +327,10 @@ dump.rdb
 
 ### Project template
 building_dialouge_webapp/media/
+building_dialouge_webapp/data/
+
+# scripts
+scripts/
 
 .pytest_cache/
 .ipython/
