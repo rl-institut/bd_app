@@ -13,6 +13,7 @@
     <div id="building_data"
       hx-post=""
       hx-trigger="keyup change delay:500ms, change"
+      hx-swap="show:bottom"
       hx-include="this">{{ building_data.content | safe }}</div>
   </section>
 {% endblock content %}
