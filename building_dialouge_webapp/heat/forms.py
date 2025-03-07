@@ -3,6 +3,7 @@ import json
 from django import forms
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
+from django.forms.widgets import RadioSelect
 
 
 class ValidationForm(forms.Form):
@@ -141,6 +142,22 @@ class InsulationForm(ValidationForm):
     )
 
 
+class EnergySourceSelect(RadioSelect):
+    template_name = "forms/energy_source.html"
+
+    INFOS = {
+        "gas": "Fossiler Brennstoff, der häufig zur effizienten und sauberen Wärmeerzeugung in "
+        "Heizkesseln verwendet wird.",
+        "oil": "Flüssiger fossiler Brennstoff, der in speziellen Kesseln verbrannt wird, "
+        "um Wärme für Gebäude zu erzeugen, und bietet eine hohe Energiedichte.",
+    }
+
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
+        option = super().create_option(name, value, label, selected, index, subindex, attrs)
+        option["info"] = self.INFOS.get(value, "")
+        return option
+
+
 class HeatingSourceForm(ValidationForm):
     energy_source = forms.ChoiceField(
         label="Technologie / Energieträger",
@@ -155,7 +172,7 @@ class HeatingSourceForm(ValidationForm):
             ("groundwater", "Grundwasser- oder Solewärmepumpe"),
             ("heating_rod", "Heizstab"),
         ],
-        widget=forms.RadioSelect,
+        widget=EnergySourceSelect(),
     )
 
 
