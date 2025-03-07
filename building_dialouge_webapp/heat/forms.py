@@ -61,10 +61,12 @@ class BuildingDataForm(ValidationForm):
     construction_year = forms.IntegerField(
         label="Baujahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+        template_name="forms/construction_year.html",
     )
     number_persons = forms.IntegerField(
         label="Anzahl Personen",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+        template_name="forms/number_persons.html",
     )
     number_flats = forms.IntegerField(
         label="Anzahl Wohneinheiten",
