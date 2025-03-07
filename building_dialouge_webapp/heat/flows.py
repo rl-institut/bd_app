@@ -149,6 +149,7 @@ class State:
         if status == StateStatus.New:
             return self.response()
         if status == StateStatus.Error:
+            self.remove_state()
             following_states = self.error_response()
             following_states.update(self.next().reset())
             return following_states
