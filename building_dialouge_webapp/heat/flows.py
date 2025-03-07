@@ -243,12 +243,11 @@ class TemplateState(State):
         self.template_name = template_name
         self.reset_template_name = reset_template_name
         self.reset_context = reset_context
+        self.context = context or {}
         super().__init__(flow, target, label, lookup)
-        if context:
-            self.extra_context.update(context)
 
     def get_context_data(self):
-        context = {}
+        context = self.context
         if self.extra_context is not None:
             context.update(self.extra_context)
         return context
@@ -499,8 +498,6 @@ class Switch(Transition):
 
 
 class Flow(TemplateView):
-    prefix: str | None = None
-
     def __init__(self, prefix: str | None = None):
         self.prefix = prefix
         self.request = None
@@ -955,7 +952,7 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
 
         self.stop = StopState(
             self,
-            lookup="renovation_request_done",
+            lookup=f"{prefix}-renovation_request_done",
             next_botton_text="Speichern",
         ).transition(
             Next("end"),
