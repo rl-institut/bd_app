@@ -2,17 +2,19 @@
 
 .btn {
   border-radius: 100px !important;
+  letter-spacing: 0.05rem;
 
   &.btn-primary {
-    background-color: $blue-600;
-    color: $color-white;
-    border: 1px solid $blue-600;
+    background-color: $green-400;
+    color: $body-color;
+    font-weight: $font-weight-bold;
+    border: 1px solid $green-400;
 
     &:hover,
     &:active {
-      background-color: $blue-800;
-      color: $color-white;
-      border: 1px solid $blue-800;
+      background-color: $green-500;
+      color: $body-color;
+      border: 1px solid $green-500;
     }
   }
 
@@ -30,15 +32,28 @@
   }
 
   &.btn-light {
-    background-color: $blue-050;
-    color: $blue-900;
-    border: 1px solid $blue-050;
+    background-color: $grey-050;
+    color: $grey-900;
+    border: 1px solid $grey-050;
 
     &:hover,
     &:active {
-      background-color: $blue-100;
-      color: $blue-800;
-      border: 1px solid $blue-100;
+      background-color: $grey-100;
+      color: $grey-800;
+      border: 1px solid $grey-100;
+    }
+  }
+
+  &.btn-green-light {
+    background-color: $green-050;
+    color: $green-900;
+    border: 1px solid $green-050;
+
+    &:hover,
+    &:active {
+      background-color: $green-100;
+      color: $green-800;
+      border: 1px solid $green-100;
     }
   }
 }

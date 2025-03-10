@@ -2,7 +2,6 @@
 
 {% block content %}
   <section class="position-relative h-100 flex-grow-1 pb-5">
-    <div class="help-background"></div>
     <div class="step-title">
       <div class="step-container">
         <div class="main">
@@ -14,6 +13,7 @@
     <div id="building_data"
       hx-post=""
       hx-trigger="keyup change delay:500ms, change"
+      hx-swap="show:bottom"
       hx-include="this">{{ building_data.content | safe }}</div>
   </section>
 {% endblock content %}

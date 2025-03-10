@@ -111,7 +111,7 @@ class State:
     def remove_state(self):
         """Removes the current state's value from the session if it exists."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        if self.target in session_data:
+        if self.lookup in session_data:
             del session_data[self.lookup]
             self.flow.request.session["django_htmx_flow"] = session_data
 
@@ -128,17 +128,14 @@ class State:
             return StateStatus.Changed
         return StateStatus.Unchanged
 
-    @property
-    def response(self) -> dict[str, StateResponse]:
+    def response(self, *, swap=False) -> dict[str, StateResponse]:
         """Return response of current state."""
         return {self.target: StateResponse(self.target)}
 
-    @property
     def reset_response(self) -> dict[str, StateResponse]:
         """Return response of current state in case of reset."""
         return {self.target: StateResponse(self.target)}
 
-    @property
     def error_response(self) -> dict[str, StateResponse]:
         """Return response of current state."""
         return {self.target: StateResponse("Something went wrong.")}
@@ -148,28 +145,34 @@ class State:
         previous_state: StateStatus = StateStatus.Unchanged,
     ) -> dict[str, StateResponse]:
         """Sets or updates the state using check_state()."""
-        status = StateStatus.New if previous_state == StateStatus.Set else self.check_state()
+        status = self.check_state()
         if status == StateStatus.New:
-            return self.response
+            return self.response()
         if status == StateStatus.Error:
-            return self.error_response
+            self.remove_state()
+            following_states = self.error_response()
+            following_states.update(self.next().reset())
+            return following_states
         if status == StateStatus.Set:
             self.store_state()
-            following_states = self.next().set(status)
+            # This line allows clearing of form errors after sending valid form and
+            # assures rendering of forms which have only non-required fields
+            following_states = self.response(swap=True)
+            following_states.update(self.next().set(status))
         elif status == StateStatus.Unchanged:
             following_states = self.next().set(status)
         elif status == StateStatus.Changed:
             following_states = self.next().reset()
             self.store_state()
-            next_state = self.next()
-            following_states.update(next_state.response)
+            following_states.update(self.response(swap=True))
+            following_states.update(self.next().set(status))
         else:
             error_msg = f"Unknown state status '{status}'."
             raise FlowError(error_msg)
 
         if self.flow.request.htmx:
             return following_states
-        following_states.update(self.response)
+        following_states.update(self.response())
         return following_states
 
     def reset(self) -> dict[str, StateResponse]:
@@ -184,7 +187,7 @@ class State:
             following_states = {}
         else:
             following_states = following_node.reset()
-        following_states.update(self.reset_response)
+        following_states.update(self.reset_response())
         return following_states
 
     @property
@@ -210,17 +213,15 @@ class EndState(State):
         self,
         previous_state: StateStatus = StateStatus.Unchanged,
     ) -> dict[str, StateResponse]:
-        return self.response
+        return self.response()
 
     def reset(self) -> dict[str, StateResponse]:
-        return self.reset_response
+        return self.reset_response()
 
-    @property
-    def response(self) -> dict[str, StateResponse]:
+    def response(self, *, swap=False) -> dict[str, StateResponse]:
         """Return response of current state."""
         return {self.target: RedirectStateResponse(self.url)}
 
-    @property
     def reset_response(self) -> dict[str, StateResponse]:
         """Return response of current state."""
         return {}
@@ -237,35 +238,64 @@ class TemplateState(State):
         lookup: str | None = None,
         label: str | None = None,
         context: dict[str, Any] | None = None,
+        reset_template_name: str | None = None,
+        reset_context: dict[str, Any] | None = None,
     ):
         self.template_name = template_name
+        self.reset_template_name = reset_template_name
+        self.reset_context = reset_context
+        self.context = context or {}
         super().__init__(flow, target, label, lookup)
-        if context:
-            self.extra_context.update(context)
 
     def get_context_data(self):
-        context = {}
+        context = self.context
         if self.extra_context is not None:
             context.update(self.extra_context)
         return context
 
-    @property
-    def response(self) -> dict[str, StateResponse]:
+    def response(self, *, swap=False) -> dict[str, StateResponse]:
         context = self.get_context_data()
+        response_format = SwapHTMLStateResponse if swap else HTMLStateResponse
         return {
-            self.target: HTMLStateResponse(
+            self.target: response_format(
                 get_template(self.template_name).render(context),
             ),
         }
 
-    @property
     def reset_response(self) -> dict[str, StateResponse]:
         """Return HTML including HTMX swap-oob in order to remove/reset HTML for current target."""
+        if self.reset_template_name:
+            return {
+                self.target: SwapHTMLStateResponse(
+                    f'<div id="{self.target}" hx-swap-oob="innerHTML">'
+                    f"{get_template(self.reset_template_name).render(self.reset_context)}"
+                    f"</div>",
+                ),
+            }
         return {
             self.target: SwapHTMLStateResponse(
                 f'<div id="{self.target}" hx-swap-oob="innerHTML"></div>',
             ),
         }
+
+
+class StopState(TemplateState):
+    def __init__(self, flow, lookup: str, next_botton_text: str = "Weiter"):
+        super().__init__(
+            flow=flow,
+            target="next_button",
+            template_name="partials/next_button.html",
+            context={
+                "hx_vals": f'{{"{lookup}": "True"}}',
+                "next_btn_text": next_botton_text,
+            },
+            reset_template_name="partials/next_button.html",
+            reset_context={
+                "next_disabled": True,
+                "next_btn_text": next_botton_text,
+            },
+            lookup=lookup,
+        )
 
 
 class FormState(TemplateState):
@@ -285,52 +315,57 @@ class FormState(TemplateState):
         self,
         flow: Flow,
         target: str,
-        form_class: type[Form],
+        form_class: type[forms.ValidationForm],
         template_name: str | None = None,
         label: str | None = None,
     ):
         super().__init__(flow, target, template_name, label)
         self.form_class = form_class
 
-    def _render_form(self, data):
+    def _init_form(self, data: dict[str, Any] | None = None) -> Form:
+        if "request" in self.form_class.__init__.__code__.co_varnames:
+            return self.form_class(
+                data,
+                prefix=self.flow.prefix,
+                request=self.flow.request,
+            )
+        return self.form_class(data, prefix=self.flow.prefix)
+
+    def _render_form(self, data) -> str:
         context = self.get_context_data()
         if self.template_name is None:
             csrf_token = csrf(self.flow.request)["csrf_token"]
-            rendered_form = (
-                f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">\n'
-                f"{self.form_class(data, prefix=self.flow.prefix).as_div()}"
-            )
-            return {self.target: HTMLStateResponse(rendered_form)}
-        context["form"] = self.form_class(data, prefix=self.flow.prefix)
-        return {
-            self.target: HTMLStateResponse(
-                get_template(self.template_name).render(
-                    context,
-                    request=self.flow.request,
-                ),
-            ),
-        }
+            form_instance = self._init_form(data)
+            return f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">\n {form_instance.as_div()}'
+        form_instance = self._init_form(data)
+        context["form"] = form_instance
+        return get_template(self.template_name).render(
+            context,
+            request=self.flow.request,
+        )
 
-    @property
-    def response(self) -> dict[str, StateResponse]:
+    def response(self, *, swap=False) -> dict[str, StateResponse]:
         """Renders the form with data from the session if available; otherwise, renders a blank form."""
         status = self.check_state()
         data = None if status == StateStatus.New else self.flow.request.session.get("django_htmx_flow", {})
-        return self._render_form(data)
+        content = self._render_form(data)
+        if swap:
+            return {
+                self.target: SwapHTMLStateResponse(
+                    f'<div id="{self.target}" hx-swap-oob="innerHTML">{content}</div>',
+                ),
+            }
+        return {self.target: HTMLStateResponse(content)}
 
-    @property
     def error_response(self) -> dict[str, StateResponse]:
         """Renders the form with incorrect data from the request."""
-        return self._render_form(self.flow.request.POST)
+        return {self.target: HTMLStateResponse(self._render_form(self.flow.request.POST))}
 
     def store_state(self):
         """Stores each form field's input value to the session."""
         if self.flow.request.method == "POST":
             session_data = self.flow.request.session.get("django_htmx_flow", {})
-            form_instance = self.form_class(
-                self.flow.request.POST,
-                prefix=self.flow.prefix,
-            )
+            form_instance = self._init_form(self.flow.request.POST)
             if form_instance.is_valid():
                 form_data = form_instance.cleaned_data
                 for field_name, value in form_data.items():
@@ -342,7 +377,7 @@ class FormState(TemplateState):
     def remove_state(self):
         """Removes each form field's stored value from the session."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        form_instance = self.form_class(prefix=self.flow.prefix)
+        form_instance = self._init_form()
         for field in form_instance.fields:
             key = field if self.flow.prefix is None else f"{self.flow.prefix}-{field}"
             if key in session_data:
@@ -357,7 +392,7 @@ class FormState(TemplateState):
             field_name if self.flow.prefix is None else f"{self.flow.prefix}-{field_name}"
             for field_name, field in self.form_class.base_fields.items()
         ]
-        form = self.form_class(self.flow.request.POST, prefix=self.flow.prefix)
+        form = self._init_form(self.flow.request.POST)
 
         if not form.is_valid():
             if any(field in required_fields for field in self.flow.request.POST):
@@ -389,53 +424,11 @@ class FormState(TemplateState):
     def data(self) -> dict[str, Any]:
         """Return cleaned data of the form with data from the session."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        form = self.form_class(session_data, prefix=self.flow.prefix)
+        form = self._init_form(session_data)
         if form.is_valid():
             return form.cleaned_data
         error_msg = f"Invalid data in flow '{self.target}': {form.errors}."
         raise FlowError(error_msg)
-
-
-class FormInfoState(FormState):
-    def __init__(  # noqa: PLR0913
-        self,
-        flow: Flow,
-        target: str,
-        form_class: type[Form],
-        info_text: str | dict[str, str | tuple[str, str]],
-        template_name: str | None = None,
-        label: str | None = None,
-    ):
-        super().__init__(flow, target, form_class, template_name, label)
-        # info text is mapped as {target: (response text, reset text)}
-        if isinstance(info_text, str):
-            self.info_text = {"_info": (info_text, "")}
-        else:
-            self.info_text = {
-                target: (value, "") if isinstance(value, str) else value for target, value in info_text.items()
-            }
-
-    @property
-    def response(self) -> dict[str, StateResponse]:
-        form_response = {
-            target: SwapHTMLStateResponse(
-                f'<div id="{target}" hx-swap-oob="innerHTML">{text[0]}</div>',
-            )
-            for target, text in self.info_text.items()
-        }
-        form_response.update(**super().response)
-        return form_response
-
-    @property
-    def reset_response(self) -> dict[str, StateResponse]:
-        form_response = {
-            target: SwapHTMLStateResponse(
-                f'<div id="{target}" hx-swap-oob="innerHTML">{text[1]}</div>',
-            )
-            for target, text in self.info_text.items()
-        }
-        form_response.update(**super().reset_response)
-        return form_response
 
 
 class Transition:
@@ -506,8 +499,6 @@ class Switch(Transition):
 
 
 class Flow(TemplateView):
-    prefix: str | None = None
-
     def __init__(self, prefix: str | None = None):
         self.prefix = prefix
         self.request = None
@@ -597,7 +588,7 @@ class Flow(TemplateView):
 class BuildingTypeFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/building_type.html"
     extra_context = {
-        "back_url": "heat:intro_consumption",
+        "back_url": "heat:intro_inventory",
         "next_disabled": True,
     }
 
@@ -626,16 +617,11 @@ class BuildingTypeFlow(SidebarNavigationMixin, Flow):
             url="heat:dead_end_monument_protection",
         )
 
-        self.stop = TemplateState(
+        self.stop = StopState(
             self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"building_type_done": "True"}',
-            },
             lookup="building_type_done",
+            next_botton_text="Speichern",
         ).transition(Next("end"))
-
         self.end = EndState(self, url="heat:building_data")
 
 
@@ -657,21 +643,16 @@ class BuildingDataFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = TemplateState(
+        self.stop = StopState(
             self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"building_data_done": "True"}',
-            },
             lookup="building_data_done",
+            next_botton_text="Speichern",
         ).transition(Next("end"))
+        self.end = EndState(self, url="heat:insulation")
 
-        self.end = EndState(self, url="heat:cellar")
 
-
-class CellarFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/cellar.html"
+class InsulationFlow(SidebarNavigationMixin, Flow):
+    template_name = "pages/insulation.html"
     extra_context = {
         "back_url": "heat:building_data",
         "next_disabled": True,
@@ -681,53 +662,24 @@ class CellarFlow(SidebarNavigationMixin, Flow):
         super().__init__()
         self.start = FormState(
             self,
-            target="cellar_heating",
-            form_class=forms.CellarHeatingForm,
-        ).transition(
-            Switch("cellar_heating").case("no_cellar", "stop").default("cellar_details"),
-        )
-
-        self.cellar_details = FormState(
-            self,
-            target="cellar_details",
-            form_class=forms.CellarDetailsForm,
-        ).transition(
-            Next("cellar_insulation_exists"),
-        )
-
-        self.cellar_insulation_exists = FormState(
-            self,
-            target="cellar_insulation_exists",
-            form_class=forms.CellarInsulationForm,
-        ).transition(
-            Switch("cellar_ceiling_insulation_exists").case("doesnt_exist", "stop").default("cellar_insulation_year"),
-        )
-
-        self.cellar_insulation_year = FormState(
-            self,
-            target="cellar_insulation_year",
-            form_class=forms.CellarInsulationYearForm,
+            target="insulation",
+            form_class=forms.InsulationForm,
         ).transition(
             Next("stop"),
         )
 
-        self.stop = TemplateState(
+        self.stop = StopState(
             self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"cellar_done": "True"}',
-            },
-            lookup="cellar_done",
+            lookup="insulation_done",
+            next_botton_text="Speichern",
         ).transition(Next("end"))
-
         self.end = EndState(self, url="heat:hotwater_heating")
 
 
 class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/hotwater_heating.html"
     extra_context = {
-        "back_url": "heat:cellar",
+        "back_url": "heat:insulation",
         "next_disabled": True,
     }
 
@@ -735,37 +687,9 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
         super().__init__()
         self.start = FormState(
             self,
-            target="heating_system",
-            form_class=forms.HeatingSystemForm,
-            template_name="partials/heating_system_help.html",
-        ).transition(
-            Switch("heating_system").case("central_heating", "heating_source").default("dead_end_heating"),
-        )
-
-        self.dead_end_heating = EndState(self, url="heat:dead_end_heating")
-
-        self.heating_source = FormState(
-            self,
             target="heating_source",
             form_class=forms.HeatingSourceForm,
             template_name="partials/heating_source_help.html",
-        ).transition(
-            Next("hotwater_heating_system"),
-        )
-
-        self.hotwater_heating_system = FormState(
-            self,
-            target="hotwater_heating_system",
-            form_class=forms.HotwaterHeatingSystemForm,
-            template_name="partials/hotwater_heating_system_help.html",
-        ).transition(
-            Switch("hotwater_heating_system").case("boiler", "solar_thermal_exists").default("hotwater_measured"),
-        )
-
-        self.hotwater_measured = FormState(
-            self,
-            target="hotwater_measured",
-            form_class=forms.HotwaterHeatingMeasuredForm,
         ).transition(
             Next("solar_thermal_exists"),
         )
@@ -775,89 +699,37 @@ class HotwaterHeatingFlow(SidebarNavigationMixin, Flow):
             target="solar_thermal_exists",
             form_class=forms.HotwaterHeatingSolarExistsForm,
         ).transition(
-            Switch("solar_thermal_exists").case("doesnt_exist", "stop").default("solar_thermal_energy_known"),
+            Switch("solar_thermal_exists").case("doesnt_exist", "stop").default("solar_thermal_area_known"),
         )
 
-        self.solar_thermal_energy_known = FormState(
+        self.solar_thermal_area_known = FormState(
             self,
-            target="solar_thermal_energy_known",
+            target="solar_thermal_area_known",
             form_class=forms.HotwaterHeatingSolarKnownForm,
-            template_name="partials/solar_thermal_energy_known_help.html",
         ).transition(
-            Switch("solar_thermal_energy_known")
-            .case("known", "solar_thermal_energy")
-            .default("solar_thermal_details"),
+            Switch("solar_thermal_area_known").case("known", "solar_thermal_area").default("stop"),
         )
 
-        self.solar_thermal_energy = FormState(
+        self.solar_thermal_area = FormState(
             self,
-            target="solar_thermal_energy",
-            form_class=forms.HotwaterHeatingSolarEnergyForm,
+            target="solar_thermal_area",
+            form_class=forms.HotwaterHeatingSolarAreaForm,
         ).transition(
             Next("stop"),
         )
 
-        self.solar_thermal_details = FormState(
+        self.stop = StopState(
             self,
-            target="solar_thermal_details",
-            form_class=forms.HotwaterHeatingSolarDetailsForm,
-        ).transition(
-            Next("stop"),
-        )
-
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"hotwater_heating_done": "True"}',
-            },
             lookup="hotwater_heating_done",
+            next_botton_text="Speichern",
         ).transition(Next("end"))
-
-        self.end = EndState(self, url="heat:consumption_input")
-
-
-class ConsumptionInputFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/consumption_input.html"
-    extra_context = {
-        "back_url": "heat:hotwater_heating",
-        "next_disabled": True,
-    }
-
-    def __init__(self, prefix=None):
-        super().__init__(prefix=prefix)
-        self.start = FormInfoState(
-            self,
-            target="consumption_input",
-            form_class=forms.ConsumptionInputForm,
-            info_text={"next_button": ("Speichern", "Weiter")},
-        ).transition(
-            Next("stop"),
-        )
-
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"consumption_input_done": "True"}',
-            },
-            lookup="consumption_input_done",
-        ).transition(Next("end"))
-
-        self.end = EndState(self, url="heat:consumption_overview")
-
-        def dispatch(self, request, *args, **kwargs):
-            # Retrieve the prefix dynamically
-            self.prefix = kwargs.get("scenario", self.prefix)
-            return super().dispatch(request, *args, **kwargs)
+        self.end = EndState(self, url="heat:roof")
 
 
 class RoofFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/roof.html"
     extra_context = {
-        "back_url": "heat:home",
+        "back_url": "heat:hotwater_heating",
         "next_disabled": True,
     }
 
@@ -865,65 +737,44 @@ class RoofFlow(SidebarNavigationMixin, Flow):
         super().__init__()
         self.start = FormState(
             self,
-            target="roof_type",
+            target="flat_roof",
             form_class=forms.RoofTypeForm,
             template_name="partials/roof_help.html",
         ).transition(
-            Switch("roof_type").case("flachdach", "roof_insulation").default("roof_details"),
+            Switch("flat_roof").case("exists", "stop").default("roof_orientation"),
         )
-
-        self.roof_details = FormState(
+        self.roof_orientation = FormState(
             self,
-            target="roof_details",
-            form_class=forms.RoofDetailsForm,
+            target="roof_orientation",
+            form_class=forms.RoofOrientationForm,
         ).transition(
-            Next("roof_usage_now"),
+            Next("roof_inclination_known"),
         )
 
-        self.roof_usage_now = FormInfoState(
+        self.roof_inclination_known = FormState(
             self,
-            target="roof_usage_now",
-            form_class=forms.RoofUsageNowForm,
-            info_text="Dachnutzung",
+            target="roof_inclination_known",
+            form_class=forms.RoofInclinationKnownForm,
         ).transition(
-            Switch("roof_usage_now").case("all_used", "roof_insulation").default("roof_usage_future"),
+            Switch("roof_inclination_known").case("known", "roof_inclination").default("stop"),
         )
 
-        self.roof_usage_future = FormState(
+        self.roof_inclination = FormState(
             self,
-            target="roof_usage_future",
-            form_class=forms.RoofUsageFutureForm,
-        ).transition(Next("roof_insulation"))
+            target="roof_inclination",
+            form_class=forms.RoofInclinationForm,
+        ).transition(Next("stop"))
 
-        self.roof_insulation = FormState(
+        self.stop = StopState(
             self,
-            target="roof_insulation",
-            form_class=forms.RoofInsulationForm,
-        ).transition(Switch("roof_insulation_exists").case("yes", "roof_insulation_year").default("stop"))
-
-        self.roof_insulation_year = FormState(
-            self,
-            target="roof_insulation_year",
-            form_class=forms.RoofInsulationYearForm,
-        ).transition(
-            Next("stop"),
-        )
-
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"roof_done": "True"}',
-            },
             lookup="roof_done",
+            next_botton_text="Speichern",
         ).transition(Next("end"))
+        self.end = EndState(self, url="heat:heating")
 
-        self.end = EndState(self, url="heat:window")
 
-
-class WindowFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/window.html"
+class HeatingFlow(SidebarNavigationMixin, Flow):
+    template_name = "pages/heating.html"
     extra_context = {
         "back_url": "heat:roof",
         "next_disabled": True,
@@ -933,134 +784,42 @@ class WindowFlow(SidebarNavigationMixin, Flow):
         super().__init__()
         self.start = FormState(
             self,
-            target="window_area",
-            form_class=forms.WindowAreaForm,
+            target="heating_year",
+            form_class=forms.HeatingYearForm,
         ).transition(
-            Next("window_details"),
+            Next("heating_storage_exists"),
         )
 
-        self.window_details = FormState(
+        self.heating_storage_exists = FormState(
             self,
-            target="window_details",
-            form_class=forms.WindowDetailsForm,
-            template_name="partials/window_details_help.html",
+            target="heating_storage_exists",
+            form_class=forms.HeatingStorageExistsForm,
         ).transition(
-            Next("stop"),
+            Switch("heating_storage_exists").case("exists", "heating_storage_capacity_known").default("stop"),
         )
 
-        self.stop = TemplateState(
+        self.heating_storage_capacity_known = FormState(
             self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"window_done": "True"}',
-            },
-            lookup="window_done",
-        ).transition(Next("end"))
-
-        self.end = EndState(self, url="heat:facade")
-
-
-class FacadeFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/facade.html"
-    extra_context = {
-        "back_url": "heat:window",
-        "next_disabled": True,
-    }
-
-    def __init__(self):
-        super().__init__()
-        self.start = FormState(
-            self,
-            target="facade_details",
-            form_class=forms.FacadeForm,
+            target="heating_storage_capacity_known",
+            form_class=forms.HeatingStorageKnownForm,
         ).transition(
-            Next("facade_insulation_exists"),
+            Switch("heating_storage_capacity_known").case("known", "heating_storage_capacity").default("stop"),
         )
 
-        self.facade_insulation_exists = FormState(
+        self.heating_storage_capacity = FormState(
             self,
-            target="facade_insulation_exists",
-            form_class=forms.FacadeInsulationForm,
-            template_name="partials/facade_insulation_help.html",
-        ).transition(
-            Switch("facade_insulation_exists").case("exists", "facade_insulation_year").default("stop"),
-        )
-
-        self.facade_insulation_year = FormState(
-            self,
-            target="facade_insulation_year",
-            form_class=forms.FacadeInsulationYearForm,
-        ).transition(
-            Next("stop"),
-        )
-
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"facade_done": "True"}',
-            },
-            lookup="facade_done",
-        ).transition(Next("end"))
-
-        self.end = EndState(self, url="heat:heating")
-
-
-class HeatingFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/heating.html"
-    extra_context = {
-        "back_url": "heat:facade",
-        "next_disabled": True,
-    }
-
-    def __init__(self):
-        super().__init__()
-        self.start = FormState(
-            self,
-            target="heating",
-            form_class=forms.HeatingForm,
-        ).transition(
-            Next("heating_hydraulic"),
-        )
-
-        self.heating_hydraulic = FormState(
-            self,
-            target="heating_hydraulic",
-            form_class=forms.HeatingHydraulicForm,
-            template_name="partials/heating_hydraulic_help.html",
-        ).transition(
-            Next("heating_details"),
-        )
-
-        self.heating_details = FormState(
-            self,
-            target="heating_details",
-            form_class=forms.HeatingDetailsForm,
-        ).transition(
-            Next("heating_storage"),
-        )
-
-        self.heating_storage = FormState(
-            self,
-            target="heating_storage",
-            form_class=forms.HeatingStorageForm,
+            target="heating_storage_capacity",
+            form_class=forms.HeatingStorageCapacityForm,
             template_name="partials/heating_storage_help.html",
         ).transition(
             Next("stop"),
         )
 
-        self.stop = TemplateState(
+        self.stop = StopState(
             self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"heating_done": "True"}',
-            },
             lookup="heating_done",
+            next_botton_text="Speichern",
         ).transition(Next("end"))
-
         self.end = EndState(self, url="heat:pv_system")
 
 
@@ -1078,91 +837,63 @@ class PVSystemFlow(SidebarNavigationMixin, Flow):
             target="pv_system",
             form_class=forms.PVSystemForm,
         ).transition(
-            Switch("pv_exists").case("doesnt_exist", "pv_system_planned").default("pv_system_details"),
+            Switch("pv_exists").case("doesnt_exist", "stop").default("pv_capacity_known"),
         )
 
-        self.pv_system_planned = FormState(
+        self.pv_capacity_known = FormState(
             self,
-            target="pv_system_planned",
-            form_class=forms.PVSystemPlannedForm,
+            target="pv_capacity_known",
+            form_class=forms.PVSystemCapacityKnownForm,
         ).transition(
-            Next("stop"),
+            Switch("pv_capacity_known").case("known", "pv_capacity").default("pv_system_battery_exists"),
         )
 
-        self.pv_system_details = FormState(
+        self.pv_capacity = FormState(
             self,
-            target="pv_system_details",
-            form_class=forms.PVSystemDetailsForm,
-            template_name="partials/pv_system_details_help.html",
+            target="pv_capacity",
+            form_class=forms.PVSystemCapacityForm,
+            template_name="partials/pv_system_capacity_help.html",
         ).transition(
-            Next("pv_system_battery"),
+            Next("pv_system_battery_exists"),
+        )
+
+        self.pv_system_battery_exists = FormState(
+            self,
+            target="pv_system_battery_exists",
+            form_class=forms.PVSystemBatteryExistsForm,
+        ).transition(
+            Switch("battery_exists").case("exists", "pv_battery_capacity_known").default("stop"),
+        )
+
+        self.pv_battery_capacity_known = FormState(
+            self,
+            target="pv_battery_capacity_known",
+            form_class=forms.PVSystemBatteryCapacityKnownForm,
+        ).transition(
+            Switch("battery_capacity_known").case("known", "pv_system_battery").default("stop"),
         )
 
         self.pv_system_battery = FormState(
             self,
             target="pv_system_battery",
-            form_class=forms.PVSystemBatteryForm,
+            form_class=forms.PVSystemBatteryCapacityForm,
             template_name="partials/pv_system_battery_help.html",
         ).transition(
             Next("stop"),
         )
 
-        self.stop = TemplateState(
+        self.stop = StopState(
             self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"pv_system_done": "True"}',
-            },
-            lookup="pv_system_done",
+            lookup="v",
+            next_botton_text="Speichern",
         ).transition(Next("end"))
-
-        self.end = EndState(self, url="heat:ventilation_system")
-
-
-class VentilationSystemFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/ventilation_system.html"
-    extra_context = {
-        "back_url": "heat:pv_system",
-        "next_disabled": True,
-    }
-
-    def __init__(self):
-        super().__init__()
-        self.start = FormState(
-            self,
-            target="ventilation_system_exists",
-            form_class=forms.VentilationSystemForm,
-            template_name="partials/ventilation_system_help.html",
-        ).transition(
-            Switch("ventilation_system_exists").case("doesnt_exist", "stop").default("ventilation_system_year"),
-        )
-
-        self.ventilation_system_year = FormState(
-            self,
-            target="ventilation_system_year",
-            form_class=forms.VentilationSystemYearForm,
-        ).transition(
-            Next("stop"),
-        )
-
-        self.stop = TemplateState(
-            self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"ventilation_system_done": "True"}',
-            },
-            lookup="ventilation_system_done",
-        ).transition(Next("end"))
-
         self.end = EndState(self, url="heat:intro_renovation")
 
 
 class RenovationRequestFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/renovation_request.html"
     extra_context = {
-        "back_url": "heat:intro_renovation",
+        "back_url": "heat:renovation_overview",
         "next_disabled": True,
     }
 
@@ -1212,25 +943,21 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
             Next("renovation_details"),
         )
 
-        self.renovation_details = FormInfoState(
+        self.renovation_details = FormState(
             self,
             target="renovation_details",
             form_class=forms.RenovationRequestForm,
-            info_text={"next_button_text": ("Speichern", "Weiter")},
         ).transition(
             Next("stop"),
         )
 
-        self.stop = TemplateState(
+        self.stop = StopState(
             self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"renovation_request_done": "True"}',
-            },
-            lookup="renovation_request_done",
-        ).transition(Next("end"))
-
+            lookup=f"{prefix}-renovation_request_done",
+            next_botton_text="Speichern",
+        ).transition(
+            Next("end"),
+        )
         self.end = EndState(self, url="heat:renovation_overview")
 
     def dispatch(self, request, *args, **kwargs):
@@ -1239,12 +966,11 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
         return super().dispatch(request, *args, **kwargs)
 
 
-class FinancialSupporFlow(SidebarNavigationMixin, Flow):
+class FinancialSupportFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/financial_support.html"
     extra_context = {
-        "back_url": "heat:renovation_request",
-        "next_disabled": True,
-        "back_kwargs": "scenario1",
+        "back_url": "heat:renovation_overview",
+        "next_disabled": False,
     }
 
     def __init__(self):
@@ -1257,13 +983,11 @@ class FinancialSupporFlow(SidebarNavigationMixin, Flow):
         ).transition(
             Next("stop"),
         )
-        self.stop = TemplateState(
+        self.stop = StopState(
             self,
-            target="next_button",
-            template_name="partials/next_button.html",
-            context={
-                "hx_vals": '{"financial_support_done": "True"}',
-            },
             lookup="financial_support_done",
-        ).transition(Next("end"))
-        self.end = EndState(self, url="heat:results")
+            next_botton_text="Speichern",
+        ).transition(
+            Next("end"),
+        )
+        self.end = EndState(self, url="heat:optimization_start")
