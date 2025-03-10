@@ -3,6 +3,7 @@ import json
 from django import forms
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
+from django.forms.widgets import RadioSelect
 
 
 class ValidationForm(forms.Form):
@@ -138,6 +139,35 @@ class InsulationForm(ValidationForm):
         required=False,
     )
 
+class EnergySourceSelect(RadioSelect):
+    template_name = "forms/energy_source.html"
+
+    INFOS = {
+        "gas": "Fossiler Brennstoff, der häufig zur effizienten und sauberen Wärmeerzeugung in "
+        "Heizkesseln verwendet wird.",
+        "oil": "Flüssiger fossiler Brennstoff, der in speziellen Kesseln verbrannt wird, "
+        "um Wärme für Gebäude zu erzeugen, und bietet eine hohe Energiedichte.",
+        "district_heating": "Wird durch ein zentrales Heizkraftwerk erzeugt und über isolierte "
+        "Rohrleitungen direkt zu Gebäuden transportiert, was effiziente und umweltfreundliche "
+        "Beheizung ermöglicht.",
+        "liquid_gas": "Ein unter Druck verflüssigtes Gasgemisch, das in Tanks gespeichert wird "
+        "und eine flexible Heizlösung für Gebiete ohne Erdgasanschluss bietet.",
+        "wood_pellets": "Verdichtete Holzabfälle, die als umweltfreundlicher Brennstoff für "
+        "Pelletöfen und -kessel genutzt werden, um Wärme zu erzeugen.",
+        "geothermal_pump": "Sie nutzt die konstante Erdwärme unter der Oberfläche, um Gebäude "
+        "effizient und umweltfreundlich zu heizen und zu kühlen.",
+        "air_heat_pump": "Sie entzieht der Außenluft Wärme, um Gebäude zu beheizen, und sind eine "
+        "effiziente Heizoption bei milden Klimabedingungen.",
+        "groundwater": "Nutzt die Wärmeenergie aus Grundwasser oder einem Solekreislauf, um "
+        "besonders effizient Wärme zu erzeugen.",
+        "heating_rod": "Elektrisches Heizelement, das direkt in Wasserboilern oder Heizkörpern "
+        "eingesetzt wird, um Wasser schnell zu erhitzen oder zusätzliche Wärme zu liefern."
+    }
+
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
+        option = super().create_option(name, value, label, selected, index, subindex, attrs)
+        option["info"] = self.INFOS.get(value, "")
+        return option
 
 class HeatingSourceForm(ValidationForm):
     energy_source = forms.ChoiceField(
@@ -153,7 +183,7 @@ class HeatingSourceForm(ValidationForm):
             ("groundwater", "Grundwasser- oder Solewärmepumpe"),
             ("heating_rod", "Heizstab"),
         ],
-        widget=forms.RadioSelect,
+        widget=EnergySourceSelect(),
     )
 
 

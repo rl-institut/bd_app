@@ -23,6 +23,7 @@
 fieldset legend {
   font-size: $font-size-md;
   color: $grey-500;
+  text-transform: uppercase;
 }
 
 .step-question {
@@ -30,16 +31,12 @@ fieldset legend {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-bottom: 1rem;
+    margin-top: 0.5rem;
   }
 
   div:has(> fieldset) {
     margin-top: 1rem;
     margin-bottom: 1rem;
-  }
-
-  div fieldset div:has(> label) {
-    margin-bottom: 0.5rem;
   }
 
   label {
