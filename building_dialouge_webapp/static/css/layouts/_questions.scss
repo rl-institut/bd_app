@@ -145,6 +145,8 @@ main .step-title {
     font-size: $font-size-sm;
     color: $grey-500;
     padding: 1rem;
+    margin-top: 1rem;
+    border-radius: $border-radius;
   }
 }
 
@@ -215,5 +217,13 @@ main .step-question {
     @media screen and (min-width: $breakpoint-2xl) {
       max-width: 1200px;
     }
+  }
+}
+
+ul.errorlist {
+  margin-bottom: 0;
+
+  li {
+    color: $error-color;
   }
 }

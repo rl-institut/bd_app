@@ -20,10 +20,14 @@
   }
 }
 
+div:has(> .form-control) {
+  margin-bottom: 1.5rem;
+}
+
 fieldset legend {
   font-size: $font-size-md;
-  color: $grey-500;
-  text-transform: uppercase;
+  color: $body-color;
+  font-weight: 500;
 }
 
 .step-question {
@@ -34,18 +38,20 @@ fieldset legend {
     margin-top: 0.5rem;
   }
 
-  div:has(> fieldset) {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-  }
-
   label {
     display: flex;
     align-items: center;
     font-size: $font-size-md;
-    color: $grey-800;
+    color: $body-color;
+    font-weight: 500;
     cursor: pointer;
     margin-right: 0.5rem;
+
+    &:has(> input[type="checkbox"]),
+    &:has(> input[type="radio"]) {
+      color: $grey-800;
+      font-weight: 400;
+    }
   }
 
   input[type="checkbox"],
@@ -137,5 +143,9 @@ fieldset legend {
 
   .number-group {
     margin-top: 10px;
+  }
+
+  div:has(> fieldset) + div:has(> fieldset) {
+    margin-top: 1.5rem;
   }
 }
