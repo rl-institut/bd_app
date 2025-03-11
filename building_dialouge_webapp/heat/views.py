@@ -264,8 +264,20 @@ def all_flows_finished(request):
         if name.endswith("Flow") and name not in {"Flow", "RenovationRequestFlow"}
     ]
 
-    # since there is no minimum for how many renovation scenarios are needed I omited testing that
+    # Check if at least one instance of RenovationRequestFlow is finished
+    scenario_max = heat_settings.SCENARIO_MAX
+    scenario_id = 1
+    has_finished_renovation = False
+    while scenario_id <= scenario_max:
+        flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+        if flow.finished(request):
+            has_finished_renovation = True
+            break
+        scenario_id += 1
+
     not_finished = [name for name, flow in all_flows if not flow.finished(request)]
+    if not has_finished_renovation:
+        not_finished.append("Renovation Request")
     return (True, []) if not not_finished else (False, not_finished)
 
 
