@@ -24,7 +24,17 @@
     background-size: contain;
     background-repeat: no-repeat;
   }
-  
+
+  &.complete a {
+    color: $green-400;
+    pointer-events: auto;
+  }
+
+  &.incomplete a {
+    color: $blue-400;
+    pointer-events: auto;
+  }
+
   &.active a {
     color: $secondary-color;
     font-weight: $font-weight-bold;
