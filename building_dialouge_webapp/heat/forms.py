@@ -65,24 +65,11 @@ class BuildingTypeForm(ValidationForm):
         widget=HouseTypeSelect(),
     )
 
-class BuildingTypeSelect(RadioSelect):
-    template_name = "forms/energy_source.html"
-
-    INFOS = {
-        "yes": "Um festzustellen, ob ein Haus unter Denkmalschutz steht, können Sie die "
-        "folgenden Schritte unternehmen."
-    }
-
-    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
-        option = super().create_option(name, value, label, selected, index, subindex, attrs)
-        option["info"] = self.INFOS.get(value, "")
-        return option
-
 class BuildingTypeProtectionForm(ValidationForm):
     monument_protection = forms.ChoiceField(
         label="Denkmalschutz?",
         choices=[("no", "Nein"), ("yes", "Ja")],
-        widget=BuildingTypeSelect(),
+        widget=forms.RadioSelect,
     )
 
 
@@ -98,6 +85,7 @@ class BuildingDataForm(ValidationForm):
     number_flats = forms.IntegerField(
         label="Anzahl Wohneinheiten",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+        template_name="forms/number_flats.html",
     )
     living_space = forms.IntegerField(
         label="Wohnfläche",
@@ -325,6 +313,7 @@ class HeatingStorageCapacityForm(ValidationForm):
     heating_storage_capacity = forms.IntegerField(
         label="Wärmespeicher Fassungsvermögen in l",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+        template_name="forms/heating-storage-capacity.html",
     )
 
 
@@ -348,6 +337,7 @@ class PVSystemCapacityForm(ValidationForm):
     pv_capacity = forms.IntegerField(
         label="Nennleistung in kWp",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+        template_name="forms/pv-capacity.html",
     )
 
 
@@ -371,6 +361,7 @@ class PVSystemBatteryCapacityForm(ValidationForm):
     battery_capacity = forms.IntegerField(
         label="Speicherkapazität in kWh",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+        template_name="forms/pv-battery-capacity.html",
     )
 
 
