@@ -54,6 +54,7 @@ fieldset legend {
     -webkit-appearance: none;
     -moz-appearance: none;
     width: 16px;
+    min-width: 16px;
     height: 16px;
     border: 1px solid $grey-500;
     border-radius: 0.25rem;
