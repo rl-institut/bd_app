@@ -38,6 +38,22 @@ class ValidationForm(forms.Form):
             session_data = self.flow.request.session.get("django_htmx_flow", {})
         """
 
+class HouseTypeSelect(RadioSelect):
+    template_name = "forms/energy_source.html"
+
+    INFOS = {
+        "single_family": "Ein Einfamilienhaus ist ein Wohngebäude, das für die Nutzung durch "
+        "eine einzige Familie bzw. einen einzigen Haushalt vorgesehen ist. Ein Haus gilt auch "
+        "dann als Einfamilienhaus, wenn es zwei Wohneinheiten enthält und eine davon eine "
+        "Einliegerwohnung ist, also von untergeordnete Bedeutung ist (Beispiel: Ferienwohnung).",
+        "apartment_building": "Wohngebäude, das mehrere separate Wohneinheiten enthält, die von "
+        "verschiedenen Familien oder Haushalten bewohnt werden."
+    }
+
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
+        option = super().create_option(name, value, label, selected, index, subindex, attrs)
+        option["info"] = self.INFOS.get(value, "")
+        return option
 
 class BuildingTypeForm(ValidationForm):
     building_type = forms.ChoiceField(
@@ -46,15 +62,27 @@ class BuildingTypeForm(ValidationForm):
             ("single_family", "Einfamlienhaus"),
             ("apartment_building", "Mehrfamilienhaus"),
         ],
-        widget=forms.RadioSelect,
+        widget=HouseTypeSelect(),
     )
 
+class BuildingTypeSelect(RadioSelect):
+    template_name = "forms/energy_source.html"
+
+    INFOS = {
+        "yes": "Um festzustellen, ob ein Haus unter Denkmalschutz steht, können Sie die "
+        "folgenden Schritte unternehmen."
+    }
+
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
+        option = super().create_option(name, value, label, selected, index, subindex, attrs)
+        option["info"] = self.INFOS.get(value, "")
+        return option
 
 class BuildingTypeProtectionForm(ValidationForm):
     monument_protection = forms.ChoiceField(
         label="Denkmalschutz?",
         choices=[("no", "Nein"), ("yes", "Ja")],
-        widget=forms.RadioSelect,
+        widget=BuildingTypeSelect(),
     )
 
 
@@ -212,6 +240,19 @@ class HotwaterHeatingSolarAreaForm(ValidationForm):
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
+class RoofTypeSelect(RadioSelect):
+    template_name = "forms/energy_source.html"
+
+    INFOS = {
+        "exists": "Ein Flachdach ist ein Dach mit einer sehr geringen Neigung, das fast "
+        "waagerecht verläuft."
+    }
+
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
+        option = super().create_option(name, value, label, selected, index, subindex, attrs)
+        option["info"] = self.INFOS.get(value, "")
+        return option
+
 
 class RoofTypeForm(forms.Form):
     flat_roof = forms.ChoiceField(
@@ -220,7 +261,7 @@ class RoofTypeForm(forms.Form):
             ("exists", "Ja"),
             ("doesnt_exist", "Nein"),
         ],
-        widget=forms.RadioSelect,
+        widget=RoofTypeSelect(),
     )
 
 
