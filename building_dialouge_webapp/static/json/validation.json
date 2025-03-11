@@ -1,0 +1,62 @@
+{
+  "BuildingDataForm": {
+    "construction_year": {
+      "min_value": 1900,
+      "max_value": 2023
+    }
+  },
+  "InsulationForm": {
+    "roof_insulation_year": {
+      "min_value": 1900,
+      "max_value": 2023
+    },
+    "upper_storey_ceiling_insulation_year": {
+      "min_value": 1900,
+      "max_value": 2023
+    },
+    "cellar_insulation_year": {
+        "min_value": 1900,
+        "max_value": 2023
+      },
+      "facade_insulation_year": {
+        "min_value": 1900,
+        "max_value": 2023
+      }
+  },
+  "HotwaterHeatingSolarAreaForm": {
+    "solar_thermal_area": {
+        "min_value": 1,
+        "max_value": 1000
+      }
+  },
+  "RoofInclinationForm": {
+    "roof_inclination": {
+      "min_value": 5,
+      "max_value": 85
+    }
+  },
+  "HeatingYearForm": {
+    "heating_system_construction_year": {
+      "min_value": 1900,
+      "max_value": 2023
+    }
+  },
+  "HeatingStorageCapacityForm": {
+    "heating_storage_capacity": {
+        "min_value": 50,
+        "max_value": 10000
+      }
+  },
+  "PVSystemCapacityForm": {
+    "pv_capacity": {
+      "min_value": 1,
+      "max_value": 100
+    }
+  },
+  "PVSystemBatteryCapacityForm": {
+    "battery_capacity": {
+      "min_value": 1,
+      "max_value": 100
+    }
+  }
+}

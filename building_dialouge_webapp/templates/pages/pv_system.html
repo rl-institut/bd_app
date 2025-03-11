@@ -2,7 +2,6 @@
 
 {% block content %}
   <section class="position-relative h-100 flex-grow-1 pb-5">
-    <div class="help-background"></div>
     <div class="step-title">
       <div class="step-container">
         <div class="main">
@@ -16,6 +15,7 @@
         <div id="pv_system"
              hx-post=""
              hx-trigger="change"
+             hx-swap="show:bottom"
              hx-include="this"
              class="main">{{ pv_system.content | safe }}</div>
         <div class="help"></div>
@@ -23,21 +23,46 @@
     </div>
     <div class="step-question">
       <div class="step-container">
-        <div id="pv_system_planned"
+        <div id="pv_capacity_known"
           hx-post=""
           hx-trigger="change"
+          hx-swap="show:bottom"
           hx-include="this"
-          class="main">{{ pv_system_planned.content | safe }}</div>
+          class="main">{{ pv_capacity_known.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>
-    <div id="pv_system_details"
+    <div id="pv_capacity"
       hx-post=""
       hx-trigger="keyup change delay:500ms"
-      hx-include="this">{{ pv_system_details.content | safe }}</div>
+      hx-swap="show:bottom"
+      hx-include="this">{{ pv_capacity.content | safe }}</div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="pv_system_battery_exists"
+          hx-post=""
+          hx-trigger="change"
+          hx-swap="show:bottom"
+          hx-include="this"
+          class="main">{{ pv_system_battery_exists.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="pv_battery_capacity_known"
+          hx-post=""
+          hx-trigger="change"
+          hx-swap="show:bottom"
+          hx-include="this"
+          class="main">{{ pv_battery_capacity_known.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
     <div id="pv_system_battery"
       hx-post=""
-      hx-trigger="keyup change delay:500ms, change"
+      hx-trigger="keyup change delay:500ms"
+      hx-swap="show:bottom"
       hx-include="this">{{ pv_system_battery.content | safe }}</div>
   </section>
 {% endblock content %}

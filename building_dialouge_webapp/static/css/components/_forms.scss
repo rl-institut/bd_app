@@ -22,4 +22,122 @@
 
 fieldset legend {
   font-size: $font-size-md;
+  color: $grey-500;
+}
+
+.step-question {
+  div:has(> label) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  div:has(> fieldset) {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  div fieldset div:has(> label) {
+    margin-bottom: 0.5rem;
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    font-size: $font-size-md;
+    color: $grey-800;
+    cursor: pointer;
+    margin-right: 0.5rem;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid $grey-500;
+    border-radius: 0.25rem;
+    margin-right: 0.5rem;
+    cursor: pointer;
+    position: relative;
+    outline: none;
+    background: $color-white;
+    display: inline-block;
+  }
+
+  input[type="radio"]:checked {
+    background: $green-500;
+    border: none;
+  }
+
+  input[type="checkbox"]:checked {
+    background: $green-500;
+    border-color: $green-500;
+  }
+
+  input[type="checkbox"]:checked::before {
+    content: "✔";
+    display: block;
+    font-size: 12px;
+    color: $color-white;
+    text-align: center;
+    line-height: 16px;
+  }
+
+  input[type="radio"] {
+    border-radius: 50%;
+  }
+
+  input[type="radio"]:checked::before {
+    content: "";
+    display: block;
+    width: 0.5rem;
+    height: 0.5rem;
+    background: $color-white;
+    border-radius: 50%;
+    margin: 0.25rem;
+    position: relative;
+  }
+
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: $font-size-md;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    margin-top: 0.25rem;
+    outline: none;
+    box-sizing: border-box;
+    background: $color-white;
+    color: $grey-700;
+    appearance: none;
+    position: relative;
+  }
+
+  input[type="number"]:focus,
+  select:focus {
+    border-color: $green-500;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+  }
+
+  select {
+    background-image: linear-gradient(45deg, transparent 50%, $grey-500 50%), 
+                      linear-gradient(135deg, $grey-500 50%, transparent 50%);
+    background-position: calc(100% - 1rem) 50%, calc(100% - 0.75rem) 50%; /* Center the arrow vertically */
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 1.5rem; /* Space for the arrow */
+  }
+
+  select::-ms-expand {
+    display: none; /* Hide the dropdown arrow for IE */
+  }
+
+  .number-group {
+    margin-top: 10px;
+  }
 }

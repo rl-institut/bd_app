@@ -14,7 +14,11 @@ class SidebarNavigationMixin:
                 category["index_state"] = ""
 
             for step in category["steps"]:
-                if step["object"] == type(self):
+                if (
+                    isinstance(step["object"], list)
+                    and any(isinstance(self, obj) for obj in step["object"])
+                    or step["object"] == type(self)
+                ):
                     step["index_state"] = "active"
                     active_step_found = True
                 elif not active_step_found:
@@ -31,73 +35,43 @@ class SidebarNavigationMixin:
 
         return [
             {
-                "category": "1. Verbrauchsanalyse",
-                "object": views.IntroConsumption,
-                "url": "heat:intro_consumption",
+                "category": "1. Bestandsanalyse",
+                "object": views.IntroInventory,
+                "url": "heat:intro_inventory",
                 "steps": [
                     {"name": "Gebäudeart", "object": flows.BuildingTypeFlow, "url": "heat:building_type"},
                     {"name": "Angaben zu Gebäude", "object": flows.BuildingDataFlow, "url": "heat:building_data"},
-                    {"name": "Keller", "object": flows.CellarFlow, "url": "heat:cellar"},
+                    {"name": "Dämmungsmaßnahmen", "object": flows.InsulationFlow, "url": "heat:insulation"},
                     {
                         "name": "Heizung & Warmwasser",
                         "object": flows.HotwaterHeatingFlow,
                         "url": "heat:hotwater_heating",
                     },
-                    {
-                        "name": "Verbrauchseingabe",
-                        "object": flows.ConsumptionInputFlow,
-                        "url": "heat:consumption_input",
-                    },
-                    {
-                        "name": "Verbrauchsanalyse Übersicht",
-                        "object": views.ConsumptionOverview,
-                        "url": "heat:consumption_overview",
-                    },
-                    {
-                        "name": "Verbrauchsergebnis",
-                        "object": views.ConsumptionResult,
-                        "url": "heat:consumption_result",
-                    },
-                ],
-            },
-            {
-                "category": "2. Bestandsanalyse",
-                "object": views.IntroInventory,
-                "url": "heat:intro_inventory",
-                "steps": [
                     {"name": "Dach", "object": flows.RoofFlow, "url": "heat:roof"},
-                    {"name": "Fenster", "object": flows.WindowFlow, "url": "heat:window"},
-                    {"name": "Fassade", "object": flows.FacadeFlow, "url": "heat:facade"},
                     {"name": "Heizung", "object": flows.HeatingFlow, "url": "heat:heating"},
                     {"name": "PV-Anlage", "object": flows.PVSystemFlow, "url": "heat:pv_system"},
-                    {
-                        "name": "Lüftungsanlage",
-                        "object": flows.VentilationSystemFlow,
-                        "url": "heat:ventilation_system",
-                    },
                 ],
             },
             {
-                "category": "3. Sanierung",
+                "category": "2. Sanierung",
                 "object": views.IntroRenovation,
                 "url": "heat:intro_renovation",
                 "steps": [
                     {
-                        "name": "Sanierungswunsch",
-                        "object": flows.RenovationRequestFlow,
-                        "url": "heat:renovation_request",
-                        "kwargs": "scenario1",
-                    },
-                    {
                         "name": "Sanierungsübersicht",
-                        "object": views.RenovationOverview,
+                        "object": [views.RenovationOverview, flows.RenovationRequestFlow],
                         "url": "heat:renovation_overview",
                     },
-                    {"name": "Förderung", "object": flows.FinancialSupporFlow, "url": "heat:financial_support"},
+                    {"name": "Förderung", "object": flows.FinancialSupportFlow, "url": "heat:financial_support"},
+                    {
+                        "name": "Optimierung starten",
+                        "object": views.OptimizationStart,
+                        "url": "heat:optimization_start",
+                    },
                 ],
             },
             {
-                "category": "4. Ergebnisse",
+                "category": "3. Ergebnisse",
                 "object": views.Results,
                 "url": "heat:results",
                 "steps": [
