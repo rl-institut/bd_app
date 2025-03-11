@@ -277,7 +277,7 @@ def all_flows_finished(request):
 
     not_finished = [name for name, flow in all_flows if not flow.finished(request)]
     if not has_finished_renovation:
-        not_finished.append("Renovation Request")
+        not_finished.append("RenovationRequestFlow")
     return (True, []) if not not_finished else (False, not_finished)
 
 
@@ -290,7 +290,13 @@ class OptimizationStart(SidebarNavigationMixin, TemplateView):
         context["next_url"] = "heat:results"
         all_finished, not_finished = all_flows_finished(self.request)
         context["all_flows_finished"] = all_finished
-        context["not_finished_flows"] = not_finished
+        context["not_finished_flows"] = [
+            step["name"]
+            for category in context["index"]
+            for step in category["steps"]
+            if (isinstance(step["object"], list) and any(obj.__name__ in not_finished for obj in step["object"]))
+            or (not isinstance(step["object"], list) and step["object"].__name__ in not_finished)
+        ]
         return context
 
 
