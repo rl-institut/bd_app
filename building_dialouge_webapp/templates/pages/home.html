@@ -21,7 +21,7 @@
                 <li>Ich gehöre zu einer <b>Wohnungseigentümer*innengemeinschaft</b> oder <b>Wohnungsverwaltung</b></li>
               </ul>
             </div>
-            <button onclick="checkSession();" class="btn btn-primary">Starten</button>
+          <button id="open-start-modal-btn" class="btn btn-primary">Starten</button>
           </div>
         </div>
         <div class="lp-header__box">
@@ -52,11 +52,26 @@
     </div>
   </section>
 
-<div id="ask_user" hidden>
-  Sie haben bereits Daten eingegeben. Möchten Sie an dem bestehenden Szenario weiterarbeiten oder ein Neues erstellen?
-  <button type="button" class="btn btn-secondary" onclick="redirect();">An bestehendem Szenario weiterbearbeiten</button>
-  <button type="button" class="btn btn-secondary" onClick="resetSession();">Neues Szenario erstellen</button>
-</div>
+  <div class="modal modal-lg fade" id="ask_user" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Bestehendes Szenario</h5>
+          <button type="button" class="btn-close" id="close-btn-header" aria-label="schließen"></button>
+        </div>
+        <div class="modal-body">
+          Sie haben bereits Daten eingegeben. Möchten Sie an dem bestehenden Szenario weiterarbeiten oder ein Neues erstellen?
+          <div class="flex mt-4">
+            <button type="button" id="continue-btn" class="btn btn-primary me-2">An bestehendem Szenario weiterbearbeiten</button>
+            <button type="button" id="reset-btn" class="btn btn-light">Neues Szenario erstellen</button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="close-btn" class="btn btn-secondary">Schließen</button>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock main %}
 
 {% block inline_javascript %}
