@@ -1,4 +1,5 @@
 .lp-header {
+  position: relative;
   background-color: #DCFCE7;
   padding-top: 4rem;
   padding-bottom: 4rem;
@@ -11,9 +12,25 @@
     background-position: right;
   }
 
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 0;
+  }
+
+  & > * {
+      position: relative;
+      z-index: 1;
+  }
+
   @media screen and (min-width: $breakpoint-xl) {
     border-left: 3rem solid #FFFFFF;
-    border-right: 3rem solid #DCFCE7;
+    border-right: 3rem solid rgba(220, 252, 231, 0.5);
   }
 
   @media screen and (min-width: $breakpoint-2xl) {
@@ -120,6 +137,49 @@
 
     a {
       width: 100%;
+    }
+  }
+}
+
+.lp-content {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+
+  @media screen and (min-width: $breakpoint-2xl) {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+
+  @media screen and (min-width: $breakpoint-3xl) {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+
+  &__section {
+    max-width: 50rem;
+    padding-bottom: 1rem;
+  }
+
+  h2 {
+    font-size: $font-size-lg;
+    font-family: 'Montserrat', 'SourceSans3', 'Roboto', sans-serif;
+    font-weight: 700;
+    color: $body-color;
+    padding-bottom: 1rem;
+
+    @media screen and (min-width: $breakpoint-xl) {
+      font-size: $font-size-xl;
+    }
+  }
+
+  p {
+    font-size: $font-size-md;
+    color: $grey-500;
+    margin-bottom: 1.5rem;
+
+    @media screen and (min-width: $breakpoint-lg) {
+      font-size: $font-size-lg;
+      margin-bottom: 2rem;
     }
   }
 }

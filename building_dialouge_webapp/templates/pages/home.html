@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block main %}
-  <div class="lp-header">
+  <section class="lp-header">
     <div class="lp-header__container container">
       <h1>Planungshilfe für Sanierungsprojekte</h1>
       <p class="lp-header__intro">
@@ -14,9 +14,9 @@
           <div class="h-100 d-flex flex-column align-items-left justify-content-between">
             <div class="lp-header__box-list">
               <ul>
-                <li>Ich bin Hauseigentümer*in</li>
-                <li>Ich bin Vermieter*in</li>
-                <li>Ich gehöre zu einer Wohnungseigentümer*innengemeinschaft oder Wohnungsverwaltung</li>
+                <li>Ich bin <b>Hauseigentümer*in</b></li>
+                <li>Ich bin <b>Vermieter*in</b></li>
+                <li>Ich gehöre zu einer <b>Wohnungseigentümer*innengemeinschaft</b> oder <b>Wohnungsverwaltung</b></li>
               </ul>
             </div>
             <a href="{% url 'heat:intro_inventory' %}" class="btn btn-primary">Starten</a>
@@ -25,19 +25,28 @@
         <div class="lp-header__box">
           <div class="h-100 d-flex flex-column align-items-left justify-content-between">
             <div class="lp-header__box-list">
-              <ul>
-                <li>Ich bin Mieter*in</li>
-              </ul>
+              <span>Ich bin <b>Mieter*in</b></span>
             </div>
             <a href="{% url 'heat:dead_end_tenant' %}" class="btn btn-light">Infos sehen</a>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="lp-content">
+  </section>
+  <section class="lp-content">
     <div class="container">
-      Test
+      <div class="lp-content__section">
+        <h2>Gebäudesanierung</h2>
+        <p>Die Sanierung von Gebäuden spielt eine zentrale Rolle bei der Verbesserung der Energieeffizienz und der Senkung von Betriebskosten. Durch gezielte Modernisierungsmaßnahmen wie die Dämmung von Außenwänden, den Austausch von Fenstern oder die Erneuerung der Heizungsanlage lassen sich langfristig erhebliche Einsparungen erzielen. Gleichzeitig tragen Sanierungen zur Werterhaltung und -steigerung der Immobilie bei. Darüber hinaus verbessern sie den Wohnkomfort und leisten einen wichtigen Beitrag zum Klimaschutz. Mit einer gut geplanten Sanierung profitieren sowohl Eigentümerinnen als auch Mieterinnen von geringeren Energiekosten und einem angenehmeren Wohnklima.</p>
+      </div>
+      <div class="lp-content__section">
+        <h2>Wofür ist dieser Rechner?</h2>
+        <p>Dieses Tool wurde entwickelt, um Hauseigentümerinnen, Wohnungseigentümergemeinschaften und Wohnungsverwaltungen bei der Planung und Bewertung von Sanierungsmaßnahmen zu unterstützen. Der Rechner analysiert die Kosten-Nutzen-Effizienz verschiedener Modernisierungsprojekte und zeigt auf, welche Maßnahmen besonders sinnvoll sind. Durch die Eingabe relevanter Gebäudedaten und geplanter Sanierungsschritte erhalten Nutzerinnen eine fundierte Einschätzung der Einsparpotenziale und der langfristigen Wirtschaftlichkeit der Maßnahmen.</p>
+      </div>
+      <div class="lp-content__section">
+        <h2>Projektinfos & Hintergrund</h2>
+        <p>Dieses Tool wurde im Rahmen eines Projekts zur Förderung energieeffizienter Sanierungen entwickelt. Ziel war es, Hauseigentümerinnen und Verwalterinnen eine praktische Entscheidungshilfe an die Hand zu geben, um Sanierungsvorhaben besser zu planen. Die Berechnungsgrundlagen basieren auf aktuellen energetischen Standards sowie wissenschaftlich fundierten Bewertungsmethoden. Das Projekt wurde in Zusammenarbeit mit Expert*innen aus den Bereichen Bauwesen, Energieberatung und Klimaschutz konzipiert und orientiert sich an den aktuellen gesetzlichen Vorgaben und Förderprogrammen. So bietet das Tool eine verlässliche Grundlage für fundierte Entscheidungen in der Gebäudesanierung.</p>
+      </div>
     </div>
-  </div>
+  </section>
 {% endblock main %}
