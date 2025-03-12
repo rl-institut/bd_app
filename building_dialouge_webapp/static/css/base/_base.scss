@@ -1,18 +1,15 @@
 @import '../base/variables';
 
 body {
-  font-family: Roboto, system-ui, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'SourceSans3', 'Roboto', sans-serif, system-ui;
   color: $body-color;
+  display: flex;
+  flex-direction: column;
 }
 
 html, body {
   height: 100%;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-body {
   display: flex;
   flex-direction: column;
 }
