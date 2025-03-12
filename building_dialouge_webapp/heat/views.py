@@ -1,23 +1,29 @@
 import inspect
 from urllib.parse import urlparse
 
-import heat.settings as heat_settings
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
 from django.views.generic import TemplateView
 from django_htmx.http import HttpResponseClientRedirect
 
-from building_dialouge_webapp.heat.flows import RenovationRequestFlow
-
 from . import flows
 from . import forms
+from . import settings as heat_settings
 from . import tables
 from .navigation import SidebarNavigationMixin
 
 
 class LandingPage(TemplateView):
     template_name = "pages/home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        flow_data_present = False
+        if self.request.session.get("django_htmx_flow"):
+            flow_data_present = True
+        context["session"] = {"flow_data_present": flow_data_present, "flow_url": reverse("heat:intro_inventory")}
+        return context
 
 
 class DeadEndTenant(TemplateView):
@@ -42,6 +48,12 @@ class DeadEndMonumentProtection(TemplateView):
     }
 
 
+def reset_session(request):
+    """Resets session to clean user inputs."""
+    request.session.clear()
+    return JsonResponse({"success": True})
+
+
 def delete_flow(request):
     """
     Delete the selected year or scenario.
@@ -59,7 +71,7 @@ def delete_flow(request):
     flow_id = request.POST.get("delete_flow")
     if flow_id.startswith("scenario"):
         prefix = flow_id[:9]
-        flow = RenovationRequestFlow(prefix=prefix)
+        flow = flows.RenovationRequestFlow(prefix=prefix)
         flow.reset(request)
 
         if len(url_path) == 1:
@@ -138,7 +150,7 @@ def renovation_scenario(request, scenario=None):
         return HttpResponseRedirect(
             reverse("heat:renovation_request", kwargs={"scenario": scenario}),
         )
-    flow = RenovationRequestFlow(prefix=scenario)
+    flow = flows.RenovationRequestFlow(prefix=scenario)
     flow.extra_context.update({"scenario_boxes": get_all_scenario_data(request)})
     return flow.dispatch(request)
 
@@ -148,7 +160,7 @@ def get_new_scenario(request):
     scenario_max = heat_settings.SCENARIO_MAX
     scenario_id = 1
     while scenario_id <= scenario_max:
-        flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+        flow = flows.RenovationRequestFlow(prefix=f"scenario{scenario_id}")
         if not flow.finished(request):
             break
         scenario_id += 1
@@ -161,7 +173,7 @@ def get_all_scenario_data(request):
     scenario_data_list = []
     scenario_id = 1
     while scenario_id <= scenario_max:
-        flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+        flow = flows.RenovationRequestFlow(prefix=f"scenario{scenario_id}")
         if not flow.finished(request):
             scenario_id += 1
             continue
@@ -208,7 +220,7 @@ def get_renovation_choices(scenario_data) -> list:
 
 def get_user_friendly_data(scenario_data, form_classes: list) -> list:
     """
-    Instantiate the Forms for RenovationRequestFlow and get all checked / chosen
+    Instantiate the Forms for flows.RenovationRequestFlow and get all checked / chosen
     labels for easier readability.
     """
     choices = []
@@ -261,7 +273,7 @@ def all_flows_finished(request):
     all_flows = [
         (name, flow())
         for name, flow in inspect.getmembers(flows, inspect.isclass)
-        if name.endswith("Flow") and name not in {"Flow", "RenovationRequestFlow"}
+        if name.endswith("Flow") and name not in {"Flow", "flows.RenovationRequestFlow"}
     ]
 
     # since there is no minimum for how many renovation scenarios are needed I omited testing that

@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block main %}
   <section class="lp-header">
     <div class="lp-header__container container">
@@ -19,7 +21,7 @@
                 <li>Ich gehöre zu einer <b>Wohnungseigentümer*innengemeinschaft</b> oder <b>Wohnungsverwaltung</b></li>
               </ul>
             </div>
-            <a href="{% url 'heat:intro_inventory' %}" class="btn btn-primary">Starten</a>
+            <button onclick="checkSession();" class="btn btn-primary">Starten</button>
           </div>
         </div>
         <div class="lp-header__box">
@@ -49,4 +51,18 @@
       </div>
     </div>
   </section>
+
+<div id="ask_user" hidden>
+  Sie haben bereits Daten eingegeben. Möchten Sie an dem bestehenden Szenario weiterarbeiten oder ein Neues erstellen?
+  <button type="button" class="btn btn-secondary" onclick="redirect();">An bestehendem Szenario weiterbearbeiten</button>
+  <button type="button" class="btn btn-secondary" onClick="resetSession();">Neues Szenario erstellen</button>
+</div>
 {% endblock main %}
+
+{% block inline_javascript %}
+  {{ session | json_script:"session" }}
+{% endblock inline_javascript %}
+
+{% block javascript %}
+  <script type="text/javascript" src="{% static 'js/home.js' %}"></script>
+{% endblock javascript %}
