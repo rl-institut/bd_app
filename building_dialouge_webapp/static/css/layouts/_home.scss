@@ -1,0 +1,86 @@
+.lp-header {
+  background-color: #DCFCE7;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+
+  @media screen and (min-width: $breakpoint-lg) {
+    background-color: #FFFFFF;
+    background-image: url("../images/illustrations/bd_lp_header.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: right;
+  }
+
+  @media screen and (min-width: $breakpoint-xl) {
+    border-left: 3rem solid #FFFFFF;
+    border-right: 3rem solid #DCFCE7;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  @media screen and (min-width: $breakpoint-2xl) {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+
+  @media screen and (min-width: $breakpoint-3xl) {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $body-color;
+    padding-bottom: 2rem;
+  }
+
+  &__intro {
+    font-size: $font-size-lg;
+    color: $grey-500;
+    max-width: 28rem;
+
+    @media screen and (min-width: $breakpoint-2xl) {
+      max-width: 36rem;
+    }
+
+    @media screen and (min-width: $breakpoint-2xl) {
+      max-width: 40rem;
+    }
+
+    @media screen and (min-width: $breakpoint-3xl) {
+      max-width: 44rem;
+    }
+  }
+
+  &__boxes {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4rem;
+  }
+
+  &__box {
+    background-color: $color-white;
+    padding: 2rem;
+    border-radius: $border-radius;
+    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.1);
+    width: 33.33%;
+    height: auto;
+
+    &--main {
+      width: 66.66%;
+      margin-right: 2rem;
+    }
+
+    & > div {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    a {
+      width: 100%;
+    }
+  }
+}
