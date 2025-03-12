@@ -1,7 +1,7 @@
 .lp-header {
   background-color: #DCFCE7;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
 
   @media screen and (min-width: $breakpoint-lg) {
     background-color: #FFFFFF;
@@ -14,8 +14,6 @@
   @media screen and (min-width: $breakpoint-xl) {
     border-left: 3rem solid #FFFFFF;
     border-right: 3rem solid #DCFCE7;
-    padding-top: 3rem;
-    padding-bottom: 3rem;
   }
 
   @media screen and (min-width: $breakpoint-2xl) {
@@ -29,16 +27,26 @@
   }
 
   h1 {
-    font-size: 2.5rem;
+    font-size: $font-size-2xl;
     font-weight: 700;
     color: $body-color;
-    padding-bottom: 2rem;
+    padding-bottom: 1rem;
+
+    @media screen and (min-width: $breakpoint-lg) {
+      font-size: 2.5rem;
+      padding-bottom: 2rem;
+    }
   }
 
   &__intro {
-    font-size: $font-size-lg;
-    color: $grey-500;
+    font-size: $font-size-md;
+    color: $body-color;
     max-width: 28rem;
+
+    @media screen and (min-width: $breakpoint-lg) {
+      font-size: $font-size-lg;
+      color: $grey-500;
+    }
 
     @media screen and (min-width: $breakpoint-2xl) {
       max-width: 36rem;
@@ -55,21 +63,37 @@
 
   &__boxes {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     margin-top: 4rem;
+
+    @media screen and (min-width: $breakpoint-md) {
+      flex-direction: row;
+    }
   }
 
   &__box {
     background-color: $color-white;
-    padding: 2rem;
+    padding: 1.5rem;
     border-radius: $border-radius;
     box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.1);
-    width: 33.33%;
+    width: 100%;
     height: auto;
+    margin-bottom: 1rem;
+
+    @media screen and (min-width: $breakpoint-md) {
+      width: 33.33%;
+      padding: 2rem;
+      margin-bottom: 0;
+    }
 
     &--main {
-      width: 66.66%;
+      width: 100%;
       margin-right: 2rem;
+
+      @media screen and (min-width: $breakpoint-md) {
+        width: 66.66%;
+      }
     }
 
     & > div {
@@ -77,6 +101,16 @@
       flex-direction: column;
       align-items: flex-start;
       justify-content: space-between;
+    }
+
+    &-list {
+      margin-bottom: 1.5rem;
+      color: $body-color;
+      font-size: $font-size-sm;
+
+      @media screen and (min-width: $breakpoint-md) {
+        font-size: $font-size-md;
+      }
     }
 
     a {
