@@ -111,7 +111,7 @@ class State:
     def remove_state(self):
         """Removes the current state's value from the session if it exists."""
         session_data = self.flow.request.session.get("django_htmx_flow", {})
-        if self.target in session_data:
+        if self.lookup in session_data:
             del session_data[self.lookup]
             self.flow.request.session["django_htmx_flow"] = session_data
 
@@ -128,17 +128,14 @@ class State:
             return StateStatus.Changed
         return StateStatus.Unchanged
 
-    @property
-    def response(self) -> dict[str, StateResponse]:
+    def response(self, *, swap=False) -> dict[str, StateResponse]:
         """Return response of current state."""
         return {self.target: StateResponse(self.target)}
 
-    @property
     def reset_response(self) -> dict[str, StateResponse]:
         """Return response of current state in case of reset."""
         return {self.target: StateResponse(self.target)}
 
-    @property
     def error_response(self) -> dict[str, StateResponse]:
         """Return response of current state."""
         return {self.target: StateResponse("Something went wrong.")}
@@ -148,28 +145,34 @@ class State:
         previous_state: StateStatus = StateStatus.Unchanged,
     ) -> dict[str, StateResponse]:
         """Sets or updates the state using check_state()."""
-        status = StateStatus.New if previous_state == StateStatus.Set else self.check_state()
+        status = self.check_state()
         if status == StateStatus.New:
-            return self.response
+            return self.response()
         if status == StateStatus.Error:
-            return self.error_response
+            self.remove_state()
+            following_states = self.error_response()
+            following_states.update(self.next().reset())
+            return following_states
         if status == StateStatus.Set:
             self.store_state()
-            following_states = self.next().set(status)
+            # This line allows clearing of form errors after sending valid form and
+            # assures rendering of forms which have only non-required fields
+            following_states = self.response(swap=True)
+            following_states.update(self.next().set(status))
         elif status == StateStatus.Unchanged:
             following_states = self.next().set(status)
         elif status == StateStatus.Changed:
             following_states = self.next().reset()
             self.store_state()
-            next_state = self.next()
-            following_states.update(next_state.response)
+            following_states.update(self.response(swap=True))
+            following_states.update(self.next().set(status))
         else:
             error_msg = f"Unknown state status '{status}'."
             raise FlowError(error_msg)
 
         if self.flow.request.htmx:
             return following_states
-        following_states.update(self.response)
+        following_states.update(self.response())
         return following_states
 
     def reset(self) -> dict[str, StateResponse]:
@@ -184,7 +187,7 @@ class State:
             following_states = {}
         else:
             following_states = following_node.reset()
-        following_states.update(self.reset_response)
+        following_states.update(self.reset_response())
         return following_states
 
     @property
@@ -210,17 +213,15 @@ class EndState(State):
         self,
         previous_state: StateStatus = StateStatus.Unchanged,
     ) -> dict[str, StateResponse]:
-        return self.response
+        return self.response()
 
     def reset(self) -> dict[str, StateResponse]:
-        return self.reset_response
+        return self.reset_response()
 
-    @property
-    def response(self) -> dict[str, StateResponse]:
+    def response(self, *, swap=False) -> dict[str, StateResponse]:
         """Return response of current state."""
         return {self.target: RedirectStateResponse(self.url)}
 
-    @property
     def reset_response(self) -> dict[str, StateResponse]:
         """Return response of current state."""
         return {}
@@ -243,26 +244,24 @@ class TemplateState(State):
         self.template_name = template_name
         self.reset_template_name = reset_template_name
         self.reset_context = reset_context
+        self.context = context or {}
         super().__init__(flow, target, label, lookup)
-        if context:
-            self.extra_context.update(context)
 
     def get_context_data(self):
-        context = {}
+        context = self.context
         if self.extra_context is not None:
             context.update(self.extra_context)
         return context
 
-    @property
-    def response(self) -> dict[str, StateResponse]:
+    def response(self, *, swap=False) -> dict[str, StateResponse]:
         context = self.get_context_data()
+        response_format = SwapHTMLStateResponse if swap else HTMLStateResponse
         return {
-            self.target: HTMLStateResponse(
+            self.target: response_format(
                 get_template(self.template_name).render(context),
             ),
         }
 
-    @property
     def reset_response(self) -> dict[str, StateResponse]:
         """Return HTML including HTMX swap-oob in order to remove/reset HTML for current target."""
         if self.reset_template_name:
@@ -325,40 +324,42 @@ class FormState(TemplateState):
 
     def _init_form(self, data: dict[str, Any] | None = None) -> Form:
         if "request" in self.form_class.__init__.__code__.co_varnames:
-            return self.form_class(data, prefix=self.flow.prefix, request=self.flow.request)
+            return self.form_class(
+                data,
+                prefix=self.flow.prefix,
+                request=self.flow.request,
+            )
         return self.form_class(data, prefix=self.flow.prefix)
 
-    def _render_form(self, data):
+    def _render_form(self, data) -> str:
         context = self.get_context_data()
         if self.template_name is None:
             csrf_token = csrf(self.flow.request)["csrf_token"]
             form_instance = self._init_form(data)
-            rendered_form = (
-                f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">\n {form_instance.as_div()}'
-            )
-            return {self.target: HTMLStateResponse(rendered_form)}
+            return f'<input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">\n {form_instance.as_div()}'
         form_instance = self._init_form(data)
         context["form"] = form_instance
-        return {
-            self.target: HTMLStateResponse(
-                get_template(self.template_name).render(
-                    context,
-                    request=self.flow.request,
-                ),
-            ),
-        }
+        return get_template(self.template_name).render(
+            context,
+            request=self.flow.request,
+        )
 
-    @property
-    def response(self) -> dict[str, StateResponse]:
+    def response(self, *, swap=False) -> dict[str, StateResponse]:
         """Renders the form with data from the session if available; otherwise, renders a blank form."""
         status = self.check_state()
         data = None if status == StateStatus.New else self.flow.request.session.get("django_htmx_flow", {})
-        return self._render_form(data)
+        content = self._render_form(data)
+        if swap:
+            return {
+                self.target: SwapHTMLStateResponse(
+                    f'<div id="{self.target}" hx-swap-oob="innerHTML">{content}</div>',
+                ),
+            }
+        return {self.target: HTMLStateResponse(content)}
 
-    @property
     def error_response(self) -> dict[str, StateResponse]:
         """Renders the form with incorrect data from the request."""
-        return self._render_form(self.flow.request.POST)
+        return {self.target: HTMLStateResponse(self._render_form(self.flow.request.POST))}
 
     def store_state(self):
         """Stores each form field's input value to the session."""
@@ -430,48 +431,6 @@ class FormState(TemplateState):
         raise FlowError(error_msg)
 
 
-class FormInfoState(FormState):
-    def __init__(  # noqa: PLR0913
-        self,
-        flow: Flow,
-        target: str,
-        form_class: type[Form],
-        info_text: str | dict[str, str | tuple[str, str]],
-        template_name: str | None = None,
-        label: str | None = None,
-    ):
-        super().__init__(flow, target, form_class, template_name, label)
-        # info text is mapped as {target: (response text, reset text)}
-        if isinstance(info_text, str):
-            self.info_text = {"_info": (info_text, "")}
-        else:
-            self.info_text = {
-                target: (value, "") if isinstance(value, str) else value for target, value in info_text.items()
-            }
-
-    @property
-    def response(self) -> dict[str, StateResponse]:
-        form_response = {
-            target: SwapHTMLStateResponse(
-                f'<div id="{target}" hx-swap-oob="innerHTML">{text[0]}</div>',
-            )
-            for target, text in self.info_text.items()
-        }
-        form_response.update(**super().response)
-        return form_response
-
-    @property
-    def reset_response(self) -> dict[str, StateResponse]:
-        form_response = {
-            target: SwapHTMLStateResponse(
-                f'<div id="{target}" hx-swap-oob="innerHTML">{text[1]}</div>',
-            )
-            for target, text in self.info_text.items()
-        }
-        form_response.update(**super().reset_response)
-        return form_response
-
-
 class Transition:
     def __init__(self):
         # These are set once Transition is added to state
@@ -540,8 +499,6 @@ class Switch(Transition):
 
 
 class Flow(TemplateView):
-    prefix: str | None = None
-
     def __init__(self, prefix: str | None = None):
         self.prefix = prefix
         self.request = None
@@ -660,7 +617,11 @@ class BuildingTypeFlow(SidebarNavigationMixin, Flow):
             url="heat:dead_end_monument_protection",
         )
 
-        self.stop = StopState(self, lookup="building_type_done", next_botton_text="Speichern").transition(Next("end"))
+        self.stop = StopState(
+            self,
+            lookup="building_type_done",
+            next_botton_text="Speichern",
+        ).transition(Next("end"))
         self.end = EndState(self, url="heat:building_data")
 
 
@@ -682,7 +643,11 @@ class BuildingDataFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = StopState(self, lookup="building_data_done", next_botton_text="Speichern").transition(Next("end"))
+        self.stop = StopState(
+            self,
+            lookup="building_data_done",
+            next_botton_text="Speichern",
+        ).transition(Next("end"))
         self.end = EndState(self, url="heat:insulation")
 
 
@@ -703,7 +668,11 @@ class InsulationFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = StopState(self, lookup="insulation_done", next_botton_text="Speichern").transition(Next("end"))
+        self.stop = StopState(
+            self,
+            lookup="insulation_done",
+            next_botton_text="Speichern",
+        ).transition(Next("end"))
         self.end = EndState(self, url="heat:hotwater_heating")
 
 
@@ -796,7 +765,11 @@ class RoofFlow(SidebarNavigationMixin, Flow):
             form_class=forms.RoofInclinationForm,
         ).transition(Next("stop"))
 
-        self.stop = StopState(self, lookup="roof_done", next_botton_text="Speichern").transition(Next("end"))
+        self.stop = StopState(
+            self,
+            lookup="roof_done",
+            next_botton_text="Speichern",
+        ).transition(Next("end"))
         self.end = EndState(self, url="heat:heating")
 
 
@@ -842,7 +815,11 @@ class HeatingFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = StopState(self, lookup="heating_done", next_botton_text="Speichern").transition(Next("end"))
+        self.stop = StopState(
+            self,
+            lookup="heating_done",
+            next_botton_text="Speichern",
+        ).transition(Next("end"))
         self.end = EndState(self, url="heat:pv_system")
 
 
@@ -905,7 +882,11 @@ class PVSystemFlow(SidebarNavigationMixin, Flow):
             Next("stop"),
         )
 
-        self.stop = StopState(self, lookup="v", next_botton_text="Speichern").transition(Next("end"))
+        self.stop = StopState(
+            self,
+            lookup="v",
+            next_botton_text="Speichern",
+        ).transition(Next("end"))
         self.end = EndState(self, url="heat:intro_renovation")
 
 
@@ -962,16 +943,19 @@ class RenovationRequestFlow(SidebarNavigationMixin, Flow):
             Next("renovation_details"),
         )
 
-        self.renovation_details = FormInfoState(
+        self.renovation_details = FormState(
             self,
             target="renovation_details",
             form_class=forms.RenovationRequestForm,
-            info_text={"next_button_text": ("Speichern", "Weiter")},
         ).transition(
             Next("stop"),
         )
 
-        self.stop = StopState(self, lookup="renovation_request_done", next_botton_text="Speichern").transition(
+        self.stop = StopState(
+            self,
+            lookup=f"{prefix}-renovation_request_done",
+            next_botton_text="Speichern",
+        ).transition(
             Next("end"),
         )
         self.end = EndState(self, url="heat:renovation_overview")
@@ -999,7 +983,11 @@ class FinancialSupportFlow(SidebarNavigationMixin, Flow):
         ).transition(
             Next("stop"),
         )
-        self.stop = StopState(self, lookup="financial_support_done", next_botton_text="Speichern").transition(
+        self.stop = StopState(
+            self,
+            lookup="financial_support_done",
+            next_botton_text="Speichern",
+        ).transition(
             Next("end"),
         )
         self.end = EndState(self, url="heat:optimization_start")
