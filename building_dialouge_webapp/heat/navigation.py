@@ -20,23 +20,23 @@ class SidebarNavigationMixin:
 
             for step in category["steps"]:
                 if step["name"] == "Sanierungsübersicht":
-                    step["index_state"] = self.get_renovation_status()
+                    if step["object"][0] == type(self) or step["object"][1] == type(self):
+                        step["index_state"] = "active"
+                        active_step_found = True
+                    else:
+                        step["index_state"] = self.get_renovation_index_state()
                 elif step["object"] == type(self):
                     step["index_state"] = "active"
                     active_step_found = True
                 elif issubclass(step["object"], flows.Flow):
-                    flow = step["object"]()
-                    if flow.finished(self.request):
-                        step["index_state"] = "complete"
-                    else:
-                        step["index_state"] = "incomplete"
+                    step["index_state"] = self.get_flow_index_state(step)
                 elif not active_step_found:
                     step["index_state"] = "visited"
 
         context["index"] = index
         return context
 
-    def get_renovation_status(self):
+    def get_renovation_index_state(self):
         """Checks if at least one scenario of RenovationRequestFlow is complete."""
         from . import flows
 
@@ -47,6 +47,13 @@ class SidebarNavigationMixin:
             if flow.finished(self.request):
                 return "complete"
             scenario_id += 1
+        return "incomplete"
+
+    def get_flow_index_state(self, step):
+        """Checks for the calling flow if it is complete or not."""
+        flow = step["object"]()
+        if flow.finished(self.request):
+            return "complete"
         return "incomplete"
 
     def get_flows(self):
