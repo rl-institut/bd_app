@@ -1,27 +1,35 @@
 {% extends "base_footer_button.html" %}
 
 {% block content %}
-  <div class="container my-5">
-    <h2>Optimierung starten</h2>
-    {% if all_flows_finished %}
-        <p>Wunderbar! Die Eingabe ist abgeschlossen.</p>
-        <p>Jetzt passiert folgendes:</p>
-        <p>
-            Mit Klick auf den "Starten"-Button beginnt die Simulation der Daten. Sobald die Simulation abgeschlossen ist, kann es weiter gehen zu der Seite "Ergebnisse". Bis dahin bleibt der "Weiter"-Button inaktiv.
-        </p>
-        <div class="d-flex justify-content-between">
-          <form action="{% url 'heat:simulate' %}"
-                method="get">
-            <button class="btn btn-primary" {% if not all_flows_finished %}disabled{% endif %}>Starten</button>
-          </form>
+  <section class="position-relative h-100 flex-grow-1 pb-5">
+    <div class="step-title">
+      <div class="step-container">
+        <div class="main">
+          <h1>Optimierung starten</h1>
+          {% if all_flows_finished %}
+          <p>Wunderbar! Die Eingabe ist abgeschlossen.</p>
+          <p>Jetzt passiert folgendes:</p>
+          <p>
+              Mit Klick auf den "Starten"-Button beginnt die Simulation der Daten. Sobald die Simulation abgeschlossen ist, kann es weiter gehen zu der Seite "Ergebnisse". Bis dahin bleibt der "Weiter"-Button inaktiv.
+          </p>
+          <div class="d-flex justify-content-between">
+            <form action="{% url 'heat:simulate' %}"
+                  method="get">
+              <button class="btn btn-primary" {% if not all_flows_finished %}disabled{% endif %}>Starten</button>
+            </form>
+          </div>
+          {% else %}
+          <div class="info-box">
+            <p>Leider fehlen die folgenden Eingaben noch:</p>
+            <ul>
+                {% for flow in not_finished_flows %}
+                    <li>{{ flow }}</li>
+                {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
         </div>
-    {% else %}
-        <p>Leider fehlen die folgenden Eingaben noch:</p>
-        <ul>
-            {% for flow in not_finished_flows %}
-                <li>{{ flow }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-  </div>
+      </div>
+    </div>
+  </section>
 {% endblock content %}

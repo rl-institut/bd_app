@@ -132,7 +132,7 @@ main .step-title {
   @include step-item(4rem 2rem 1.5rem 4rem);
 
   @media screen and (min-width: $breakpoint-3xl) {
-    @include step-item(4rem 4rem 1.5rem 6rem);
+    @include step-item(4rem 4rem 1.5rem 12rem);
   }
 
   h1 {
@@ -145,6 +145,8 @@ main .step-title {
     font-size: $font-size-sm;
     color: $grey-500;
     padding: 1rem;
+    margin-top: 1rem;
+    border-radius: $border-radius;
   }
 }
 
@@ -152,7 +154,7 @@ main .step-text {
   @include step-item(4rem 2rem 1.5rem 4rem);
 
   @media screen and (min-width: $breakpoint-3xl) {
-    @include step-item(4rem 4rem 1.5rem 6rem);
+    @include step-item(4rem 4rem 1.5rem 12rem);
   }
 }
 
@@ -160,7 +162,7 @@ main .step-question {
   @include step-item(0 2rem 1.5rem 4rem);
 
   @media screen and (min-width: $breakpoint-3xl) {
-    @include step-item(4rem 4rem 1.5rem 6rem);
+    @include step-item(1rem 4rem 1rem 12rem);
   }
 
   .help {
@@ -171,6 +173,21 @@ main .step-question {
       font-weight: $font-weight-bold;
     }
   }
+
+  .info-text {
+    font-size: $font-size-sm;
+    color: $grey-500;
+    padding-bottom: 0.5rem;
+
+    &--form {
+      margin-top: 0.25rem;
+    }
+  }
+}
+
+.radio-button-label {
+  margin-bottom: 0;
+  margin-top: 0.5rem;
 }
 
 .step-button {
@@ -200,5 +217,13 @@ main .step-question {
     @media screen and (min-width: $breakpoint-2xl) {
       max-width: 1200px;
     }
+  }
+}
+
+ul.errorlist {
+  margin-bottom: 0;
+
+  li {
+    color: $error-color;
   }
 }
