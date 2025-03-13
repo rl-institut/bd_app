@@ -276,8 +276,20 @@ def all_flows_finished(request):
         if name.endswith("Flow") and name not in {"Flow", "flows.RenovationRequestFlow"}
     ]
 
-    # since there is no minimum for how many renovation scenarios are needed I omited testing that
+    # Check if at least one instance of RenovationRequestFlow is finished
+    scenario_max = heat_settings.SCENARIO_MAX
+    scenario_id = 1
+    has_finished_renovation = False
+    while scenario_id <= scenario_max:
+        flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+        if flow.finished(request):
+            has_finished_renovation = True
+            break
+        scenario_id += 1
+
     not_finished = [name for name, flow in all_flows if not flow.finished(request)]
+    if not has_finished_renovation:
+        not_finished.append("RenovationRequestFlow")
     return (True, []) if not not_finished else (False, not_finished)
 
 
@@ -290,7 +302,13 @@ class OptimizationStart(SidebarNavigationMixin, TemplateView):
         context["next_url"] = "heat:results"
         all_finished, not_finished = all_flows_finished(self.request)
         context["all_flows_finished"] = all_finished
-        context["not_finished_flows"] = not_finished
+        context["not_finished_flows"] = [
+            step["name"]
+            for category in context["index"]
+            for step in category["steps"]
+            if (isinstance(step["object"], list) and any(obj.__name__ in not_finished for obj in step["object"]))
+            or (not isinstance(step["object"], list) and step["object"].__name__ in not_finished)
+        ]
         return context
 
 

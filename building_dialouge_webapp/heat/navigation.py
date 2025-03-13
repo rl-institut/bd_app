@@ -1,5 +1,10 @@
+import heat.settings as heat_settings
+
+
 class SidebarNavigationMixin:
     def get_context_data(self, **kwargs):
+        from . import flows
+
         context = super().get_context_data(**kwargs)
         index = self.get_flows()
         active_step_found = False
@@ -14,20 +19,42 @@ class SidebarNavigationMixin:
                 category["index_state"] = ""
 
             for step in category["steps"]:
-                if (
-                    isinstance(step["object"], list)
-                    and any(isinstance(self, obj) for obj in step["object"])
-                    or step["object"] == type(self)
-                ):
+                if step["name"] == "Sanierungsübersicht":
+                    if step["object"][0] == type(self) or step["object"][1] == type(self):
+                        step["index_state"] = "active"
+                        active_step_found = True
+                    else:
+                        step["index_state"] = self.get_renovation_index_state()
+                elif step["object"] == type(self):
                     step["index_state"] = "active"
                     active_step_found = True
+                elif issubclass(step["object"], flows.Flow):
+                    step["index_state"] = self.get_flow_index_state(step)
                 elif not active_step_found:
                     step["index_state"] = "visited"
-                else:
-                    step["index_state"] = ""
 
         context["index"] = index
         return context
+
+    def get_renovation_index_state(self):
+        """Checks if at least one scenario of RenovationRequestFlow is complete."""
+        from . import flows
+
+        scenario_max = heat_settings.SCENARIO_MAX
+        scenario_id = 1
+        while scenario_id <= scenario_max:
+            flow = flows.RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+            if flow.finished(self.request):
+                return "complete"
+            scenario_id += 1
+        return "incomplete"
+
+    def get_flow_index_state(self, step):
+        """Checks for the calling flow if it is complete or not."""
+        flow = step["object"]()
+        if flow.finished(self.request):
+            return "complete"
+        return "incomplete"
 
     def get_flows(self):
         from . import flows
@@ -63,15 +90,16 @@ class SidebarNavigationMixin:
                         "url": "heat:renovation_overview",
                     },
                     {"name": "Förderung", "object": flows.FinancialSupportFlow, "url": "heat:financial_support"},
-                    {
-                        "name": "Optimierung starten",
-                        "object": views.OptimizationStart,
-                        "url": "heat:optimization_start",
-                    },
                 ],
             },
             {
-                "category": "3. Ergebnisse",
+                "category": "3. Optimierung starten",
+                "object": views.OptimizationStart,
+                "url": "heat:optimization_start",
+                "steps": [],
+            },
+            {
+                "category": "4. Ergebnisse",
                 "object": views.Results,
                 "url": "heat:results",
                 "steps": [

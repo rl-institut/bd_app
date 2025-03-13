@@ -123,14 +123,16 @@ class BuildingDataForm(ValidationForm):
             },
         }
 
-        field_rules = min_max_defaults.get(data["building_type"])
-        for field_name, rules in field_rules.items():
-            if field_name in self.fields:
-                self.fields[field_name].widget.attrs.update(
-                    {"min": rules["min"], "max": rules["max"]},
-                )
-                self.fields[field_name].validators.append(MinValueValidator(rules["min"]))
-                self.fields[field_name].validators.append(MaxValueValidator(rules["max"]))
+        building_type = data.get("building_type", None)
+        if building_type:
+            field_rules = min_max_defaults[building_type]
+            for field_name, rules in field_rules.items():
+                if field_name in self.fields:
+                    self.fields[field_name].widget.attrs.update(
+                        {"min": rules["min"], "max": rules["max"]},
+                    )
+                    self.fields[field_name].validators.append(MinValueValidator(rules["min"]))
+                    self.fields[field_name].validators.append(MaxValueValidator(rules["max"]))
 
 
 class InsulationForm(ValidationForm):
