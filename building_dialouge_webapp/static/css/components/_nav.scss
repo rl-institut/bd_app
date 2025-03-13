@@ -14,6 +14,10 @@ nav.navbar {
   .navbar-brand {
     font-size: $font-size-xl;
     font-weight: $font-weight-bold;
+
+    img {
+      transform: translateY(-2px);
+    }
   }
 
   .navbar-collapse {

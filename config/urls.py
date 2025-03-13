@@ -7,9 +7,11 @@ from django.urls import path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
 
+from building_dialouge_webapp.heat import views
+
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path("", include("building_dialouge_webapp.heat.urls", namespace="heat")),
+    path("reset_session/", views.reset_session),
     path(
         "about/",
         TemplateView.as_view(template_name="pages/about.html"),

@@ -23,22 +23,23 @@ $blue-900: #214387;
 $blue-950: #192a52;
 
 /* Secondary & Neutral palette */
-$grey-050: #fafafa;
-$grey-100: #f5f5f5;
-$grey-200: #e5e5e5;
-$grey-300: #d4d4d4;
-$grey-400: #a3a3a3;
-$grey-500: #737373;
-$grey-600: #525252;
-$grey-700: #404040;
-$grey-800: #262626;
-$grey-900: #171717;
-$grey-950: #0a0a0a;
+$grey-050: #f9fafb;
+$grey-100: #f3f4f6;
+$grey-200: #e5e7eb;
+$grey-300: #d1d5db;
+$grey-400: #9ca3af;
+$grey-500: #6b7280;
+$grey-600: #4b5563;
+$grey-700: #374151;
+$grey-800: #1f2937;
+$grey-900: #111827;
+$grey-950: #030712;
 
 $primary-color: $grey-900;
 $secondary-color: $blue-800;
 $body-color: $grey-900;
 $color-white: #ffffff;
+$error-color: #dc2626;
 
 // Breakpoints
 $breakpoint-md: 768px;
