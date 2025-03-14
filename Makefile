@@ -20,4 +20,8 @@ update_vendor_assets:
 	rm -r building_dialouge_webapp/static/vendors/htmx/js/*
 	cp node_modules/htmx.org/dist/htmx.min.js building_dialouge_webapp/static/vendors/htmx/js/
 
+	# eCharts https://echarts.apache.org/en/index.html
+	rm -r building_dialouge_webapp/static/vendors/echarts/js/*
+	cp node_modules/echarts/dist/echarts.min.js building_dialouge_webapp/static/vendors/echarts/js/
+
 	# Done
