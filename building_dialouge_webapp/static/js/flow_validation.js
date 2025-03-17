@@ -1,6 +1,6 @@
 // Listen for HTMX events and handle validation for all forms
 document.addEventListener("htmx:beforeRequest", (event) => {
-  const form = event.target.closest(".main"); // Target the closest form
+  const form = event.target.querySelector(".main"); // Target the closest form
   if (!form) return;
 
   const requiredFields = form.querySelectorAll("[required]");
