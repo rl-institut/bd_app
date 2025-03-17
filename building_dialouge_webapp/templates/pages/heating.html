@@ -14,7 +14,7 @@
       <div class="step-container">
         <div id="heating_year"
           hx-post=""
-          hx-trigger="keyup change delay:500ms"
+          hx-trigger="keyup change delay:1000ms"
           hx-swap="show:bottom"
           hx-include="this"
           class="main">{{ heating_year.content | safe }}</div>
@@ -47,7 +47,7 @@
     </div>
     <div id="heating_storage_capacity"
       hx-post=""
-      hx-trigger="keyup change delay:500ms"
+      hx-trigger="keyup change delay:1000ms"
       hx-swap="show:bottom"
       hx-include="this">{{ heating_storage_capacity.content | safe }}</div>
   </section>
