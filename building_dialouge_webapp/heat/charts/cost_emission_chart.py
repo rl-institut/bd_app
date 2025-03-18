@@ -49,23 +49,21 @@ def create_echarts_cost_emission(title, unit, data):
     ]
 
     # font_size = 28 if len(data) == 4 else 34  # noqa: ERA001
-    grid_left = "35%" if title == "Emissionen" else "25%"
+    grid_left = "15%" if title == "Emissionen" else "5%"
 
     # Construct the ECharts option
     return {
         "grid": {
             "left": grid_left,
-            "right": "4%",
-            "bottom": "3%",
+            "right": "0%",
+            "top": "0%",
+            "bottom": "0%",
             "containLabel": True,
         },
         "xAxis": {
             "type": "value",
             "axisLabel": {"show": False},
-            "splitLine": {"show": True},
-            "min": 0,
-            "max": max(item["value"] for item in data) * 1.1,  # Add 10% padding
-            "interval": 20000,
+            "splitLine": {"show": False},
         },
         "yAxis": {
             "type": "category",
@@ -73,12 +71,6 @@ def create_echarts_cost_emission(title, unit, data):
             "axisLine": {"show": False},
             "axisLabel": {"show": True},
             "axisTick": {"show": False},
-        },
-        "title": {
-            "text": title,
-            "left": "0%",
-            "top": "80%",
-            "textStyle": {"fontWeight": "bold", "color": "#6e6e6e"},
         },
         "series": [
             {
@@ -91,7 +83,7 @@ def create_echarts_cost_emission(title, unit, data):
                     # "fontSize": font_size,    # noqa: ERA001
                     "fontWeight": "bold",
                     "align": "right",
-                    "offset": [-20, 0],
+                    "offset": [-10, 0],
                 },
             },
         ],
