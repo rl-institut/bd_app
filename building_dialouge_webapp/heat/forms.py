@@ -61,7 +61,7 @@ class BuildingTypeForm(ValidationForm):
     building_type = forms.ChoiceField(
         label="Gebäudeart",
         choices=[
-            ("single_family", "Einfamlienhaus"),
+            ("single_family", "Einfamilienhaus"),
             ("apartment_building", "Mehrfamilienhaus"),
         ],
         widget=HouseTypeSelect(),
