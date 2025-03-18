@@ -261,8 +261,28 @@ class RenovationOverview(SidebarNavigationMixin, TemplateView):
         context["back_url"] = "heat:intro_renovation"
         context["next_url"] = "heat:financial_support"
         context["scenario_boxes"] = get_all_scenario_data(self.request)
+        context["next_disabled"] = check_for_min(self.request)
         context["max_reached"] = int(get_new_scenario(self.request)[8:]) > scenario_max
         return context
+
+
+def check_for_min(request):
+    """
+    Checks if there is at least one renovation scenario saved already. Returns True if thats not the case, since
+    then the next-button is diabled.
+
+    """
+    scenario_max = heat_settings.SCENARIO_MAX
+    scenario_id = 1
+    next_disabled = True  # disables next button if minimun not reached
+    while scenario_id <= scenario_max:
+        flow = flows.RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+        if flow.finished(request):
+            next_disabled = False
+            break
+        scenario_id += 1
+
+    return next_disabled
 
 
 def all_flows_finished(request):
