@@ -281,7 +281,7 @@ def all_flows_finished(request):
     scenario_id = 1
     has_finished_renovation = False
     while scenario_id <= scenario_max:
-        flow = RenovationRequestFlow(prefix=f"scenario{scenario_id}")
+        flow = flows.RenovationRequestFlow(prefix=f"scenario{scenario_id}")
         if flow.finished(request):
             has_finished_renovation = True
             break
