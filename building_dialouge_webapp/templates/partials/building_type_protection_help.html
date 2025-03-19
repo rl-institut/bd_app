@@ -3,7 +3,16 @@
     <div class="main">
       {{ form }}
       {% csrf_token %}
-      <span class="info-text">Um festzustellen, ob ein Haus unter Denkmalschutz steht, können Sie die <a href="{% url 'heat:home' %}">folgenden Schritte unternehmen</a>.</span>
+      <div class="info-text">
+        <p><b>Definition Denkmalschutz:</b></p>
+        <p>Denkmalschutz bedeutet, dass ein Gebäude oder ein Objekt wegen seiner besonderen geschichtlichen, künstlerischen
+          oder architektonischen Bedeutung geschützt ist. Dies kann die Möglichkeiten für Sanierungen einschränken.</p>
+        <p><b>Wo finde ich, ob mein Gebäude Denkmalgeschützt ist?</b></p>
+        <p>Denkmalgeschützte Gebäude sind in Denkmalliste zusammengefasst, die Sie bei Ihrer zuständigen Denkmalbehörde
+          einsehen können. Eine Beispiel-Datenbank ist die
+          <a href="https://www.berlin.de/landesdenkmalamt/denkmale/liste-karte-datenbank/denkmalliste/" target="_blank"
+             rel="noopener noreferrer">Denkmalliste Berlin</a>.
+      </div>
     </div>
   </div>
 </div>

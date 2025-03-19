@@ -38,6 +38,7 @@ class ValidationForm(forms.Form):
             session_data = self.flow.request.session.get("django_htmx_flow", {})
         """
 
+
 class HouseTypeSelect(RadioSelect):
     template_name = "forms/energy_source.html"
 
@@ -46,14 +47,16 @@ class HouseTypeSelect(RadioSelect):
         "eine einzige Familie bzw. einen einzigen Haushalt vorgesehen ist. Ein Haus gilt auch "
         "dann als Einfamilienhaus, wenn es zwei Wohneinheiten enthält und eine davon eine "
         "Einliegerwohnung ist, also von untergeordnete Bedeutung ist (Beispiel: Ferienwohnung).",
-        "apartment_building": "Wohngebäude, das mehrere separate Wohneinheiten enthält, die von "
-        "verschiedenen Familien oder Haushalten bewohnt werden."
+        "apartment_building": "Ein Mehrfamilienhaus ist ein Wohngebäude, das mehrere separate Wohneinheiten enthält."
+        "Jede Wohneinheit wird von verschiedenen Familien oder Haushalten bewohnt. Auch Zweifamilienhäuser zählen zu "
+                              "Mehrfamilienhäusern. ",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
         option = super().create_option(name, value, label, selected, index, subindex, attrs)
         option["info"] = self.INFOS.get(value, "")
         return option
+
 
 class BuildingTypeForm(ValidationForm):
     building_type = forms.ChoiceField(
@@ -64,6 +67,7 @@ class BuildingTypeForm(ValidationForm):
         ],
         widget=HouseTypeSelect(),
     )
+
 
 class BuildingTypeProtectionForm(ValidationForm):
     monument_protection = forms.ChoiceField(
@@ -179,13 +183,14 @@ class EnergySourceSelect(RadioSelect):
         "groundwater": "Nutzt die Wärmeenergie aus Grundwasser oder einem Solekreislauf, um "
         "besonders effizient Wärme zu erzeugen.",
         "heating_rod": "Elektrisches Heizelement, das direkt in Wasserboilern oder Heizkörpern "
-        "eingesetzt wird, um Wasser schnell zu erhitzen oder zusätzliche Wärme zu liefern."
+        "eingesetzt wird, um Wasser schnell zu erhitzen oder zusätzliche Wärme zu liefern.",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
         option = super().create_option(name, value, label, selected, index, subindex, attrs)
         option["info"] = self.INFOS.get(value, "")
         return option
+
 
 class HeatingSourceForm(ValidationForm):
     energy_source = forms.ChoiceField(
@@ -230,12 +235,12 @@ class HotwaterHeatingSolarAreaForm(ValidationForm):
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
+
 class RoofTypeSelect(RadioSelect):
     template_name = "forms/energy_source.html"
 
     INFOS = {
-        "exists": "Ein Flachdach ist ein Dach mit einer sehr geringen Neigung, das fast "
-        "waagerecht verläuft."
+        "exists": "Ein Flachdach ist ein Dach mit einer sehr geringen Neigung, das fast waagerecht verläuft.",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
