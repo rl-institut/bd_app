@@ -6,6 +6,10 @@
       <div class="step-container">
         <div class="main">
           <h1>Sanierungsübersicht</h1>
+          <div class="info-box">
+            Hier fügen Sie Szenarien für den Heizungstausch und Sanierungsmaßnahmen hinzu. <br>
+            Sie können bis zu 3 Szenarien berechnen.
+          </div>
           <form action="{% url 'heat:renovation_request' scenario='new_scenario' %}" method="get">
             <button class="btn btn-primary" {% if max_reached %}disabled{% endif %}>Weiteres Heizszenario</button>
           </form>
