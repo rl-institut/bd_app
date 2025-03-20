@@ -30,6 +30,7 @@ class DeadEndTenant(TemplateView):
     template_name = "pages/dead_end_tenant.html"
     extra_context = {
         "back_url": "heat:home",
+        "next_disabled": True,
     }
 
 
@@ -45,6 +46,7 @@ class DeadEndMonumentProtection(TemplateView):
     template_name = "pages/dead_end_monument_protection.html"
     extra_context = {
         "back_url": "heat:building_type",
+        "next_disabled": True,
     }
 
 
