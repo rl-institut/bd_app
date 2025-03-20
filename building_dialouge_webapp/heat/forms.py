@@ -160,6 +160,18 @@ class InsulationForm(ValidationForm):
         required=False,
     )
 
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+
+        building_construction_year = data.get("construction_year", None)
+        if building_construction_year:
+            for fieldname in self.fields.values():
+                fieldname.validators = [v for v in fieldname.validators if not isinstance(v, MinValueValidator)]
+                fieldname.widget.attrs.update(
+                    {"min": building_construction_year},
+                )
+                fieldname.validators.append(MinValueValidator(building_construction_year))
+
 
 class EnergySourceSelect(RadioSelect):
     template_name = "forms/energy_source.html"
@@ -298,6 +310,18 @@ class HeatingYearForm(ValidationForm):
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         required=False,
     )
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+
+        building_construction_year = data.get("construction_year", None)
+        if building_construction_year:
+            field = self.fields["heating_system_construction_year"]
+            field.validators = [v for v in field.validators if not isinstance(v, MinValueValidator)]
+            field.widget.attrs.update(
+                {"min": building_construction_year},
+            )
+            field.validators.append(MinValueValidator(building_construction_year))
 
 
 class HeatingStorageExistsForm(ValidationForm):
