@@ -115,13 +115,13 @@ class BuildingDataForm(ValidationForm):
             "single_family": {
                 "number_persons": {"min": 1, "max": 10},
                 "number_flats": {"min": 1, "max": 2},
-                "living_space": {"min": 200, "max": 400},
+                "living_space": {"min": 50, "max": 300},
                 "number_floors": {"min": 1, "max": 3},
             },
             "apartment_building": {
                 "number_persons": {"min": 2, "max": 100},
                 "number_flats": {"min": 2, "max": 20},
-                "living_space": {"min": 400, "max": 1000},
+                "living_space": {"min": 300, "max": 1000},
                 "number_floors": {"min": 1, "max": 10},
             },
         }
