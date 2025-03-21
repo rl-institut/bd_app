@@ -609,8 +609,14 @@ class BuildingTypeFlow(SidebarNavigationMixin, Flow):
             form_class=forms.BuildingTypeProtectionForm,
             template_name="partials/building_type_protection_help.html",
         ).transition(
-            Switch("monument_protection").case("yes", "dead_end_monument_protection").default("stop"),
+            Switch("monument_protection").case("yes", "dead_end_stop").default("stop"),
         )
+
+        self.dead_end_stop = StopState(
+            self,
+            lookup="building_type_done",
+            next_botton_text="Speichern",
+        ).transition(Next("dead_end_monument_protection"))
 
         self.dead_end_monument_protection = EndState(
             self,
