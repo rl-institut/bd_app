@@ -38,6 +38,7 @@ class ValidationForm(forms.Form):
             session_data = self.flow.request.session.get("django_htmx_flow", {})
         """
 
+
 class HouseTypeSelect(RadioSelect):
     template_name = "forms/energy_source.html"
 
@@ -47,7 +48,7 @@ class HouseTypeSelect(RadioSelect):
         "dann als Einfamilienhaus, wenn es zwei Wohneinheiten enthält und eine davon eine "
         "Einliegerwohnung ist, also von untergeordnete Bedeutung ist (Beispiel: Ferienwohnung).",
         "apartment_building": "Wohngebäude, das mehrere separate Wohneinheiten enthält, die von "
-        "verschiedenen Familien oder Haushalten bewohnt werden."
+        "verschiedenen Familien oder Haushalten bewohnt werden.",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
@@ -55,15 +56,17 @@ class HouseTypeSelect(RadioSelect):
         option["info"] = self.INFOS.get(value, "")
         return option
 
+
 class BuildingTypeForm(ValidationForm):
     building_type = forms.ChoiceField(
         label="Gebäudeart",
         choices=[
-            ("single_family", "Einfamlienhaus"),
+            ("single_family", "Einfamilienhaus"),
             ("apartment_building", "Mehrfamilienhaus"),
         ],
         widget=HouseTypeSelect(),
     )
+
 
 class BuildingTypeProtectionForm(ValidationForm):
     monument_protection = forms.ChoiceField(
@@ -88,7 +91,7 @@ class BuildingDataForm(ValidationForm):
         template_name="forms/number_flats.html",
     )
     living_space = forms.IntegerField(
-        label="Wohnfläche",
+        label="Wohnfläche in m²",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     number_floors = forms.IntegerField(
@@ -112,13 +115,13 @@ class BuildingDataForm(ValidationForm):
             "single_family": {
                 "number_persons": {"min": 1, "max": 10},
                 "number_flats": {"min": 1, "max": 2},
-                "living_space": {"min": 200, "max": 400},
+                "living_space": {"min": 50, "max": 300},
                 "number_floors": {"min": 1, "max": 3},
             },
             "apartment_building": {
                 "number_persons": {"min": 2, "max": 100},
                 "number_flats": {"min": 2, "max": 20},
-                "living_space": {"min": 400, "max": 1000},
+                "living_space": {"min": 300, "max": 1000},
                 "number_floors": {"min": 1, "max": 10},
             },
         }
@@ -157,6 +160,19 @@ class InsulationForm(ValidationForm):
         required=False,
     )
 
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+
+        building_construction_year = data.get("construction_year", None)
+        if building_construction_year:
+            for fieldname in self.fields.values():
+                fieldname.validators = [v for v in fieldname.validators if not isinstance(v, MinValueValidator)]
+                fieldname.widget.attrs.update(
+                    {"min": building_construction_year},
+                )
+                fieldname.validators.append(MinValueValidator(building_construction_year))
+
+
 class EnergySourceSelect(RadioSelect):
     template_name = "forms/energy_source.html"
 
@@ -179,13 +195,14 @@ class EnergySourceSelect(RadioSelect):
         "groundwater": "Nutzt die Wärmeenergie aus Grundwasser oder einem Solekreislauf, um "
         "besonders effizient Wärme zu erzeugen.",
         "heating_rod": "Elektrisches Heizelement, das direkt in Wasserboilern oder Heizkörpern "
-        "eingesetzt wird, um Wasser schnell zu erhitzen oder zusätzliche Wärme zu liefern."
+        "eingesetzt wird, um Wasser schnell zu erhitzen oder zusätzliche Wärme zu liefern.",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
         option = super().create_option(name, value, label, selected, index, subindex, attrs)
         option["info"] = self.INFOS.get(value, "")
         return option
+
 
 class HeatingSourceForm(ValidationForm):
     energy_source = forms.ChoiceField(
@@ -230,12 +247,12 @@ class HotwaterHeatingSolarAreaForm(ValidationForm):
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
+
 class RoofTypeSelect(RadioSelect):
     template_name = "forms/energy_source.html"
 
     INFOS = {
-        "exists": "Ein Flachdach ist ein Dach mit einer sehr geringen Neigung, das fast "
-        "waagerecht verläuft."
+        "exists": "Ein Flachdach ist ein Dach mit einer sehr geringen Neigung, das fast waagerecht verläuft.",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
@@ -282,7 +299,7 @@ class RoofInclinationKnownForm(ValidationForm):
 
 class RoofInclinationForm(ValidationForm):
     roof_inclination = forms.IntegerField(
-        label="Dachneigung",
+        label="Dachneigung in Grad",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
@@ -293,6 +310,18 @@ class HeatingYearForm(ValidationForm):
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         required=False,
     )
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+
+        building_construction_year = data.get("construction_year", None)
+        if building_construction_year:
+            field = self.fields["heating_system_construction_year"]
+            field.validators = [v for v in field.validators if not isinstance(v, MinValueValidator)]
+            field.widget.attrs.update(
+                {"min": building_construction_year},
+            )
+            field.validators.append(MinValueValidator(building_construction_year))
 
 
 class HeatingStorageExistsForm(ValidationForm):
