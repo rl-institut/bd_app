@@ -92,7 +92,7 @@ class BuildingDataForm(ValidationForm):
         template_name="forms/number_flats.html",
     )
     living_space = forms.IntegerField(
-        label="Wohnfläche",
+        label="Wohnfläche in m²",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     number_floors = forms.IntegerField(
@@ -116,13 +116,13 @@ class BuildingDataForm(ValidationForm):
             "single_family": {
                 "number_persons": {"min": 1, "max": 10},
                 "number_flats": {"min": 1, "max": 2},
-                "living_space": {"min": 200, "max": 400},
+                "living_space": {"min": 50, "max": 300},
                 "number_floors": {"min": 1, "max": 3},
             },
             "apartment_building": {
                 "number_persons": {"min": 2, "max": 100},
                 "number_flats": {"min": 2, "max": 20},
-                "living_space": {"min": 400, "max": 1000},
+                "living_space": {"min": 300, "max": 1000},
                 "number_floors": {"min": 1, "max": 10},
             },
         }
@@ -160,6 +160,19 @@ class InsulationForm(ValidationForm):
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         required=False,
     )
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+
+        building_construction_year = data.get("construction_year", None)
+        if building_construction_year:
+            for fieldname in self.fields.values():
+                fieldname.validators = [v for v in fieldname.validators if not isinstance(v, MinValueValidator)]
+                fieldname.widget.attrs.update(
+                    {"min": building_construction_year},
+                )
+                fieldname.validators.append(MinValueValidator(building_construction_year))
+
 
 class EnergySourceSelect(RadioSelect):
     template_name = "forms/energy_source.html"
@@ -287,7 +300,7 @@ class RoofInclinationKnownForm(ValidationForm):
 
 class RoofInclinationForm(ValidationForm):
     roof_inclination = forms.IntegerField(
-        label="Dachneigung",
+        label="Dachneigung in Grad",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
@@ -298,6 +311,18 @@ class HeatingYearForm(ValidationForm):
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         required=False,
     )
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+
+        building_construction_year = data.get("construction_year", None)
+        if building_construction_year:
+            field = self.fields["heating_system_construction_year"]
+            field.validators = [v for v in field.validators if not isinstance(v, MinValueValidator)]
+            field.widget.attrs.update(
+                {"min": building_construction_year},
+            )
+            field.validators.append(MinValueValidator(building_construction_year))
 
 
 class HeatingStorageExistsForm(ValidationForm):
