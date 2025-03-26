@@ -49,6 +49,10 @@ class HouseTypeSelect(RadioSelect):
         "Einliegerwohnung ist, also von untergeordnete Bedeutung ist (Beispiel: Ferienwohnung).",
         "apartment_building": "Wohngebäude, das mehrere separate Wohneinheiten enthält, die von "
         "verschiedenen Familien oder Haushalten bewohnt werden.",
+        "terraced_house": "Ein Reihenhaus ist ein Einfamilienhaus, das in einer Reihe identischer "
+        "oder ähnlicher Häuser direkt aneinandergebaut ist. Es teilt sich mindestens eine Seitenwand "
+        "mit dem Nachbarhaus und bietet eine kosteneffiziente Wohnlösung mit eigenem Eingang und "
+        "oft einem kleinen Garten.",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
@@ -63,6 +67,7 @@ class BuildingTypeForm(ValidationForm):
         choices=[
             ("single_family", "Einfamilienhaus"),
             ("apartment_building", "Mehrfamilienhaus"),
+            ("terraced_house", "Reihenhaus"),
         ],
         widget=HouseTypeSelect(),
     )
