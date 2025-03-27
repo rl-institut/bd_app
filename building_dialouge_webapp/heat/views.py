@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
+from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
 from django_htmx.http import HttpResponseClientRedirect
@@ -11,6 +12,7 @@ from . import flows
 from . import forms
 from . import settings as heat_settings
 from . import tables
+from .forms import RoofOrientationForm
 from .navigation import SidebarNavigationMixin
 
 
@@ -80,6 +82,11 @@ def delete_flow(request):
             return HttpResponseClientRedirect(reverse("heat:renovation_request", kwargs={"scenario": url_instance}))
         overview_url = "heat:renovation_overview"
     return HttpResponseClientRedirect(reverse(overview_url))
+
+
+def roof_orientation(request):
+    form = RoofOrientationForm()
+    return render(request, "partials/roof_orientation.html", {"form": form})
 
 
 class ConsumptionResult(SidebarNavigationMixin, TemplateView):

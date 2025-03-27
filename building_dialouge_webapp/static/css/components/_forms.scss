@@ -129,7 +129,7 @@ fieldset legend {
   }
 
   select {
-    background-image: linear-gradient(45deg, transparent 50%, $grey-500 50%), 
+    background-image: linear-gradient(45deg, transparent 50%, $grey-500 50%),
                       linear-gradient(135deg, $grey-500 50%, transparent 50%);
     background-position: calc(100% - 1rem) 50%, calc(100% - 0.75rem) 50%; /* Center the arrow vertically */
     background-size: 5px 5px, 5px 5px;
