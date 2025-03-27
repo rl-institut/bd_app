@@ -32,3 +32,41 @@ class Photovoltaic(models.Model):
 
     def __str__(self):
         return f"Photovoltaic ({self.elevation_angle}, {self.direction_angle})"
+
+
+class Load(models.Model):
+    """Model to hold timeseries for different setups of load component."""
+
+    number_people = models.IntegerField()
+    eec = models.IntegerField()
+    profile = ArrayField(models.FloatField())
+
+    class Meta:
+        unique_together = ("number_people", "eec")
+
+    def __str__(self):
+        return f"Load ({self.number_people}, {self.eec})"
+
+
+class Hotwater(models.Model):
+    """Model to hold timeseries for different setups of hotwater component."""
+
+    number_people = models.IntegerField()
+    profile = ArrayField(models.FloatField())
+
+    def __str__(self):
+        return f"Hotwater ({self.number_people})"
+
+
+class Heatpump(models.Model):
+    """Model to hold air, water and brine timeseries for different setups of heatpump component."""
+
+    medium = models.CharField()  # to distinguish between air, water and brine medium
+    type_temperature = models.CharField()
+    profile = ArrayField(models.FloatField())
+
+    class Meta:
+        unique_together = ("medium", "type_temperature")
+
+    def __str__(self):
+        return f"Heatpump ({self.medium}, {self.type_temperature})"
