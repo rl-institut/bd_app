@@ -1,5 +1,5 @@
 {
-  "BuildingDataForm": {
+  "BuildingTypeForm": {
     "construction_year": {
       "min_value": 1900,
       "max_value": 2024
