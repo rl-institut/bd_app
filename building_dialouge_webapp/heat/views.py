@@ -11,6 +11,9 @@ from . import flows
 from . import forms
 from . import settings as heat_settings
 from . import tables
+from .charts import cost_emission_chart
+from .charts import heating_and_co2_chart
+from .charts import investment_costs_chart
 from .navigation import SidebarNavigationMixin
 
 
@@ -439,6 +442,38 @@ class Results(SidebarNavigationMixin, TemplateView):
         context["consumption_table_html"] = consumption_table_html
         context["investment_summary_table_html"] = investment_summary_table_html
         context["scenarios"] = scenario_list
+        context["cost_chart_data"] = cost_emission_chart.create_echarts_cost_emission(
+            title="Kosten",
+            unit="€",
+            data=cost_emission_chart.EXAMPLE_COST_DATA,
+        )
+        context["emission_chart_data"] = cost_emission_chart.create_echarts_cost_emission(
+            title="Emissionen",
+            unit="t/a",
+            data=cost_emission_chart.EXAMPLE_EMISSION_DATA,
+        )
+        context["heating_chart_data"] = heating_and_co2_chart.generate_echarts_option(
+            scenarios=[
+                {"name": "Heute", "value": 230},
+                {"name": "Szenario 1", "value": 130},
+                {"name": "Szenario 2", "value": 47},
+            ],
+            title="Heizenergieverbrauch in kWh/(m²*a) (Endenergie)",
+        )
+        context["co2_chart_data"] = heating_and_co2_chart.generate_echarts_option(
+            scenarios=[
+                {"name": "Heute", "value": 2600},
+                {"name": "Szenario 1", "value": 1200},
+                {"name": "Szenario 2", "value": 700},
+            ],
+            title="CO2-Kosten in € pro Jahr",
+        )
+        context["investment_chart_data"] = investment_costs_chart.generate_investment_chart_options(
+            scenarios=[
+                {"name": "Szenario 1", "renovation": 55000, "maintenance": 45000},
+                {"name": "Szenario 2", "renovation": 100000, "maintenance": 67250},
+            ],
+        )
         return context
 
 
