@@ -49,7 +49,11 @@ class HouseTypeSelect(RadioSelect):
         "Einliegerwohnung ist, also von untergeordnete Bedeutung ist (Beispiel: Ferienwohnung).",
         "apartment_building": "Ein Mehrfamilienhaus ist ein Wohngebäude, das mehrere separate Wohneinheiten enthält."
         "Jede Wohneinheit wird von verschiedenen Familien oder Haushalten bewohnt. Auch Zweifamilienhäuser zählen zu "
-                              "Mehrfamilienhäusern. ",
+         "Mehrfamilienhäusern.",
+        "terraced_house": "Ein Reihenhaus ist ein Einfamilienhaus, das in einer Reihe identischer "
+        "oder ähnlicher Häuser direkt aneinandergebaut ist. Es teilt sich mindestens eine Seitenwand "
+        "mit dem Nachbarhaus und bietet eine kosteneffiziente Wohnlösung mit eigenem Eingang und "
+        "oft einem kleinen Garten.",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
@@ -64,20 +68,10 @@ class BuildingTypeForm(ValidationForm):
         choices=[
             ("single_family", "Einfamilienhaus"),
             ("apartment_building", "Mehrfamilienhaus"),
+            ("terraced_house", "Reihenhaus"),
         ],
         widget=HouseTypeSelect(),
     )
-
-
-class BuildingTypeProtectionForm(ValidationForm):
-    monument_protection = forms.ChoiceField(
-        label="Denkmalschutz?",
-        choices=[("no", "Nein"), ("yes", "Ja")],
-        widget=forms.RadioSelect,
-    )
-
-
-class BuildingDataForm(ValidationForm):
     construction_year = forms.IntegerField(
         label="Baujahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
@@ -86,48 +80,21 @@ class BuildingDataForm(ValidationForm):
         label="Anzahl Personen",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
-    number_flats = forms.IntegerField(
-        label="Anzahl Wohneinheiten",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        template_name="forms/number_flats.html",
-    )
-    living_space = forms.IntegerField(
-        label="Wohnfläche in m²",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
-    number_floors = forms.IntegerField(
-        label="Anzahl Vollgeschosse",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
-    adjoining_building = forms.ChoiceField(
-        label="Angrenzendes Gebäude",
-        choices=[
-            ("no", "Nein / Freistehend"),
-            ("1_side", "Eine Seite / Reihenendhaus"),
-            ("2_side", "Zwei Seiten / Reihenmittelhaus"),
-        ],
-        widget=forms.RadioSelect,
-    )
 
     def validate_with_session(self):
-        data = self.request.session.get("django_htmx_flow", {})
-
         min_max_defaults = {
             "single_family": {
                 "number_persons": {"min": 1, "max": 10},
-                "number_flats": {"min": 1, "max": 2},
-                "living_space": {"min": 50, "max": 300},
-                "number_floors": {"min": 1, "max": 3},
             },
             "apartment_building": {
                 "number_persons": {"min": 2, "max": 100},
-                "number_flats": {"min": 2, "max": 20},
-                "living_space": {"min": 300, "max": 1000},
-                "number_floors": {"min": 1, "max": 10},
+            },
+            "terraced_house": {
+                "number_persons": {"min": 1, "max": 10},
             },
         }
 
-        building_type = data.get("building_type", None)
+        building_type = self.data.get("building_type") or self.initial.get("building_type")
         if building_type:
             field_rules = min_max_defaults[building_type]
             for field_name, rules in field_rules.items():
@@ -137,6 +104,14 @@ class BuildingDataForm(ValidationForm):
                     )
                     self.fields[field_name].validators.append(MinValueValidator(rules["min"]))
                     self.fields[field_name].validators.append(MaxValueValidator(rules["max"]))
+
+
+class BuildingTypeProtectionForm(ValidationForm):
+    monument_protection = forms.ChoiceField(
+        label="Denkmalschutz?",
+        choices=[("no", "Nein"), ("yes", "Ja")],
+        widget=forms.RadioSelect,
+    )
 
 
 class InsulationForm(ValidationForm):

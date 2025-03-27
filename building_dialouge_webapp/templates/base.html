@@ -27,7 +27,6 @@
     {% endblock css %}
     {% block javascript %}
       {% compress js %}
-        <script defer src="{% static 'vendors/bootstrap/js/bootstrap.min.js' %}"></script>
         <script defer src="{% static 'vendors/htmx/js/htmx.min.js' %}"></script>
         <script defer src="{% static 'js/project.js' %}"></script>
         {% django_htmx_script %}
@@ -279,4 +278,5 @@
       {% endcomment %}
     {% endblock inline_javascript %}
   </body>
+        <script defer src="{% static 'vendors/bootstrap/js/bootstrap.min.js' %}"></script>
 </html>
