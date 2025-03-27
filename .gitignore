@@ -329,9 +329,6 @@ dump.rdb
 building_dialouge_webapp/media/
 building_dialouge_webapp/data/
 
-# scripts
-scripts/
-
 .pytest_cache/
 .ipython/
 .env
