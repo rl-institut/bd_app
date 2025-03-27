@@ -1,5 +1,3 @@
-import json
-
 def generate_echarts_option(scenarios, title):
     default_colors = {
         "Heute": "#dcdcdb",
@@ -38,30 +36,22 @@ def generate_echarts_option(scenarios, title):
             },
         )
 
-    title_top = "55%"
-    grid_height = 200
+    title_top = "0%"
     rotate = 0
-    font_size = 24 if len(scenarios) == 4 else (44 if len(scenarios) == 2 else 34)
     if title == "CO2-Kosten in € pro Jahr":
         rotate = 45
-        grid_height = 250
-        title_top = "50%"
+        title_top = "0%"
 
-    option = {
+    return {
         "grid": {
-            "left": "20%",
-            "right": "4%",
-            "bottom": "3%",
-            "height": grid_height,
             "containLabel": True,
         },
         "xAxis": {
             "type": "value",
             "axisLabel": {
                 "show": True,
-                "fontSize": 26,
                 "color": "#b3b4b2",
-                "rotate": rotate
+                "rotate": rotate,
             },
             "splitLine": {
                 "show": True,
@@ -75,7 +65,6 @@ def generate_echarts_option(scenarios, title):
             },
             "axisLabel": {
                 "show": True,
-                "fontSize": 28,
             },
             "axisTick": {
                 "show": False,
@@ -87,7 +76,6 @@ def generate_echarts_option(scenarios, title):
             "top": title_top,
             "textStyle": {
                 "fontWeight": "normal",
-                "fontSize": 34,
                 "color": "#6e6e6e",
             },
         },
@@ -98,7 +86,6 @@ def generate_echarts_option(scenarios, title):
                 "label": {
                     "show": True,
                     "position": "right",
-                    "fontSize": font_size,
                     "fontWeight": "bold",
                     "align": "right",
                     "offset": [-20, 0],
@@ -106,62 +93,3 @@ def generate_echarts_option(scenarios, title):
             },
         ],
     }
-
-    return option
-
-
-# Beispiele heating_consumption:
-# 1) Nur ein Szenario
-single_scenario_option = generate_echarts_option(
-    [
-        {"name": "Heute", "value": 230},
-        {"name": "Szenario 1", "value": 130},
-    ]
-,"Heizenergieverbrauch in kWh/(m²*a) (Endenergie)")
-print(json.dumps(single_scenario_option, indent=2, ensure_ascii=False))
-
-#2) Zwei Szenarien
-# two_scenarios_option = generate_echarts_option(
-#     [
-#         {"name": "Heute", "value": 230},
-#         {"name": "Szenario 1", "value": 130},
-#         {"name": "Szenario 2", "value": 47}
-#     ]
-# ,"Heizenergieverbrauch in kWh/(m²*a) (Endenergie)")
-# print(json.dumps(two_scenarios_option, indent=2, ensure_ascii=False))
-
-# 3) Drei Szenarien
-# three_scenarios_option = generate_echarts_option(
-#     [
-#          {"name": "Heute", "value": 230},
-#          {"name": "Szenario 1", "value": 130},
-#          {"name": "Szenario 2", "value": 47},
-#          {"name": "Szenario 3", "value": 87}
-#      ]
-# ,"Heizenergieverbrauch in kWh/(m²*a) (Endenergie)")
-# print(json.dumps(three_scenarios_option, indent=2, ensure_ascii=False))
-# Beispiele CO2-Kosten:
-single_scenario_option = generate_echarts_option(
-    [
-        {"name": "Heute", "value": 2600},
-        {"name": "Szenario 1", "value": 1200},
-    ]
-,"CO2-Kosten in € pro Jahr")
-print(json.dumps(single_scenario_option, indent=2, ensure_ascii=False))
-# two_scenarios_option = generate_echarts_option(
-#     [
-#         {"name": "Heute", "value": 2600},
-#         {"name": "Szenario 1", "value": 1200},
-#         {"name": "Szenario 2", "value": 700},
-#     ]
-# ,"CO2-Kosten in € pro Jahr")
-# print(json.dumps(two_scenarios_option, indent=2, ensure_ascii=False))
-# three_scenarios_option = generate_echarts_option(
-#     [
-#          {"name": "Heute", "value": 2600},
-#          {"name": "Szenario 1", "value": 1200},
-#          {"name": "Szenario 2", "value": 700},
-#          {"name": "Szenario 3", "value": 900}
-#      ]
-# ,"CO2-Kosten in € pro Jahr")
-# print(json.dumps(three_scenarios_option, indent=2, ensure_ascii=False))
