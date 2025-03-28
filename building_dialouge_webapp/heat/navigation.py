@@ -1,4 +1,4 @@
-import heat.settings as heat_settings
+from . import settings as heat_settings
 
 
 class SidebarNavigationMixin:
