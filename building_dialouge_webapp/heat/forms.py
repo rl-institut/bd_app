@@ -47,8 +47,9 @@ class HouseTypeSelect(RadioSelect):
         "eine einzige Familie bzw. einen einzigen Haushalt vorgesehen ist. Ein Haus gilt auch "
         "dann als Einfamilienhaus, wenn es zwei Wohneinheiten enthält und eine davon eine "
         "Einliegerwohnung ist, also von untergeordnete Bedeutung ist (Beispiel: Ferienwohnung).",
-        "apartment_building": "Wohngebäude, das mehrere separate Wohneinheiten enthält, die von "
-        "verschiedenen Familien oder Haushalten bewohnt werden.",
+        "apartment_building": "Ein Mehrfamilienhaus ist ein Wohngebäude, das mehrere separate Wohneinheiten enthält."
+        "Jede Wohneinheit wird von verschiedenen Familien oder Haushalten bewohnt. Auch Zweifamilienhäuser zählen zu "
+         "Mehrfamilienhäusern.",
         "terraced_house": "Ein Reihenhaus ist ein Einfamilienhaus, das in einer Reihe identischer "
         "oder ähnlicher Häuser direkt aneinandergebaut ist. Es teilt sich mindestens eine Seitenwand "
         "mit dem Nachbarhaus und bietet eine kosteneffiziente Wohnlösung mit eigenem Eingang und "
