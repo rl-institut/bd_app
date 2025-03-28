@@ -299,7 +299,7 @@ def all_flows_finished(request):
     all_flows = [
         (name, flow())
         for name, flow in inspect.getmembers(flows, inspect.isclass)
-        if name.endswith("Flow") and name not in {"Flow", "flows.RenovationRequestFlow"}
+        if name.endswith("Flow") and name not in {"Flow", "RenovationRequestFlow"}
     ]
 
     # Check if at least one instance of RenovationRequestFlow is finished
