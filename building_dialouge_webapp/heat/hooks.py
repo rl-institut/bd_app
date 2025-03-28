@@ -9,6 +9,13 @@ from .settings import DATA_DIR
 from .settings import SCENARIO_MAX
 
 
+def set_up_parameters_structure(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+    """Set up structure of parameters used in hooks."""
+    structure = {"flow_data": {}, "renovation_data": {}, "oeprom": {}}
+    parameters.update(structure)
+    return parameters
+
+
 def read_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dict:
     """Read flow data from session."""
     # alternativ in settings.py ne Liste anlegen, mit allen Flows, die dann in views und hier genutzt werden kann
@@ -34,7 +41,8 @@ def read_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dic
         message = "No completed 'RenovationRequestFlow' scenarios found."
         raise SimulationError(message)
 
-    return {"flow_data": flow_data}
+    parameters["flow_data"] = flow_data
+    return parameters
 
 
 def get_renovation_data(scenario: str, parameters: dict, request: HttpRequest) -> dict:
@@ -52,19 +60,16 @@ def get_renovation_data(scenario: str, parameters: dict, request: HttpRequest) -
     return parameters
 
 
-def calculate_energy_demand(
+def set_profiles(
     scenario: str,
     parameters: dict,
     request: HttpRequest,
 ) -> dict:
-    # Energy demand
-    data = {
-        "oeprom": {
-            "load_electricity": {"amount": 100},
-            "volatile_PV": {"capacity": 1000},
-        },
+    parameters["oeprom"] = {
+        "load_electricity": {"profile": 100},
+        "volatile_PV": {"capacity": 1000},
     }
-    return data
+    return parameters
 
 
 def unpack_oeprom(scenario: str, parameters: dict, request: HttpRequest) -> dict:
