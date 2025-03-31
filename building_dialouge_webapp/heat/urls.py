@@ -16,7 +16,7 @@ urlpatterns = [
     path("insulation", flows.InsulationFlow.as_view(), name="insulation"),
     path("hotwater_heating/", flows.HotwaterHeatingFlow.as_view(), name="hotwater_heating"),
     path("roof/", flows.RoofFlow.as_view(), name="roof"),
-    path("roof_orientation/", views.roof_orientation, name="roof_orientation"),
+    path("roof_orientation_buttons/", views.roof_orientation_buttons, name="roof_orientation_buttons"),
     path("heating/", flows.HeatingFlow.as_view(), name="heating"),
     path("pv_system/", flows.PVSystemFlow.as_view(), name="pv_system"),
     # step 2 renovation request

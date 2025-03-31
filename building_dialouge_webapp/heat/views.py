@@ -1,6 +1,7 @@
 import inspect
 from urllib.parse import urlparse
 
+from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -89,9 +90,14 @@ def delete_flow(request):
     return HttpResponseClientRedirect(reverse(overview_url))
 
 
-def roof_orientation(request):
-    form = RoofOrientationForm()
-    return render(request, "partials/roof_orientation.html", {"form": form})
+def roof_orientation_buttons(request):
+    flat_roof = request.GET.get("flat_roof")
+
+    if flat_roof == "doesnt_exist":
+        form = RoofOrientationForm()
+        return render(request, "partials/roof_orientation_buttons.html", {"form": form})
+
+    return HttpResponse("")
 
 
 class ConsumptionResult(SidebarNavigationMixin, TemplateView):

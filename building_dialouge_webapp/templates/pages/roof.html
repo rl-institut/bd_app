@@ -1,5 +1,7 @@
 {% extends "base_footer_button.html" %}
 
+{% load static %}
+
 {% block content %}
   <section class="position-relative h-100 flex-grow-1 pb-5">
     <div class="step-title">
@@ -27,9 +29,9 @@
       </svg>
 
       <div id="roof_orientation_buttons"
-           hx-post="{% url 'roof_orientation' %}"
-           hx-trigger="change"
-           hx-swap="show:bottom"
+           hx-post="{% url 'roof_orientation_buttons' %}"
+           hx-trigger="change from:input[name='flat_roof]"
+           hx-swap="innerHTML"
            hx-include="this">
           {% for radio in form.roof_orientation %}
             <div class="radio-position {{ radio.choice_value }}">
