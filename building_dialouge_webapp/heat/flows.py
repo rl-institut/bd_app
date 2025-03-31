@@ -609,8 +609,14 @@ class BuildingTypeFlow(SidebarNavigationMixin, Flow):
             form_class=forms.BuildingTypeProtectionForm,
             template_name="partials/building_type_protection_help.html",
         ).transition(
-            Switch("monument_protection").case("yes", "dead_end_monument_protection").default("stop"),
+            Switch("monument_protection").case("yes", "dead_end_stop").default("stop"),
         )
+
+        self.dead_end_stop = StopState(
+            self,
+            lookup="building_type_done",
+            next_botton_text="Speichern",
+        ).transition(Next("dead_end_monument_protection"))
 
         self.dead_end_monument_protection = EndState(
             self,
@@ -622,39 +628,13 @@ class BuildingTypeFlow(SidebarNavigationMixin, Flow):
             lookup="building_type_done",
             next_botton_text="Speichern",
         ).transition(Next("end"))
-        self.end = EndState(self, url="heat:building_data")
-
-
-class BuildingDataFlow(SidebarNavigationMixin, Flow):
-    template_name = "pages/building_data.html"
-    extra_context = {
-        "back_url": "heat:building_type",
-        "next_disabled": True,
-    }
-
-    def __init__(self):
-        super().__init__()
-        self.start = FormState(
-            self,
-            target="building_data",
-            form_class=forms.BuildingDataForm,
-            template_name="partials/building_data_help.html",
-        ).transition(
-            Next("stop"),
-        )
-
-        self.stop = StopState(
-            self,
-            lookup="building_data_done",
-            next_botton_text="Speichern",
-        ).transition(Next("end"))
         self.end = EndState(self, url="heat:insulation")
 
 
 class InsulationFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/insulation.html"
     extra_context = {
-        "back_url": "heat:building_data",
+        "back_url": "heat:building_type",
         "next_disabled": True,
     }
 

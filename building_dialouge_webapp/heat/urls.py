@@ -13,7 +13,6 @@ urlpatterns = [
     path("intro_inventory/", views.IntroInventory.as_view(), name="intro_inventory"),
     path("building_type/", flows.BuildingTypeFlow.as_view(), name="building_type"),
     path("dead_end_monument/", views.DeadEndMonumentProtection.as_view(), name="dead_end_monument_protection"),
-    path("building_data", flows.BuildingDataFlow.as_view(), name="building_data"),
     path("insulation", flows.InsulationFlow.as_view(), name="insulation"),
     path("hotwater_heating/", flows.HotwaterHeatingFlow.as_view(), name="hotwater_heating"),
     path("roof/", flows.RoofFlow.as_view(), name="roof"),

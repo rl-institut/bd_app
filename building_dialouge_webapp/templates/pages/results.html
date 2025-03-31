@@ -40,22 +40,11 @@
                 Hier sehen Sie Ihren heutigen Energieverbrauch sowie für die von Ihnen gewählten Szenarien.
                 Der heutige Verbrauch basiert entweder auf Ihren Verbrauchseingaben oder wurde von uns gemäß Ihrer Angaben berechnet.
               </p>
-              <br />
-              <div>
-                <strong>placeholder chart</strong>
-              </div>
-              <br />
-              <br />
+              <div id="heating_chart" class="chart_big"></div>
               <p>Der Energieverbrauch Ihres Gebäudes hängt von der verbauten Heizung ab und unterliegt saisonalen Schwankungen:</p>
               <br />
               <div>
-                <strong>placeholder Heizlastprofil in kWh/Monat area chart</strong>
-              </div>
-              <br />
-              <br />
-              <br />
-              <div>
-                <strong>placeholder Heizlastprofil in kWh/Monat vertical Bar</strong>
+                <strong>placeholder Heizlastprofil in kWh/Monat line chart</strong>
               </div>
               <br />
               <br />
@@ -74,7 +63,10 @@
                     data-bs-toggle="collapse"
                     data-bs-target="#panelsStayOpen-collapseTwo"
                     aria-expanded="false"
-                    aria-controls="panelsStayOpen-collapseTwo">Kosten</button>
+                    aria-controls="panelsStayOpen-collapseTwo">
+                Kosten
+                <span id="cost_chart" class="chart_small"></span>
+            </button>
           </h2>
           <div id="panelsStayOpen-collapseTwo"
                class="accordion-collapse collapse"
@@ -117,11 +109,7 @@
                 Die aufgeführten Kosten enthalten auch jene, die über den betrachteten Zeitraum sowieso angefallen wären - die <span class="maintenance">Instandhaltungskosten</span>.
                 Denn um Ihr Gebäude instand zu halten, sind in jedem Fall Aufwendungen - z.B. für Reüeraturen und Wartungsarbeiten - nötig.
                 Wenn Sie also in absehbarer Zeit ohnehin mit solchen Kosten rechnen, kann sich eine <span class="renovation">Sanierung</span> umso mehr lohnen.
-                <br />
-                <br />
-                <strong>placeholder for chart "Zusammensetzung der Investitionskosten"</strong>
-                <br />
-                <br />
+                <div id="investment_chart" class="chart_big"></div>
                 Ihre jährlichen Energiekosten für <span class="electricity">Strom</span> und <span class="heating">Heizung & Warmwasser</span> und Ihr Einsparpotenzial:
                 <br />
                 <br />
@@ -131,6 +119,7 @@
               </div>
             </div>
           </div>
+        </div>
           <div class="accordion-item">
             <h2 class="accordion-header" id="panelsStayOpen-headingThree">
               <button class="accordion-button collapsed"
@@ -138,7 +127,10 @@
                       data-bs-toggle="collapse"
                       data-bs-target="#panelsStayOpen-collapseThree"
                       aria-expanded="false"
-                      aria-controls="panelsStayOpen-collapseThree">Emissionen</button>
+                      aria-controls="panelsStayOpen-collapseThree">
+                Emissionen
+                <span id="emission_chart" class="chart_small"></span>
+              </button>
             </h2>
             <div id="panelsStayOpen-collapseThree"
                  class="accordion-collapse collapse"
@@ -149,11 +141,7 @@
                 <br />
                 Für jede Tonne emittiertes CO<sub>2</sub> fallen seit 2021 Kosten an.
                 Diese Kosten werden steigen und einen maßgeblichen Teil der laufenden Energiekosten darstellen:
-                <br />
-                <br />
-                <strong>placeholder for chart "CO<sub>2</sub>-Kosten in € pro Jahr"</strong>
-                <br />
-                <br />
+                <div id="co2_chart" class="chart_big"></div>
                 <div class="saving_forest">
                   Sehr gut, die Maßnahmen in deinen
                   <br />
@@ -177,5 +165,17 @@
         </div>
       </div>
     </div>
-  </div>
 {% endblock content %}
+
+{% block javascript %}
+  <script type="text/javascript" src="{% static 'vendors/echarts/js/echarts.min.js' %}"></script>
+  <script type="module" src="{% static 'js/results.js' %}"></script>
+{% endblock javascript %}
+
+{% block inline_javascript %}
+  {{ cost_chart_data|json_script:"cost_chart_data" }}
+  {{ emission_chart_data|json_script:"emission_chart_data" }}
+  {{ heating_chart_data|json_script:"heating_chart_data" }}
+  {{ investment_chart_data|json_script:"investment_chart_data" }}
+  {{ co2_chart_data|json_script:"co2_chart_data" }}
+{% endblock inline_javascript %}

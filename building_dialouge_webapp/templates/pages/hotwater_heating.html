@@ -7,8 +7,9 @@
         <div class="main">
           <h1>Heizung & Warmwasser</h1>
           <div class="info-box">
-            Wie wird das Gebäude derzeit beheizt? <br>
-            Bitte wählen Sie den Energieträger und ggf. eine Zusatzheizung.
+            <p>Hier erfassen wir die Technologie Ihrer Heizung und Warmwasserbereitung. Die Art Ihrer Heizung und
+               Warmwasserzubereitung hilft, die Effizienz Ihrer Heizungsanlage zu bewerten.</p>
+            <p>Wählen Sie Ihre primäre Heizungsart aus.</p>
           </div>
         </div>
       </div>
@@ -22,8 +23,23 @@
           hx-trigger="change"
           hx-swap="show:bottom"
           hx-include="this"
-          class="main">{{ solar_thermal_exists.content | safe }}</div>
-        <div class="help"></div>
+          class="main">{{ solar_thermal_exists.content | safe }}
+          <div class="info-text">
+            <p>Eine Solarthermie-Anlage wandelt Sonnenlicht mithilfe von Kollektoren (Flach- oder
+              Vakuumröhrenkollektoren) in Wärme um. Diese wird über eine Trägerflüssigkeit weitergeleitet und für
+              Warmwasser oder zur Heizungsunterstützung genutzt.</p>
+            <p><b>Woran erkenne ich eine Solarthermie-Anlage?</b></p>
+            <div class="category-content">
+              <ul>
+                <li><b>Dunkle Kollektoren auf dem Dach</b>, schmaler und weniger glänzend als Solarmodule</li>
+                <li><b>Zusätzliche Wärmespeicher</b> mit Solaranschlüssen im Heizungsraum</li>
+                <li><b>Hinweise in den Heizungsunterlagen</b> oder Auskunft von Hausverwaltung/Installateur</li>
+              </ul>
+              <p>Falls Sie unsicher sind, werfen Sie einen Blick aufs Dach oder in den Heizraum - oft geben diese
+                 Merkmale erste Hinweise.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="step-question">
