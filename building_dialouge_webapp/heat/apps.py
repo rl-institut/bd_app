@@ -15,22 +15,22 @@ class HeatConfig(AppConfig):
 
         hooks.register_hook(
             hooks.HookType.SETUP,
-            hooks.Hook(scenario=hooks.ALL_SCENARIOS, function=bd_hooks.set_up_parameters_structure),
+            hooks.Hook(scenario=hooks.ALL_SCENARIOS, function=bd_hooks.init_parameters),
         )
 
         hooks.register_hook(
             hooks.HookType.SETUP,
-            hooks.Hook(scenario=hooks.ALL_SCENARIOS, function=bd_hooks.read_flow_data),
+            hooks.Hook(scenario=hooks.ALL_SCENARIOS, function=bd_hooks.init_flow_data),
         )
 
         hooks.register_hook(
             hooks.HookType.SETUP,
-            hooks.Hook(scenario=hooks.ALL_SCENARIOS, function=bd_hooks.get_renovation_data),
+            hooks.Hook(scenario=hooks.ALL_SCENARIOS, function=bd_hooks.init_renovation_data),
         )
 
         hooks.register_hook(
             hooks.HookType.PARAMETER,
-            hooks.Hook(scenario=hooks.ALL_SCENARIOS, function=bd_hooks.set_profiles),
+            hooks.Hook(scenario=hooks.ALL_SCENARIOS, function=bd_hooks.set_up_loads),
         )
 
         hooks.register_hook(

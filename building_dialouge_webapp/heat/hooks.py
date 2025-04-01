@@ -1,22 +1,24 @@
 import inspect
 import json
 
+import pandas as pd
 from django.http import HttpRequest
 from django_oemof.simulation import SimulationError
 
 from . import flows
+from .settings import CONFIG
 from .settings import DATA_DIR
 from .settings import SCENARIO_MAX
 
 
-def set_up_parameters_structure(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+def init_parameters(scenario: str, parameters: dict, request: HttpRequest) -> dict:
     """Set up structure of parameters used in hooks."""
     structure = {"flow_data": {}, "renovation_data": {}, "oeprom": {}}
     parameters.update(structure)
     return parameters
 
 
-def read_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+def init_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dict:
     """Read flow data from session."""
     # alternativ in settings.py ne Liste anlegen, mit allen Flows, die dann in views und hier genutzt werden kann
     all_flows = [
@@ -45,7 +47,7 @@ def read_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dic
     return parameters
 
 
-def get_renovation_data(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+def init_renovation_data(scenario: str, parameters: dict, request: HttpRequest) -> dict:
     """Get renovation data from KfW based on flow data."""
     # Get cluster ID from KfW clustering
     # TODO: Get cluster ID from lookup table. Currently hardcoded.
@@ -60,14 +62,65 @@ def get_renovation_data(scenario: str, parameters: dict, request: HttpRequest) -
     return parameters
 
 
-def set_profiles(
+def set_up_loads(
     scenario: str,
     parameters: dict,
     request: HttpRequest,
 ) -> dict:
+    """Set up electricity, heat and hotwater consumption (profiles & amount)."""
+    electricity_amount = (
+        parameters["renovation_data"]["energyConsumptionElectricityAsIs"]
+        - parameters["renovation_data"]["resultsMeasuresAccordingBEG"]["reductionFinalEnergyElectricity"]
+    )
+    hotwater_amount = parameters["flow_data"]["number_persons"] * CONFIG["hotwater_energy_consumption_per_person"]
+    heat_amount = (
+        parameters["renovation_data"]["energyConsumptionHeatingAsIs"]
+        - parameters["renovation_data"]["resultsMeasuresAccordingBEG"]["reductionFinalEnergyHeating"]
+        - hotwater_amount
+    )
     parameters["oeprom"] = {
-        "load_electricity": {"profile": 100},
-        "volatile_PV": {"capacity": 1000},
+        "load_electricity": {"profile": 100, "amount": electricity_amount},
+        "load_hotwater": {"profile": 100, "amount": hotwater_amount},
+        "load_heat": {"profile": 100, "amount": heat_amount},
+    }
+    return parameters
+
+
+def set_up_volatiles(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+    """Set up PV and solar-thermal profiles and capacities."""
+    pv_profile = pd.DataFrame()
+    pv_full_load_hours = pv_profile.sum()
+    pv_measure = next(
+        (
+            measure
+            for measure in parameters["renovation_data"]["additionalMeasures"]
+            if measure["name"] == "PV-Anlage + Speicher + Ladesäule"
+        ),
+        None,
+    )
+    if not pv_measure:
+        error_msg = "Could not find PV measure in renovation data."
+        raise SimulationError(error_msg)
+    pv_capacity = pv_measure["reductionFinalEnergy"] / pv_full_load_hours
+
+    sth_profile = pd.DataFrame()
+    sth_full_load_hours = sth_profile.sum()
+    sth_measure = next(
+        (
+            measure
+            for measure in parameters["renovation_data"]["resultsMeasuresAccordingBEG"]["measures"]
+            if measure["name"] == "Thermische Solaranlage"
+        ),
+        None,
+    )
+    if not sth_measure:
+        error_msg = "Could not find Solarthermal measure in renovation data."
+        raise SimulationError(error_msg)
+    sth_capacity = sth_measure["reductionFinalEnergy"] / sth_full_load_hours
+
+    parameters["oeprom"] = {
+        "volatile_PV": {"profile": pv_profile, "capacity": pv_capacity},
+        "volatile_STH": {"profile": sth_profile, "capacity": sth_capacity},
     }
     return parameters
 

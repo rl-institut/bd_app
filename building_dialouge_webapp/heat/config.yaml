@@ -1,0 +1,3 @@
+# Config file for building dialouge
+
+hotwater_energy_consumption_per_person: 800  # in kWh
