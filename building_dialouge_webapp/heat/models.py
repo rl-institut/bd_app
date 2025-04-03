@@ -48,6 +48,15 @@ class Load(models.Model):
         return f"Load ({self.number_people}, {self.eec})"
 
 
+class Heat(models.Model):
+    """Model to hold timeseries for different setups of heat component."""
+
+    profile = ArrayField(models.FloatField())
+
+    def __str__(self):
+        return "Heat"
+
+
 class Hotwater(models.Model):
     """Model to hold timeseries for different setups of hotwater component."""
 
