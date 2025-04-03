@@ -1,3 +1,13 @@
 # Config file for building dialouge
 
 hotwater_energy_consumption_per_person: 800  # in kWh
+default_energy_efficiency_class: 2
+orientation:
+  s: 0
+  sw: 45
+  w: 90
+  nw: 135
+  n: 180
+  no: 225
+  o: 270
+  so: 315
