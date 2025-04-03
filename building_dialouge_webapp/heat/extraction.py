@@ -1,24 +1,9 @@
-import os
-import sys
-from pathlib import Path
-
-import django
-import models
 import pandas as pd
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))  # noqa: PTH100, PTH118, PTH120
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.base")
-django.setup()
-
-
-# define the paths
-DATA_PATH = Path(Path(__file__).parent.parent)
-# should be something like: DATA_PATH = '/home/miria/git_repos/bd_app/building_dialouge_webapp'
+from django.conf import settings
 
 
 def full_path(filename):
-    return Path(DATA_PATH) / "data/profiles" / f"hourly_{filename}"
+    return settings.DATA_DIR / "profiles" / f"hourly_{filename}"
 
 
 cop_air_path = full_path("profile_cop_air_raw.csv")
@@ -239,74 +224,3 @@ def solarthermal(type_sth: str, type_temp: int, elev_angle: int, direc_angle: in
 
     # extract desired column as timeseries and return it
     return df_sth[column_name]
-
-
-def import_heatpump_data():
-    allowed_medium = {"air", "water", "brine"}
-    allowed_type_temp = {"VL75C", "VL40C"}
-
-    for medium in allowed_medium:
-        for temp in allowed_type_temp:
-            heatpump_timeseries = coefficient_of_performance(medium=medium, type_temp=temp)
-            models.Heatpump(medium=medium, type_temp=temp, profile=heatpump_timeseries.tolist()).save()
-
-
-def import_hotwater_data():
-    allowed_number_people = {1, 2, 3, 4, 5}
-
-    for number_people in allowed_number_people:
-        hotwater_timeseries = hotwater_per_person(number_people=number_people)
-        models.Hotwater(number_people=number_people, profile=hotwater_timeseries.tolist()).save()
-
-
-def import_load_data():
-    allowed_number_people = {1, 2, 3, 4, 5}
-    allowed_eec = {0, 1, 2, 3, 4}
-
-    for number_people in allowed_number_people:
-        for eec in allowed_eec:
-            load_timeseries = load(number_people=number_people, eec=eec)
-            models.Load(number_people=number_people, ees=eec, profile=load_timeseries.tolist()).save()
-
-
-def import_photovoltaic_data():
-    allowed_elev_angle = {0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90}
-    allowed_direc_angle = {0, 120, 150, 180, 210, 240, 270, 30, 300, 330, 360, 60, 90}
-
-    for elev in allowed_elev_angle:
-        for direc in allowed_direc_angle:
-            photovoltaic_timeseries = photovoltaic(elev, direc)
-            models.Photovoltaic(
-                elevation_angle=elev,
-                direction_angle=direc,
-                profile=photovoltaic_timeseries.tolist(),
-            ).save()
-
-
-def import_solarthermal_data():
-    alllowed_type = {"heat", "load"}
-    allowed_type_temp = {40, 75}
-    allowed_elev_angle = {0, 10, 20, 30, 40, 45, 50, 60, 70, 80, 90}
-    allowed_direc_angle = {0, 120, 150, 180, 210, 240, 270, 30, 300, 330, 360, 60, 90}
-
-    for type_sth in alllowed_type:
-        for temp in allowed_type_temp:
-            for elev in allowed_elev_angle:
-                for direc in allowed_direc_angle:
-                    sth_timeseries = solarthermal(type_sth, temp, elev, direc)
-                    models.Solarthermal(
-                        type=type_sth,
-                        temperature=temp,
-                        elevation_angle=elev,
-                        direction_angle=direc,
-                        profile=sth_timeseries.tolist(),
-                    ).save()
-
-    print(models.Solarthermal.objects.count())  # noqa: T201
-
-    for entry in models.Solarthermal.objects.all()[:5]:
-        print(entry)  # noqa: T201
-
-
-if __name__ == "__main__":
-    import_solarthermal_data()
