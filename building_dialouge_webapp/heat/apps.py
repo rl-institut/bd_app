@@ -17,6 +17,7 @@ class HeatConfig(AppConfig):
         SETUP_FUNCTIONS = (  # noqa: N806
             bd_hooks.init_parameters,
             bd_hooks.init_flow_data,
+            bd_hooks.init_tabula_data,
             bd_hooks.init_roof,
             bd_hooks.init_renovation_data,
         )

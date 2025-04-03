@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pandas as pd
 import yaml
 
 APP_DIR = Path(__file__).parent
@@ -8,6 +9,9 @@ DATA_DIR = APP_DIR.parent / "data"
 CONFIG_FILE = "config.yaml"
 with (APP_DIR / CONFIG_FILE).open("r", encoding="utf-8") as f:
     CONFIG = yaml.safe_load(f)
+
+TABULA_FILE = DATA_DIR / "tabula" / "tabula_housing_types.csv"
+TABULA_DATA = pd.read_csv(TABULA_FILE, index_col=0)
 
 SCENARIO_MAX = 3  # maximum of renovation scenario flow instances
 
