@@ -9,8 +9,8 @@ from . import flows
 from . import models
 from .settings import CONFIG
 from .settings import DATA_DIR
-from .settings import DEFAULT_ELECTRICITY_EEC
 from .settings import SCENARIO_MAX
+from .settings import map_elevation
 
 
 def init_parameters(scenario: str, parameters: dict, request: HttpRequest) -> dict:
@@ -49,6 +49,19 @@ def init_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dic
     return parameters
 
 
+def init_roof(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+    """Calculate elevation and direction angles of roof."""
+    if parameters["flow_data"]["flat_roof"] == "exists":
+        parameters["flow_data"]["elevation"] = 0
+        parameters["flow_data"]["direction"] = 0
+    else:
+        parameters["flow_data"]["elevation"] = map_elevation(
+            parameters["flow_data"]["roof_inclination"],
+        )
+        parameters["flow_data"]["direction"] = CONFIG["orientation"][parameters["flow_data"]["roof_orientation"]]
+    return parameters
+
+
 def init_renovation_data(scenario: str, parameters: dict, request: HttpRequest) -> dict:
     """Get renovation data from KfW based on flow data."""
     # Get cluster ID from KfW clustering
@@ -73,7 +86,7 @@ def set_up_loads(
     electricity_profile = pd.Series(
         models.Load.objects.get(
             number_people=parameters["flow_data"]["number_persons"],
-            eec=DEFAULT_ELECTRICITY_EEC,
+            eec=CONFIG["default_energy_efficiency_class"],
         ).profile,
     )
     electricity_amount = (
@@ -86,25 +99,31 @@ def set_up_loads(
         ).profile,
     )
     hotwater_amount = parameters["flow_data"]["number_persons"] * CONFIG["hotwater_energy_consumption_per_person"]
-    heat_profile = pd.Series(
-        models.Heat.objects.first().profile,
-    )
     heat_amount = (
         parameters["renovation_data"]["energyConsumptionHeatingAsIs"]
         - parameters["renovation_data"]["resultsMeasuresAccordingBEG"]["reductionFinalEnergyHeating"]
         - hotwater_amount
     )
     parameters["oeprom"] = {
-        "load_electricity": {"profile": electricity_profile, "amount": electricity_amount},
+        "load_electricity": {
+            "profile": electricity_profile,
+            "amount": electricity_amount,
+        },
         "load_hotwater": {"profile": hotwater_profile, "amount": hotwater_amount},
-        "load_heat": {"profile": heat_profile, "amount": heat_amount},
+        "load_heat": {"amount": heat_amount},
     }
     return parameters
 
 
 def set_up_volatiles(scenario: str, parameters: dict, request: HttpRequest) -> dict:
     """Set up PV and solar-thermal profiles and capacities."""
-    pv_profile = pd.DataFrame()
+
+    pv_profile = pd.Series(
+        models.Photovoltaic.objects.get(
+            elevation_angle=parameters["flow_data"]["elevation"],
+            direction_angle=parameters["flow_data"]["direction"],
+        ).profile,
+    )
     pv_full_load_hours = pv_profile.sum()
     pv_measure = next(
         (
@@ -119,7 +138,14 @@ def set_up_volatiles(scenario: str, parameters: dict, request: HttpRequest) -> d
         raise SimulationError(error_msg)
     pv_capacity = pv_measure["reductionFinalEnergy"] / pv_full_load_hours
 
-    sth_profile = pd.DataFrame()
+    sth_profile = pd.Series(
+        models.Solarthermal.objects.get(
+            type="heat",
+            temperature=parameters["flow_data"]["flow_temperature"],
+            elevation_angle=parameters["flow_data"]["elevation"],
+            direction_angle=parameters["flow_data"]["direction"],
+        ).profile,
+    )
     sth_full_load_hours = sth_profile.sum()
     sth_measure = next(
         (
@@ -139,6 +165,10 @@ def set_up_volatiles(scenario: str, parameters: dict, request: HttpRequest) -> d
         "volatile_STH": {"profile": sth_profile, "capacity": sth_capacity},
     }
     return parameters
+
+
+def set_up_heatpump(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+    """Set up heatpump."""
 
 
 def unpack_oeprom(scenario: str, parameters: dict, request: HttpRequest) -> dict:
