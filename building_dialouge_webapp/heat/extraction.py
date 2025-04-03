@@ -1,14 +1,9 @@
-from pathlib import Path
-
 import pandas as pd
-
-# define the paths
-DATA_PATH = Path(Path(__file__).parent)
-# should be something like: DATA_PATH = '/home/miria/git_repos/bd_app/building_dialouge_webapp/heat'
+from django.conf import settings
 
 
 def full_path(filename):
-    return Path(DATA_PATH) / "data/data_raw" / filename
+    return settings.DATA_DIR / "profiles" / f"hourly_{filename}"
 
 
 cop_air_path = full_path("profile_cop_air_raw.csv")
