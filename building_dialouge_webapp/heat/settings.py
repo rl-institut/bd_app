@@ -10,3 +10,5 @@ with (APP_DIR / CONFIG_FILE).open("r", encoding="utf-8") as f:
     CONFIG = yaml.safe_load(f)
 
 SCENARIO_MAX = 3  # maximum of renovation scenario flow instances
+
+DEFAULT_ELECTRICITY_EEC = 2

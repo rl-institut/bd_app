@@ -6,8 +6,10 @@ from django.http import HttpRequest
 from django_oemof.simulation import SimulationError
 
 from . import flows
+from . import models
 from .settings import CONFIG
 from .settings import DATA_DIR
+from .settings import DEFAULT_ELECTRICITY_EEC
 from .settings import SCENARIO_MAX
 
 
@@ -68,20 +70,34 @@ def set_up_loads(
     request: HttpRequest,
 ) -> dict:
     """Set up electricity, heat and hotwater consumption (profiles & amount)."""
+    electricity_profile = pd.Series(
+        models.Load.objects.get(
+            number_people=parameters["flow_data"]["number_persons"],
+            eec=DEFAULT_ELECTRICITY_EEC,
+        ).profile,
+    )
     electricity_amount = (
         parameters["renovation_data"]["energyConsumptionElectricityAsIs"]
         - parameters["renovation_data"]["resultsMeasuresAccordingBEG"]["reductionFinalEnergyElectricity"]
     )
+    hotwater_profile = pd.Series(
+        models.Hotwater.objects.get(
+            number_people=parameters["flow_data"]["number_persons"],
+        ).profile,
+    )
     hotwater_amount = parameters["flow_data"]["number_persons"] * CONFIG["hotwater_energy_consumption_per_person"]
+    heat_profile = pd.Series(
+        models.Heat.objects.first().profile,
+    )
     heat_amount = (
         parameters["renovation_data"]["energyConsumptionHeatingAsIs"]
         - parameters["renovation_data"]["resultsMeasuresAccordingBEG"]["reductionFinalEnergyHeating"]
         - hotwater_amount
     )
     parameters["oeprom"] = {
-        "load_electricity": {"profile": 100, "amount": electricity_amount},
-        "load_hotwater": {"profile": 100, "amount": hotwater_amount},
-        "load_heat": {"profile": 100, "amount": heat_amount},
+        "load_electricity": {"profile": electricity_profile, "amount": electricity_amount},
+        "load_hotwater": {"profile": hotwater_profile, "amount": hotwater_amount},
+        "load_heat": {"profile": heat_profile, "amount": heat_amount},
     }
     return parameters
 
