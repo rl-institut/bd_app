@@ -1,8 +1,10 @@
 import inspect
 from urllib.parse import urlparse
 
+from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
+from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
 from django_htmx.http import HttpResponseClientRedirect
@@ -14,6 +16,7 @@ from . import tables
 from .charts import cost_emission_chart
 from .charts import heating_and_co2_chart
 from .charts import investment_costs_chart
+from .forms import RoofOrientationForm
 from .navigation import SidebarNavigationMixin
 
 
@@ -85,6 +88,16 @@ def delete_flow(request):
             return HttpResponseClientRedirect(reverse("heat:renovation_request", kwargs={"scenario": url_instance}))
         overview_url = "heat:renovation_overview"
     return HttpResponseClientRedirect(reverse(overview_url))
+
+
+def roof_orientation_buttons(request):
+    flat_roof = request.GET.get("flat_roof")
+
+    if flat_roof == "doesnt_exist":
+        form = RoofOrientationForm()
+        return render(request, "partials/roof_orientation_buttons.html", {"form": form})
+
+    return HttpResponse("")
 
 
 class ConsumptionResult(SidebarNavigationMixin, TemplateView):

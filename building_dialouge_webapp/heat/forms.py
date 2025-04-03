@@ -49,7 +49,7 @@ class HouseTypeSelect(RadioSelect):
         "Einliegerwohnung ist, also von untergeordnete Bedeutung ist (Beispiel: Ferienwohnung).",
         "apartment_building": "Ein Mehrfamilienhaus ist ein Wohngebäude, das mehrere separate Wohneinheiten enthält."
         "Jede Wohneinheit wird von verschiedenen Familien oder Haushalten bewohnt. Auch Zweifamilienhäuser zählen zu "
-         "Mehrfamilienhäusern.",
+        "Mehrfamilienhäusern.",
         "terraced_house": "Ein Reihenhaus ist ein Einfamilienhaus, das in einer Reihe identischer "
         "oder ähnlicher Häuser direkt aneinandergebaut ist. Es teilt sich mindestens eine Seitenwand "
         "mit dem Nachbarhaus und bietet eine kosteneffiziente Wohnlösung mit eigenem Eingang und "
