@@ -1,6 +1,7 @@
 import inspect
 import json
 
+import numpy as np
 import pandas as pd
 from django.http import HttpRequest
 from django_oemof.simulation import SimulationError
@@ -10,6 +11,7 @@ from . import models
 from .settings import CONFIG
 from .settings import DATA_DIR
 from .settings import SCENARIO_MAX
+from .settings import TABULA_DATA
 from .settings import map_elevation
 
 
@@ -46,6 +48,23 @@ def init_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dic
         raise SimulationError(message)
 
     parameters["flow_data"] = flow_data
+    return parameters
+
+
+def init_tabula_data(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+    """Get tabula building."""
+
+    building_type = CONFIG["building_type"][parameters["flow_data"]["building_type"]]
+
+    # Get nearest available year using absolut difference
+    year_diff = [abs(year - parameters["flow_data"]["construction_year"]) for year in CONFIG["construction_years"]]
+    year_index = int(np.argmin(year_diff)) + 1
+    if building_type == "TH" and year_index == 1:
+        # There is no building data for "DE.N.TH.01."
+        year_index = 2
+
+    building_reference = f"DE.N.{building_type}.{year_index:02}."
+    parameters["tabula_data"] = TABULA_DATA[building_reference].to_dict()
     return parameters
 
 
