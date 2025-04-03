@@ -1,7 +1,9 @@
 # Config file for building dialouge
 
 hotwater_energy_consumption_per_person: 800  # in kWh
+
 default_energy_efficiency_class: 2
+
 orientation:
   s: 0
   sw: 45
@@ -11,3 +13,10 @@ orientation:
   no: 225
   o: 270
   so: 315
+
+building_type:
+  single_family: "SFH"
+  apartment_building: "MFH"
+  terraced_house: "TH"
+
+construction_years: [1859, 1918, 1948, 1957, 1968, 1978, 1983, 1994, 2001, 2009, 2015, 2025]
