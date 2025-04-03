@@ -1,5 +1,7 @@
 import logging
 
+import pandas as pd
+
 from building_dialouge_webapp.heat import extraction
 from building_dialouge_webapp.heat import models
 
@@ -66,6 +68,28 @@ def import_photovoltaic_data():
                 direction_angle=direc,
                 profile=photovoltaic_timeseries.tolist(),
             ).save()
+
+        # Interpolate values for 45° steps
+        if elev == 45:  # noqa: PLR2004
+            continue
+        for direc in (45, 135, 225, 315):
+            left = pd.Series(
+                models.Photovoltaic.objects.get(
+                    elevation_angle=elev,
+                    direction_angle=direc - 15,
+                ).profile,
+            )
+            right = pd.Series(
+                models.Photovoltaic.objects.get(
+                    elevation_angle=elev,
+                    direction_angle=direc + 15,
+                ).profile,
+            )
+            models.Photovoltaic(
+                elevation_angle=elev,
+                direction_angle=direc,
+                profile=((left + right) / 2).tolist(),
+            ).save()
     logging.info("Photovoltaic data imported.")
 
 
@@ -93,6 +117,35 @@ def import_solarthermal_data():
                         direction_angle=direc,
                         profile=sth_timeseries.tolist(),
                     ).save()
+
+                # Interpolate values for 45° steps
+                if elev == 45:  # noqa: PLR2004
+                    continue
+                for direc in (45, 135, 225, 315):
+                    left = pd.Series(
+                        models.Solarthermal.objects.get(
+                            type=type_sth,
+                            temperature=temp,
+                            elevation_angle=elev,
+                            direction_angle=direc - 15,
+                        ).profile,
+                    )
+                    right = pd.Series(
+                        models.Solarthermal.objects.get(
+                            type=type_sth,
+                            temperature=temp,
+                            elevation_angle=elev,
+                            direction_angle=direc + 15,
+                        ).profile,
+                    )
+                    models.Solarthermal(
+                        type=type_sth,
+                        temperature=temp,
+                        elevation_angle=elev,
+                        direction_angle=direc,
+                        profile=((left + right) / 2).tolist(),
+                    ).save()
+
     logging.info("Solarthermal data imported.")
 
 
