@@ -51,7 +51,11 @@ def init_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dic
     return parameters
 
 
-def init_renovation_scenario(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+def init_renovation_scenario(
+    scenario: str,
+    parameters: dict,
+    request: HttpRequest,
+) -> dict:
     """Extract current renovation scenario from flow."""
     if "renovation_scenario" not in parameters:
         error_msg = "No renovation scenario given. Must be set in parameters as 'renovation_scenario'."
@@ -89,6 +93,11 @@ def init_tabula_data(scenario: str, parameters: dict, request: HttpRequest) -> d
     parameters["tabula_data"]["flow_temperature"] = CONFIG["flow_temperature"][
         parameters["tabula_data"]["HeatingSystem_Emission"]
     ]
+
+    # Set available roof area
+    parameters["tabula_data"]["roof_area_available"] = (
+        parameters["tabula_data"]["roof_area_tabula"] * CONFIG["roof_usage"]
+    )
 
     return parameters
 
@@ -170,57 +179,83 @@ def set_up_loads(
     return parameters
 
 
-def set_up_volatiles(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+def set_up_volatiles(scenario: str, parameters: dict, request: HttpRequest) -> dict:  # noqa: C901
     """Set up PV and solar-thermal profiles and capacities."""
+    parameters["oeprom"]["volatile_PV"] = {}
+    parameters["oeprom"]["volatile_STH"] = {}
 
-    pv_profile = pd.Series(
-        models.Photovoltaic.objects.get(
-            elevation_angle=parameters["flow_data"]["elevation"],
-            direction_angle=parameters["flow_data"]["direction"],
-        ).profile,
-    )
-    pv_full_load_hours = pv_profile.sum()
-    pv_measure = next(
-        (
-            measure
-            for measure in parameters["renovation_data"]["additionalMeasures"]
-            if measure["name"] == "PV-Anlage + Speicher + Ladesäule"
-        ),
-        None,
-    )
-    if not pv_measure:
-        error_msg = "Could not find PV measure in renovation data."
-        raise SimulationError(error_msg)
-    pv_capacity = pv_measure["reductionFinalEnergy"] / pv_full_load_hours
+    if parameters["flow_data"]["pv_exists"] == "True" or "pv" in parameters["flow_data"]["scenario-secondary_heating"]:
+        pv_profile = pd.Series(
+            models.Photovoltaic.objects.get(
+                elevation_angle=parameters["flow_data"]["elevation"],
+                direction_angle=parameters["flow_data"]["direction"],
+            ).profile,
+        )
+        parameters["oeprom"]["volatile_PV"]["profile"] = pv_profile
 
-    sth_profile = pd.Series(
-        models.Solarthermal.objects.get(
-            type="heat",
-            temperature=parameters["tabula_data"]["flow_temperature"],
-            elevation_angle=parameters["flow_data"]["elevation"],
-            direction_angle=parameters["flow_data"]["direction"],
-        ).profile,
-    )
-    sth_full_load_hours = sth_profile.sum()
-    sth_measure = next(
-        (
-            measure
-            for measure in parameters["renovation_data"]["resultsMeasuresAccordingBEG"]["measures"]
-            if measure["name"] == "Thermische Solaranlage"
-        ),
-        None,
-    )
-    if not sth_measure:
-        error_msg = "Could not find Solarthermal measure in renovation data."
-        raise SimulationError(error_msg)
-    sth_capacity = sth_measure["reductionFinalEnergy"] / sth_full_load_hours
+    if (
+        parameters["flow_data"]["solar_thermal_exists"] == "True"
+        or "solar" in parameters["flow_data"]["scenario-secondary_heating"]
+    ):
+        sth_profile = pd.Series(
+            models.Solarthermal.objects.get(
+                type="heat",
+                temperature=parameters["tabula_data"]["flow_temperature"],
+                elevation_angle=parameters["flow_data"]["elevation"],
+                direction_angle=parameters["flow_data"]["direction"],
+            ).profile,
+        )
+        parameters["oeprom"]["volatile_STH"]["profile"] = sth_profile
 
-    parameters["oeprom"].update(
-        {
-            "volatile_PV": {"profile": pv_profile, "capacity": pv_capacity},
-            "volatile_STH": {"profile": sth_profile, "capacity": sth_capacity},
-        },
-    )
+    # Set existing PV and solarthermal capacities
+    if parameters["flow_data"]["pv_exists"] == "True" and "pv_capacity" in parameters["flow_data"]:
+        parameters["oeprom"]["volatile_PV"]["capacity"] = parameters["flow_data"]["pv_capacity"]
+    if parameters["flow_data"]["solar_thermal_exists"] == "True" and "solar_thermal_area" in parameters["flow_data"]:
+        parameters["oeprom"]["volatile_STH"]["capacity"] = (
+            parameters["flow_data"]["solar_thermal_area"] / CONFIG["sth_density"]
+        )
+
+    # Prepare optimization of PV in scenario
+    if (
+        parameters["flow_data"]["pv_exists"] == "False"
+        and "pv" in parameters["flow_data"]["scenario-secondary_heating"]
+    ):
+        if parameters["flow_data"]["solar_thermal_exists"] == "True":
+            # Calculate remaining area for PV
+            pv_area_available = max(
+                parameters["tabula_data"]["roof_area_available"] - parameters["flow_data"]["solar_thermal_area"],
+                0,
+            )
+        elif "solar" in parameters["flow_data"]["scenario-secondary_heating"]:
+            # Share available roof area across PV and STH
+            pv_area_available = parameters["tabula_data"]["roof_area_available"] * CONFIG["roof_usage_pv_share"]
+        else:
+            pv_area_available = parameters["tabula_data"]["roof_area_available"]
+        pv_capacity_max = pv_area_available / CONFIG["pv_density"]
+        parameters["oeprom"]["volatile_PV"]["capacity_potential"] = pv_capacity_max
+        parameters["oeprom"]["volatile_PV"]["expandable"] = True
+
+    # Prepare optimization of STH in scenario
+    if (
+        parameters["flow_data"]["solar_thermal_exists"] == "False"
+        and "solar" in parameters["flow_data"]["scenario-secondary_heating"]
+    ):
+        if parameters["flow_data"]["pv_exists"] == "True":
+            # Calculate remaining area for STH
+            sth_area_available = max(
+                parameters["tabula_data"]["roof_area_available"]
+                - parameters["flow_data"]["pv_capacity"] * CONFIG["pv_density"],
+                0,
+            )
+        elif "pv" in parameters["flow_data"]["scenario-secondary_heating"]:
+            # Share available roof area across PV and STH
+            sth_area_available = parameters["tabula_data"]["roof_area_available"] * (1 - CONFIG["roof_usage_pv_share"])
+        else:
+            sth_area_available = parameters["tabula_data"]["roof_area_available"]
+        sth_capacity_max = sth_area_available / CONFIG["sth_density"]
+        parameters["oeprom"]["volatile_STH"]["capacity_potential"] = sth_capacity_max
+        parameters["oeprom"]["volatile_STH"]["expandable"] = True
+
     return parameters
 
 
