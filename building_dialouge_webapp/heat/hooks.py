@@ -170,7 +170,11 @@ def set_up_loads(
     return parameters
 
 
-def set_up_volatiles(scenario: str, parameters: dict, request: HttpRequest) -> dict:  # noqa: C901
+def set_up_volatiles(  # noqa: C901
+    scenario: str,
+    parameters: dict,
+    request: HttpRequest,
+) -> dict:
     """Set up PV and solar-thermal profiles and capacities."""
     parameters["oeprom"]["volatile_PV"] = {}
     parameters["oeprom"]["volatile_STH"] = {}
@@ -262,32 +266,46 @@ def set_up_volatiles(scenario: str, parameters: dict, request: HttpRequest) -> d
 
 def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> dict:
     """Set up heatpumps."""
+
+    # Get temperature type from flow temperature
     type_temperature = f"VL{parameters['tabula_data']['flow_temperature']}C"
-    heatpump_air_cop = pd.Series(
-        models.Heatpump.objects.get(
-            type="air",
-            type_temperature=type_temperature,
-        ).profile,
-    )
-    heatpump_water_cop = pd.Series(
-        models.Heatpump.objects.get(
-            type="water",
-            type_temperature=type_temperature,
-        ).profile,
-    )
-    heatpump_brine_cop = pd.Series(
-        models.Heatpump.objects.get(
-            type="brine",
-            type_temperature=type_temperature,
-        ).profile,
-    )
-    parameters["oeprom"].update(
-        {
-            "conversion_heatpump_air": {"efficiency": heatpump_air_cop},
-            "conversion_heatpump_water": {"efficiency": heatpump_water_cop},
-            "conversion_heatpump_brine": {"efficiency": heatpump_brine_cop},
-        },
-    )
+
+    if parameters["flow_data"]["energy_source"] == "air_heat_pump" or (
+        parameters["flow_data"]["scenario-primary_heating"] == "heat_pump"
+        and parameters["flow_data"]["scenario-heat_pump_type"] == "air_heat_pump"
+    ):
+        heatpump_air_cop = pd.Series(
+            models.Heatpump.objects.get(
+                type="air",
+                type_temperature=type_temperature,
+            ).profile,
+        )
+        parameters["oeprom"]["conversion_heatpump_air"] = {"expandable": True, "efficiency": heatpump_air_cop}
+
+    if parameters["flow_data"]["energy_source"] == "geothermal_pump" or (
+        parameters["flow_data"]["scenario-primary_heating"] == "heat_pump"
+        and parameters["flow_data"]["scenario-heat_pump_type"] == "geothermal_pump"
+    ):
+        heatpump_water_cop = pd.Series(
+            models.Heatpump.objects.get(
+                type="water",
+                type_temperature=type_temperature,
+            ).profile,
+        )
+        parameters["oeprom"]["conversion_heatpump_water"] = {"expandable": True, "efficiency": heatpump_water_cop}
+
+    if parameters["flow_data"]["energy_source"] == "groundwater" or (
+        parameters["flow_data"]["scenario-primary_heating"] == "heat_pump"
+        and parameters["flow_data"]["scenario-heat_pump_type"] == "groundwater"
+    ):
+        heatpump_brine_cop = pd.Series(
+            models.Heatpump.objects.get(
+                type="brine",
+                type_temperature=type_temperature,
+            ).profile,
+        )
+        parameters["oeprom"]["conversion_heatpump_brine"] = {"expandable": True, "efficiency": heatpump_brine_cop}
+
     return parameters
 
 
