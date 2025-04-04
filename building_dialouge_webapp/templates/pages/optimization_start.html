@@ -1,11 +1,13 @@
 {% extends "base_footer_button.html" %}
 
 {% block content %}
-  <section class="position-relative h-100 flex-grow-1 pb-5">
-    <div class="step-title">
-      <div class="step-container">
-        <div class="main">
-          <h1>Optimierung starten</h1>
+    <div class="main-content">
+    <div>
+      <div class="category-header">
+        <h2 class="category-title">
+          <span class="category-title__name">Optimierung starten</span>
+        </h2>
+      </div>
           {% if all_flows_finished %}
           <p>Wunderbar! Die Eingabe ist abgeschlossen.</p>
           <p>Jetzt passiert folgendes:</p>
@@ -31,5 +33,4 @@
         </div>
       </div>
     </div>
-  </section>
 {% endblock content %}

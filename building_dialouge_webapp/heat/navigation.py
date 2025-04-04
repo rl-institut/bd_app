@@ -66,7 +66,7 @@ class SidebarNavigationMixin:
                 "object": views.IntroInventory,
                 "url": "heat:intro_inventory",
                 "steps": [
-                    {"name": "Gebäudeart", "object": flows.BuildingTypeFlow, "url": "heat:building_type"},
+                    {"name": "Gebäude", "object": flows.BuildingTypeFlow, "url": "heat:building_type"},
                     {"name": "Dämmmaßnahmen", "object": flows.InsulationFlow, "url": "heat:insulation"},
                     {
                         "name": "Heizung & Warmwasser",

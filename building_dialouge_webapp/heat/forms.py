@@ -43,17 +43,14 @@ class HouseTypeSelect(RadioSelect):
     template_name = "forms/energy_source.html"
 
     INFOS = {
-        "single_family": "Ein Einfamilienhaus ist ein Wohngebäude, das für die Nutzung durch "
-        "eine einzige Familie bzw. einen einzigen Haushalt vorgesehen ist. Ein Haus gilt auch "
-        "dann als Einfamilienhaus, wenn es zwei Wohneinheiten enthält und eine davon eine "
-        "Einliegerwohnung ist, also von untergeordnete Bedeutung ist (Beispiel: Ferienwohnung).",
-        "apartment_building": "Ein Mehrfamilienhaus ist ein Wohngebäude, das mehrere separate Wohneinheiten enthält."
-        "Jede Wohneinheit wird von verschiedenen Familien oder Haushalten bewohnt. Auch Zweifamilienhäuser zählen zu "
-         "Mehrfamilienhäusern.",
-        "terraced_house": "Ein Reihenhaus ist ein Einfamilienhaus, das in einer Reihe identischer "
-        "oder ähnlicher Häuser direkt aneinandergebaut ist. Es teilt sich mindestens eine Seitenwand "
-        "mit dem Nachbarhaus und bietet eine kosteneffiziente Wohnlösung mit eigenem Eingang und "
-        "oft einem kleinen Garten.",
+        "single_family": "Ein Einfamilienhaus ist ein Wohngebäude mit einer Wohneinheit, das von einer "
+        "Familie oder einem Haushalt bewohnt wird. Einliegerwohnungen, wie z.B. Ferienwohnungen, zählen "
+        "als Sonderfall mit zwei Wohneinheiten dazu.",
+        "apartment_building": "Ein Mehrfamilienhaus ist ein Wohngebäude mit mehreren Wohneinheiten, in denen "
+        "verschiedene Familien oder Haushalte getrennt voneinander wohnen.",
+        "terraced_house": "Ein Reihenhaus ist ein Einfamilienhaus in geschlossener Bauweise, das direkt an "
+        "benachbarte, ähnliche oder identische Einfamilienhäuser grenzt und mit ihnen eine oder zwei Seitenwände "
+        "teilt. Es bietet eine kosteneffiziente Wohnlösung mit eigenem Eingang und oft einem kleinen Garten.",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
@@ -153,25 +150,19 @@ class EnergySourceSelect(RadioSelect):
     template_name = "forms/energy_source.html"
 
     INFOS = {
-        "gas": "Fossiler Brennstoff, der häufig zur effizienten und sauberen Wärmeerzeugung in "
-        "Heizkesseln verwendet wird.",
-        "oil": "Flüssiger fossiler Brennstoff, der in speziellen Kesseln verbrannt wird, "
-        "um Wärme für Gebäude zu erzeugen, und bietet eine hohe Energiedichte.",
-        "district_heating": "Wird durch ein zentrales Heizkraftwerk erzeugt und über isolierte "
-        "Rohrleitungen direkt zu Gebäuden transportiert, was effiziente und umweltfreundliche "
-        "Beheizung ermöglicht.",
-        "liquid_gas": "Ein unter Druck verflüssigtes Gasgemisch, das in Tanks gespeichert wird "
-        "und eine flexible Heizlösung für Gebiete ohne Erdgasanschluss bietet.",
-        "wood_pellets": "Verdichtete Holzabfälle, die als umweltfreundlicher Brennstoff für "
-        "Pelletöfen und -kessel genutzt werden, um Wärme zu erzeugen.",
-        "geothermal_pump": "Sie nutzt die konstante Erdwärme unter der Oberfläche, um Gebäude "
-        "effizient und umweltfreundlich zu heizen und zu kühlen.",
-        "air_heat_pump": "Sie entzieht der Außenluft Wärme, um Gebäude zu beheizen, und sind eine "
-        "effiziente Heizoption bei milden Klimabedingungen.",
-        "groundwater": "Nutzt die Wärmeenergie aus Grundwasser oder einem Solekreislauf, um "
-        "besonders effizient Wärme zu erzeugen.",
-        "heating_rod": "Elektrisches Heizelement, das direkt in Wasserboilern oder Heizkörpern "
-        "eingesetzt wird, um Wasser schnell zu erhitzen oder zusätzliche Wärme zu liefern.",
+        "gas": "Fossiler Brennstoff, der häufig zur Wärmeerzeugung in Heizkesseln verwendet wird.",
+        "oil": "Flüssiger fossiler Brennstoff, der in Kesseln verbrannt wird, um Wärme einer hohen "
+        "Energiedichte zu bereitzustellen.",
+        "district_heating": "Wärme, die in einem zentralen Heizkraftwerk erzeugt und über gedämmte "
+        "Rohrleitungen zum Gebäude transportiert wird.",
+        "liquid_gas": "Unter Druck verflüssigtes Gasgemisch, das in Tanks gelagert wird und eine "
+        "flexible Heizlösung für Gebiete ohne Erdgasanschluss bietet.",
+        "wood_pellets": "Verdichtete Holzabfälle als Brennstoff für Pelletöfen und Pelletkessel.",
+        "air_heat_pump": "Entzieht der Umgebungsluft Wärme, um das Gebäude zu beheizen.",
+        "groundwater": "Entzieht dem Grundwasser oder einem Oberflächengewässer Wärme, um dasGebäude zu beheizen.",
+        "geothermal_pump": "Entzieht dem Erdreich Wärme, um das Gebäude zu beheizen.",
+        "heating_rod": "Elektrisches Heizelement, das in Wasserboilern oder Heizkörpern zur "
+        "Wärmeerzeugung eingesetzt wird.",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
@@ -189,9 +180,9 @@ class HeatingSourceForm(ValidationForm):
             ("district_heating", "Fernwärme"),
             ("liquid_gas", "Flüssiggas"),
             ("wood_pellets", "Holzpellets"),
-            ("geothermal_pump", "Erdwärmepumpe"),
             ("air_heat_pump", "Luftwärmepumpe"),
             ("groundwater", "Grundwasser- oder Solewärmepumpe"),
+            ("geothermal_pump", "Erdwärmepumpe"),
             ("heating_rod", "Heizstab"),
         ],
         widget=EnergySourceSelect(),
