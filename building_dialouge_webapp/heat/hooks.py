@@ -157,14 +157,6 @@ def set_up_loads(
         - parameters["renovation_data"]["resultsMeasuresAccordingBEG"]["reductionFinalEnergyHeating"]
         - hotwater_amount
     )
-    sth_profile = pd.Series(
-        models.Solarthermal.objects.get(
-            type="load",
-            temperature=parameters["tabula_data"]["flow_temperature"],
-            elevation_angle=parameters["flow_data"]["elevation"],
-            direction_angle=parameters["flow_data"]["direction"],
-        ).profile,
-    )
     parameters["oeprom"].update(
         {
             "load_electricity": {
@@ -173,7 +165,6 @@ def set_up_loads(
             },
             "load_hotwater": {"profile": hotwater_profile, "amount": hotwater_amount},
             "load_heat": {"amount": heat_amount},
-            "load_STH": {"profile": sth_profile},
         },
     )
     return parameters
@@ -183,6 +174,7 @@ def set_up_volatiles(scenario: str, parameters: dict, request: HttpRequest) -> d
     """Set up PV and solar-thermal profiles and capacities."""
     parameters["oeprom"]["volatile_PV"] = {}
     parameters["oeprom"]["volatile_STH"] = {}
+    parameters["oeprom"]["load_STH"] = {}
 
     if parameters["flow_data"]["pv_exists"] == "True" or "pv" in parameters["flow_data"]["scenario-secondary_heating"]:
         pv_profile = pd.Series(
@@ -206,14 +198,23 @@ def set_up_volatiles(scenario: str, parameters: dict, request: HttpRequest) -> d
             ).profile,
         )
         parameters["oeprom"]["volatile_STH"]["profile"] = sth_profile
+        sth_load_profile = pd.Series(
+            models.Solarthermal.objects.get(
+                type="load",
+                temperature=parameters["tabula_data"]["flow_temperature"],
+                elevation_angle=parameters["flow_data"]["elevation"],
+                direction_angle=parameters["flow_data"]["direction"],
+            ).profile,
+        )
+        parameters["oeprom"]["load_STH"]["profile"] = sth_load_profile
 
     # Set existing PV and solarthermal capacities
     if parameters["flow_data"]["pv_exists"] == "True" and "pv_capacity" in parameters["flow_data"]:
         parameters["oeprom"]["volatile_PV"]["capacity"] = parameters["flow_data"]["pv_capacity"]
     if parameters["flow_data"]["solar_thermal_exists"] == "True" and "solar_thermal_area" in parameters["flow_data"]:
-        parameters["oeprom"]["volatile_STH"]["capacity"] = (
-            parameters["flow_data"]["solar_thermal_area"] / CONFIG["sth_density"]
-        )
+        st_capacity = parameters["flow_data"]["solar_thermal_area"] / CONFIG["sth_density"]
+        parameters["oeprom"]["volatile_STH"]["capacity"] = st_capacity
+        parameters["oeprom"]["load_STH"]["amount"] = st_capacity
 
     # Prepare optimization of PV in scenario
     if (
