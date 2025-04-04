@@ -31,8 +31,8 @@
   },
   "RoofInclinationForm": {
     "roof_inclination": {
-      "min_value": 5,
-      "max_value": 85
+      "min_value": 1,
+      "max_value": 60
     }
   },
   "HeatingYearForm": {
