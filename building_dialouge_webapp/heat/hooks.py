@@ -123,6 +123,14 @@ def set_up_loads(
         - parameters["renovation_data"]["resultsMeasuresAccordingBEG"]["reductionFinalEnergyHeating"]
         - hotwater_amount
     )
+    sth_profile = pd.Series(
+        models.Solarthermal.objects.get(
+            type="load",
+            temperature=parameters["tabula_data"]["flow_temperature"],
+            elevation_angle=parameters["flow_data"]["elevation"],
+            direction_angle=parameters["flow_data"]["direction"],
+        ).profile,
+    )
     parameters["oeprom"] = {
         "load_electricity": {
             "profile": electricity_profile,
@@ -130,6 +138,7 @@ def set_up_loads(
         },
         "load_hotwater": {"profile": hotwater_profile, "amount": hotwater_amount},
         "load_heat": {"amount": heat_amount},
+        "load_STH": {"profile": sth_profile},
     }
     return parameters
 
@@ -160,7 +169,7 @@ def set_up_volatiles(scenario: str, parameters: dict, request: HttpRequest) -> d
     sth_profile = pd.Series(
         models.Solarthermal.objects.get(
             type="heat",
-            temperature=parameters["flow_data"]["flow_temperature"],
+            temperature=parameters["tabula_data"]["flow_temperature"],
             elevation_angle=parameters["flow_data"]["elevation"],
             direction_angle=parameters["flow_data"]["direction"],
         ).profile,

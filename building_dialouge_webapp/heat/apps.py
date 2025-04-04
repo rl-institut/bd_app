@@ -33,11 +33,11 @@ class HeatConfig(AppConfig):
         for func in SETUP_FUNCTIONS:
             hooks.register_hook(
                 hooks.HookType.SETUP,
-                hooks.Hook(scenario=hooks.ALL_SCENARIOS, function=func),
+                hooks.Hook(scenario="oeprom", function=func),
             )
 
         for func in PARAMETER_FUNCTIONS:
             hooks.register_hook(
                 hooks.HookType.PARAMETER,
-                hooks.Hook(scenario=hooks.ALL_SCENARIOS, function=func),
+                hooks.Hook(scenario="oeprom", function=func),
             )
