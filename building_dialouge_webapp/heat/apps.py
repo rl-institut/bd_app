@@ -26,7 +26,7 @@ class HeatConfig(AppConfig):
         PARAMETER_FUNCTIONS = (  # noqa: N806
             bd_hooks.set_up_loads,
             bd_hooks.set_up_volatiles,
-            bd_hooks.set_up_heatpump,
+            bd_hooks.set_up_heatpumps,
             bd_hooks.unpack_oeprom,
         )
 
