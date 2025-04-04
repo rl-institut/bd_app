@@ -15,44 +15,28 @@
       </div>
       <div class="help"></div>
     </div>
-    <div id="heating_source" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this">{{ heating_source.content | safe }}</div>
     <div class="step-question">
       <div class="step-container">
-        <div id="solar_thermal_exists"
+        <div id="heating_source"
           hx-post=""
           hx-trigger="change"
           hx-swap="show:bottom"
           hx-include="this"
-          class="main">{{ solar_thermal_exists.content | safe }}
-          <div class="info-text">
-            <p>Eine Solarthermie-Anlage wandelt Sonnenlicht mithilfe von Kollektoren (Flach- oder
-              Vakuumröhrenkollektoren) in Wärme um. Diese wird über eine Trägerflüssigkeit weitergeleitet und für
-              Warmwasser oder zur Heizungsunterstützung genutzt.</p>
-            <p><b>Woran erkenne ich eine Solarthermie-Anlage?</b></p>
-            <div class="category-content">
-              <ul>
-                <li><b>Dunkle Kollektoren auf dem Dach</b>, schmaler und weniger glänzend als Solarmodule</li>
-                <li><b>Zusätzliche Wärmespeicher</b> mit Solaranschlüssen im Heizungsraum</li>
-                <li><b>Hinweise in den Heizungsunterlagen</b> oder Auskunft von Hausverwaltung/Installateur</li>
-              </ul>
-              <p>Falls Sie unsicher sind, werfen Sie einen Blick aufs Dach oder in den Heizraum - oft geben diese
-                 Merkmale erste Hinweise.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="step-question">
-      <div class="step-container">
-        <div id="solar_thermal_area_known"
-            hx-post=""
-            hx-trigger="change"
-            hx-swap="show:bottom"
-            hx-include="this"
-            class="main">{{ solar_thermal_area_known.content | safe }}</div>
+          class="main">{{ heating_source.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>
+    <div id="solar_thermal_exists"
+      hx-post=""
+      hx-trigger="change"
+      hx-swap="show:bottom"
+      hx-include="this">{{ solar_thermal_exists.content | safe }}
+    </div>
+    <div id="solar_thermal_area_known"
+        hx-post=""
+        hx-trigger="change"
+        hx-swap="show:bottom"
+        hx-include="this">{{ solar_thermal_area_known.content | safe }}</div>
     <div class="step-question">
       <div class="step-container">
         <div id="solar_thermal_area"
@@ -61,11 +45,6 @@
           hx-swap="show:bottom"
           hx-include="this"
           class="main">{{ solar_thermal_area.content | safe }}
-          <div class="info-text">
-            <p>Die Kollektorfläche einer thermischen Solaranlage entspricht der Gesamtfläche der Solarkollektoren,
-            die Sonnenenergie aufnehmen und in Wärme umwandeln. Falls bekannt, geben Sie die Fläche bitte in
-            Quadratmetern (m²) an.</p>
-          </div>
         </div>
         <div class="help"></div>
       </div>
