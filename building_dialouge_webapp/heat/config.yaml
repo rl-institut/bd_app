@@ -20,3 +20,7 @@ building_type:
   terraced_house: "TH"
 
 construction_years: [1859, 1918, 1948, 1957, 1968, 1978, 1983, 1994, 2001, 2009, 2015, 2025]
+
+flow_temperature:
+  radiators: 75
+  floorheating: 40
