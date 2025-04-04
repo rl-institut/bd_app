@@ -51,6 +51,25 @@ def init_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dic
     return parameters
 
 
+def init_renovation_scenario(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+    """Extract current renovation scenario from flow."""
+    if "renovation_scenario" not in parameters:
+        error_msg = "No renovation scenario given. Must be set in parameters as 'renovation_scenario'."
+        raise KeyError(error_msg)
+    renovation_scenario = parameters["renovation_scenario"]
+
+    scenario_keys = [key for key in parameters["flow_data"] if key.startswith(renovation_scenario)]
+    if len(scenario_keys) == 0:
+        error_msg = f"No renovation scenario '{renovation_scenario}' found in flow data."
+        raise KeyError(error_msg)
+
+    # Chosen renovation scenario keys are renamed to "scenario_<key_name>", removing scenario ID
+    for key in scenario_keys:
+        new_key = key.replace(renovation_scenario, "scenario")
+        parameters["flow_data"][new_key] = parameters["flow_data"][key]
+    return parameters
+
+
 def init_tabula_data(scenario: str, parameters: dict, request: HttpRequest) -> dict:
     """Get tabula building."""
 

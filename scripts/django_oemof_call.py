@@ -1,4 +1,3 @@
-# noqa: INP001
 import json
 import os
 
@@ -6,7 +5,7 @@ import requests
 
 URL = "http://localhost:8000/oemof/simulate"
 SCENARIO = "oeprom"
-PARAMETERS = {}
+PARAMETERS = {"renovation_scenario": "scenario1"}
 SESSION_ID = os.environ["SESSION_ID"]  # look up in browser and store in env var SESSION_ID
 
 data = {"scenario": SCENARIO, "parameters": json.dumps(PARAMETERS)}
