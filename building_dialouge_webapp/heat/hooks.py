@@ -65,6 +65,12 @@ def init_tabula_data(scenario: str, parameters: dict, request: HttpRequest) -> d
 
     building_reference = f"DE.N.{building_type}.{year_index:02}."
     parameters["tabula_data"] = TABULA_DATA[building_reference].to_dict()
+
+    # Set flow temperature depending on heating system (i.e. radiators/floorheating)
+    parameters["tabula_data"]["flow_temperature"] = CONFIG["flow_temperature"][
+        parameters["tabula_data"]["HeatingSystem_Emission"]
+    ]
+
     return parameters
 
 
@@ -131,15 +137,17 @@ def set_up_loads(
             direction_angle=parameters["flow_data"]["direction"],
         ).profile,
     )
-    parameters["oeprom"] = {
-        "load_electricity": {
-            "profile": electricity_profile,
-            "amount": electricity_amount,
+    parameters["oeprom"].update(
+        {
+            "load_electricity": {
+                "profile": electricity_profile,
+                "amount": electricity_amount,
+            },
+            "load_hotwater": {"profile": hotwater_profile, "amount": hotwater_amount},
+            "load_heat": {"amount": heat_amount},
+            "load_STH": {"profile": sth_profile},
         },
-        "load_hotwater": {"profile": hotwater_profile, "amount": hotwater_amount},
-        "load_heat": {"amount": heat_amount},
-        "load_STH": {"profile": sth_profile},
-    }
+    )
     return parameters
 
 
@@ -188,15 +196,44 @@ def set_up_volatiles(scenario: str, parameters: dict, request: HttpRequest) -> d
         raise SimulationError(error_msg)
     sth_capacity = sth_measure["reductionFinalEnergy"] / sth_full_load_hours
 
-    parameters["oeprom"] = {
-        "volatile_PV": {"profile": pv_profile, "capacity": pv_capacity},
-        "volatile_STH": {"profile": sth_profile, "capacity": sth_capacity},
-    }
+    parameters["oeprom"].update(
+        {
+            "volatile_PV": {"profile": pv_profile, "capacity": pv_capacity},
+            "volatile_STH": {"profile": sth_profile, "capacity": sth_capacity},
+        },
+    )
     return parameters
 
 
-def set_up_heatpump(scenario: str, parameters: dict, request: HttpRequest) -> dict:
-    """Set up heatpump."""
+def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+    """Set up heatpumps."""
+    type_temperature = f"VL{parameters['tabula_data']['flow_temperature']}C"
+    heatpump_air_cop = pd.Series(
+        models.Heatpump.objects.get(
+            type="air",
+            type_temperature=type_temperature,
+        ).profile,
+    )
+    heatpump_water_cop = pd.Series(
+        models.Heatpump.objects.get(
+            type="water",
+            type_temperature=type_temperature,
+        ).profile,
+    )
+    heatpump_brine_cop = pd.Series(
+        models.Heatpump.objects.get(
+            type="brine",
+            type_temperature=type_temperature,
+        ).profile,
+    )
+    parameters["oeprom"].update(
+        {
+            "conversion_heatpump_air": {"efficiency": heatpump_air_cop},
+            "conversion_heatpump_water": {"efficiency": heatpump_water_cop},
+            "conversion_heatpump_brine": {"efficiency": heatpump_brine_cop},
+        },
+    )
+    return parameters
 
 
 def unpack_oeprom(scenario: str, parameters: dict, request: HttpRequest) -> dict:
