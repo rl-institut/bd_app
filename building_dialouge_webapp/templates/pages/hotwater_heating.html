@@ -60,7 +60,13 @@
           hx-trigger="keyup change delay:1000ms"
           hx-swap="show:bottom"
           hx-include="this"
-          class="main">{{ solar_thermal_area.content | safe }}</div>
+          class="main">{{ solar_thermal_area.content | safe }}
+          <div class="info-text">
+            <p>Die Kollektorfläche einer thermischen Solaranlage entspricht der Gesamtfläche der Solarkollektoren,
+            die Sonnenenergie aufnehmen und in Wärme umwandeln. Falls bekannt, geben Sie die Fläche bitte in
+            Quadratmetern (m²) an.</p>
+          </div>
+        </div>
         <div class="help"></div>
       </div>
     </div>
