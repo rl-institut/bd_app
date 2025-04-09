@@ -272,7 +272,7 @@ def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> d
     # Get temperature type from flow temperature
     type_temperature = f"VL{parameters['tabula_data']['flow_temperature']}C"
 
-    if parameters["flow_data"]["energy_source"] == "air_heat_pump" or (
+    if (
         parameters["flow_data"]["scenario-primary_heating"] == "heat_pump"
         and parameters["flow_data"]["scenario-heat_pump_type"] == "air_heat_pump"
     ):
@@ -287,7 +287,7 @@ def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> d
             "efficiency": heatpump_air_cop,
         }
 
-    if parameters["flow_data"]["energy_source"] == "geothermal_pump" or (
+    if (
         parameters["flow_data"]["scenario-primary_heating"] == "heat_pump"
         and parameters["flow_data"]["scenario-heat_pump_type"] == "geothermal_pump"
     ):
@@ -302,7 +302,7 @@ def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> d
             "efficiency": heatpump_water_cop,
         }
 
-    if parameters["flow_data"]["energy_source"] == "groundwater" or (
+    if (
         parameters["flow_data"]["scenario-primary_heating"] == "heat_pump"
         and parameters["flow_data"]["scenario-heat_pump_type"] == "groundwater"
     ):
@@ -336,10 +336,7 @@ def set_up_conversion_technologies(
         return 1
 
     # Capacity of district heating is set to infinity and not optimized
-    if (
-        parameters["flow_data"]["energy_source"] == "district_heating"
-        or parameters["flow_data"]["scenario-primary_heating"] == "district_heating"
-    ):
+    if parameters["flow_data"]["scenario-primary_heating"] == "district_heating":
         parameters["oeprom"]["district_heating"] = {"capacity": float("+inf")}
 
     # Heating system is optimized
@@ -352,10 +349,7 @@ def set_up_conversion_technologies(
         "bhkw": "backpressure_bhkw",
     }
     for technology, oemof_technology in technologies.items():
-        if (
-            parameters["flow_data"]["energy_source"] == technology  # noqa: PLR1714
-            or parameters["flow_data"]["scenario-primary_heating"] == technology
-        ):
+        if parameters["flow_data"]["scenario-primary_heating"] == technology:
             parameters["oeprom"][oemof_technology] = {
                 "expandable": True,
                 "capacity_cost": get_capacity_cost(
