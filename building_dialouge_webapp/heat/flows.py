@@ -653,7 +653,7 @@ class InsulationFlow(SidebarNavigationMixin, Flow):
             lookup="insulation_done",
             next_botton_text="Speichern",
         ).transition(Next("end"))
-        self.end = EndState(self, url="heat:hotwater_heating")
+        self.end = EndState(self, url="heat:heating")
 
 
 class HeatingFlow(SidebarNavigationMixin, Flow):
@@ -712,7 +712,7 @@ class HeatingFlow(SidebarNavigationMixin, Flow):
             lookup="hotwater_heating_done",
             next_botton_text="Speichern",
         ).transition(Next("end"))
-        self.end = EndState(self, url="heat:roof")
+        self.end = EndState(self, url="heat:hotwater")
 
 
 class HotwaterFlow(SidebarNavigationMixin, Flow):
@@ -763,7 +763,7 @@ class HotwaterFlow(SidebarNavigationMixin, Flow):
             lookup="heating_done",
             next_botton_text="Speichern",
         ).transition(Next("end"))
-        self.end = EndState(self, url="heat:pv_system")
+        self.end = EndState(self, url="heat:roof")
 
 
 class RoofFlow(SidebarNavigationMixin, Flow):
