@@ -28,6 +28,7 @@ class HeatConfig(AppConfig):
             bd_hooks.set_up_loads,
             bd_hooks.set_up_volatiles,
             bd_hooks.set_up_heatpumps,
+            bd_hooks.set_up_conversion_technologies,
             bd_hooks.unpack_oeprom,
         )
 
