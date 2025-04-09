@@ -280,7 +280,10 @@ def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> d
                 type_temperature=type_temperature,
             ).profile,
         )
-        parameters["oeprom"]["conversion_heatpump_air"] = {"expandable": True, "efficiency": heatpump_air_cop}
+        parameters["oeprom"]["conversion_heatpump_air"] = {
+            "expandable": True,
+            "efficiency": heatpump_air_cop,
+        }
 
     if parameters["flow_data"]["energy_source"] == "geothermal_pump" or (
         parameters["flow_data"]["scenario-primary_heating"] == "heat_pump"
@@ -292,7 +295,10 @@ def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> d
                 type_temperature=type_temperature,
             ).profile,
         )
-        parameters["oeprom"]["conversion_heatpump_water"] = {"expandable": True, "efficiency": heatpump_water_cop}
+        parameters["oeprom"]["conversion_heatpump_water"] = {
+            "expandable": True,
+            "efficiency": heatpump_water_cop,
+        }
 
     if parameters["flow_data"]["energy_source"] == "groundwater" or (
         parameters["flow_data"]["scenario-primary_heating"] == "heat_pump"
@@ -304,7 +310,12 @@ def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> d
                 type_temperature=type_temperature,
             ).profile,
         )
-        parameters["oeprom"]["conversion_heatpump_brine"] = {"expandable": True, "efficiency": heatpump_brine_cop}
+        parameters["oeprom"]["conversion_heatpump_brine"] = {
+            "expandable": True,
+            "efficiency": heatpump_brine_cop,
+        }
+
+    return parameters
 
     return parameters
 
