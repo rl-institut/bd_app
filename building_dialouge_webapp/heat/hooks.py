@@ -317,6 +317,50 @@ def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> d
 
     return parameters
 
+
+def set_up_conversion_technologies(
+    scenario: str,
+    parameters: dict,
+    request: HttpRequest,
+) -> dict:
+    """Set up conversion technologies if selected in renovation scenario."""
+
+    def get_capacity_cost(technology, building_type):
+        """Capacity cost are related to installed capacity which, as a simplification, depends on building type."""
+        if building_type == "apartment_building":  # MFH
+            # TODO: Implement lookup for technologies
+            return 1
+        # in case of EFH,RH
+        return 1
+
+    # Capacity of district heating is set to infinity and not optimized
+    if (
+        parameters["flow_data"]["energy_source"] == "district_heating"
+        or parameters["flow_data"]["scenario-primary_heating"] == "district_heating"
+    ):
+        parameters["oeprom"]["district_heating"] = {"capacity": float("+inf")}
+
+    # Heating system is optimized
+    technologies = {
+        "wood_pellets": "conversion_pk",
+        "wood_chips": "conversion_hgk",
+        "firewood": "conversion_shk",
+        "oil_heating": "conversion_boiler",
+        "heating_rod": "conversion_ehz",
+        "bhkw": "backpressure_bhkw",
+    }
+    for technology, oemof_technology in technologies.items():
+        if (
+            parameters["flow_data"]["energy_source"] == technology  # noqa: PLR1714
+            or parameters["flow_data"]["scenario-primary_heating"] == technology
+        ):
+            parameters["oeprom"][oemof_technology] = {
+                "expandable": True,
+                "capacity_cost": get_capacity_cost(
+                    technology,
+                    parameters["flow_data"]["building_type"],
+                ),
+            }
     return parameters
 
 
