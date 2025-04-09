@@ -260,6 +260,8 @@ def set_up_volatiles(  # noqa: C901
         sth_capacity_max = sth_area_available / CONFIG["sth_density"]
         parameters["oeprom"]["volatile_STH"]["capacity_potential"] = sth_capacity_max
         parameters["oeprom"]["volatile_STH"]["expandable"] = True
+        # Set fix load amount (instead of coupling amount to optimized STH capacity) depending on number of persons
+        parameters["oeprom"]["load_STH"]["amount"] = CONFIG["sth_area_per_person"] / CONFIG["sth_density"]
 
     return parameters
 

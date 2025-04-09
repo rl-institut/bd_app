@@ -31,3 +31,5 @@ roof_usage_pv_share: 0.5
 
 pv_density: 7  # in m² / kWp
 sth_density: 12  # in m² / kWp
+
+sth_area_per_person: 1  # in m² / Person; needed to set fix capacity for STH electricity load
