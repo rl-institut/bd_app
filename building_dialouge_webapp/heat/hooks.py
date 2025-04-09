@@ -360,5 +360,14 @@ def set_up_conversion_technologies(
     return parameters
 
 
+def set_up_hotwater_supply(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+    """Either supply hot water via instantaneous water heater or freshwater station."""
+    if parameters["flow_data"]["hotwater_supply"] == "instantaneous_water_heater":
+        parameters["oeprom"]["conversion_dle"] = {"capacity": float("+inf")}
+    else:
+        parameters["oeprom"]["conversion_fws"] = {"capacity": float("+inf")}
+    return parameters
+
+
 def unpack_oeprom(scenario: str, parameters: dict, request: HttpRequest) -> dict:
     return parameters["oeprom"]
