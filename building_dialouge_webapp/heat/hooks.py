@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from django.http import HttpRequest
 from django_oemof.simulation import SimulationError
+from oemof import solph
 
 from . import flows
 from . import models
@@ -14,10 +15,13 @@ from .settings import SCENARIO_MAX
 from .settings import TABULA_DATA
 from .settings import map_elevation
 
+# As inf cannot be set, we instead use a very large value
+OEMOF_INF_EQUIVALENT = 100000000
+
 
 def init_parameters(scenario: str, parameters: dict, request: HttpRequest) -> dict:
     """Set up structure of parameters used in hooks."""
-    structure = {"flow_data": {}, "renovation_data": {}, "oeprom": {}}
+    structure = {"flow_data": {}, "renovation_data": {}, "oeprom": {}, "config": CONFIG}
     parameters.update(structure)
     return parameters
 
@@ -96,7 +100,7 @@ def init_tabula_data(scenario: str, parameters: dict, request: HttpRequest) -> d
 
     # Set available roof area
     parameters["tabula_data"]["roof_area_available"] = (
-        parameters["tabula_data"]["roof_area_tabula"] * CONFIG["roof_usage"]
+        float(parameters["tabula_data"]["roof_area_tabula"]) * CONFIG["roof_usage"]
     )
 
     return parameters
@@ -112,6 +116,10 @@ def init_roof(scenario: str, parameters: dict, request: HttpRequest) -> dict:
             parameters["flow_data"]["roof_inclination"],
         )
         parameters["flow_data"]["direction"] = CONFIG["orientation"][parameters["flow_data"]["roof_orientation"]]
+
+        # This is necessary due to missing data for elevation angle of 45°; only 0, 120, 240, 360 are available
+        if parameters["flow_data"]["elevation"] == 45:  # noqa: PLR2004
+            parameters["flow_data"]["direction"] = round(parameters["flow_data"]["direction"] / 120) * 120
     return parameters
 
 
@@ -293,7 +301,7 @@ def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> d
     ):
         heatpump_water_cop = pd.Series(
             models.Heatpump.objects.get(
-                type="water",
+                medium="water",
                 type_temperature=type_temperature,
             ).profile,
         )
@@ -335,9 +343,9 @@ def set_up_conversion_technologies(
         # in case of EFH,RH
         return 1
 
-    # Capacity of district heating is set to infinity and not optimized
+    # Capacity of district heating is set to "infinity" and not optimized
     if parameters["flow_data"]["scenario-primary_heating"] == "district_heating":
-        parameters["oeprom"]["district_heating"] = {"capacity": float("+inf")}
+        parameters["oeprom"]["district_heating"] = {"capacity": OEMOF_INF_EQUIVALENT}
 
     # Heating system is optimized
     technologies = {
@@ -360,13 +368,53 @@ def set_up_conversion_technologies(
     return parameters
 
 
-def set_up_hotwater_supply(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+def set_up_hotwater_supply(
+    scenario: str,
+    parameters: dict,
+    request: HttpRequest,
+) -> dict:
     """Either supply hot water via instantaneous water heater or freshwater station."""
     if parameters["flow_data"]["hotwater_supply"] == "instantaneous_water_heater":
-        parameters["oeprom"]["conversion_dle"] = {"capacity": float("+inf")}
+        parameters["oeprom"]["conversion_dle"] = {"capacity": OEMOF_INF_EQUIVALENT}
     else:
-        parameters["oeprom"]["conversion_fws"] = {"capacity": float("+inf")}
+        parameters["oeprom"]["conversion_fws"] = {"capacity": OEMOF_INF_EQUIVALENT}
     return parameters
+
+
+def set_up_storages(scenario: str, parameters: dict, request: HttpRequest) -> dict:
+    """Set up heat storage and battery storage if PV is selected."""
+    # Always optimize heat storage
+    parameters["oeprom"]["storage_heat"] = {"expandable": True}
+
+    # Set up battery
+    # Existing battery
+    if parameters["flow_data"]["battery_exists"] == "True":
+        parameters["oeprom"]["storage_lion"] = {
+            "storage_capacity": parameters["flow_data"]["battery_capacity"],
+            "capacity": parameters["flow_data"]["battery_capacity"] * CONFIG["battery_c_rate"],
+        }
+    elif (
+        parameters["flow_data"]["pv_exists"] == "True" or "pv" in parameters["flow_data"]["scenario-secondary_heating"]
+    ):
+        parameters["oeprom"]["storage_lion"] = {
+            "expandable": True,
+            "invest_relation_input_capacity": CONFIG["battery_c_rate"],
+        }
+
+    return parameters
+
+
+def debug_input_data(scenario: str, energysystem, request: HttpRequest):
+    _ = solph.processing.parameter_as_dict(
+        energysystem,
+        exclude_attrs=["bus", "from_bus", "to_bus", "from_node", "to_node"],
+    )
+    return energysystem
+
+
+def couple_battery_storage_to_pv_capacity(scenario: str, model, request: HttpRequest):
+    """Set constraint in model which couples battery storage to PV capacity in a fix relation."""
+    return model
 
 
 def unpack_oeprom(scenario: str, parameters: dict, request: HttpRequest) -> dict:

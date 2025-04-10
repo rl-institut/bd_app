@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+from django.conf import settings
 
 
 class HeatConfig(AppConfig):
@@ -30,6 +31,7 @@ class HeatConfig(AppConfig):
             bd_hooks.set_up_heatpumps,
             bd_hooks.set_up_conversion_technologies,
             bd_hooks.set_up_hotwater_supply,
+            bd_hooks.set_up_storages,
             bd_hooks.unpack_oeprom,
         )
 
@@ -44,3 +46,14 @@ class HeatConfig(AppConfig):
                 hooks.HookType.PARAMETER,
                 hooks.Hook(scenario="oeprom", function=func),
             )
+
+        if settings.DEBUG:
+            hooks.register_hook(
+                hooks.HookType.ENERGYSYSTEM,
+                hooks.Hook(scenario="oeprom", function=bd_hooks.debug_input_data),
+            )
+
+        hooks.register_hook(
+            hooks.HookType.MODEL,
+            hooks.Hook(scenario="oeprom", function=bd_hooks.couple_battery_storage_to_pv_capacity),
+        )
