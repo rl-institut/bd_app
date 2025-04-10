@@ -7,13 +7,23 @@
         <div class="main">
           <h1>Heizung</h1>
           <div class="info-box">
-            <p>In diesem Abschnitt erfassen wir zusätzliche Angaben zu Ihrem Wärmespeicher. Diese Details sind wichtig,
-              um die Effizienz Ihres Systems zur Warmwasserbereitung und Heizungsunterstützung besser einschätzen zu können.</p>
-            <p>Tragen Sie die Ihnen bekannten Werte ein. Falls Ihnen keine genauen Angaben vorliegen, genügt eine Schätzung.</p>
+            <p>Hier erfassen wir die Technologie Ihrer Heizung. Die Angaben zu Ihrer Heizung helfen, die Effizienz Ihrer Heizungsanlage zu bewerten.</p>
+            <p>Wählen Sie Ihre primäre Heizungsart aus.</p>
           </div>
         </div>
       </div>
       <div class="help"></div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="heating_source"
+          hx-post=""
+          hx-trigger="change"
+          hx-swap="show:bottom"
+          hx-include="this"
+          class="main">{{ heating_source.content | safe }}</div>
+        <div class="help"></div>
+      </div>
     </div>
     <div class="step-question">
       <div class="step-container">
@@ -26,34 +36,28 @@
         <div class="help"></div>
       </div>
     </div>
-    <div class="step-question">
-      <div class="step-container">
-        <div id="heating_storage_exists"
-             hx-post=""
-             hx-trigger="change"
-             hx-swap="show:bottom"
-             hx-include="this"
-             class="main">{{ heating_storage_exists.content | safe }}
-             </div>
-        <div class="help"></div>
-      </div>
-    </div>
-    <div class="step-question">
-      <div class="step-container">
-        <div id="heating_storage_capacity_known"
-             hx-post=""
-             hx-trigger="change"
-             hx-swap="show:bottom"
-             hx-include="this"
-             class="main">{{ heating_storage_capacity_known.content | safe }}
-             </div>
-        <div class="help"></div>
-      </div>
-    </div>
-    <div id="heating_storage_capacity"
+    <div id="solar_thermal_exists"
       hx-post=""
-      hx-trigger="keyup change delay:1000ms"
+      hx-trigger="change"
       hx-swap="show:bottom"
-      hx-include="this">{{ heating_storage_capacity.content | safe }}</div>
+      hx-include="this">{{ solar_thermal_exists.content | safe }}
+    </div>
+    <div id="solar_thermal_area_known"
+        hx-post=""
+        hx-trigger="change"
+        hx-swap="show:bottom"
+        hx-include="this">{{ solar_thermal_area_known.content | safe }}</div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="solar_thermal_area"
+          hx-post=""
+          hx-trigger="keyup change delay:1000ms"
+          hx-swap="show:bottom"
+          hx-include="this"
+          class="main">{{ solar_thermal_area.content | safe }}
+        </div>
+        <div class="help"></div>
+      </div>
+    </div>
   </section>
 {% endblock content %}

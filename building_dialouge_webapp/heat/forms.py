@@ -291,6 +291,14 @@ class HeatingYearForm(ValidationForm):
             field.validators.append(MinValueValidator(building_construction_year))
 
 
+class HotwaterSupplyForm(ValidationForm):
+    hotwater_supply = forms.ChoiceField(
+        label="Wird das Warmwasser mittels Durchlauferhitzer erwärmt?",
+        choices=[("instantaneous_water_heater", "Ja"), ("combined", "Nein")],
+        widget=forms.RadioSelect,
+    )
+
+
 class HeatingStorageExistsForm(ValidationForm):
     heating_storage_exists = forms.ChoiceField(
         label="Wärmespeicher vorhanden?",
