@@ -1,7 +1,8 @@
 {
   "esversion": 8,
   "globals": {
-    "echarts": false
+    "echarts": false,
+    "console": false
   },
   "strict": "implied",
   "browser": true

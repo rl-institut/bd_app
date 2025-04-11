@@ -1,36 +1,47 @@
 {% extends "base_footer_button.html" %}
 
+{% load static %}
+
 {% block content %}
-    <div class="main-content">
+  <div class="main-content">
     <div>
       <div class="category-header">
         <h2 class="category-title">
           <span class="category-title__name">Optimierung starten</span>
         </h2>
       </div>
-          {% if all_flows_finished %}
-          <p>Wunderbar! Die Eingabe ist abgeschlossen.</p>
-          <p>Jetzt passiert folgendes:</p>
-          <p>
-              Mit Klick auf den "Starten"-Button beginnt die Simulation der Daten. Sobald die Simulation abgeschlossen ist, kann es weiter gehen zu der Seite "Ergebnisse". Bis dahin bleibt der "Weiter"-Button inaktiv.
-          </p>
-          <div class="d-flex justify-content-between">
-            <form action="{% url 'heat:simulate' %}"
-                  method="get">
-              <button class="btn btn-primary" {% if not all_flows_finished %}disabled{% endif %}>Starten</button>
-            </form>
-          </div>
-          {% else %}
-          <div class="info-box">
-            <p>Leider fehlen die folgenden Eingaben noch:</p>
-            <ul>
-                {% for flow in not_finished_flows %}
-                    <li>{{ flow }}</li>
-                {% endfor %}
-            </ul>
-          </div>
-          {% endif %}
+      {% if all_flows_finished %}
+        <p>Wunderbar! Die Eingabe ist abgeschlossen.</p>
+        <p>Jetzt passiert folgendes:</p>
+        <p>
+            Mit Klick auf den "Starten"-Button beginnt die Simulation der Daten. Sobald die Simulation abgeschlossen ist, kann es weiter gehen zu der Seite "Ergebnisse". Bis dahin bleibt der "Weiter"-Button inaktiv.
+        </p>
+        <div class="d-flex justify-content-between">
+          <button id="btn_optimization" class="btn btn-primary" {% if not all_flows_finished %}disabled{% endif %} onclick="startOptimization();">Starten</button>
         </div>
-      </div>
+        <div id="optimization_info" hidden>
+          <p>Optimierung läuft</p>
+          <div id="optimization_progress">
+            0 / {{ scenarios | length }} Simulationen abgeschlossen.
+          </div>
+        </div>
+      {% else %}
+        <div class="info-box">
+          <p>Leider fehlen die folgenden Eingaben noch:</p>
+          <ul>
+              {% for flow in not_finished_flows %}
+                  <li>{{ flow }}</li>
+              {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
     </div>
+  </div>
+
+  {{ scenarios | json_script:"scenarios" }}
 {% endblock content %}
+
+{% block inline_javascript %}
+  {{ block.super }}
+  <script type="application/javascript" src="{% static 'js/optimization.js' %}"></script>
+{% endblock inline_javascript %}
