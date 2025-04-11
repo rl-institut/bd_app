@@ -315,14 +315,6 @@ class PVSystemForm(ValidationForm):
     )
 
 
-class PVSystemCapacityKnownForm(ValidationForm):
-    pv_capacity_known = forms.ChoiceField(
-        label="Leistung bekannt?",
-        choices=[("known", "Ja"), ("unknown", "Unbekannt")],
-        widget=forms.RadioSelect,
-    )
-
-
 class PVSystemCapacityForm(ValidationForm):
     pv_capacity = forms.IntegerField(
         label="Nennleistung in kWp",
