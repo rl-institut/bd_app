@@ -72,9 +72,17 @@ def init_renovation_scenario(
         raise KeyError(error_msg)
 
     # Chosen renovation scenario keys are renamed to "scenario_<key_name>", removing scenario ID
+    scenario_data = {}
     for key in scenario_keys:
         new_key = key.replace(renovation_scenario, "scenario")
-        parameters["flow_data"][new_key] = parameters["flow_data"].pop(key)
+        scenario_data[new_key] = parameters["flow_data"].pop(key)
+
+    # Remove all other scenarios as well
+    scenario_keys = [key for key in parameters["flow_data"] if key.startswith("scenario")]
+    for key in scenario_keys:
+        del parameters["flow_data"][key]
+
+    parameters["flow_data"].update(scenario_data)
     return parameters
 
 
