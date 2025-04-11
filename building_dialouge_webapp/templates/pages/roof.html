@@ -7,23 +7,15 @@
         <div class="main">
           <h1>Dach</h1>
           <div class="info-box">
-            <p>Hier geben Sie an, um welche Art von Dach es sich bei Ihrem Gebäude handelt.
-              Wir fragen nach, ob es sich um ein Flachdach oder ein geneigtes Dach handelt.
-              Nur bei geneigten Dächern folgen weitere Abfragen zu Ausrichtung und Neigung. Diese Information ist wichtig,
-              um das Solarpotential Ihres Daches zu bewerten.</p>
-            <p>Tragen Sie die entsprechenden Werte ein. Falls Ihnen keine genauen Angaben vorliegen, genügt eine Schätzung.</p>
+            <p>Geben Sie an, ob Ihr Gebäude ein Flachdach oder ein Steildach hat. Ein Flachdach hat eine sehr geringe Neigung und verläuft nahezu waagerecht. Nur bei geneigten Dächern fragen wir zusätzlich nach Ausrichtung und Neigung, da diese Angaben für die Bewertung des Solarpotenzials wichtig sind.
+Tragen Sie die entsprechenden Werte ein. Falls Ihnen keine genauen Angaben vorliegen, reicht eine Schätzung aus.</p>
           </div>
         </div>
       </div>
       <div class="help"></div>
     </div>
     <div id="flat_roof" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this">{{ flat_roof.content | safe }}</div>
-    <div class="step-question">
-      <div class="step-container">
-        <div id="roof_orientation" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this" class="main">{{ roof_orientation.content | safe }}</div>
-        <div class="help"></div>
-      </div>
-    </div>
+    <div id="roof_orientation" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this">{{ roof_orientation.content | safe }}</div>
     <div class="step-question">
       <div class="step-container">
         <div id="roof_inclination_known"
@@ -35,16 +27,10 @@
         <div class="help"></div>
       </div>
     </div>
-    <div class="step-question">
-      <div class="step-container">
         <div id="roof_inclination"
           hx-post=""
           hx-trigger="keyup change delay:1000ms"
           hx-swap="show:bottom"
-          hx-include="this"
-          class="main">{{ roof_inclination.content | safe }}</div>
-        <div class="help"></div>
-      </div>
-    </div>
+          hx-include="this">{{ roof_inclination.content | safe }}</div>
   </section>
 {% endblock content %}

@@ -7,8 +7,8 @@
         <div class="main">
           <h1>Heizung</h1>
           <div class="info-box">
-            <p>Hier erfassen wir die Technologie Ihrer Heizung. Die Angaben zu Ihrer Heizung helfen, die Effizienz Ihrer Heizungsanlage zu bewerten.</p>
-            <p>Wählen Sie Ihre primäre Heizungsart aus.</p>
+            <p>Hier erfassen wir die Technologie, mit der Ihr Gebäude beheizt wird. Diese Informationen sind wichtig, um den aktuellen Energiebedarf Ihres Gebäudes besser einzuschätzen.</p>
+            <p>Wählen Sie bitte die primäre Heizungsart Ihres Gebäudes aus:</p>
           </div>
         </div>
       </div>
@@ -49,8 +49,7 @@
           hx-trigger="keyup change delay:1000ms"
           hx-swap="show:bottom"
           hx-include="this"
-          class="main">{{ solar_thermal_area.content | safe }}
-        </div>
+          class="main">{{ solar_thermal_area.content | safe }}</div>
         <div class="help"></div>
       </div>
     </div>
