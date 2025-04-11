@@ -729,15 +729,7 @@ class HotwaterFlow(SidebarNavigationMixin, Flow):
             target="heating_storage_exists",
             form_class=forms.HeatingStorageExistsForm,
         ).transition(
-            Switch("heating_storage_exists").case("exists", "heating_storage_capacity_known").default("stop"),
-        )
-
-        self.heating_storage_capacity_known = FormState(
-            self,
-            target="heating_storage_capacity_known",
-            form_class=forms.HeatingStorageKnownForm,
-        ).transition(
-            Switch("heating_storage_capacity_known").case("known", "heating_storage_capacity").default("stop"),
+            Switch("heating_storage_exists").case("exists", "heating_storage_capacity").default("stop"),
         )
 
         self.heating_storage_capacity = FormState(

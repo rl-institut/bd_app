@@ -299,14 +299,6 @@ class HeatingStorageExistsForm(ValidationForm):
     )
 
 
-class HeatingStorageKnownForm(ValidationForm):
-    heating_storage_capacity_known = forms.ChoiceField(
-        label="Fassungsvermögen des Wärmespeichers bekannt?",
-        choices=[("known", "Ja"), ("unknown", "Unbekannt")],
-        widget=forms.RadioSelect,
-    )
-
-
 class HeatingStorageCapacityForm(ValidationForm):
     heating_storage_capacity = forms.IntegerField(
         label="Wärmespeicher Fassungsvermögen in l",
