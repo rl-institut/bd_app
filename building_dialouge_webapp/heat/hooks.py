@@ -64,7 +64,7 @@ def init_renovation_scenario(
     if "renovation_scenario" not in parameters:
         error_msg = "No renovation scenario given. Must be set in parameters as 'renovation_scenario'."
         raise KeyError(error_msg)
-    renovation_scenario = parameters["renovation_scenario"]
+    renovation_scenario = parameters.pop("renovation_scenario")
 
     scenario_keys = [key for key in parameters["flow_data"] if key.startswith(renovation_scenario)]
     if len(scenario_keys) == 0:
@@ -74,7 +74,7 @@ def init_renovation_scenario(
     # Chosen renovation scenario keys are renamed to "scenario_<key_name>", removing scenario ID
     for key in scenario_keys:
         new_key = key.replace(renovation_scenario, "scenario")
-        parameters["flow_data"][new_key] = parameters["flow_data"][key]
+        parameters["flow_data"][new_key] = parameters["flow_data"].pop(key)
     return parameters
 
 
