@@ -793,13 +793,13 @@ class RoofFlow(SidebarNavigationMixin, Flow):
             lookup="roof_done",
             next_botton_text="Speichern",
         ).transition(Next("end"))
-        self.end = EndState(self, url="heat:heating")
+        self.end = EndState(self, url="heat:pv_system")
 
 
 class PVSystemFlow(SidebarNavigationMixin, Flow):
     template_name = "pages/pv_system.html"
     extra_context = {
-        "back_url": "heat:heating",
+        "back_url": "heat:roof",
         "next_disabled": True,
     }
 
