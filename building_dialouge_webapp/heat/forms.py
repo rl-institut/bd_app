@@ -200,14 +200,6 @@ class HotwaterHeatingSolarExistsForm(ValidationForm):
     )
 
 
-class HotwaterHeatingSolarKnownForm(ValidationForm):
-    solar_thermal_area_known = forms.ChoiceField(
-        label="Kollektorfläche bekannt?",
-        choices=[("known", "Ja"), ("unknown", "Unbekannt")],
-        widget=forms.RadioSelect,
-    )
-
-
 class HotwaterHeatingSolarAreaForm(ValidationForm):
     solar_thermal_area = forms.FloatField(
         label="Kollektorfläche in m²",

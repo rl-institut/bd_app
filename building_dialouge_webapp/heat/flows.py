@@ -687,16 +687,7 @@ class HeatingFlow(SidebarNavigationMixin, Flow):
             form_class=forms.HotwaterHeatingSolarExistsForm,
             template_name="partials/hotwater_heating_solar_help.html",
         ).transition(
-            Switch("solar_thermal_exists").case("doesnt_exist", "stop").default("solar_thermal_area_known"),
-        )
-
-        self.solar_thermal_area_known = FormState(
-            self,
-            target="solar_thermal_area_known",
-            form_class=forms.HotwaterHeatingSolarKnownForm,
-            template_name="partials/hotwater_heating_area_help.html",
-        ).transition(
-            Switch("solar_thermal_area_known").case("known", "solar_thermal_area").default("stop"),
+            Switch("solar_thermal_exists").case("doesnt_exist", "stop").default("solar_thermal_area"),
         )
 
         self.solar_thermal_area = FormState(
