@@ -200,14 +200,6 @@ class HotwaterHeatingSolarExistsForm(ValidationForm):
     )
 
 
-class HotwaterHeatingSolarKnownForm(ValidationForm):
-    solar_thermal_area_known = forms.ChoiceField(
-        label="Kollektorfläche bekannt?",
-        choices=[("known", "Ja"), ("unknown", "Unbekannt")],
-        widget=forms.RadioSelect,
-    )
-
-
 class HotwaterHeatingSolarAreaForm(ValidationForm):
     solar_thermal_area = forms.FloatField(
         label="Kollektorfläche in m²",
@@ -307,14 +299,6 @@ class HeatingStorageExistsForm(ValidationForm):
     )
 
 
-class HeatingStorageKnownForm(ValidationForm):
-    heating_storage_capacity_known = forms.ChoiceField(
-        label="Fassungsvermögen des Wärmespeichers bekannt?",
-        choices=[("known", "Ja"), ("unknown", "Unbekannt")],
-        widget=forms.RadioSelect,
-    )
-
-
 class HeatingStorageCapacityForm(ValidationForm):
     heating_storage_capacity = forms.IntegerField(
         label="Wärmespeicher Fassungsvermögen in l",
@@ -327,14 +311,6 @@ class PVSystemForm(ValidationForm):
     pv_exists = forms.ChoiceField(
         label="PV-Anlage vorhanden?",
         choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
-        widget=forms.RadioSelect,
-    )
-
-
-class PVSystemCapacityKnownForm(ValidationForm):
-    pv_capacity_known = forms.ChoiceField(
-        label="Leistung bekannt?",
-        choices=[("known", "Ja"), ("unknown", "Unbekannt")],
         widget=forms.RadioSelect,
     )
 
