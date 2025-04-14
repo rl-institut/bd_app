@@ -14,7 +14,6 @@ celery:
 	redis-server --port 6379 & celery -A config.celery_app worker -l INFO
 
 update_dependencies:
-	uv pip compile -q requirements/base.in -o requirements/base.txt
 	uv pip compile -q requirements/local.in -o requirements/local.txt
 	uv pip compile -q requirements/production.in -o requirements/production.txt
 
