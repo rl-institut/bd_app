@@ -5,8 +5,6 @@ from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.forms.widgets import RadioSelect
 
-from . import settings as heat_settings
-
 
 class ValidationForm(forms.Form):
     def __init__(self, *args, request=None, **kwargs):
@@ -328,7 +326,7 @@ class PVSystemCapacityForm(ValidationForm):
 class PVSystemBatteryExistsForm(ValidationForm):
     battery_exists = forms.ChoiceField(
         label="Batterie vorhanden?",
-        choices=[("exists", "Ja"), ("doesnt_exist", "Nein")],
+        choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
         widget=forms.RadioSelect,
     )
 

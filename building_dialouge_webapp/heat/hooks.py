@@ -28,6 +28,12 @@ def init_parameters(scenario: str, parameters: dict, request: HttpRequest) -> di
 
 def init_flow_data(scenario: str, parameters: dict, request: HttpRequest) -> dict:
     """Read flow data from session."""
+
+    # For debugging:
+    if "django_htmx_flow" in parameters:
+        parameters["flow_data"] = parameters.pop("django_htmx_flow")
+        return parameters
+
     # alternativ in settings.py ne Liste anlegen, mit allen Flows, die dann in views und hier genutzt werden kann
     all_flows = [
         (name, flow())
@@ -239,7 +245,7 @@ def set_up_volatiles(  # noqa: C901
     # Prepare optimization of PV in scenario
     if (
         parameters["flow_data"]["pv_exists"] == "False"
-        and "pv" in parameters["flow_data"]["scenario-secondary_heating"]
+        or "pv" in parameters["flow_data"]["scenario-secondary_heating"]
     ):
         if parameters["flow_data"]["solar_thermal_exists"] == "True":
             # Calculate remaining area for PV
@@ -259,7 +265,7 @@ def set_up_volatiles(  # noqa: C901
     # Prepare optimization of STH in scenario
     if (
         parameters["flow_data"]["solar_thermal_exists"] == "False"
-        and "solar" in parameters["flow_data"]["scenario-secondary_heating"]
+        or "solar" in parameters["flow_data"]["scenario-secondary_heating"]
     ):
         if parameters["flow_data"]["pv_exists"] == "True":
             # Calculate remaining area for STH
@@ -294,7 +300,7 @@ def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> d
     ):
         heatpump_air_cop = pd.Series(
             models.Heatpump.objects.get(
-                type="air",
+                medium="air",
                 type_temperature=type_temperature,
             ).profile,
         )
@@ -324,7 +330,7 @@ def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> d
     ):
         heatpump_brine_cop = pd.Series(
             models.Heatpump.objects.get(
-                type="brine",
+                medium="brine",
                 type_temperature=type_temperature,
             ).profile,
         )
@@ -396,14 +402,19 @@ def set_up_storages(scenario: str, parameters: dict, request: HttpRequest) -> di
 
     # Set up battery
     # Existing battery
-    if parameters["flow_data"]["battery_exists"] == "True":
+    if "battery_exists" in parameters["flow_data"] and parameters["flow_data"]["battery_exists"] == "True":
+        storage_capacity = parameters["flow_data"]["battery_capacity"]
         parameters["oeprom"]["storage_lion"] = {
-            "storage_capacity": parameters["flow_data"]["battery_capacity"],
-            "capacity": parameters["flow_data"]["battery_capacity"] * CONFIG["battery_c_rate"],
+            "storage_capacity": storage_capacity,
+            "capacity": storage_capacity * CONFIG["battery_c_rate"],
         }
-    elif (
-        parameters["flow_data"]["pv_exists"] == "True" or "pv" in parameters["flow_data"]["scenario-secondary_heating"]
-    ):
+    elif parameters["flow_data"]["pv_exists"] == "True":
+        storage_capacity = parameters["flow_data"]["pv_capacity"] * CONFIG["battery_storage_capacity_per_pv_capacity"]
+        parameters["oeprom"]["storage_lion"] = {
+            "storage_capacity": storage_capacity,
+            "capacity": storage_capacity * CONFIG["battery_c_rate"],
+        }
+    elif "pv" in parameters["flow_data"]["scenario-secondary_heating"]:
         parameters["oeprom"]["storage_lion"] = {
             "expandable": True,
             "invest_relation_input_capacity": CONFIG["battery_c_rate"],
