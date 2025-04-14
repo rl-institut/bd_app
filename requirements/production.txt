@@ -13,9 +13,9 @@ asgiref==3.8.1
     #   django-htmx
 async-timeout==5.0.1
     # via redis
-attrs==25.1.0
+attrs==25.3.0
     # via jsonlines
-bcrypt==4.2.1
+bcrypt==4.3.0
     # via paramiko
 billiard==3.6.4.0
     # via celery
@@ -23,9 +23,9 @@ blinker==1.9.0
     # via
     #   oemof-network
     #   oemof-solph
-boto3==1.37.0
+boto3==1.37.33
     # via tabulator
-botocore==1.37.0
+botocore==1.37.33
     # via
     #   boto3
     #   s3transfer
@@ -37,7 +37,7 @@ celery==5.1.2
     #   django-celery-beat
     #   django-oemof
     #   flower
-certifi==2024.12.14
+certifi==2025.1.31
     # via
     #   requests
     #   sentry-sdk
@@ -65,9 +65,9 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-crispy-bootstrap5==2024.10
+crispy-bootstrap5==2025.4
     # via -r requirements/base.in
-cryptography==44.0.0
+cryptography==44.0.2
     # via
     #   fido2
     #   paramiko
@@ -77,7 +77,7 @@ dill==0.3.9
     # via
     #   oemof-network
     #   oemof-solph
-django==5.1.5
+django==5.2
     # via
     #   -r requirements/base.in
     #   crispy-bootstrap5
@@ -85,7 +85,6 @@ django==5.1.5
     #   django-anymail
     #   django-appconf
     #   django-celery-beat
-    #   django-compressor
     #   django-cotton
     #   django-crispy-forms
     #   django-htmx
@@ -93,21 +92,21 @@ django==5.1.5
     #   django-redis
     #   django-timezone-field
     #   djangorestframework
-django-allauth==65.3.1
+django-allauth==65.7.0
     # via -r requirements/base.in
-django-anymail==12.0
+django-anymail==13.0
     # via -r requirements/production.in
-django-appconf==1.0.6
+django-appconf==1.1.0
     # via django-compressor
 django-celery-beat==2.1.0
     # via -r requirements/base.in
-django-compressor==4.5.1
+django-compressor==1.6
     # via
     #   -r requirements/base.in
     #   django-libsass
-django-cotton==1.5.2
+django-cotton==2.0.3
     # via -r requirements/base.in
-django-crispy-forms==2.3
+django-crispy-forms==2.4
     # via
     #   -r requirements/base.in
     #   crispy-bootstrap5
@@ -115,19 +114,19 @@ django-environ==0.10.0
     # via
     #   -r requirements/base.in
     #   django-oemof
-django-htmx==1.21.0
+django-htmx==1.23.0
     # via -r requirements/base.in
 django-libsass==0.9
     # via -r requirements/base.in
 django-model-utils==5.0.0
     # via -r requirements/base.in
-django-oemof==0.19.0
+django-oemof==0.20.0
     # via -r requirements/base.in
 django-redis==5.4.0
     # via -r requirements/base.in
 django-timezone-field==4.2.3
     # via django-celery-beat
-djangorestframework==3.15.2
+djangorestframework==3.16.0
     # via django-oemof
 et-xmlfile==2.0.0
     # via openpyxl
@@ -141,7 +140,7 @@ gunicorn==23.0.0
     # via -r requirements/production.in
 hiredis==3.1.0
     # via -r requirements/base.in
-humanize==4.11.0
+humanize==4.12.2
     # via flower
 idna==3.10
     # via requests
@@ -161,7 +160,7 @@ jsonschema==2.6.0
     # via
     #   datapackage
     #   tableschema
-kombu==5.4.2
+kombu==5.5.2
     # via celery
 libsass==0.23.0
     # via django-libsass
@@ -200,7 +199,7 @@ pandas==2.2.3
     #   oemof-tabular
 paramiko==3.5.1
     # via oemof-tabular
-pillow==11.1.0
+pillow==11.2.1
     # via -r requirements/base.in
 ply==3.11
     # via pyomo
@@ -208,9 +207,9 @@ prometheus-client==0.21.1
     # via flower
 prompt-toolkit==3.0.50
     # via click-repl
-psycopg==3.2.4
+psycopg==3.2.6
     # via -r requirements/production.in
-psycopg-c==3.2.4
+psycopg-c==3.2.6
     # via psycopg
 psycopg2-binary==2.9.10
     # via django-oemof
@@ -218,7 +217,7 @@ pycparser==2.22
     # via cffi
 pynacl==1.5.0
     # via paramiko
-pyomo==6.9.0
+pyomo==6.9.1
     # via oemof-solph
 python-crontab==3.2.0
     # via django-celery-beat
@@ -230,18 +229,16 @@ python-dateutil==2.9.0.post0
     #   tableschema
 python-slugify==8.0.4
     # via -r requirements/base.in
-pytz==2024.2
+pytz==2025.2
     # via
     #   celery
     #   django-timezone-field
     #   flower
     #   pandas
-qrcode==8.0
+qrcode==8.1
     # via django-allauth
-rcssmin==1.1.2
-    # via
-    #   -r requirements/base.in
-    #   django-compressor
+rcssmin==1.2.1
+    # via -r requirements/base.in
 redis==5.2.1
     # via
     #   -r requirements/base.in
@@ -254,13 +251,11 @@ requests==2.32.3
     #   tabulator
 rfc3986==2.0.0
     # via tableschema
-rjsmin==1.2.2
-    # via django-compressor
-s3transfer==0.11.2
+s3transfer==0.11.4
     # via boto3
-sentry-sdk==2.20.0
+sentry-sdk==2.25.1
     # via -r requirements/production.in
-setuptools==75.8.0
+setuptools==78.1.0
     # via celery
 six==1.17.0
     # via
@@ -269,7 +264,7 @@ six==1.17.0
     #   python-dateutil
     #   tableschema
     #   tabulator
-sqlalchemy==2.0.38
+sqlalchemy==2.0.40
     # via tabulator
 sqlparse==0.5.3
     # via django
@@ -287,12 +282,12 @@ toml==0.10.2
     # via oemof-tabular
 tornado==6.4.2
     # via flower
-typing-extensions==4.12.2
+typing-extensions==4.13.2
     # via
     #   asgiref
     #   psycopg
     #   sqlalchemy
-tzdata==2025.1
+tzdata==2025.2
     # via
     #   kombu
     #   pandas
@@ -301,7 +296,7 @@ unicodecsv==0.14.1
     #   datapackage
     #   tableschema
     #   tabulator
-urllib3==2.3.0
+urllib3==2.4.0
     # via
     #   botocore
     #   django-anymail
@@ -314,7 +309,7 @@ vine==5.1.0
     #   kombu
 wcwidth==0.2.13
     # via prompt-toolkit
-whitenoise==6.8.2
+whitenoise==6.9.0
     # via -r requirements/base.in
 xlrd==2.0.1
     # via tabulator
