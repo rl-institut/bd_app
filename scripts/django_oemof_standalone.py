@@ -1,3 +1,5 @@
+import logging
+
 from django_oemof.standalone import init_django
 
 init_django(installed_apps=["building_dialouge_webapp.heat"])
@@ -61,3 +63,5 @@ parameters = hooks.apply_hooks(
     request=None,
 )
 simulation_id = simulation.simulate_scenario(scenario="oeprom", parameters=parameters)
+lg_msg = f"Simulation ID: {simulation_id}"
+logging.info(lg_msg)

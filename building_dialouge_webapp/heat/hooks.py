@@ -6,6 +6,8 @@ import pandas as pd
 from django.http import HttpRequest
 from django_oemof.simulation import SimulationError
 from oemof import solph
+from pyomo.environ import BuildAction
+from pyomo.environ import Constraint
 
 from . import flows
 from . import models
@@ -433,6 +435,25 @@ def debug_input_data(scenario: str, energysystem, request: HttpRequest):
 
 def couple_battery_storage_to_pv_capacity(scenario: str, model, request: HttpRequest):
     """Set constraint in model which couples battery storage to PV capacity in a fix relation."""
+    if model.es.groups["volatile_PV"].investment is not None:
+        pv_flow = next((f, n) for f, n in model.InvestmentFlowBlock.INVESTFLOWS if f.label == "volatile_PV")
+        storageblock = model.GenericInvestmentStorageBlock
+
+        def _limit_lion_storage_to_pv_capacity(block):
+            """Bound lion battery storage capacity to pv capacity"""
+            for n in storageblock.INVESTSTORAGES:
+                if n.label != "storage_lion":
+                    continue
+                for p in model.PERIODS:
+                    expr = (
+                        storageblock.total[n, p]
+                        == model.InvestmentFlowBlock.invest[pv_flow[0], pv_flow[1], 0]
+                        * CONFIG["battery_storage_capacity_per_pv_capacity"]
+                    )
+                    storageblock.limit_storage_rule.add((n, p), expr)
+
+        storageblock.limit_storage_rule = Constraint(storageblock.INVESTSTORAGES, model.PERIODS, noruleinit=True)
+        storageblock.limit_storage_rule_build = BuildAction(rule=_limit_lion_storage_to_pv_capacity)
     return model
 
 
