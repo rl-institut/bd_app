@@ -11,8 +11,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   # dependencies for building Python packages
   build-essential \
   # psycopg dependencies
-  libpq-dev \
-  git
+  libpq-dev
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements .
@@ -54,6 +53,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   gettext \
   # Needed to install cchardet
   gcc g++ \
+  # Needed for oemof.tabular
+  git \
   # CBC-Solver
   coinor-cbc coinor-libcbc-dev \
   # cleaning up unused files
