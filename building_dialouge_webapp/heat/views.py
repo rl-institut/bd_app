@@ -251,7 +251,7 @@ def get_user_friendly_data(scenario_data, form_classes: list) -> list:
     # remove duplicates
     choices = list(dict.fromkeys(choices))
     # remove categories that have further specification
-    top_categories = ["Biomasseheizung", "Wärmepumpe", "Dach"]
+    top_categories = ["Biomasseheizung", "Wärmepumpe", "Dach", "Fassade"]
     for category in top_categories:
         if category in choices:
             choices.remove(category)

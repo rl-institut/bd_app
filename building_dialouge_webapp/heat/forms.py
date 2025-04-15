@@ -113,22 +113,27 @@ class BuildingTypeProtectionForm(ValidationForm):
 
 class InsulationForm(ValidationForm):
     roof_insulation_year = forms.IntegerField(
-        label="Dach: Jahr",
+        label="Dach",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         required=False,
     )
     upper_storey_ceiling_insulation_year = forms.IntegerField(
-        label="Obere Geschossdecke: Jahr",
+        label="Obere Geschossdecke",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         required=False,
     )
     cellar_insulation_year = forms.IntegerField(
-        label="Keller: Jahr",
+        label="Kellerdecke",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         required=False,
     )
     facade_insulation_year = forms.IntegerField(
-        label="Fassade: Jahr",
+        label="Fassade",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+    window_insulation_year = forms.IntegerField(
+        label="Fenster",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
         required=False,
     )
@@ -157,12 +162,12 @@ class EnergySourceSelect(RadioSelect):
         "Rohrleitungen zum Gebäude transportiert wird.",
         "liquid_gas": "Unter Druck verflüssigtes Gasgemisch, das in Tanks gelagert wird und eine "
         "flexible Heizlösung für Gebiete ohne Erdgasanschluss bietet.",
-        "wood_pellets": "Verdichtete Holzabfälle als Brennstoff für Pelletöfen und Pelletkessel.",
-        "air_heat_pump": "Entzieht der Umgebungsluft Wärme, um das Gebäude zu beheizen.",
-        "groundwater": "Entzieht dem Grundwasser oder einem Oberflächengewässer Wärme, um dasGebäude zu beheizen.",
-        "geothermal_pump": "Entzieht dem Erdreich Wärme, um das Gebäude zu beheizen.",
+        "wood_pellets": "Verdichtete Holzabfälle als Brennstoff für Pelletöfen und Pelletkessel",
+        "air_heat_pump": "Entzieht der Umgebungsluft Wärme, um das Gebäude zu beheizen",
+        "groundwater": "Entzieht dem Grundwasser oder einem Oberflächengewässer Wärme, um das Gebäude zu beheizen",
+        "geothermal_pump": "Entzieht dem Erdreich Wärme, um das Gebäude zu beheizen",
         "heating_rod": "Elektrisches Heizelement, das in Wasserboilern oder Heizkörpern zur "
-        "Wärmeerzeugung eingesetzt wird.",
+        "Wärmeerzeugung eingesetzt wird",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
@@ -181,7 +186,7 @@ class HeatingSourceForm(ValidationForm):
             ("liquid_gas", "Flüssiggas"),
             ("wood_pellets", "Holzpellets"),
             ("air_heat_pump", "Luftwärmepumpe"),
-            ("groundwater", "Grundwasser- oder Solewärmepumpe"),
+            ("groundwater", "Grundwasser- oder Oberflächengewässerpumpe"),
             ("geothermal_pump", "Erdwärmepumpe"),
             ("heating_rod", "Heizstab"),
         ],
@@ -211,7 +216,7 @@ class RoofTypeSelect(RadioSelect):
     template_name = "forms/energy_source.html"
 
     INFOS = {
-        "exists": "Ein Flachdach ist ein Dach mit einer sehr geringen Neigung, das fast waagerecht verläuft.",
+        "exists": "Besitzt ihr Gebäude ein Flachdach?",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
@@ -222,7 +227,7 @@ class RoofTypeSelect(RadioSelect):
 
 class RoofTypeForm(forms.Form):
     flat_roof = forms.ChoiceField(
-        label="Besitzt ihr Gebäude ein Flachdach?",
+        label="Flachdach",
         choices=[
             ("exists", "Ja"),
             ("doesnt_exist", "Nein"),
@@ -233,7 +238,7 @@ class RoofTypeForm(forms.Form):
 
 class RoofOrientationForm(ValidationForm):
     roof_orientation = forms.ChoiceField(
-        label="In welcher Richtung ist ihr Dach ausgerichtet?",
+        label="Dachausrichtung",
         choices=[
             ("n", "N"),
             ("ne", "NO"),
@@ -284,11 +289,28 @@ class HeatingYearForm(ValidationForm):
 
 
 class HotwaterSupplyForm(ValidationForm):
+    hotwater_year = forms.IntegerField(
+        label="Baujahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
+    )
     hotwater_supply = forms.ChoiceField(
         label="Wird das Warmwasser mittels Durchlauferhitzer erwärmt?",
         choices=[("instantaneous_water_heater", "Ja"), ("combined", "Nein")],
         widget=forms.RadioSelect,
     )
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+
+        building_construction_year = data.get("construction_year", None)
+        if building_construction_year:
+            field = self.fields["hotwater_year"]
+            field.validators = [v for v in field.validators if not isinstance(v, MinValueValidator)]
+            field.widget.attrs.update(
+                {"min": building_construction_year},
+            )
+            field.validators.append(MinValueValidator(building_construction_year))
 
 
 class HeatingStorageExistsForm(ValidationForm):
@@ -326,7 +348,7 @@ class PVSystemCapacityForm(ValidationForm):
 class PVSystemBatteryExistsForm(ValidationForm):
     battery_exists = forms.ChoiceField(
         label="Batterie vorhanden?",
-        choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
+        choices=[("exists", "Ja"), ("doesnt_exist", "Nein")],
         widget=forms.RadioSelect,
     )
 
@@ -434,7 +456,16 @@ class RenovationHeatPumpForm(ValidationForm):
 
 class RenovationRequestForm(ValidationForm):
     facade_renovation = forms.BooleanField(
-        label="Fassade dämmen",
+        label="Fassade",
+        required=False,
+    )
+    facade_renovation_details = forms.ChoiceField(
+        label="",
+        choices=[
+            ("facade_insulate_renovation", "Fassade dämmen"),
+            ("facade_glaster_renovation", "Fassade verputzen"),
+        ],
+        widget=forms.RadioSelect,
         required=False,
     )
     roof_renovation = forms.BooleanField(
@@ -458,8 +489,8 @@ class RenovationRequestForm(ValidationForm):
         label="Kellerdeckendämmung",
         required=False,
     )
-    entrance_renovation = forms.BooleanField(
-        label="Eingangstür erneuern",
+    upper_storey_ceiling_renovation = forms.BooleanField(
+        label="Obere Geschossdecke erneuern",
         required=False,
     )
     renovation_input_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
@@ -473,6 +504,9 @@ class RenovationRequestForm(ValidationForm):
 
         if cleaned_data.get("roof_renovation") and not cleaned_data.get("roof_renovation_details"):
             errors["roof_renovation_details"] = "Bitte eine Spezifikation fürs Dach sanieren auswählen."
+
+        if cleaned_data.get("facade_renovation") and not cleaned_data.get("facade_renovation_details"):
+            errors["facade_renovation_details"] = "Bitte eine Spezifikation fürs Fassade sanieren auswählen."
 
         if errors:
             raise forms.ValidationError(errors)
