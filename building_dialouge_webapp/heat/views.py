@@ -481,6 +481,7 @@ class Results(SidebarNavigationMixin, TemplateView):
                 {"name": "Szenario 2", "renovation": 100000, "maintenance": 67250},
             ],
         )
+        context["scenario_boxes"] = get_all_scenario_data(self.request)
         return context
 
 
