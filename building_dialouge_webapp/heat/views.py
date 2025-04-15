@@ -1,6 +1,7 @@
 import inspect
 from urllib.parse import urlparse
 
+from django.http import HttpRequest
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
@@ -298,24 +299,29 @@ def all_flows_finished(request):
     all_flows = [
         (name, flow())
         for name, flow in inspect.getmembers(flows, inspect.isclass)
-        if name.endswith("Flow") and name not in {"Flow", "flows.RenovationRequestFlow"}
+        if name.endswith("Flow") and name not in {"Flow", "RenovationRequestFlow"}
     ]
 
     # Check if at least one instance of RenovationRequestFlow is finished
+    finished_scenarios = get_finished_scenarios(request)
+
+    not_finished = [name for name, flow in all_flows if not flow.finished(request)]
+    if not finished_scenarios:
+        not_finished.append("RenovationRequestFlow")
+    return (True, []) if not not_finished else (False, not_finished)
+
+
+def get_finished_scenarios(request: HttpRequest) -> list[str]:
+    """Return finished scenarios."""
+    finished_scenarios = []
     scenario_max = heat_settings.SCENARIO_MAX
     scenario_id = 1
-    has_finished_renovation = False
     while scenario_id <= scenario_max:
         flow = flows.RenovationRequestFlow(prefix=f"scenario{scenario_id}")
         if flow.finished(request):
-            has_finished_renovation = True
-            break
+            finished_scenarios.append(f"scenario{scenario_id}")
         scenario_id += 1
-
-    not_finished = [name for name, flow in all_flows if not flow.finished(request)]
-    if not has_finished_renovation:
-        not_finished.append("RenovationRequestFlow")
-    return (True, []) if not not_finished else (False, not_finished)
+    return finished_scenarios
 
 
 class OptimizationStart(SidebarNavigationMixin, TemplateView):
@@ -324,7 +330,7 @@ class OptimizationStart(SidebarNavigationMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["back_url"] = "heat:financial_support"
-        context["next_url"] = "heat:results"
+        context["next_disabled"] = True
         all_finished, not_finished = all_flows_finished(self.request)
         context["all_flows_finished"] = all_finished
         context["not_finished_flows"] = [
@@ -334,6 +340,7 @@ class OptimizationStart(SidebarNavigationMixin, TemplateView):
             if (isinstance(step["object"], list) and any(obj.__name__ in not_finished for obj in step["object"]))
             or (not isinstance(step["object"], list) and step["object"].__name__ in not_finished)
         ]
+        context["scenarios"] = get_finished_scenarios(self.request)
         return context
 
 
@@ -482,3 +489,8 @@ class NextSteps(SidebarNavigationMixin, TemplateView):
     extra_context = {
         "back_url": "heat:results",
     }
+
+
+def show_session(request: HttpRequest) -> JsonResponse:
+    """Show session. May be used by developers only."""
+    return JsonResponse(dict(request.session))
