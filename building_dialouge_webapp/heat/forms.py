@@ -194,7 +194,27 @@ class HeatingSourceForm(ValidationForm):
     )
 
 
-class HotwaterHeatingSolarExistsForm(ValidationForm):
+class HeatingYearForm(ValidationForm):
+    heating_system_construction_year = forms.IntegerField(
+        label="Baujahr Heizung",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+
+        building_construction_year = data.get("construction_year", None)
+        if building_construction_year:
+            field = self.fields["heating_system_construction_year"]
+            field.validators = [v for v in field.validators if not isinstance(v, MinValueValidator)]
+            field.widget.attrs.update(
+                {"min": building_construction_year},
+            )
+            field.validators.append(MinValueValidator(building_construction_year))
+
+
+class HeatingSolarExistsForm(ValidationForm):
     solar_thermal_exists = forms.ChoiceField(
         label="Solarthermieanlage vorhanden?",
         choices=[
@@ -205,10 +225,51 @@ class HotwaterHeatingSolarExistsForm(ValidationForm):
     )
 
 
-class HotwaterHeatingSolarAreaForm(ValidationForm):
+class HeatingSolarAreaForm(ValidationForm):
     solar_thermal_area = forms.FloatField(
         label="Kollektorfläche in m²",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+
+class HotwaterSupplyForm(ValidationForm):
+    hotwater_year = forms.IntegerField(
+        label="Baujahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+    hotwater_supply = forms.ChoiceField(
+        label="Wird das Warmwasser mittels Durchlauferhitzer erwärmt?",
+        choices=[("instantaneous_water_heater", "Ja"), ("combined", "Nein")],
+        widget=forms.RadioSelect,
+    )
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+
+        building_construction_year = data.get("construction_year", None)
+        if building_construction_year:
+            field = self.fields["hotwater_year"]
+            field.validators = [v for v in field.validators if not isinstance(v, MinValueValidator)]
+            field.widget.attrs.update(
+                {"min": building_construction_year},
+            )
+            field.validators.append(MinValueValidator(building_construction_year))
+
+
+class HeatingStorageExistsForm(ValidationForm):
+    heating_storage_exists = forms.ChoiceField(
+        label="Wärmespeicher vorhanden?",
+        choices=[("exists", "Ja"), ("doesnt_exist", "Nein")],
+        widget=forms.RadioSelect,
+    )
+
+
+class HeatingStorageCapacityForm(ValidationForm):
+    heating_storage_capacity = forms.IntegerField(
+        label="Wärmespeicher Fassungsvermögen in l",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        template_name="forms/heating-storage-capacity.html",
     )
 
 
@@ -265,67 +326,6 @@ class RoofInclinationForm(ValidationForm):
     roof_inclination = forms.IntegerField(
         label="Dachneigung in Grad",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-    )
-
-
-class HeatingYearForm(ValidationForm):
-    heating_system_construction_year = forms.IntegerField(
-        label="Baujahr Heizung",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        required=False,
-    )
-
-    def validate_with_session(self):
-        data = self.request.session.get("django_htmx_flow", {})
-
-        building_construction_year = data.get("construction_year", None)
-        if building_construction_year:
-            field = self.fields["heating_system_construction_year"]
-            field.validators = [v for v in field.validators if not isinstance(v, MinValueValidator)]
-            field.widget.attrs.update(
-                {"min": building_construction_year},
-            )
-            field.validators.append(MinValueValidator(building_construction_year))
-
-
-class HotwaterSupplyForm(ValidationForm):
-    hotwater_year = forms.IntegerField(
-        label="Baujahr",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        required=False,
-    )
-    hotwater_supply = forms.ChoiceField(
-        label="Wird das Warmwasser mittels Durchlauferhitzer erwärmt?",
-        choices=[("instantaneous_water_heater", "Ja"), ("combined", "Nein")],
-        widget=forms.RadioSelect,
-    )
-
-    def validate_with_session(self):
-        data = self.request.session.get("django_htmx_flow", {})
-
-        building_construction_year = data.get("construction_year", None)
-        if building_construction_year:
-            field = self.fields["hotwater_year"]
-            field.validators = [v for v in field.validators if not isinstance(v, MinValueValidator)]
-            field.widget.attrs.update(
-                {"min": building_construction_year},
-            )
-            field.validators.append(MinValueValidator(building_construction_year))
-
-
-class HeatingStorageExistsForm(ValidationForm):
-    heating_storage_exists = forms.ChoiceField(
-        label="Wärmespeicher vorhanden?",
-        choices=[("exists", "Ja"), ("doesnt_exist", "Nein")],
-        widget=forms.RadioSelect,
-    )
-
-
-class HeatingStorageCapacityForm(ValidationForm):
-    heating_storage_capacity = forms.IntegerField(
-        label="Wärmespeicher Fassungsvermögen in l",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        template_name="forms/heating-storage-capacity.html",
     )
 
 
