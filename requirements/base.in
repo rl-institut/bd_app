@@ -24,3 +24,7 @@ django-htmx
 django-cotton
 
 pandas
+
+# Custom packages
+# ------------------------------------------------------------------------------
+django-oemof

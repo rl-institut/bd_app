@@ -1,0 +1,38 @@
+# Config file for building dialouge
+
+hotwater_energy_consumption_per_person: 0.8 # in MWh / person
+
+default_energy_efficiency_class: 2
+
+orientation:  # in °
+  s: 0
+  sw: 45
+  w: 90
+  nw: 135
+  n: 180
+  ne: 225
+  e: 270
+  se: 315
+
+building_type:
+  single_family: "SFH"
+  apartment_building: "MFH"
+  terraced_house: "TH"
+
+construction_years:
+  [1859, 1918, 1948, 1957, 1968, 1978, 1983, 1994, 2001, 2009, 2015, 2025]
+
+flow_temperature:
+  radiators: 75  # in °
+  floorheating: 40  # in °
+
+roof_usage: 0.5
+roof_usage_pv_share: 0.5
+
+pv_density: 7  # in m² / kWp
+sth_density: 12  # in m² / kWp
+
+sth_area_per_person: 1  # in m² / Person; needed to set fix capacity for STH electricity load
+
+battery_c_rate: 0.5  # in kW / kWh
+battery_storage_capacity_per_pv_capacity: 50  # in kWh / kWp; needed to couple battery to PV in optimization

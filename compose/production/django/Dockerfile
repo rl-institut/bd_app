@@ -1,6 +1,6 @@
 
 # define an alias for the specific python version used in this file.
-FROM docker.io/python:3.12.3-slim-bookworm as python
+FROM docker.io/python:3.10.17-slim-bookworm as python
 
 # Python build stage
 FROM python as python-build-stage
@@ -44,6 +44,12 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   libpq-dev \
   # Translations dependencies
   gettext \
+  # Needed to install cchardet
+  gcc g++ \
+  # Needed for oemof.tabular
+  git \
+  # CBC-Solver
+  coinor-cbc coinor-libcbc-dev \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
@@ -56,6 +62,10 @@ COPY --from=python-build-stage /usr/src/app/wheels  /wheels/
 RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
   && rm -rf /wheels/
 
+# oemof.tabular dependencies are outdated. Default installation leads to incompatibility errors.
+# Thus, installation of tabular must be done afterwards (overwriting some deps).
+RUN pip install git+https://github.com/oemof/oemof-tabular.git
+RUN pip install --upgrade django-compressor
 
 COPY --chown=django:django ./compose/production/django/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint

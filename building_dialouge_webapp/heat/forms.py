@@ -326,7 +326,7 @@ class PVSystemCapacityForm(ValidationForm):
 class PVSystemBatteryExistsForm(ValidationForm):
     battery_exists = forms.ChoiceField(
         label="Batterie vorhanden?",
-        choices=[("exists", "Ja"), ("doesnt_exist", "Nein")],
+        choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
         widget=forms.RadioSelect,
     )
 
