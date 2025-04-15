@@ -112,29 +112,16 @@ class BuildingTypeProtectionForm(ValidationForm):
 
 
 class InsulationForm(ValidationForm):
-    roof_insulation_year = forms.IntegerField(
-        label="Dach",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        required=False,
-    )
-    upper_storey_ceiling_insulation_year = forms.IntegerField(
-        label="Obere Geschossdecke",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        required=False,
-    )
-    cellar_insulation_year = forms.IntegerField(
-        label="Kellerdecke",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        required=False,
-    )
-    facade_insulation_year = forms.IntegerField(
-        label="Fassade",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        required=False,
-    )
-    window_insulation_year = forms.IntegerField(
-        label="Fenster",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    insulation_choices = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("roof_insulation_year", "Dach"),
+            ("upper_storey_ceiling_insulation_year", "Obere Geschossdecke"),
+            ("cellar_insulation_year", "Kellerdecke"),
+            ("facade_insulation_year", "Fassade"),
+            ("window_insulation_year", "Fenster"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
         required=False,
     )
 
