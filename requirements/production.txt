@@ -153,6 +153,8 @@ pytz==2025.2
     # via
     #   flower
     #   pandas
+pyyaml==6.0.2
+    # via -r requirements/base.in
 qrcode==8.1
     # via django-allauth
 rcssmin==1.2.1

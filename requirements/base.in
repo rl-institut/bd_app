@@ -24,6 +24,7 @@ django-htmx
 django-cotton
 
 pandas
+pyyaml
 
 # Custom packages
 # ------------------------------------------------------------------------------
