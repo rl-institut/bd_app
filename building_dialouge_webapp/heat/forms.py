@@ -460,6 +460,7 @@ class RenovationRequestForm(ValidationForm):
     facade_renovation = forms.BooleanField(
         label="Fassade",
         required=False,
+        initial=False,
     )
     facade_renovation_details = forms.ChoiceField(
         label="",
@@ -473,6 +474,7 @@ class RenovationRequestForm(ValidationForm):
     roof_renovation = forms.BooleanField(
         label="Dach",
         required=False,
+        initial=False,
     )
     roof_renovation_details = forms.ChoiceField(
         label="",
@@ -486,14 +488,17 @@ class RenovationRequestForm(ValidationForm):
     window_renovation = forms.BooleanField(
         label="Fenster austauschen",
         required=False,
+        initial=False,
     )
     cellar_renovation = forms.BooleanField(
         label="Kellerdeckendämmung",
         required=False,
+        initial=False,
     )
     upper_storey_ceiling_renovation = forms.BooleanField(
         label="Obere Geschossdecke erneuern",
         required=False,
+        initial=False,
     )
     renovation_input_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
@@ -504,6 +509,13 @@ class RenovationRequestForm(ValidationForm):
         cleaned_data = super().clean()
         errors = {}
 
+        # Autofill if one suboption was chosen
+        if cleaned_data.get("roof_renovation_details"):
+            cleaned_data["roof_renovation"] = True
+        if cleaned_data.get("facade_renovation_details"):
+            cleaned_data["facade_renovation"] = True
+
+        # Return an error if no suboptin was chosen yet
         if cleaned_data.get("roof_renovation") and not cleaned_data.get("roof_renovation_details"):
             errors["roof_renovation_details"] = "Bitte eine Spezifikation fürs Dach sanieren auswählen."
 
