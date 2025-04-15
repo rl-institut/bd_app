@@ -22,27 +22,11 @@ asttokens==3.0.0
     # via stack-data
 async-timeout==5.0.1
     # via redis
-attrs==25.3.0
-    # via jsonlines
 babel==2.17.0
     # via sphinx
-bcrypt==4.3.0
-    # via paramiko
-billiard==3.6.4.0
+billiard==4.2.1
     # via celery
-blinker==1.9.0
-    # via
-    #   oemof-network
-    #   oemof-solph
-boto3==1.37.33
-    # via tabulator
-botocore==1.37.33
-    # via
-    #   boto3
-    #   s3transfer
-cchardet==2.1.7
-    # via datapackage
-celery==5.1.2
+celery==5.5.1
     # via
     #   -r requirements/base.in
     #   django-celery-beat
@@ -56,23 +40,17 @@ cffi==1.17.1
     # via
     #   argon2-cffi-bindings
     #   cryptography
-    #   pynacl
 cfgv==3.4.0
     # via pre-commit
-chardet==5.2.0
-    # via tabulator
 charset-normalizer==3.4.1
     # via requests
-click==7.1.2
+click==8.1.8
     # via
     #   celery
     #   click-didyoumean
     #   click-plugins
     #   click-repl
-    #   datapackage
     #   djlint
-    #   tableschema
-    #   tabulator
     #   uvicorn
 click-didyoumean==0.3.1
     # via celery
@@ -90,23 +68,19 @@ coverage==7.8.0
     #   django-coverage-plugin
 crispy-bootstrap5==2025.4
     # via -r requirements/base.in
+cron-descriptor==1.4.5
+    # via django-celery-beat
 cryptography==44.0.2
-    # via
-    #   fido2
-    #   paramiko
-datapackage==1.5.1
-    # via oemof-tabular
+    # via fido2
+cssbeautifier==1.15.4
+    # via djlint
 decorator==5.2.1
     # via
     #   ipdb
     #   ipython
-dill==0.3.9
-    # via
-    #   oemof-network
-    #   oemof-solph
 distlib==0.3.9
     # via virtualenv
-django==5.2
+django==5.1.8
     # via
     #   -r requirements/base.in
     #   crispy-bootstrap5
@@ -131,7 +105,7 @@ django-anymail==13.0
     # via -r requirements/production.in
 django-appconf==1.1.0
     # via django-compressor
-django-celery-beat==2.1.0
+django-celery-beat==2.7.0
     # via -r requirements/base.in
 django-compressor==1.6
     # via
@@ -167,16 +141,18 @@ django-stubs==5.1.3
     # via -r requirements/local.in
 django-stubs-ext==5.1.3
     # via django-stubs
-django-timezone-field==4.2.3
+django-timezone-field==7.1
     # via django-celery-beat
 djangorestframework==3.16.0
     # via django-oemof
-djlint==0.3.4
+djlint==1.36.4
     # via -r requirements/local.in
 docutils==0.21.2
     # via sphinx
-et-xmlfile==2.0.0
-    # via openpyxl
+editorconfig==0.17.0
+    # via
+    #   cssbeautifier
+    #   jsbeautifier
 exceptiongroup==1.2.2
     # via
     #   anyio
@@ -194,8 +170,6 @@ filelock==3.18.0
     # via virtualenv
 flower==2.0.1
     # via -r requirements/base.in
-greenlet==3.1.1
-    # via sqlalchemy
 gunicorn==23.0.0
     # via -r requirements/production.in
 h11==0.14.0
@@ -210,8 +184,6 @@ idna==3.10
     # via
     #   anyio
     #   requests
-ijson==3.3.0
-    # via tabulator
 imagesize==1.4.1
     # via sphinx
 iniconfig==2.1.0
@@ -220,30 +192,20 @@ ipdb==0.13.13
     # via -r requirements/local.in
 ipython==8.35.0
     # via ipdb
-isodate==0.7.2
-    # via tableschema
 jedi==0.19.2
     # via ipython
 jinja2==3.1.6
     # via sphinx
-jmespath==1.0.1
+jsbeautifier==1.15.4
     # via
-    #   boto3
-    #   botocore
-jsonlines==4.0.0
-    # via tabulator
-jsonpointer==1.14
-    # via datapackage
-jsonschema==2.6.0
-    # via
-    #   datapackage
-    #   tableschema
+    #   cssbeautifier
+    #   djlint
+json5==0.12.0
+    # via djlint
 kombu==5.5.2
     # via celery
 libsass==0.23.0
     # via django-libsass
-linear-tsv==1.1.0
-    # via tabulator
 markupsafe==3.0.2
     # via
     #   jinja2
@@ -256,30 +218,12 @@ mypy==1.15.0
     #   django-stubs
 mypy-extensions==1.0.0
     # via mypy
-networkx==3.4.2
-    # via
-    #   oemof-network
-    #   oemof-solph
 nodeenv==1.9.1
     # via pre-commit
 numpy==1.26.4
     # via
     #   django-oemof
-    #   oemof-solph
-    #   oemof-tabular
     #   pandas
-oemof-network==0.5.0a4
-    # via
-    #   oemof-solph
-    #   oemof-tabular
-oemof-solph==0.5.2.dev1
-    # via oemof-tabular
-oemof-tabular @ git+https://github.com/oemof/oemof-tabular.git@09346649f75389d9fdafa62c24ae5e95cc0cf291
-    # via -r requirements/base.in
-oemof-tools==0.4.3
-    # via oemof-solph
-openpyxl==3.1.5
-    # via tabulator
 packaging==24.2
     # via
     #   gunicorn
@@ -290,13 +234,10 @@ pandas==2.2.3
     # via
     #   -r requirements/base.in
     #   django-oemof
-    #   oemof-network
-    #   oemof-solph
-    #   oemof-tabular
-paramiko==3.5.1
-    # via oemof-tabular
 parso==0.8.4
     # via jedi
+pathspec==0.12.1
+    # via djlint
 pexpect==4.9.0
     # via ipython
 pillow==11.2.1
@@ -305,8 +246,6 @@ platformdirs==4.3.7
     # via virtualenv
 pluggy==1.5.0
     # via pytest
-ply==3.11
-    # via pyomo
 pre-commit==4.2.0
     # via -r requirements/local.in
 prometheus-client==0.21.1
@@ -333,10 +272,6 @@ pygments==2.19.1
     # via
     #   ipython
     #   sphinx
-pynacl==1.5.0
-    # via paramiko
-pyomo==6.9.1
-    # via oemof-solph
 pytest==8.3.5
     # via
     #   -r requirements/local.in
@@ -350,16 +285,13 @@ python-crontab==3.2.0
     # via django-celery-beat
 python-dateutil==2.9.0.post0
     # via
-    #   botocore
+    #   celery
     #   pandas
     #   python-crontab
-    #   tableschema
 python-slugify==8.0.4
     # via -r requirements/base.in
 pytz==2025.2
     # via
-    #   celery
-    #   django-timezone-field
     #   flower
     #   pandas
 pyyaml==6.0.2
@@ -378,28 +310,17 @@ regex==2024.11.6
     # via djlint
 requests==2.32.3
     # via
-    #   datapackage
     #   django-anymail
     #   sphinx
-    #   tableschema
-    #   tabulator
-rfc3986==2.0.0
-    # via tableschema
 ruff==0.11.5
     # via -r requirements/local.in
-s3transfer==0.11.4
-    # via boto3
-sentry-sdk==2.25.1
+sentry-sdk==2.26.0
     # via -r requirements/production.in
-setuptools==78.1.0
-    # via celery
 six==1.17.0
     # via
-    #   datapackage
-    #   linear-tsv
+    #   cssbeautifier
+    #   jsbeautifier
     #   python-dateutil
-    #   tableschema
-    #   tabulator
 sniffio==1.3.1
     # via anyio
 snowballstemmer==2.2.0
@@ -422,8 +343,6 @@ sphinxcontrib-qthelp==2.0.0
     # via sphinx
 sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
-sqlalchemy==2.0.40
-    # via tabulator
 sqlparse==0.5.3
     # via
     #   django
@@ -432,23 +351,14 @@ stack-data==0.6.3
     # via ipython
 starlette==0.46.2
     # via sphinx-autobuild
-tableschema==1.7.4
-    # via
-    #   datapackage
-    #   oemof-tabular
-tabulator==1.53.5
-    # via
-    #   datapackage
-    #   tableschema
 termcolor==3.0.1
     # via pytest-sugar
 text-unidecode==1.3
     # via python-slugify
-toml==0.10.2
-    # via oemof-tabular
 tomli==2.2.1
     # via
     #   django-stubs
+    #   djlint
     #   ipdb
     #   mypy
     #   pytest
@@ -469,24 +379,19 @@ typing-extensions==4.13.2
     #   asgiref
     #   django-stubs
     #   django-stubs-ext
+    #   djlint
     #   ipython
     #   mypy
     #   psycopg
-    #   sqlalchemy
     #   uvicorn
 tzdata==2025.2
     # via
+    #   django-celery-beat
     #   faker
     #   kombu
     #   pandas
-unicodecsv==0.14.1
-    # via
-    #   datapackage
-    #   tableschema
-    #   tabulator
 urllib3==2.4.0
     # via
-    #   botocore
     #   django-anymail
     #   requests
     #   sentry-sdk
@@ -513,5 +418,3 @@ werkzeug==3.1.3
     # via -r requirements/local.in
 whitenoise==6.9.0
     # via -r requirements/base.in
-xlrd==2.0.1
-    # via tabulator
