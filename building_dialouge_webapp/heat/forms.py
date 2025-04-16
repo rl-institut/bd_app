@@ -116,7 +116,7 @@ class InsulationForm(ValidationForm):
         label="",
         choices=[
             ("roof_insulation_year", "Dach"),
-            ("upper_storey_ceiling_insulation_year", "Obere Geschossdecke"),
+            ("upper_storey_ceiling_insulation_year", "Oberste Geschossdecke"),
             ("cellar_insulation_year", "Kellerdecke"),
             ("facade_insulation_year", "Fassade"),
             ("window_insulation_year", "Fenster"),
@@ -496,7 +496,7 @@ class RenovationRequestForm(ValidationForm):
         initial=False,
     )
     upper_storey_ceiling_renovation = forms.BooleanField(
-        label="Obere Geschossdecke erneuern",
+        label="Oberste Geschossdecke erneuern",
         required=False,
         initial=False,
     )
