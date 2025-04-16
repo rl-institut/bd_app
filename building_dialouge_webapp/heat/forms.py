@@ -356,21 +356,6 @@ class PVSystemBatteryCapacityForm(ValidationForm):
     )
 
 
-class RenovationTechnologySelect(RadioSelect):
-    template_name = "forms/energy_source.html"
-
-    INFOS = {
-        "district_heating": "Wärme, die in einem zentralen Heizkraftwerk erzeugt und über gedämmte Rohrleitungen zum "
-        "Gebäude transportiert wird. Existiert bei ihnen ein Fernwärmenetz, prüfen sie bitte, ob eine "
-        "Anschlusspflicht besteht.",
-    }
-
-    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
-        option = super().create_option(name, value, label, selected, index, subindex, attrs)
-        option["info"] = self.INFOS.get(value, "")
-        return option
-
-
 class RenovationTechnologyForm(ValidationForm):
     primary_heating = forms.ChoiceField(
         label="Heizungstechnologie",
@@ -382,7 +367,7 @@ class RenovationTechnologyForm(ValidationForm):
             ("heating_rod", "Heizstab"),
             ("bhkw", "BHKW"),
         ],
-        widget=RenovationTechnologySelect,
+        widget=forms.RadioSelect,
     )
 
 
