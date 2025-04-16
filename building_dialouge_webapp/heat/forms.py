@@ -457,10 +457,13 @@ class RenovationHeatPumpForm(ValidationForm):
 
 
 class RenovationRequestForm(ValidationForm):
-    facade_renovation = forms.BooleanField(
-        label="Fassade",
+    facade_renovation_choice = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("facade_renovation", "Fassade:"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
         required=False,
-        initial=False,
     )
     facade_renovation_details = forms.ChoiceField(
         label="",
@@ -471,10 +474,13 @@ class RenovationRequestForm(ValidationForm):
         widget=forms.RadioSelect,
         required=False,
     )
-    roof_renovation = forms.BooleanField(
-        label="Dach",
+    roof_renovation_choice = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("roof_renovation", "Dach:"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
         required=False,
-        initial=False,
     )
     roof_renovation_details = forms.ChoiceField(
         label="",
@@ -485,20 +491,29 @@ class RenovationRequestForm(ValidationForm):
         widget=forms.RadioSelect,
         required=False,
     )
-    window_renovation = forms.BooleanField(
-        label="Fenster austauschen",
+    window_renovation_choice = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("window_renovation", "Fenster austauschen"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
         required=False,
-        initial=False,
     )
-    cellar_renovation = forms.BooleanField(
-        label="Kellerdeckendämmung",
+    cellar_renovation_choice = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("cellar_renovation", "Kellerdeckendämmung"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
         required=False,
-        initial=False,
     )
-    upper_storey_ceiling_renovation = forms.BooleanField(
-        label="Oberste Geschossdecke erneuern",
+    upper_storey_ceiling_renovation_choice = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("upper_storey_ceiling_renovation", "Oberste Geschossdecke erneuern"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
         required=False,
-        initial=False,
     )
     renovation_input_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
@@ -511,15 +526,15 @@ class RenovationRequestForm(ValidationForm):
 
         # Autofill if one suboption was chosen
         if cleaned_data.get("roof_renovation_details"):
-            cleaned_data["roof_renovation"] = True
+            cleaned_data["roof_renovation_choice"] = ["roof_renovation"]
         if cleaned_data.get("facade_renovation_details"):
-            cleaned_data["facade_renovation"] = True
+            cleaned_data["facade_renovation_choice"] = ["facade_renovation"]
 
         # Return an error if no suboptin was chosen yet
-        if cleaned_data.get("roof_renovation") and not cleaned_data.get("roof_renovation_details"):
+        if cleaned_data.get("roof_renovation_choice") and not cleaned_data.get("roof_renovation_details"):
             errors["roof_renovation_details"] = "Bitte eine Spezifikation fürs Dach sanieren auswählen."
 
-        if cleaned_data.get("facade_renovation") and not cleaned_data.get("facade_renovation_details"):
+        if cleaned_data.get("facade_renovation_choice") and not cleaned_data.get("facade_renovation_details"):
             errors["facade_renovation_details"] = "Bitte eine Spezifikation fürs Fassade sanieren auswählen."
 
         if errors:
