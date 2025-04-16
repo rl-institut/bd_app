@@ -1,87 +1,67 @@
 {% extends "base_footer_button.html" %}
 
 {% block content %}
-  <section class="position-relative h-100 flex-grow-1 pb-5">
-    <div class="step-title">
-      <div class="step-container">
-        <div class="main">
-          <h1>Sanierungswunsch</h1>
-          <div class="info-box">
-            Bitte wählen Sie eine primäre Heizungsart, falls gewünscht zusätzliche Erzeuger sowie Sanierungsmaßnahmen für dieses Szenario.
+<section class="position-relative h-100 flex-grow-1 pb-5">
+  <div class="step-title">
+    <div class="step-container">
+      <div class="main">
+        <h1>Sanierungswunsch</h1>
+        <div class="info-box">
+          Bitte wählen Sie eine primäre Heizungsart, falls gewünscht zusätzliche Erzeuger sowie Sanierungsmaßnahmen für dieses Szenario.
+        </div>
+      </div>
+    </div>
+    <div class="help"></div>
+  </div>
+
+  <div class="renovation-layout">
+    <div> <!-- LEFT COLUMN -->
+      <div class="step-question">
+        <div class="step-container">
+          <div class="form-step-grid">
+            <div>
+              <div id="primary_heating"
+                   hx-post=""
+                   hx-trigger="change"
+                   hx-swap="show:bottom"
+                   hx-include="this"
+                   class="main">{{ primary_heating.content | safe }}</div>
+              <div class="help"></div>
+            </div>
+            <div>
+              <div id="renovation_solar" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this" class="main">{{ renovation_solar.content | safe }}</div>
+              <div id="renovation_biomass" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this" class="main">{{ renovation_biomass.content | safe }}</div>
+              <div class="help"></div>
+              <div id="renovation_heatpump" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this" class="main">{{ renovation_heatpump.content | safe }}</div>
+              <div class="help"></div>
+              <div id="renovation_pvsolar" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this" class="main">{{ renovation_pvsolar.content | safe }}</div>
+              <div class="help"></div>
+              <div class="help"></div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="help"></div>
-    </div>
-    <div class="step-question">
-      <div class="step-container">
-        <div id="primary_heating"
-             hx-post=""
-             hx-trigger="change"
-             hx-swap="show:bottom"
-             hx-include="this"
-             class="main">{{ primary_heating.content | safe }}</div>
-        <div class="help" id="flow-instance-boxes">
-          {% for box in scenario_boxes %}
-            <c-layouts.renovation :box="box"></c-layouts.renovation>
-          {% endfor %}
+
+      <div class="step-question">
+        <div class="step-container">
+          <div id="renovation_details"
+               hx-post=""
+               hx-trigger="change"
+               hx-swap="show:bottom"
+               hx-include="this"
+               class="main">{{ renovation_details.content | safe }}</div>
+          <div class="help"></div>
         </div>
       </div>
     </div>
-    <div class="step-question">
-      <div class="step-container">
-        <div id="renovation_biomass"
-             hx-post=""
-             hx-trigger="change"
-             hx-swap="show:bottom"
-             hx-include="this"
-             class="main">{{ renovation_biomass.content | safe }}</div>
-        <div class="help"></div>
+
+    <div> <!-- RIGHT COLUMN -->
+      <div id="flow-instance-boxes">
+        {% for box in scenario_boxes %}
+          <c-layouts.renovation :box="box"></c-layouts.renovation>
+        {% endfor %}
       </div>
     </div>
-    <div class="step-question">
-      <div class="step-container">
-        <div id="renovation_heatpump"
-             hx-post=""
-             hx-trigger="change"
-             hx-swap="show:bottom"
-             hx-include="this"
-             class="main">{{ renovation_heatpump.content | safe }}</div>
-        <div class="help"></div>
-      </div>
-    </div>
-    <div class="step-question">
-      <div class="step-container">
-        <div id="renovation_pvsolar"
-             hx-post=""
-             hx-trigger="change"
-             hx-swap="show:bottom"
-             hx-include="this"
-             class="main">{{ renovation_pvsolar.content | safe }}</div>
-        <div class="help"></div>
-      </div>
-    </div>
-    <div class="step-question">
-      <div class="step-container">
-        <div id="renovation_solar"
-             hx-post=""
-             hx-trigger="change"
-             hx-swap="show:bottom"
-             hx-include="this"
-             class="main">{{ renovation_solar.content | safe }}</div>
-        <div class="help"></div>
-      </div>
-    </div>
-    <div class="step-question">
-      <div class="step-container">
-        <div id="renovation_details"
-          hx-post=""
-          hx-trigger="change"
-          hx-swap="show:bottom"
-          hx-include="this"
-          class="main">{{ renovation_details.content | safe }}</div>
-        <div class="help"></div>
-      </div>
-    </div>
-  </section>
+  </div>
+</section>
 {% endblock content %}

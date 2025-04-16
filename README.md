@@ -40,7 +40,10 @@ git clone git@github.com:rl-institut/bd_app.git
 cd bd_app
 virtualenv venv
 source venv/bin/activate
+pip install uv
 pip install -r ./requirements/local.txt
+pip install git+https://github.com/oemof/oemof-tabular.git
+pip install --upgrade django-compressor
 ```
 
 2. Setup local PostgreSQL server and configure using pgadmin4 (Linux)
