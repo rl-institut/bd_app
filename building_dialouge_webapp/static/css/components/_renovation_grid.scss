@@ -1,0 +1,25 @@
+// src/scss/components/_renovation.scss or wherever you manage styles
+
+.renovation-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+  }
+
+  .form-step-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    width: 100%;
+    align-items: stretch;
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      .main {
+        flex: 1;
+      }
+    }
+  }
