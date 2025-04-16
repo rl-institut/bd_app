@@ -829,7 +829,7 @@ class PVSystemFlow(SidebarNavigationMixin, Flow):
             target="pv_system_battery_exists",
             form_class=forms.PVSystemBatteryExistsForm,
         ).transition(
-            Switch("battery_exists").case("exists", "pv_battery_capacity_known").default("stop"),
+            Switch("battery_exists").case("doesnt_exist", "stop").default("pv_battery_capacity_known"),
         )
 
         self.pv_battery_capacity_known = FormState(
