@@ -770,6 +770,7 @@ class RoofFlow(SidebarNavigationMixin, Flow):
             self,
             target="roof_orientation",
             form_class=forms.RoofOrientationForm,
+            template_name="partials/roof_orientation_help.html",
         ).transition(
             Next("roof_inclination_known"),
         )
@@ -786,6 +787,7 @@ class RoofFlow(SidebarNavigationMixin, Flow):
             self,
             target="roof_inclination",
             form_class=forms.RoofInclinationForm,
+            template_name="partials/roof_inclination_help.html",
         ).transition(Next("stop"))
 
         self.stop = StopState(
