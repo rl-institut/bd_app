@@ -3,6 +3,7 @@
   <div class="flow-instance-box-header">
     <p>{{ box.title }}</p>
     <div class="button-container">
+    {% if not request.path == "/results/" %}
       <a href="{{ box.href }}" class="edit-flow-instance-link">
         {% csrf_token %}
         <button type="submit"
@@ -27,6 +28,7 @@
                 </svg>
               </button>
       </form>
+      {% endif %}
     </div>
   </div>
   <div class="flow-instance-box-text">{{ slot }}</div>
