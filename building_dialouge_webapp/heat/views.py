@@ -251,7 +251,7 @@ def get_user_friendly_data(scenario_data, form_classes: list) -> list:
     # remove duplicates
     choices = list(dict.fromkeys(choices))
     # remove categories that have further specification
-    top_categories = ["Biomasseheizung", "Wärmepumpe", "Dach"]
+    top_categories = ["Biomasseheizung", "Wärmepumpe", "Dach", "Fassade"]
     for category in top_categories:
         if category in choices:
             choices.remove(category)
@@ -481,6 +481,7 @@ class Results(SidebarNavigationMixin, TemplateView):
                 {"name": "Szenario 2", "renovation": 100000, "maintenance": 67250},
             ],
         )
+        context["scenario_boxes"] = get_all_scenario_data(self.request)
         return context
 
 

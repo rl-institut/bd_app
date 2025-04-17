@@ -165,6 +165,11 @@
         </div>
       </div>
     </div>
+    <div class="help" id="flow-instance-boxes">
+        {% for box in scenario_boxes %}
+          <c-layouts.renovation :box="box"></c-layouts.renovation>
+        {% endfor %}
+      </div>
 {% endblock content %}
 
 {% block javascript %}
