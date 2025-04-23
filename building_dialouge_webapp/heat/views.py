@@ -14,6 +14,7 @@ from . import settings as heat_settings
 from . import tables
 from .charts import cost_emission_chart
 from .charts import heating_and_co2_chart
+from .charts import heating_chart_vertical
 from .charts import investment_costs_chart
 from .navigation import SidebarNavigationMixin
 
@@ -459,13 +460,22 @@ class Results(SidebarNavigationMixin, TemplateView):
             unit="t/a",
             data=cost_emission_chart.EXAMPLE_EMISSION_DATA,
         )
-        context["heating_chart_data"] = heating_and_co2_chart.generate_echarts_option(
+        context["heating_chart_data"] = heating_chart_vertical.generate_vertical_echarts_option(
+            months=["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
             scenarios=[
-                {"name": "Heute", "value": 230},
-                {"name": "Szenario 1", "value": 130},
-                {"name": "Szenario 2", "value": 47},
+                {
+                    "name": "Szenario 1",
+                    "values": [3450, 3050, 2800, 1800, 1200, 600, 450, 400, 700, 1400, 2500, 3350],
+                    "color": "#b2dfdb",
+                },
+                {
+                    "name": "Szenario 2",
+                    "values": [450, 430, 410, 300, 220, 110, 100, 90, 150, 260, 390, 440],
+                    "color": "#7986cb",
+                },
             ],
-            title="Heizenergieverbrauch in kWh/(m²*a) (Endenergie)",
+            title="Heizwärmebedarf in kWh",
+            y_axis_label="kWh",
         )
         context["co2_chart_data"] = heating_and_co2_chart.generate_echarts_option(
             scenarios=[
