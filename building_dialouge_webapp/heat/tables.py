@@ -193,11 +193,24 @@ class TotalCostTable(Table):
     def generate_table_data(self):
         investments = self.data.get("investments", {})
         subsidies = self.data.get("subsidies", {})
+        total_cost = sum(investments.values()) - sum(subsidies.values())
+        return pd.DataFrame(
+            {
+                "Summe": [""],
+                "": [format_currency(total_cost)],
+            },
+        )
+
+
+class TotalCost15YearsTable(Table):
+    def generate_table_data(self):
+        investments = self.data.get("investments", {})
+        subsidies = self.data.get("subsidies", {})
         savings = self.data.get("savings", {})
         total_cost = sum(investments.values()) - sum(subsidies.values()) - sum(savings.values())
         return pd.DataFrame(
             {
-                "Summe": [""],
+                "Summe 15 Jahre": [""],
                 "": [format_currency(total_cost)],
             },
         )

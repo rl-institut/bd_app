@@ -439,6 +439,9 @@ class Results(SidebarNavigationMixin, TemplateView):
             subsidies_table = tables.SubsidiesTable(scenario_data).to_html(f"{scenario_name} summary_table")
             savings_table = tables.EnergySavingsTable(scenario_data).to_html(f"{scenario_name} summary_table")
             total_cost_table = tables.TotalCostTable(scenario_data).to_html(f"{scenario_name} summary_table")
+            total_cost_15_years_table = tables.TotalCost15YearsTable(scenario_data).to_html(
+                f"{scenario_name} summary_table",
+            )
 
             scenario_list.append(
                 {
@@ -449,6 +452,7 @@ class Results(SidebarNavigationMixin, TemplateView):
                     "subsidies_table": subsidies_table,
                     "savings_table": savings_table,
                     "total_cost_table": total_cost_table,
+                    "total_cost_15_years_table": total_cost_15_years_table,
                 },
             )
 
