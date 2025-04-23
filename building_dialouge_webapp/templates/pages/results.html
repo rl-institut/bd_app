@@ -87,14 +87,11 @@
                   {% endfor %}
                 </div>
                 <br />
-                <p>Die aufgeführten Kosten enthalten auch jene, die über den betrachteten Zeitraum sowieso angefallen wären - die <span class="maintenance">Instandhaltungskosten</span>.
-                Denn um Ihr Gebäude instand zu halten, sind in jedem Fall Aufwendungen - z.B. für Reüeraturen und Wartungsarbeiten - nötig.
-                Wenn Sie also in absehbarer Zeit ohnehin mit solchen Kosten rechnen, kann sich eine <span class="renovation">Sanierung</span> umso mehr lohnen.</p>
-                <div id="investment_chart" class="chart_big"></div>
                 <p>Ihre jährlichen Energiekosten für <span class="electricity">Strom</span> und <span class="heating">Heizung & Warmwasser</span> und Ihr Einsparpotenzial:</p>
                 <br />
                 <br />
                 <strong>placeholder for chart "Energiekosten pro Jahr in €"</strong>
+                <div id="energycost_chart" class="chart_big"></div>
                 <br />
                 <br />
           </div>
@@ -146,5 +143,6 @@
   {{ emission_chart_data|json_script:"emission_chart_data" }}
   {{ heating_chart_data|json_script:"heating_chart_data" }}
   {{ investment_chart_data|json_script:"investment_chart_data" }}
+  {{ energycost_chart_data|json_script:"energycost_chart_data" }}
   {{ co2_chart_data|json_script:"co2_chart_data" }}
 {% endblock inline_javascript %}

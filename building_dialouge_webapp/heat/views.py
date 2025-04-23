@@ -15,7 +15,6 @@ from . import tables
 from .charts import cost_emission_chart
 from .charts import heating_and_co2_chart
 from .charts import heating_chart_vertical
-from .charts import investment_costs_chart
 from .navigation import SidebarNavigationMixin
 
 
@@ -494,6 +493,14 @@ class Results(SidebarNavigationMixin, TemplateView):
             title="Heizwärmebedarf in kWh",
             y_axis_label="kWh",
         )
+        context["energycost_chart_data"] = heating_and_co2_chart.generate_echarts_option(
+            scenarios=[
+                {"name": "Ausgangszustand", "value": 2600},
+                {"name": "Szenario 1", "value": 1200},
+                {"name": "Szenario 2", "value": 700},
+            ],
+            title="Energiekosten in € pro Jahr",
+        )
         context["co2_chart_data"] = heating_and_co2_chart.generate_echarts_option(
             scenarios=[
                 {"name": "Heute", "value": 2600},
@@ -501,12 +508,6 @@ class Results(SidebarNavigationMixin, TemplateView):
                 {"name": "Szenario 2", "value": 700},
             ],
             title="CO2-Kosten in € pro Jahr",
-        )
-        context["investment_chart_data"] = investment_costs_chart.generate_investment_chart_options(
-            scenarios=[
-                {"name": "Szenario 1", "renovation": 55000, "maintenance": 45000},
-                {"name": "Szenario 2", "renovation": 100000, "maintenance": 67250},
-            ],
         )
         context["scenario_boxes"] = get_all_scenario_data(self.request)
         return context
