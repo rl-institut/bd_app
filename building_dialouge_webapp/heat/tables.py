@@ -55,13 +55,14 @@ class ConsumptionTable(Table):
         "change_heating": "Heiztechnologie wechseln",
         "hydraulic_balancing": "Hydraulischer Abgleich",
         "change_circuit_pump": "Austausch Heizkreispumpe",
-        "insulate_heat_distribution": "Dämmung Heizverteilung",
+        "insulate_heat_distribution": "Dämmung Heizungsverteilung",
         "insulate_water_distribution": "Dämmung Warmwasserverteilung",
         "pv_battery": "PV-Anlage und Batterie",
         "renovate_roof": "Dach sanieren",
         "insulate_upper_ceiling": "Obere Geschossdecke",
         "replace_windows": "Fenster austauschen",
         "insulate_basement_ceiling": "Kellerdecke dämmen",
+        "insulate_outer_facade": "Außenfassade dämmen",
     }
 
     procedures = [
@@ -75,6 +76,7 @@ class ConsumptionTable(Table):
         "insulate_upper_ceiling",
         "replace_windows",
         "insulate_basement_ceiling",
+        "insulate_outer_facade",
     ]
 
     def generate_table_data(self) -> pd.DataFrame:
@@ -147,13 +149,18 @@ class InvestmentSummaryTable(SumTable):
 class InvestmentTable(Table):
     translations = {
         **Table.translations,
+        "wood_chip_heating": "Holzhackschnitzel-Heizung",
         "air_heat_pump": "Luft-Wärmepumpe",
-        "thermal_storage": "Wärmespeicher",
-        "heat_meter": "Wärmemengenzähler",
-        "heating_system_pump": "Pumpe des Heizsystems",
-        "ventilation_system": "Lüftungsanlage",
+        "hydraulic_balancing": "Hydraulischer Abgleich",
+        "change_circuit_pump": "Austausch Heizkreispumpe",
+        "insulate_heat_distribution": "Dämmung Heizungsverteilung",
+        "insulate_water_distribution": "Dämmung Warmwasserverteilung",
+        "pv_battery": "PV-Anlage und Batterie",
+        "renovate_roof": "Dach sanieren",
+        "insulate_upper_ceiling": "Obere Geschossdecke",
+        "replace_windows": "Fenster austauschen",
+        "insulate_basement_ceiling": "Kellerdecke dämmen",
         "insulate_outer_facade": "Außenfassade dämmen",
-        "insulate_roof": "Dach dämmen",
     }
 
     def generate_table_data(self):
@@ -181,11 +188,16 @@ class SubsidiesTable(Table):
 class EnergySavingsTable(Table):
     translations = {
         **Table.translations,
-        "air_heat_pump": "Luft-Wärmepumpe",
+        "wood_chip_heating": "Holzhackschnitzel-Heizung",
         "hydraulic_comparison": "Hydraulischer Abgleich",
-        "wood_chips": "Holzhackschnitzel-Heizung",
-        "insulate_outer_facade": "Außenfassade dämmen",
-        "insulate_roof": "Dach dämmen",
+        "change_circuit_pump": "Austausch Heizkreispumpe",
+        "insulate_heat_distribution": "Dämmung Heizungsverteilung",
+        "insulate_water_distribution": "Dämmung Warmwasserverteilung",
+        "renovate_roof": "Dach sanieren",
+        "replace_windows": "Fenster austauschen",
+        "air_heat_pump": "Luft-Wärmepumpe",
+        "pv_battery": "PV-Anlage und Batterie",
+        "insulate_basement_ceiling": "Kellerdecke dämmen",
     }
 
     def generate_table_data(self):

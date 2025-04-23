@@ -404,12 +404,13 @@ class Results(SidebarNavigationMixin, TemplateView):
         summary_data = {
             "scenario1": {
                 "investments": {
-                    "air_heat_pump": 20700,
-                    "thermal_storage": 2980,
-                    "heat_meter": 260,
-                    "heating_system_pump": 480,
-                    "ventilation_system": 9620,
-                    "insulate_outer_facade": 36890,
+                    "wood_chip_heating": 21500,
+                    "hydraulic_balancing": 1000,
+                    "change_circuit_pump": 1000,
+                    "insulate_heat_distribution": 3000,
+                    "insulate_water_distribution": 500,
+                    "renovate_roof": 64500,
+                    "replace_windows": 8000,
                 },
                 "subsidies": {
                     "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
@@ -423,13 +424,14 @@ class Results(SidebarNavigationMixin, TemplateView):
             },
             "scenario2": {
                 "investments": {
-                    "air_heat_pump": 28700,
-                    "thermal_storage": 1980,
-                    "heat_meter": 260,
-                    "heating_system_pump": 480,
-                    "ventilation_system": 9620,
-                    "insulate_roof": 38980,
-                    "insulate_outer_facade": 36890,
+                    "air_heat_pump": 21500,
+                    "hydraulic_balancing": 1000,
+                    "change_circuit_pump": 1000,
+                    "insulate_heat_distribution": 3000,
+                    "insulate_water_distribution": 500,
+                    "pv_battery": 27500,
+                    "renovate_roof": 64500,
+                    "insulate_basement_ceiling": 8000,
                 },
                 "subsidies": {
                     "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
