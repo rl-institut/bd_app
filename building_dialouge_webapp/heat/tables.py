@@ -163,7 +163,28 @@ class SubsidiesTable(Table):
         return pd.DataFrame(
             {
                 "Zuschüsse": list(subsidies),
-                "": [format_currency(v) for v in subsidies.values()],
+                "": [f"-{format_currency(abs(v))}" for v in subsidies.values()],
+            },
+        )
+
+
+class EnergySavingsTable(Table):
+    translations = {
+        **Table.translations,
+        "air_heat_pump": "Luft-Wärmepumpe",
+        "hydraulic_comparison": "Hydraulischer Abgleich",
+        "wood_chips": "Holzhackschnitzel-Heizung",
+        "insulate_outer_facade": "Außenfassade dämmen",
+        "insulate_roof": "Dach dämmen",
+    }
+
+    def generate_table_data(self):
+        savings = self.data.get("savings", {})
+
+        return pd.DataFrame(
+            {
+                "Energetische Einsparungen über 15 Jahre": [self.translations.get(k, k) for k in savings],
+                "": [f"-{format_currency(abs(v))}" for v in savings.values()],
             },
         )
 
@@ -172,7 +193,8 @@ class TotalCostTable(Table):
     def generate_table_data(self):
         investments = self.data.get("investments", {})
         subsidies = self.data.get("subsidies", {})
-        total_cost = sum(investments.values()) - sum(subsidies.values())
+        savings = self.data.get("savings", {})
+        total_cost = sum(investments.values()) - sum(subsidies.values()) - sum(savings.values())
         return pd.DataFrame(
             {
                 "Summe": [""],

@@ -401,6 +401,11 @@ class Results(SidebarNavigationMixin, TemplateView):
                     "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
                     "Wohnungsgebäude (BEG EM) (Nr. 458) (Zuschuss inkl. Klima-Bonus)": 23158.07,
                 },
+                "savings": {
+                    "wood_chips": 28800,
+                    "hydraulic_comparison": 2600,
+                    "insulate_roof": 15400,
+                },
             },
             "scenario2": {
                 "investments": {
@@ -418,6 +423,12 @@ class Results(SidebarNavigationMixin, TemplateView):
                     "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
                     "Wohnungsgebäude (BEG EM) (Nr. 458) (Effizienz-Bonus)": 1931.93,
                 },
+                "savings": {
+                    "air_heat_pump": 17000,
+                    "hydraulic_comparison": 3600,
+                    "insulate_outer_facade": 12400,
+                    "insulate_roof": 21300,
+                },
             },
         }
 
@@ -426,6 +437,7 @@ class Results(SidebarNavigationMixin, TemplateView):
             scenario_id = f"tab_scenario{i}"
             investment_table = tables.InvestmentTable(scenario_data).to_html(f"{scenario_name} summary_table")
             subsidies_table = tables.SubsidiesTable(scenario_data).to_html(f"{scenario_name} summary_table")
+            savings_table = tables.EnergySavingsTable(scenario_data).to_html(f"{scenario_name} summary_table")
             total_cost_table = tables.TotalCostTable(scenario_data).to_html(f"{scenario_name} summary_table")
 
             scenario_list.append(
@@ -435,6 +447,7 @@ class Results(SidebarNavigationMixin, TemplateView):
                     "label": f"Szenario {i}",
                     "investment_table": investment_table,
                     "subsidies_table": subsidies_table,
+                    "savings_table": savings_table,
                     "total_cost_table": total_cost_table,
                 },
             )

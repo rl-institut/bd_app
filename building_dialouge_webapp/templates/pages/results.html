@@ -57,7 +57,7 @@
               Die berechnete Summe zeigt den Betrag, den Sie nach Abzug der Zuschüsse selbst aufwenden müssen.
               Diese Übersicht unterstützt Sie dabei, die finanziellen Auswirkungen Ihrer Entscheidungen besser zu erfassen und zu planen.</p>
               <br />
-              {{ investment_summary_table_html|safe }}
+              <div id="co2_chart" class="chart_big"></div>
               <br />
               <p>
               Eine genauere Aufschlüsselung der Kosten für jede einzelne Sanierungsmaßnahme, sowie für die verschidenen Posten innerhalb eines Technologiewechsels finden Sie hier.
@@ -80,6 +80,7 @@
                     <div class="tab-content {{ scenario.id }}">
                       {{ scenario.investment_table|safe }}
                       {{ scenario.subsidies_table|safe }}
+                      {{ scenario.savings_table|safe }}
                       {{ scenario.total_cost_table|safe }}
                     </div>
                   {% endfor %}
