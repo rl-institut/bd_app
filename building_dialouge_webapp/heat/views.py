@@ -510,6 +510,20 @@ class Results(SidebarNavigationMixin, TemplateView):
             title="Heizwärmebedarf in kWh",
             y_axis_label="kWh",
         )
+        context["financial_expense_chart_data_future"] = heating_and_co2_chart.generate_echarts_option(
+            scenarios=[
+                {"name": "Szenario 1", "value": 50260},
+                {"name": "Szenario 2", "value": 8875},
+            ],
+            title="",
+        )
+        context["financial_expense_chart_data_now"] = heating_and_co2_chart.generate_echarts_option(
+            scenarios=[
+                {"name": "Szenario 1", "value": 108500},
+                {"name": "Szenario 2", "value": 95175},
+            ],
+            title="",
+        )
         context["energycost_chart_data"] = heating_and_co2_chart.generate_echarts_option(
             scenarios=[
                 {"name": "Ausgangszustand", "value": 2600},

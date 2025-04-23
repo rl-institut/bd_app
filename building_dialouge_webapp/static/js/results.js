@@ -6,6 +6,7 @@ const CHARTS = {
   heating_chart: "heating_chart_data",
   co2_chart: "co2_chart_data",
   energycost_chart: "energycost_chart_data",
+  financial_expense_chart: "financial_expense_chart_data_future",
 };
 
 for (const chart in CHARTS) {
@@ -14,6 +15,21 @@ for (const chart in CHARTS) {
 }
 
 
+// updating financial_expense_chart when clicking the button
+const optionsNow = JSON.parse(document.getElementById("financial_expense_chart_data_now").textContent);
+const optionsFuture = JSON.parse(document.getElementById("financial_expense_chart_data_future").textContent);
+
+function updateEnergyCostChart(period) {
+  if (period === 'now') {
+    createChart("financial_expense_chart", optionsNow);  // true = replace all options
+  } else if (period === 'future') {
+    createChart("financial_expense_chart", optionsFuture);
+  }
+}
+window.updateEnergyCostChart = updateEnergyCostChart;
+
+
+// activate and deactivate the tabs (consumption, cost, emission)
 document.addEventListener("DOMContentLoaded", function () {
   const buttons = document.querySelectorAll(".tab-button");
   const contents = document.querySelectorAll(".tab-content");

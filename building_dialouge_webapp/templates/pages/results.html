@@ -58,7 +58,11 @@
               Die berechnete Summe zeigt den Betrag, den Sie nach Abzug der Zuschüsse selbst aufwenden müssen.
               Diese Übersicht unterstützt Sie dabei, die finanziellen Auswirkungen Ihrer Entscheidungen besser zu erfassen und zu planen.</p>
               <br />
-              <div id="co2_chart" class="chart_big"></div>
+              <div>
+                <button onclick="updateEnergyCostChart('future')">In 15 Jahren</button>
+                <button onclick="updateEnergyCostChart('now')">Heute</button>
+              </div>
+              <div id="financial_expense_chart" class="chart_big"></div>
               <br />
               <p>
               Eine genauere Aufschlüsselung der Kosten für jede einzelne Sanierungsmaßnahme, sowie für die verschidenen Posten innerhalb eines Technologiewechsels finden Sie hier.
@@ -144,6 +148,8 @@
   {{ emission_chart_data|json_script:"emission_chart_data" }}
   {{ heating_chart_data|json_script:"heating_chart_data" }}
   {{ investment_chart_data|json_script:"investment_chart_data" }}
+  {{ financial_expense_chart_data_future|json_script:"financial_expense_chart_data_future" }}
+  {{ financial_expense_chart_data_now|json_script:"financial_expense_chart_data_now" }}
   {{ energycost_chart_data|json_script:"energycost_chart_data" }}
   {{ co2_chart_data|json_script:"co2_chart_data" }}
 {% endblock inline_javascript %}
