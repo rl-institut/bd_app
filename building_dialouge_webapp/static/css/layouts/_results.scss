@@ -26,7 +26,12 @@ body {
 
 .tab-content {
   display: none;
+  width: 70%;
+  margin-right: 20%;
   margin-top: 1rem; // mt-4
+  border: 5px solid #e3e3e3;
+  border-top: none;
+  color: #545f71;
 
   &.active {
     display: block;
