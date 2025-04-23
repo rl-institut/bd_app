@@ -6,6 +6,34 @@ body {
   width: 60%;
 }
 
+.tab-button {
+  color: #9ca3af; // Tailwind's gray-400
+  font-weight: 600; // Semi-bold
+  padding: 0.5rem 1rem; // py-2 px-4
+  border-bottom: 2px solid transparent;
+  background: none;
+  cursor: pointer;
+
+  &.active {
+    color: #111827; // Tailwind's gray-900
+    border-color: #9ca3af; // Tailwind's gray-400
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.tab-content {
+  display: none;
+  margin-top: 1rem; // mt-4
+
+  &.active {
+    display: block;
+  }
+}
+
+
 .accordion {
   width: 50%;
   margin-right: 20%;
