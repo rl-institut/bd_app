@@ -365,13 +365,28 @@ class Results(SidebarNavigationMixin, TemplateView):
 
         consumption_data = {
             "scenario1": {
-                "change_heating": -50,
-                "renovate_facade": -50,
+                "change_heating": -29,
+                "hydraulic_balancing": -7,
+                "change_circuit_pump": -3,
+                "insulate_heat_distribution": -7,
+                "insulate_water_distribution": -3,
+                "pv_battery": "nicht ausgewählt",
+                "renovate_roof": -35,
+                "insulate_upper_ceiling": "nicht ausgewählt",
+                "replace_windows": -18,
+                "insulate_basement_ceiling": "nicht ausgewählt",
             },
             "scenario2": {
-                "change_heating": -88,
-                "renovate_facade": -50,
-                "renovate_roof": -45,
+                "change_heating": -52,
+                "hydraulic_balancing": -3,
+                "change_circuit_pump": -2,
+                "insulate_heat_distribution": -3,
+                "insulate_water_distribution": -2,
+                "pv_battery": -6,
+                "renovate_roof": -18,
+                "insulate_upper_ceiling": "nicht ausgewählt",
+                "replace_windows": "nicht ausgewählt",
+                "insulate_basement_ceiling": -3,
             },
         }
 

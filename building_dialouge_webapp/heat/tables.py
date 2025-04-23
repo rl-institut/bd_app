@@ -51,18 +51,28 @@ class Table:
 class ConsumptionTable(Table):
     translations = {
         **Table.translations,
+        "procedure": "Maßnahme",
         "change_heating": "Heiztechnologie wechseln",
-        "renovate_facade": "Fassade sanieren",
+        "hydraulic_balancing": "Hydraulischer Abgleich",
+        "change_circuit_pump": "Austausch Heizkreispumpe",
+        "insulate_heat_distribution": "Dämmung Heizverteilung",
+        "insulate_water_distribution": "Dämmung Warmwasserverteilung",
+        "pv_battery": "PV-Anlage und Batterie",
         "renovate_roof": "Dach sanieren",
+        "insulate_upper_ceiling": "Obere Geschossdecke",
         "replace_windows": "Fenster austauschen",
         "insulate_basement_ceiling": "Kellerdecke dämmen",
-        "procedure": "Maßnahme",
     }
 
     procedures = [
         "change_heating",
-        "renovate_facade",
+        "hydraulic_balancing",
+        "change_circuit_pump",
+        "insulate_heat_distribution",
+        "insulate_water_distribution",
+        "pv_battery",
         "renovate_roof",
+        "insulate_upper_ceiling",
         "replace_windows",
         "insulate_basement_ceiling",
     ]
