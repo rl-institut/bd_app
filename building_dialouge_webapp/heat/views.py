@@ -13,6 +13,7 @@ from . import forms
 from . import settings as heat_settings
 from . import tables
 from .charts import cost_emission_chart
+from .charts import energycost_chart
 from .charts import heating_and_co2_chart
 from .charts import heating_chart_vertical
 from .navigation import SidebarNavigationMixin
@@ -524,13 +525,14 @@ class Results(SidebarNavigationMixin, TemplateView):
             ],
             title="",
         )
-        context["energycost_chart_data"] = heating_and_co2_chart.generate_echarts_option(
+        context["energycost_chart_data"] = energycost_chart.generate_grouped_echarts_option(
             scenarios=[
-                {"name": "Ausgangszustand", "value": 2600},
-                {"name": "Szenario 1", "value": 1200},
-                {"name": "Szenario 2", "value": 700},
+                {"name": "Ausgangszustand", "value": [1550, 5260]},
+                {"name": "Szenario 1", "value": [1420, 1490]},
+                {"name": "Szenario 2", "value": [70, 990]},
             ],
             title="Energiekosten in € pro Jahr",
+            series_names=["Energiekosten Strom", "Energiekosten Heizung & Warmwasser"],
         )
         context["co2_chart_data"] = heating_and_co2_chart.generate_echarts_option(
             scenarios=[
