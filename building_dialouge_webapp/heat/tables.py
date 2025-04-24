@@ -199,10 +199,16 @@ class SubsidiesTable(Table):
     def generate_table_data(self):
         subsidies = self.data.get("subsidies", {})
 
+        translated_keys = [self.translations.get(k, k) for k in subsidies]
+        formatted_values = [f"-{format_currency(abs(v))}" for v in subsidies.values()]
+
+        total_sum = sum(subsidies.values())
+        formatted_sum = f"-{format_currency(abs(total_sum))}"
+
         return pd.DataFrame(
             {
-                "Zuschüsse": [self.translations.get(k, k) for k in subsidies],
-                "": [f"-{format_currency(abs(v))}" for v in subsidies.values()],
+                "Zuschüsse": ["<span class='summary-label'>Zuschüsse (Summe)</span>"] + translated_keys,  # noqa: RUF005
+                "": [f"<span class='summary-value'>{formatted_sum}</span>"] + formatted_values,  # noqa: RUF005
             },
         )
 

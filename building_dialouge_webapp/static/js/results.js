@@ -47,3 +47,37 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const wrappers = document.querySelectorAll(".foldable-wrapper");
+
+  wrappers.forEach(wrapper => {
+    const table = wrapper.querySelector("table");
+    if (!table) return;
+
+    const rows = table.querySelectorAll("tbody tr");
+    if (rows.length <= 1) return;
+
+    const summaryRow = rows[0];
+    summaryRow.classList.add("summary-row");
+    summaryRow.style.cursor = "pointer";
+
+    const detailRows = Array.from(rows).slice(1);
+    detailRows.forEach(row => row.classList.add("foldable-row"));
+
+    // Initially hidden
+    detailRows.forEach(row => {
+      row.style.display = "none";
+    });
+
+    let expanded = false;
+    summaryRow.addEventListener("click", () => {
+      expanded = !expanded;
+      detailRows.forEach(row => {
+        row.style.display = expanded ? "table-row" : "none";
+      });
+      summaryRow.classList.toggle("open", expanded);
+    });
+  });
+});

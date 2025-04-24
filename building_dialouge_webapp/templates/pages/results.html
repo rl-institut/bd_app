@@ -84,7 +84,9 @@
                   {% for scenario in scenarios %}
                     <div class="tab-content {{ scenario.id }}">
                       {{ scenario.investment_table|safe }}
-                      {{ scenario.subsidies_table|safe }}
+                      <div class="foldable-wrapper">
+                        {{ scenario.subsidies_table|safe }}
+                      </div>
                       {{ scenario.savings_table|safe }}
                       {{ scenario.total_cost_table|safe }}
                       {{ scenario.total_cost_15_years_table|safe }}
