@@ -59,10 +59,14 @@ class ConsumptionTable(Table):
         "insulate_water_distribution": "Dämmung Warmwasserverteilung",
         "pv_battery": "PV-Anlage und Batterie",
         "renovate_roof": "Dach sanieren",
+        "cover_roof": "Dach decken",
+        "attic_extension": "Dach ausbauen",
         "insulate_upper_ceiling": "Obere Geschossdecke",
         "replace_windows": "Fenster austauschen",
-        "insulate_basement_ceiling": "Kellerdecke dämmen",
+        "insulate_basement_ceiling": "Kellerdeckendämmung",
+        "renovate_outer_facade": "Außenfassade sanieren",
         "insulate_outer_facade": "Außenfassade dämmen",
+        "plaster_outer_facade": "Außenfassade verputzen",
     }
 
     procedures = [
@@ -73,10 +77,14 @@ class ConsumptionTable(Table):
         "insulate_water_distribution",
         "pv_battery",
         "renovate_roof",
+        "cover_roof",
+        "attic_extension",
         "insulate_upper_ceiling",
         "replace_windows",
         "insulate_basement_ceiling",
+        "renovate_outer_facade",
         "insulate_outer_facade",
+        "plaster_outer_facade",
     ]
 
     def generate_table_data(self) -> pd.DataFrame:
@@ -157,10 +165,14 @@ class InvestmentTable(Table):
         "insulate_water_distribution": "Dämmung Warmwasserverteilung",
         "pv_battery": "PV-Anlage und Batterie",
         "renovate_roof": "Dach sanieren",
+        "cover_roof": "Dach decken",
+        "attic_extension": "Dach ausbauen",
         "insulate_upper_ceiling": "Obere Geschossdecke",
         "replace_windows": "Fenster austauschen",
-        "insulate_basement_ceiling": "Kellerdecke dämmen",
+        "insulate_basement_ceiling": "Kellerdeckendämmung",
+        "renovate_outer_facade": "Außenfassade sanieren",
         "insulate_outer_facade": "Außenfassade dämmen",
+        "plaster_outer_facade": "Außenfassade verputzen",
     }
 
     def generate_table_data(self):
@@ -189,15 +201,21 @@ class EnergySavingsTable(Table):
     translations = {
         **Table.translations,
         "wood_chip_heating": "Holzhackschnitzel-Heizung",
+        "air_heat_pump": "Luft-Wärmepumpe",
         "hydraulic_comparison": "Hydraulischer Abgleich",
         "change_circuit_pump": "Austausch Heizkreispumpe",
         "insulate_heat_distribution": "Dämmung Heizungsverteilung",
         "insulate_water_distribution": "Dämmung Warmwasserverteilung",
-        "renovate_roof": "Dach sanieren",
-        "replace_windows": "Fenster austauschen",
-        "air_heat_pump": "Luft-Wärmepumpe",
         "pv_battery": "PV-Anlage und Batterie",
-        "insulate_basement_ceiling": "Kellerdecke dämmen",
+        "renovate_roof": "Dach sanieren",
+        "cover_roof": "Dach decken",
+        "attic_extension": "Dach ausbauen",
+        "insulate_upper_ceiling": "Obere Geschossdecke",
+        "replace_windows": "Fenster austauschen",
+        "insulate_basement_ceiling": "Kellerdeckendämmung",
+        "renovate_outer_facade": "Außenfassade sanieren",
+        "insulate_outer_facade": "Außenfassade dämmen",
+        "plaster_outer_facade": "Außenfassade verputzen",
     }
 
     def generate_table_data(self):
