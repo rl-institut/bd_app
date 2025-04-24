@@ -575,9 +575,9 @@ class Results(SidebarNavigationMixin, TemplateView):
         )
         context["co2_chart_data"] = heating_and_co2_chart.generate_echarts_option(
             scenarios=[
-                {"name": "Heute", "value": 2600},
-                {"name": "Szenario 1", "value": 1200},
-                {"name": "Szenario 2", "value": 700},
+                {"name": "Heute", "value": 825},
+                {"name": "Szenario 1", "value": 55},
+                {"name": "Szenario 2", "value": 137},
             ],
             title="CO2-Kosten in € pro Jahr",
         )
