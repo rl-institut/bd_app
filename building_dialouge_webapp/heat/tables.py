@@ -202,7 +202,7 @@ class SubsidiesTable(Table):
         return pd.DataFrame(
             {
                 "Zuschüsse": [self.translations.get(k, k) for k in subsidies],
-                "": [format_currency(v) for v in subsidies.values()],
+                "": [f"-{format_currency(abs(v))}" for v in subsidies.values()],
             },
         )
 
