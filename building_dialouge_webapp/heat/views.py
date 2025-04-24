@@ -479,8 +479,8 @@ class Results(SidebarNavigationMixin, TemplateView):
         investment_summary_table_html = investment_summary_table.to_html(title="investment_table")
         # Kontext hinzufügen
         context["html_content"] = "<Hallo>"
-        context["hectare_scenario1"] = 2.2
-        context["hectare_scenario2"] = 1.3
+        context["hectare_scenario1"] = 1.4
+        context["hectare_scenario2"] = 1.25
         context["consumption_table_html"] = consumption_table_html
         context["investment_summary_table_html"] = investment_summary_table_html
         context["scenarios"] = scenario_list
