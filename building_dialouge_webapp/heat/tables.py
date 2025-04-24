@@ -58,15 +58,10 @@ class ConsumptionTable(Table):
         "insulate_heat_distribution": "Dämmung Heizungsverteilung",
         "insulate_water_distribution": "Dämmung Warmwasserverteilung",
         "pv_battery": "PV-Anlage und Batterie",
+        "renovate_outer_facade": "Außenwand sanieren",
         "renovate_roof": "Dach sanieren",
-        "cover_roof": "Dach decken",
-        "attic_extension": "Dach ausbauen",
-        "insulate_upper_ceiling": "Obere Geschossdecke",
         "replace_windows": "Fenster austauschen",
         "insulate_basement_ceiling": "Kellerdeckendämmung",
-        "renovate_outer_facade": "Außenfassade sanieren",
-        "insulate_outer_facade": "Außenfassade dämmen",
-        "plaster_outer_facade": "Außenfassade verputzen",
     }
 
     procedures = [
@@ -77,23 +72,22 @@ class ConsumptionTable(Table):
         "insulate_water_distribution",
         "pv_battery",
         "renovate_roof",
-        "cover_roof",
-        "attic_extension",
-        "insulate_upper_ceiling",
         "replace_windows",
         "insulate_basement_ceiling",
         "renovate_outer_facade",
-        "insulate_outer_facade",
-        "plaster_outer_facade",
     ]
 
     def generate_table_data(self) -> pd.DataFrame:
+        used_procedures = [
+            proc for proc in self.procedures if any(proc in scenario_data for scenario_data in self.data.values())
+        ]
+
         table_data = {
-            self.translate_column("procedure"): [self.translations.get(proc, proc) for proc in self.procedures],
+            self.translate_column("procedure"): [self.translations.get(proc, proc) for proc in used_procedures],
         }
         for scenario, scenario_data in self.data.items():
             table_data[self.translate_column(scenario)] = [
-                scenario_data.get(proc, "nicht ausgewählt") for proc in self.procedures
+                scenario_data.get(proc, "nicht ausgewählt") for proc in used_procedures
             ]
         return pd.DataFrame(table_data)
 

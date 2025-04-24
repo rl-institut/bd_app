@@ -437,7 +437,6 @@ class Results(SidebarNavigationMixin, TemplateView):
                     "insulate_heat_distribution": 3000,
                     "insulate_water_distribution": 500,
                     "pv_battery": 27500,
-                    # "insulate_outer_facade": "hier fehlt ein Wert im figma", # noqa: ERA001
                     "renovate_roof": 64500,
                     "insulate_basement_ceiling": 8000,
                 },
