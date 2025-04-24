@@ -187,12 +187,22 @@ class InvestmentTable(Table):
 
 
 class SubsidiesTable(Table):
+    translations = {
+        **Table.translations,
+        "heating_basic_subsidy": "Heizung Grundförderung",
+        "heating_income_bonus": "Heizung Einkommensbonus",
+        "heating_emission_reduction_bonus": "Heizung Emissionsminderungszuschlag",
+        "bafa_building_envelope_subsidy": "Einzelmaßnahme an der Gebäudehülle - BAFA Förderung",
+        "tax_advantage_subsidy": "Steuervorteil",
+    }
+
     def generate_table_data(self):
         subsidies = self.data.get("subsidies", {})
+
         return pd.DataFrame(
             {
-                "Zuschüsse": list(subsidies),
-                "": [f"-{format_currency(abs(v))}" for v in subsidies.values()],
+                "Zuschüsse": [self.translations.get(k, k) for k in subsidies],
+                "": [format_currency(v) for v in subsidies.values()],
             },
         )
 
