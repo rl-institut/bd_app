@@ -571,7 +571,6 @@ class Results(SidebarNavigationMixin, TemplateView):
                 {"name": "Szenario 2", "value": [70, 990]},
             ],
             title="Energiekosten in € pro Jahr",
-            series_names=["Energiekosten Strom", "Energiekosten Heizung & Warmwasser"],
         )
         context["co2_chart_data"] = heating_and_co2_chart.generate_echarts_option(
             scenarios=[

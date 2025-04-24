@@ -1,4 +1,4 @@
-def generate_grouped_echarts_option(scenarios, title, series_names):
+def generate_grouped_echarts_option(scenarios, title):
     default_colors = ["#b3de69", "#fb8072"]  # electricity and heating colors
 
     # Sorting
@@ -13,7 +13,7 @@ def generate_grouped_echarts_option(scenarios, title, series_names):
 
     series = [
         {
-            "name": series_names[0],
+            "name": "",
             "type": "bar",
             "data": values_1,
             "itemStyle": {"color": default_colors[0]},
@@ -24,7 +24,7 @@ def generate_grouped_echarts_option(scenarios, title, series_names):
             },
         },
         {
-            "name": series_names[1],
+            "name": "",
             "type": "bar",
             "data": values_2,
             "itemStyle": {"color": default_colors[1]},
@@ -38,7 +38,6 @@ def generate_grouped_echarts_option(scenarios, title, series_names):
 
     return {
         "tooltip": {"trigger": "axis", "axisPointer": {"type": "shadow"}},
-        "legend": {"data": series_names},
         "grid": {"containLabel": True},
         "xAxis": {
             "type": "value",
@@ -51,6 +50,15 @@ def generate_grouped_echarts_option(scenarios, title, series_names):
             "axisLine": {"show": False},
             "axisLabel": {"show": True},
             "axisTick": {"show": False},
+        },
+        "title": {
+            "text": title,
+            "left": "0%",
+            "top": "0%",
+            "textStyle": {
+                "fontWeight": "normal",
+                "color": "#6e6e6e",
+            },
         },
         "series": series,
     }
