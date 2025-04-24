@@ -500,7 +500,7 @@ class Results(SidebarNavigationMixin, TemplateView):
                         2453.095525606935,
                         3345.5603939823663,
                     ],
-                    "color": "#b2dfdb",
+                    "color": "#1b9e77",
                 },
                 {
                     "name": "Szenario 2",
@@ -518,10 +518,9 @@ class Results(SidebarNavigationMixin, TemplateView):
                         335.7687021132994,
                         442.7838328978601,
                     ],
-                    "color": "#7986cb",
+                    "color": "#7570b3",
                 },
             ],
-            title="Heizwärmebedarf in kWh",
             y_axis_label="kWh",
         )
         context["financial_expense_chart_data_future"] = heating_and_co2_chart.generate_echarts_option(
@@ -544,7 +543,7 @@ class Results(SidebarNavigationMixin, TemplateView):
                 {"name": "Szenario 1", "value": [1420, 1490]},
                 {"name": "Szenario 2", "value": [70, 990]},
             ],
-            title="Energiekosten in € pro Jahr",
+            title="",
         )
         context["co2_chart_data"] = heating_and_co2_chart.generate_echarts_option(
             scenarios=[
@@ -552,7 +551,7 @@ class Results(SidebarNavigationMixin, TemplateView):
                 {"name": "Szenario 1", "value": 55},
                 {"name": "Szenario 2", "value": 137},
             ],
-            title="CO2-Kosten in € pro Jahr",
+            title="",
         )
         context["scenario_boxes"] = get_all_scenario_data(self.request)
         return context

@@ -100,7 +100,7 @@ def generate_echarts_option(scenarios, title):
                     "position": "right",
                     "fontWeight": "bold",
                     "align": "right",
-                    "offset": [-20, 0],
+                    "offset": [-5, 0],
                 },
             },
         ],

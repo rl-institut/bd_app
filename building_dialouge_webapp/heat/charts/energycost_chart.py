@@ -33,6 +33,8 @@ def generate_grouped_echarts_option(scenarios, title):
                 "position": "right",
                 "fontWeight": "bold",
             },
+            "barGap": 0,
+            "barCategoryGap": "30%",
         },
         {
             "name": "",
@@ -44,6 +46,8 @@ def generate_grouped_echarts_option(scenarios, title):
                 "position": "right",
                 "fontWeight": "bold",
             },
+            "barGap": 0,
+            "barCategoryGap": "30%",
         },
     ]
 

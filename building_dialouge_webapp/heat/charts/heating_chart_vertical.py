@@ -1,4 +1,4 @@
-def generate_vertical_echarts_option(months, scenarios, title, y_axis_label="Wert"):
+def generate_vertical_echarts_option(months, scenarios, y_axis_label="Wert"):
     """
     Generates a vertical grouped bar chart for multiple scenarios across months.
 
@@ -52,15 +52,6 @@ def generate_vertical_echarts_option(months, scenarios, title, y_axis_label="Wer
             },
             "splitLine": {
                 "lineStyle": {"color": "#f0f0f0"},
-            },
-        },
-        "title": {
-            "text": title,
-            "left": "0%",
-            "top": "5%",
-            "textStyle": {
-                "fontWeight": "normal",
-                "color": "#6e6e6e",
             },
         },
         "grid": {
