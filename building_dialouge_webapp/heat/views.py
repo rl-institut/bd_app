@@ -413,8 +413,10 @@ class Results(SidebarNavigationMixin, TemplateView):
                     "replace_windows": 8000,
                 },
                 "subsidies": {
-                    "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
-                    "Wohnungsgebäude (BEG EM) (Nr. 458) (Zuschuss inkl. Klima-Bonus)": 23158.07,
+                    "heating_basic_subsidy": 7500,
+                    "heating_income_bonus": 7500,
+                    "heating_emission_reduction_bonus": 2500,
+                    "bafa_building_envelope_subsidy": 12000,
                 },
                 "savings": {
                     "wood_chip_heating": 28800,
@@ -439,10 +441,11 @@ class Results(SidebarNavigationMixin, TemplateView):
                     "insulate_basement_ceiling": 8000,
                 },
                 "subsidies": {
-                    "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
-                    "Wohnungsgebäude (BEG EM) (Nr. 458) (Zuschuss inkl. Klima-Bonus)": 23158.07,
-                    "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
-                    "Wohnungsgebäude (BEG EM) (Nr. 458) (Effizienz-Bonus)": 1931.93,
+                    "tax_advantage_subsidy": 825,
+                    "heating_basic_subsidy": 5500,
+                    "heating_income_bonus": 8500,
+                    "heating_emission_reduction_bonus": 5500,
+                    "bafa_building_envelope_subsidy": 12000,
                 },
                 "savings": {
                     "air_heat_pump": 17000,
