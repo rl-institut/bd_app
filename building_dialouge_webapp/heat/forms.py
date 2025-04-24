@@ -492,14 +492,6 @@ class RenovationRequestForm(ValidationForm):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
-    upper_storey_ceiling_renovation_choice = forms.MultipleChoiceField(
-        label="",
-        choices=[
-            ("upper_storey_ceiling_renovation", "Oberste Geschossdecke erneuern"),
-        ],
-        widget=forms.CheckboxSelectMultiple,
-        required=False,
-    )
     renovation_input_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
     def clean_renovation_input_hidden(self):
