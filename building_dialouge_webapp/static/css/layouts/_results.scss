@@ -310,3 +310,37 @@ table.consumption_table td.no-entry {
   height: 300px;
   padding-left: 20px;
 }
+
+
+/* Style for the info icon */
+.info-icon {
+  display: inline-block;
+  position: relative;
+  z-index: 100;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 8px;
+
+  /* Style for the tooltip on hover */
+  &:hover::after {
+    content: attr(data-tooltip); /* Get the tooltip text from the data-tooltip attribute */
+    position: absolute;
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    top: 100%; /* Place the tooltip below the icon */
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 10;
+  }
+}
