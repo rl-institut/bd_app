@@ -12,7 +12,6 @@ from . import flows
 from . import forms
 from . import settings as heat_settings
 from . import tables
-from .charts import cost_emission_chart
 from .charts import energycost_chart
 from .charts import heating_and_co2_chart
 from .charts import heating_chart_vertical
@@ -391,17 +390,6 @@ class Results(SidebarNavigationMixin, TemplateView):
             },
         }
 
-        investment_data = {
-            "scenario1": {
-                "investment": 95800,
-                "contribution": -13800,
-            },
-            "scenario2": {
-                "investment": 167280,
-                "contribution": -25090,
-            },
-        }
-
         summary_data = {
             "scenario1": {
                 "investments": {
@@ -487,25 +475,12 @@ class Results(SidebarNavigationMixin, TemplateView):
 
         consumption_table = tables.ConsumptionTable(consumption_data)
         consumption_table_html = consumption_table.to_html(title="consumption_table")
-        investment_summary_table = tables.InvestmentSummaryTable(investment_data)
-        investment_summary_table_html = investment_summary_table.to_html(title="investment_table")
         # Kontext hinzufügen
         context["html_content"] = "<Hallo>"
         context["hectare_scenario1"] = 1.4
         context["hectare_scenario2"] = 1.25
         context["consumption_table_html"] = consumption_table_html
-        context["investment_summary_table_html"] = investment_summary_table_html
         context["scenarios"] = scenario_list
-        context["cost_chart_data"] = cost_emission_chart.create_echarts_cost_emission(
-            title="Kosten",
-            unit="€",
-            data=cost_emission_chart.EXAMPLE_COST_DATA,
-        )
-        context["emission_chart_data"] = cost_emission_chart.create_echarts_cost_emission(
-            title="Emissionen",
-            unit="t/a",
-            data=cost_emission_chart.EXAMPLE_EMISSION_DATA,
-        )
         context["heating_chart_data"] = heating_chart_vertical.generate_vertical_echarts_option(
             months=["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
             scenarios=[
