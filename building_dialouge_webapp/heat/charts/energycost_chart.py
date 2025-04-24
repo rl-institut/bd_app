@@ -1,4 +1,15 @@
 def generate_grouped_echarts_option(scenarios, title):
+    """
+    Generates a horizontal grouped bar chart for multiple scenarios.
+    Takes values in a list to show them as groups.
+
+    :param scenarios: List of scenario dicts:
+                      [
+                        {"name": "Szenario 1", "value": [..]},
+                        {"name": "Szenario 2", "value": [..]},
+                      ]
+    :param title: Chart title.
+    """
     default_colors = ["#b3de69", "#fb8072"]  # electricity and heating colors
 
     # Sorting
