@@ -46,36 +46,38 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-
+// unfolding and folding some tables in the costs table
 document.addEventListener("DOMContentLoaded", function () {
   const wrappers = document.querySelectorAll(".foldable-wrapper");
 
   wrappers.forEach(wrapper => {
-    const table = wrapper.querySelector("table");
-    if (!table) return;
+    const tables = wrapper.querySelectorAll("table");
 
-    const rows = table.querySelectorAll("tbody tr");
-    if (rows.length <= 1) return;
+    tables.forEach(table => {
+      const headerRow = table.querySelector("thead tr");
+      const rows = table.querySelectorAll("tbody tr");
 
-    const summaryRow = rows[0];
-    summaryRow.classList.add("summary-row");
-    summaryRow.style.cursor = "pointer";
+      if (!headerRow || rows.length === 0) return;
 
-    const detailRows = Array.from(rows).slice(1);
-    detailRows.forEach(row => row.classList.add("foldable-row"));
+      headerRow.classList.add("summary-row");
+      headerRow.style.cursor = "pointer";
 
-    // Initially hidden
-    detailRows.forEach(row => {
-      row.style.display = "none";
-    });
+      const detailRows = Array.from(rows); // All body rows are foldable
 
-    let expanded = false;
-    summaryRow.addEventListener("click", () => {
-      expanded = !expanded;
+      // Initially hidden
       detailRows.forEach(row => {
-        row.style.display = expanded ? "table-row" : "none";
+        row.classList.add("foldable-row");
+        row.style.display = "none";
       });
-      summaryRow.classList.toggle("open", expanded);
+
+      let expanded = false;
+      headerRow.addEventListener("click", () => {
+        expanded = !expanded;
+        detailRows.forEach(row => {
+          row.style.display = expanded ? "table-row" : "none";
+        });
+        headerRow.classList.toggle("open", expanded);
+      });
     });
   });
 });

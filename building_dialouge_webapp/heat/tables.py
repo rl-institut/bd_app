@@ -171,11 +171,15 @@ class InvestmentTable(Table):
 
     def generate_table_data(self):
         investments = self.data.get("investments", {})
+        formatted_values = [format_currency(v) for v in investments.values()]
+
+        total_sum = sum(investments.values())
+        formatted_sum = format_currency(total_sum)
 
         return pd.DataFrame(
             {
                 "Investitionskosten": [self.translations.get(k, k) for k in investments],
-                "": [format_currency(v) for v in investments.values()],
+                f"<span class='summary-value'>{formatted_sum}</span>": formatted_values,
             },
         )
 
@@ -192,8 +196,6 @@ class SubsidiesTable(Table):
 
     def generate_table_data(self):
         subsidies = self.data.get("subsidies", {})
-
-        translated_keys = [self.translations.get(k, k) for k in subsidies]
         formatted_values = [f"-{format_currency(abs(v))}" for v in subsidies.values()]
 
         total_sum = sum(subsidies.values())
@@ -201,8 +203,8 @@ class SubsidiesTable(Table):
 
         return pd.DataFrame(
             {
-                "Zuschüsse": ["<span class='summary-label'>Zuschüsse (Summe)</span>"] + translated_keys,  # noqa: RUF005
-                "": [f"<span class='summary-value'>{formatted_sum}</span>"] + formatted_values,  # noqa: RUF005
+                "Zuschüsse": [self.translations.get(k, k) for k in subsidies],
+                f"<span class='summary-value'>{formatted_sum}</span>": formatted_values,
             },
         )
 
@@ -230,11 +232,15 @@ class EnergySavingsTable(Table):
 
     def generate_table_data(self):
         savings = self.data.get("savings", {})
+        formatted_values = [format_currency(v) for v in savings.values()]
+
+        total_sum = sum(savings.values())
+        formatted_sum = format_currency(total_sum)
 
         return pd.DataFrame(
             {
                 "Energetische Einsparungen über 15 Jahre": [self.translations.get(k, k) for k in savings],
-                "": [f"-{format_currency(abs(v))}" for v in savings.values()],
+                f"<span class='summary-value'>{formatted_sum}</span>": formatted_values,
             },
         )
 
