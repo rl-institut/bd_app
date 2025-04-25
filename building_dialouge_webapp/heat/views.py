@@ -12,9 +12,9 @@ from . import flows
 from . import forms
 from . import settings as heat_settings
 from . import tables
-from .charts import cost_emission_chart
+from .charts import energycost_chart
 from .charts import heating_and_co2_chart
-from .charts import investment_costs_chart
+from .charts import heating_chart_vertical
 from .navigation import SidebarNavigationMixin
 
 
@@ -365,57 +365,86 @@ class Results(SidebarNavigationMixin, TemplateView):
 
         consumption_data = {
             "scenario1": {
-                "change_heating": -50,
-                "renovate_facade": -50,
+                "change_heating": -29,
+                "hydraulic_balancing": -7,
+                "change_circuit_pump": -3,
+                "insulate_heat_distribution": -7,
+                "insulate_water_distribution": -3,
+                "pv_battery": "nicht ausgewählt",
+                "renovate_roof": -35,
+                "replace_windows": -18,
+                "insulate_basement_ceiling": "nicht ausgewählt",
             },
             "scenario2": {
-                "change_heating": -88,
-                "renovate_facade": -50,
-                "renovate_roof": -45,
-            },
-        }
-
-        investment_data = {
-            "scenario1": {
-                "investment": 95800,
-                "contribution": -13800,
-            },
-            "scenario2": {
-                "investment": 167280,
-                "contribution": -25090,
+                "change_heating": -52,
+                "hydraulic_balancing": -3,
+                "change_circuit_pump": -2,
+                "insulate_heat_distribution": -3,
+                "insulate_water_distribution": -2,
+                "pv_battery": -6,
+                "renovate_outer_facade": -11,
+                "renovate_roof": -18,
+                "replace_windows": "nicht ausgewählt",
+                "insulate_basement_ceiling": -3,
             },
         }
 
         summary_data = {
             "scenario1": {
                 "investments": {
-                    "air_heat_pump": 20700,
-                    "thermal_storage": 2980,
-                    "heat_meter": 260,
-                    "heating_system_pump": 480,
-                    "ventilation_system": 9620,
-                    "insulate_outer_facade": 36890,
+                    "wood_chip_heating": 21500,
+                    "hydraulic_balancing": 1000,
+                    "change_circuit_pump": 1000,
+                    "insulate_heat_distribution": 3000,
+                    "insulate_water_distribution": 500,
+                    "renovate_roof": 64500,
+                    "replace_windows": 8000,
                 },
                 "subsidies": {
-                    "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
-                    "Wohnungsgebäude (BEG EM) (Nr. 458) (Zuschuss inkl. Klima-Bonus)": 23158.07,
+                    "heating_basic_subsidy": 7500,
+                    "heating_income_bonus": 7500,
+                    "heating_emission_reduction_bonus": 2500,
+                    "bafa_building_envelope_subsidy": 12000,
+                },
+                "savings": {
+                    "wood_chip_heating": 28800,
+                    "hydraulic_comparison": 2600,
+                    "change_circuit_pump": 770,
+                    "insulate_heat_distribution": 3000,
+                    "insulate_water_distribution": 770,
+                    "renovate_roof": 15400,
+                    "replace_windows": 6900,
                 },
             },
             "scenario2": {
                 "investments": {
-                    "air_heat_pump": 28700,
-                    "thermal_storage": 1980,
-                    "heat_meter": 260,
-                    "heating_system_pump": 480,
-                    "ventilation_system": 9620,
-                    "insulate_roof": 38980,
-                    "insulate_outer_facade": 36890,
+                    "air_heat_pump": 21500,
+                    "hydraulic_balancing": 1000,
+                    "change_circuit_pump": 1000,
+                    "insulate_heat_distribution": 3000,
+                    "insulate_water_distribution": 500,
+                    "pv_battery": 27500,
+                    "renovate_outer_facade": 11000,
+                    "renovate_roof": 64500,
+                    "insulate_basement_ceiling": 8000,
                 },
                 "subsidies": {
-                    "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
-                    "Wohnungsgebäude (BEG EM) (Nr. 458) (Zuschuss inkl. Klima-Bonus)": 23158.07,
-                    "KfW - Bundesförderung für effiziente Gebäude - Heizungsförderung für Privatpersonen - "
-                    "Wohnungsgebäude (BEG EM) (Nr. 458) (Effizienz-Bonus)": 1931.93,
+                    "tax_advantage_subsidy": 825,
+                    "heating_basic_subsidy": 5500,
+                    "heating_income_bonus": 8500,
+                    "heating_emission_reduction_bonus": 5500,
+                    "bafa_building_envelope_subsidy": 12000,
+                },
+                "savings": {
+                    "air_heat_pump": 17000,
+                    "hydraulic_comparison": 3600,
+                    "change_circuit_pump": 900,
+                    "insulate_heat_distribution": 4400,
+                    "insulate_water_distribution": 900,
+                    "pv_battery": 22200,
+                    "renovate_outer_facade": 12400,
+                    "renovate_roof": 21300,
+                    "insulate_basement_ceiling": 3600,
                 },
             },
         }
@@ -425,7 +454,11 @@ class Results(SidebarNavigationMixin, TemplateView):
             scenario_id = f"tab_scenario{i}"
             investment_table = tables.InvestmentTable(scenario_data).to_html(f"{scenario_name} summary_table")
             subsidies_table = tables.SubsidiesTable(scenario_data).to_html(f"{scenario_name} summary_table")
+            savings_table = tables.EnergySavingsTable(scenario_data).to_html(f"{scenario_name} summary_table")
             total_cost_table = tables.TotalCostTable(scenario_data).to_html(f"{scenario_name} summary_table")
+            total_cost_15_years_table = tables.TotalCost15YearsTable(scenario_data).to_html(
+                f"{scenario_name} summary_table",
+            )
 
             scenario_list.append(
                 {
@@ -434,52 +467,91 @@ class Results(SidebarNavigationMixin, TemplateView):
                     "label": f"Szenario {i}",
                     "investment_table": investment_table,
                     "subsidies_table": subsidies_table,
+                    "savings_table": savings_table,
                     "total_cost_table": total_cost_table,
+                    "total_cost_15_years_table": total_cost_15_years_table,
                 },
             )
 
         consumption_table = tables.ConsumptionTable(consumption_data)
         consumption_table_html = consumption_table.to_html(title="consumption_table")
-        investment_summary_table = tables.InvestmentSummaryTable(investment_data)
-        investment_summary_table_html = investment_summary_table.to_html(title="investment_table")
         # Kontext hinzufügen
         context["html_content"] = "<Hallo>"
-        context["hectare_scenario1"] = 2.2
-        context["hectare_scenario2"] = 1.3
+        context["hectare_scenario1"] = 1.4
+        context["hectare_scenario2"] = 1.25
         context["consumption_table_html"] = consumption_table_html
-        context["investment_summary_table_html"] = investment_summary_table_html
         context["scenarios"] = scenario_list
-        context["cost_chart_data"] = cost_emission_chart.create_echarts_cost_emission(
-            title="Kosten",
-            unit="€",
-            data=cost_emission_chart.EXAMPLE_COST_DATA,
-        )
-        context["emission_chart_data"] = cost_emission_chart.create_echarts_cost_emission(
-            title="Emissionen",
-            unit="t/a",
-            data=cost_emission_chart.EXAMPLE_EMISSION_DATA,
-        )
-        context["heating_chart_data"] = heating_and_co2_chart.generate_echarts_option(
+        context["heating_chart_data"] = heating_chart_vertical.generate_vertical_echarts_option(
+            months=["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
             scenarios=[
-                {"name": "Heute", "value": 230},
-                {"name": "Szenario 1", "value": 130},
-                {"name": "Szenario 2", "value": 47},
+                {
+                    "name": "Szenario 1",
+                    "values": [
+                        3468.164547397838,
+                        3033.178038349136,
+                        2776.8431747565123,
+                        1807.908995161528,
+                        1038.37207426303,
+                        590.005415215605,
+                        443.0399715349141,
+                        424.40763799495966,
+                        687.827991548195,
+                        1432.850252308145,
+                        2453.095525606935,
+                        3345.5603939823663,
+                    ],
+                    "color": "#1b9e77",
+                },
+                {
+                    "name": "Szenario 2",
+                    "values": [
+                        457.21460496882776,
+                        401.7522643955988,
+                        375.9754775656805,
+                        257.22107134751735,
+                        159.39529865567033,
+                        97.67117642479182,
+                        76.16884597672653,
+                        73.2881691214471,
+                        111.5659844745372,
+                        211.33609069766447,
+                        335.7687021132994,
+                        442.7838328978601,
+                    ],
+                    "color": "#7570b3",
+                },
             ],
-            title="Heizenergieverbrauch in kWh/(m²*a) (Endenergie)",
+            y_axis_label="kWh",
+        )
+        context["financial_expense_chart_data_future"] = heating_and_co2_chart.generate_echarts_option(
+            scenarios=[
+                {"name": "Szenario 1", "value": 50260},
+                {"name": "Szenario 2", "value": 8875},
+            ],
+            title="",
+        )
+        context["financial_expense_chart_data_now"] = heating_and_co2_chart.generate_echarts_option(
+            scenarios=[
+                {"name": "Szenario 1", "value": 108500},
+                {"name": "Szenario 2", "value": 95175},
+            ],
+            title="",
+        )
+        context["energycost_chart_data"] = energycost_chart.generate_grouped_echarts_option(
+            scenarios=[
+                {"name": "Ausgangszustand", "value": [1550, 5260]},
+                {"name": "Szenario 1", "value": [1420, 1490]},
+                {"name": "Szenario 2", "value": [70, 990]},
+            ],
+            title="",
         )
         context["co2_chart_data"] = heating_and_co2_chart.generate_echarts_option(
             scenarios=[
-                {"name": "Heute", "value": 2600},
-                {"name": "Szenario 1", "value": 1200},
-                {"name": "Szenario 2", "value": 700},
+                {"name": "Heute", "value": 825},
+                {"name": "Szenario 1", "value": 55},
+                {"name": "Szenario 2", "value": 137},
             ],
-            title="CO2-Kosten in € pro Jahr",
-        )
-        context["investment_chart_data"] = investment_costs_chart.generate_investment_chart_options(
-            scenarios=[
-                {"name": "Szenario 1", "renovation": 55000, "maintenance": 45000},
-                {"name": "Szenario 2", "renovation": 100000, "maintenance": 67250},
-            ],
+            title="",
         )
         context["scenario_boxes"] = get_all_scenario_data(self.request)
         return context

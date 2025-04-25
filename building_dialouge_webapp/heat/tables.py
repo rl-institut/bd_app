@@ -51,29 +51,43 @@ class Table:
 class ConsumptionTable(Table):
     translations = {
         **Table.translations,
+        "procedure": "Maßnahme",
         "change_heating": "Heiztechnologie wechseln",
-        "renovate_facade": "Fassade sanieren",
+        "hydraulic_balancing": "Hydraulischer Abgleich",
+        "change_circuit_pump": "Austausch Heizkreispumpe",
+        "insulate_heat_distribution": "Dämmung Heizungsverteilung",
+        "insulate_water_distribution": "Dämmung Warmwasserverteilung",
+        "pv_battery": "PV-Anlage und Batterie",
+        "renovate_outer_facade": "Außenwand sanieren",
         "renovate_roof": "Dach sanieren",
         "replace_windows": "Fenster austauschen",
-        "insulate_basement_ceiling": "Kellerdecke dämmen",
-        "procedure": "Maßnahme",
+        "insulate_basement_ceiling": "Kellerdeckendämmung",
     }
 
     procedures = [
         "change_heating",
-        "renovate_facade",
+        "hydraulic_balancing",
+        "change_circuit_pump",
+        "insulate_heat_distribution",
+        "insulate_water_distribution",
+        "pv_battery",
+        "renovate_outer_facade",
         "renovate_roof",
         "replace_windows",
         "insulate_basement_ceiling",
     ]
 
     def generate_table_data(self) -> pd.DataFrame:
+        used_procedures = [
+            proc for proc in self.procedures if any(proc in scenario_data for scenario_data in self.data.values())
+        ]
+
         table_data = {
-            self.translate_column("procedure"): [self.translations.get(proc, proc) for proc in self.procedures],
+            self.translate_column("procedure"): [self.translations.get(proc, proc) for proc in used_procedures],
         }
         for scenario, scenario_data in self.data.items():
             table_data[self.translate_column(scenario)] = [
-                scenario_data.get(proc, "nicht ausgewählt") for proc in self.procedures
+                scenario_data.get(proc, "nicht ausgewählt") for proc in used_procedures
             ]
         return pd.DataFrame(table_data)
 
@@ -137,33 +151,86 @@ class InvestmentSummaryTable(SumTable):
 class InvestmentTable(Table):
     translations = {
         **Table.translations,
+        "wood_chip_heating": "Holzhackschnitzel-Heizung",
         "air_heat_pump": "Luft-Wärmepumpe",
-        "thermal_storage": "Wärmespeicher",
-        "heat_meter": "Wärmemengenzähler",
-        "heating_system_pump": "Pumpe des Heizsystems",
-        "ventilation_system": "Lüftungsanlage",
-        "insulate_outer_facade": "Außenfassade dämmen",
-        "insulate_roof": "Dach dämmen",
+        "hydraulic_balancing": "Hydraulischer Abgleich",
+        "change_circuit_pump": "Austausch Heizkreispumpe",
+        "insulate_heat_distribution": "Dämmung Heizungsverteilung",
+        "insulate_water_distribution": "Dämmung Warmwasserverteilung",
+        "pv_battery": "PV-Anlage und Batterie",
+        "renovate_outer_facade": "Außenfassade sanieren",
+        "renovate_roof": "Dach sanieren",
+        "replace_windows": "Fenster austauschen",
+        "insulate_basement_ceiling": "Kellerdeckendämmung",
     }
 
     def generate_table_data(self):
         investments = self.data.get("investments", {})
+        formatted_values = [format_currency(v) for v in investments.values()]
+
+        total_sum = sum(investments.values())
+        formatted_sum = format_currency(total_sum)
 
         return pd.DataFrame(
             {
                 "Investitionskosten": [self.translations.get(k, k) for k in investments],
-                "": [format_currency(v) for v in investments.values()],
+                f"<span class='summary-value'>{formatted_sum}</span>": formatted_values,
             },
         )
 
 
 class SubsidiesTable(Table):
+    translations = {
+        **Table.translations,
+        "heating_basic_subsidy": "Heizung Grundförderung",
+        "heating_income_bonus": "Heizung Einkommensbonus",
+        "heating_emission_reduction_bonus": "Heizung Emissionsminderungszuschlag",
+        "bafa_building_envelope_subsidy": "Einzelmaßnahme an der Gebäudehülle - BAFA Förderung",
+        "tax_advantage_subsidy": "Steuervorteil",
+    }
+
     def generate_table_data(self):
         subsidies = self.data.get("subsidies", {})
+        formatted_values = [f"-{format_currency(abs(v))}" for v in subsidies.values()]
+
+        total_sum = sum(subsidies.values())
+        formatted_sum = f"-{format_currency(abs(total_sum))}"
+
         return pd.DataFrame(
             {
-                "Zuschüsse": list(subsidies),
-                "": [format_currency(v) for v in subsidies.values()],
+                "Zuschüsse": [self.translations.get(k, k) for k in subsidies],
+                f"<span class='summary-value'>{formatted_sum}</span>": formatted_values,
+            },
+        )
+
+
+class EnergySavingsTable(Table):
+    translations = {
+        **Table.translations,
+        "wood_chip_heating": "Holzhackschnitzel-Heizung",
+        "air_heat_pump": "Luft-Wärmepumpe",
+        "hydraulic_comparison": "Hydraulischer Abgleich",
+        "change_circuit_pump": "Austausch Heizkreispumpe",
+        "insulate_heat_distribution": "Dämmung Heizungsverteilung",
+        "insulate_water_distribution": "Dämmung Warmwasserverteilung",
+        "pv_battery": "PV-Anlage und Batterie",
+        "renovate_outer_facade": "Außenfassade sanieren",
+        "renovate_roof": "Dach sanieren",
+        "replace_windows": "Fenster austauschen",
+        "insulate_basement_ceiling": "Kellerdeckendämmung",
+    }
+
+    def generate_table_data(self):
+        savings = self.data.get("savings", {})
+        formatted_values = [f"-{format_currency(abs(v))}" for v in savings.values()]
+
+        total_sum = sum(savings.values())
+        formatted_sum = f"-{format_currency(abs(total_sum))}"
+
+        return pd.DataFrame(
+            {
+                "Energetische Einsparungen über 15 Jahre": [self.translations.get(k, k) for k in savings],
+                f"<span class='summary-value'>{formatted_sum}</span>": formatted_values,
             },
         )
 
@@ -176,6 +243,20 @@ class TotalCostTable(Table):
         return pd.DataFrame(
             {
                 "Summe": [""],
+                "": [format_currency(total_cost)],
+            },
+        )
+
+
+class TotalCost15YearsTable(Table):
+    def generate_table_data(self):
+        investments = self.data.get("investments", {})
+        subsidies = self.data.get("subsidies", {})
+        savings = self.data.get("savings", {})
+        total_cost = sum(investments.values()) - sum(subsidies.values()) - sum(savings.values())
+        return pd.DataFrame(
+            {
+                "Summe 15 Jahre": [""],
                 "": [format_currency(total_cost)],
             },
         )
