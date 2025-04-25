@@ -15,7 +15,14 @@ Tragen Sie die entsprechenden Werte ein. Falls Ihnen keine genauen Angaben vorli
       <div class="help"></div>
     </div>
     <div id="flat_roof" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this">{{ flat_roof.content | safe }}</div>
-    <div id="roof_orientation" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this">{{ roof_orientation.content | safe }}</div>
+    <div id="roof_orientation"
+       class="step-container"
+       hx-post="{% url 'heat:roof' %}"
+       hx-trigger="change from:input[name='flat_roof']"
+       hx-target="#roof_inclination_known"
+       hx-swap="innerHTML"
+       hx-include="this">
+  </div>
     <div class="step-question">
       <div class="step-container">
         <div id="roof_inclination_known"

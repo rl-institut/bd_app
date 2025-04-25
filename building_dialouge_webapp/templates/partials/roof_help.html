@@ -1,8 +1,44 @@
 <div class="step-question">
   <div class="step-container">
     <div class="main">
-      {{ form }}
-      {% csrf_token %}
+      {# --- Question Text --- #}
+      <div class="info-text">
+        <p>Besitzt Ihr Gebäude ein Flachdach?</p>
+      </div>
+
+      {# --- The form with HTMX on the radios --- #}
+      <form id="flatRoofForm">
+        {% csrf_token %}
+        <label class="flat-radio">
+          <input
+            type="radio"
+            name="flat_roof"
+            value="exists"
+            required
+            hx-post="{% url 'heat:roof' %}"
+            hx-trigger="change"
+            hx-target="#roof_orientation"
+            hx-swap="innerHTML"
+            hx-include="#flatRoofForm"
+          >
+          Ja
+        </label>
+
+        <label class="flat-radio">
+          <input
+            type="radio"
+            name="flat_roof"
+            value="doesnt_exist"
+            required
+            hx-post="{% url 'heat:roof' %}"
+            hx-trigger="change"
+            hx-target="#roof_orientation"
+            hx-swap="innerHTML"
+            hx-include="#flatRoofForm"
+          >
+          Nein
+        </label>
+      </form>
     </div>
   </div>
 </div>
