@@ -71,10 +71,10 @@ class ConsumptionTable(Table):
         "insulate_heat_distribution",
         "insulate_water_distribution",
         "pv_battery",
+        "renovate_outer_facade",
         "renovate_roof",
         "replace_windows",
         "insulate_basement_ceiling",
-        "renovate_outer_facade",
     ]
 
     def generate_table_data(self) -> pd.DataFrame:
@@ -158,15 +158,10 @@ class InvestmentTable(Table):
         "insulate_heat_distribution": "Dämmung Heizungsverteilung",
         "insulate_water_distribution": "Dämmung Warmwasserverteilung",
         "pv_battery": "PV-Anlage und Batterie",
+        "renovate_outer_facade": "Außenfassade sanieren",
         "renovate_roof": "Dach sanieren",
-        "cover_roof": "Dach decken",
-        "attic_extension": "Dach ausbauen",
-        "insulate_upper_ceiling": "Obere Geschossdecke",
         "replace_windows": "Fenster austauschen",
         "insulate_basement_ceiling": "Kellerdeckendämmung",
-        "renovate_outer_facade": "Außenfassade sanieren",
-        "insulate_outer_facade": "Außenfassade dämmen",
-        "plaster_outer_facade": "Außenfassade verputzen",
     }
 
     def generate_table_data(self):
@@ -219,23 +214,18 @@ class EnergySavingsTable(Table):
         "insulate_heat_distribution": "Dämmung Heizungsverteilung",
         "insulate_water_distribution": "Dämmung Warmwasserverteilung",
         "pv_battery": "PV-Anlage und Batterie",
+        "renovate_outer_facade": "Außenfassade sanieren",
         "renovate_roof": "Dach sanieren",
-        "cover_roof": "Dach decken",
-        "attic_extension": "Dach ausbauen",
-        "insulate_upper_ceiling": "Obere Geschossdecke",
         "replace_windows": "Fenster austauschen",
         "insulate_basement_ceiling": "Kellerdeckendämmung",
-        "renovate_outer_facade": "Außenfassade sanieren",
-        "insulate_outer_facade": "Außenfassade dämmen",
-        "plaster_outer_facade": "Außenfassade verputzen",
     }
 
     def generate_table_data(self):
         savings = self.data.get("savings", {})
-        formatted_values = [format_currency(v) for v in savings.values()]
+        formatted_values = [f"-{format_currency(abs(v))}" for v in savings.values()]
 
         total_sum = sum(savings.values())
-        formatted_sum = format_currency(total_sum)
+        formatted_sum = f"-{format_currency(abs(total_sum))}"
 
         return pd.DataFrame(
             {
