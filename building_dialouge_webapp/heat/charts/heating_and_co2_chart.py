@@ -19,8 +19,8 @@ def generate_echarts_option(scenarios, title):
 
     default_label_colors = {
         "Heute": "black",
-        "Szenario 1": "white",
-        "Szenario 2": "white",
+        "Szenario 1": "black",
+        "Szenario 2": "black",
     }
 
     order = {"Heute": 1, "Szenario 1": 2, "Szenario 2": 3, "Szenario 3": 4}
@@ -99,8 +99,6 @@ def generate_echarts_option(scenarios, title):
                     "show": True,
                     "position": "right",
                     "fontWeight": "bold",
-                    "align": "right",
-                    "offset": [-5, 0],
                 },
             },
         ],
