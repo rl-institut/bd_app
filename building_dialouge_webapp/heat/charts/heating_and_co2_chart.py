@@ -1,4 +1,16 @@
 def generate_echarts_option(scenarios, title):
+    """
+    Generates a horizontal bar chart for multiple scenarios.
+    Controlls order of scenarios and Colors.
+
+    :param scenarios: List of scenario dicts:
+                      [
+                        {"name": "Szenario 1", "value": ...},
+                        {"name": "Szenario 2", "value": ...},
+                      ]
+    :param title: Chart title.
+
+    """
     default_colors = {
         "Heute": "#dcdcdb",
         "Szenario 1": "#1b9e77",
@@ -7,8 +19,8 @@ def generate_echarts_option(scenarios, title):
 
     default_label_colors = {
         "Heute": "black",
-        "Szenario 1": "white",
-        "Szenario 2": "white",
+        "Szenario 1": "black",
+        "Szenario 2": "black",
     }
 
     order = {"Heute": 1, "Szenario 1": 2, "Szenario 2": 3, "Szenario 3": 4}
@@ -87,8 +99,6 @@ def generate_echarts_option(scenarios, title):
                     "show": True,
                     "position": "right",
                     "fontWeight": "bold",
-                    "align": "right",
-                    "offset": [-20, 0],
                 },
             },
         ],

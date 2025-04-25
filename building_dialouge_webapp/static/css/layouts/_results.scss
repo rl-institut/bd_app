@@ -6,6 +6,45 @@ body {
   width: 60%;
 }
 
+// generel Tabs on results Page (Consumption, Cost and Emission)
+.result-tabs{
+  .tab-header{
+    .tab-button {
+      color: #9ca3af;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-bottom: 2px solid transparent;
+      background: none;
+      cursor: pointer;
+
+      &.active {
+        color: #111827;
+        border-color: #9ca3af;
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  .tab-content {
+    display: none;
+    width: 70%;
+    margin-right: 20%;
+    margin-top: 1rem; // mt-4
+    border: 5px solid #e3e3e3;
+    border-top: none;
+    color: #545f71;
+
+
+    &.active {
+      display: block;
+    }
+  }
+}
+
+
 .accordion {
   width: 50%;
   margin-right: 20%;
@@ -81,7 +120,7 @@ body {
 /* TABLE-STYLES                                  */
 /* --------------------------------------------- */
 table.consumption_table,
-table.investment_table {
+table.summary_table {
   border: 1px solid #b9b9b9;
   border-radius: 12px;
   width: 100%;
@@ -91,15 +130,15 @@ table.investment_table {
 
 table.consumption_table th,
 table.consumption_table td,
-table.investment_table th,
-table.investment_table td {
+table.summary_table th,
+table.summary_table td {
   border: 1px solid #b9b9b9;
   padding: 10px;
   vertical-align: middle;
 }
 
 table.consumption_table th,
-table.investment_table th {
+table.summary_table th {
   background-color: #f0f0f0;
   font-weight: bold;
   text-align: left;
@@ -126,19 +165,16 @@ table.consumption_table td.no-entry {
   color: #b9b9b9;
 }
 
-.investment_table th.scenario1 span,
 .consumption_table th.scenario1 span {
   background-color: #1b9e77;
   padding: 5px 15px;
 }
 
-.investment_table th.scenario2 span,
 .consumption_table th.scenario2 span{
   background-color: #7570b3;
   padding: 5px 15px;
 }
 
-.investment_table th.scenario3 span,
 .consumption_table th.scenario3 span {
   background-color: #ff9900;
   padding: 5px 15px;
@@ -147,13 +183,37 @@ table.consumption_table td.no-entry {
   color: #A9A9A9;
   }
 
-.investment_table th, td {
+.summary_table th, td {
   border: 1px solid grey;
   padding: 10px;
   text-align: center;
   }
 
-.investment_table tr:last-child td {
+.scenario1{
+  &.summary_table th {
+    background-color: #1b9e77;
+    color: #fff;
+    padding: 5px;
+  }
+}
+
+.scenario2 {
+  &.summary_table th{
+    background-color: #7570b3;
+    color: #fff;
+    padding: 5px;
+  }
+}
+
+.scenario3 {
+  &.summary_table th{
+    background-color: #ff9900;
+    color: #fff;
+    padding: 5px;
+  }
+}
+
+.summary_table tr:last-child td {
   font-weight: bold;
   }
 
@@ -201,7 +261,7 @@ table.consumption_table td.no-entry {
   position: relative;
   height: 40px;
   margin-left: 80px;
-  margin-dowm: 20px;
+  margin-bottom: 20px;
   z-index: 10;
 }
 
@@ -276,4 +336,38 @@ table.consumption_table td.no-entry {
   width: 500px;
   height: 300px;
   padding-left: 20px;
+}
+
+
+/* Style for the info icon */
+.info-icon {
+  display: inline-block;
+  position: relative;
+  z-index: 100;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 8px;
+
+  /* Style for the tooltip on hover */
+  &:hover::after {
+    content: attr(data-tooltip); /* Get the tooltip text from the data-tooltip attribute */
+    position: absolute;
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    top: 100%; /* Place the tooltip below the icon */
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 10;
+  }
 }

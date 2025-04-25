@@ -13,77 +13,68 @@
       <div>
         Herzlichen Glückwunsch, die Berechnung ist abgeschlossen!
         <br />
-        Hier sehen Sie die Ergebnisse für Ihre gewählten Szenarien.
+        Hier sehen Sie eine Übersicht der Ergebnisse für Ihre gewählten Szenarien.
       </div>
       <br />
-      <p>Wählen Sie eine Kategorie, um Detailergebnisse anzuzeigen.</p>
-      <div class="accordion" id="accordionPanelsStayOpenExample">
-        <div class="accordion-item">
+      <p> Wählen Sie eine Kategorie aus, um weitere Details zu Energieverbrauch, Kosten oder CO₂-Einsparungen zu erhalten.
+      </p>
+      <div class="result-tabs">
+        <div class="tab-header">
+          <button class="tab-button active" data-tab="tab-consumption">Verbrauch</button>
+          <button class="tab-button" data-tab="tab-cost">Kosten</button>
+          <button class="tab-button" data-tab="tab-emission">Emissionen</button>
+        </div>
+        <div class="tab-content active" id="tab-consumption">
+          <!-- Verbrauch-Inhalt -->
           <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-            <button class="accordion-button collapsed custom-arrow"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#panelsStayOpen-collapseOne"
-                    aria-expanded="false"
-                    aria-controls="panelsStayOpen-collapseOne">
               Verbrauch
-              <object class="energy_efficiency"
-                      type="image/svg+xml"
-                      data="/static/images/svg/energy_consumption_index.svg"></object>
-            </button>
           </h2>
-          <div id="panelsStayOpen-collapseOne"
-               class="accordion-collapse collapse"
-               aria-labelledby="panelsStayOpen-headingOne">
-            <div class="accordion-body">
-              <p>
-                Hier sehen Sie Ihren heutigen Energieverbrauch sowie für die von Ihnen gewählten Szenarien.
-                Der heutige Verbrauch basiert entweder auf Ihren Verbrauchseingaben oder wurde von uns gemäß Ihrer Angaben berechnet.
-              </p>
-              <div id="heating_chart" class="chart_big"></div>
-              <p>Der Energieverbrauch Ihres Gebäudes hängt von der verbauten Heizung ab und unterliegt saisonalen Schwankungen:</p>
+          <p>
+            Hier sehen Sie Ihren aktuellen Endenergiebedarf für Raumwärme und Warmwasser im Vergleich zu den
+            von Ihnen erstellten Sanierungsszenarien.
+            Die Berechnung des heutigen Bedarfs basiert auf Ihren Angaben und der Zuordnung Ihres Gebäudes zu einem von
+            rund 665.000 standardisierten Gebäudetypen. So können Sie einschätzen, wie sich verschiedene Maßnahmen auf
+            den Energiebedarf auswirken würden.
+          </p>
+          <strong>Heizenergieverbrauch in kWh/(m²*a) (Endenergie)</strong>
+          <object class="energy_efficiency"
+                      type="image/svg+xml"
+                      data="/static/images/svg/energy_consumption_index_workshop.svg"></object>
+          <p>Der Energieverbrauch Ihres Gebäudes hängt von der verbauten Heizung ab und unterliegt saisonalen Schwankungen:</p>
+          <br />
+          <strong>Heizlastprofil in kWh/Monat</strong>
+          <div id="heating_chart" class="chart_big"></div>
+          <p>
+            In dieser Übersicht sehen Sie, wie sich die von Ihnen im Szenario gewählten Sanierungsmaßnahmen und Technologiewechsel
+            auf den Energieverbrauch Ihres Gebäudes auswirken. Für jede Maßnahme wird die prozentuale Veränderung im
+            Energieverbrauch in % angegeben, sodass Sie den Effekt einzelner Maßnahme einfacher nachvollziehen können.
+          </p>
+          <strong>Energetische Einsparung in %:</strong>
+          {{ consumption_table_html|safe }}
+        </div>
+        <div class="tab-content" id="tab-cost">
+          <!-- Kosten-Inhalt -->
+          <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                Kosten
+          </h2>
+          <p>
+            Hier sehen Sie die Gesamtkosten für jedes Ihrer gewählten Szenarien über unterschiedliche Zeiträume.
+            In dieser Wirtschaftlichkeitsbetrachtung fließen Investitions-, Betriebs-, Wartungs- und Brennstoffkosten ein –
+            sowohl zum heutigen Zeitpunkt als auch über einen Betrachtungszeitraum von 15 Jahren. So sehen Sie, welchen finanziellen
+            Aufwand ein Heizszenario heute und über einen längeren Betrachtungszeitraum verursacht.
+            <span class="info-icon" data-tooltip="Nur über einen längeren Zeitraum können langfristige Einsparungen oder Ausgaben durch Sanierung und Technologiewechsel berücksichtigt werden. Auf diese Weise lässt sich der Wert Ihrer Investition für Sie besser einschätzen.">I</span></p>
               <br />
               <div>
-                <strong>placeholder Heizlastprofil in kWh/Monat line chart</strong>
+                <button onclick="updateEnergyCostChart('future')">In 15 Jahren</button>
+                <button onclick="updateEnergyCostChart('now')">Heute</button>
               </div>
-              <br />
+              <div id="financial_expense_chart" class="chart_big"></div>
               <br />
               <p>
-                In dieser Übersicht sehen Sie, wie sich die von Ihnen im Szenario gewählten Sanierungsmaßnahmen und Technologiewechsel auf den Energieverbrauch Ihres Gebäudes auswirken.
-                Für jede Maßnahme wird die Differenz im Energieverbrauch in kWh/m² angegeben, sodass Sie den absoluten Effekt jeder einzelnen Maßnahme nachvollziehen können.
-              </p>
-              {{ consumption_table_html|safe }}
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-            <button class="accordion-button collapsed"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#panelsStayOpen-collapseTwo"
-                    aria-expanded="false"
-                    aria-controls="panelsStayOpen-collapseTwo">
-                Kosten
-                <span id="cost_chart" class="chart_small"></span>
-            </button>
-          </h2>
-          <div id="panelsStayOpen-collapseTwo"
-               class="accordion-collapse collapse"
-               aria-labelledby="panelsStayOpen-headingTwo">
-            <div class="accordion-body">
-              Hier sehen Sie die Gesamtkosten für jedes von Ihnen gewählte Szenario.
-              Neben den Investitionskosten für Sanierungsmaßnahmen und Technologiewechsel werden die für Sie relevanten Zuschüsse aufgeführt.
-              Die berechnete Summe zeigt den Betrag, den Sie nach Abzug der Zuschüsse selbst aufwenden müssen.
-              Diese Übersicht unterstützt Sie dabei, die finanziellen Auswirkungen Ihrer Entscheidungen besser zu erfassen und zu planen.
-              <br />
-              <br />
-              {{ investment_summary_table_html|safe }}
-              <br />
-              Eine genauere Aufschlüsselung der Kosten für jede einzelne Sanierungsmaßnahme, sowie für die verschidenen Posten innerhalb eines Technologiewechsels finden Sie hier.
-              Zusätzlich werden die von Ihnen ausgewählten Zuschüsse aufgeführt.
-              Diese Übersicht gibt Ihnen eine fundierte Vorab-Einschätzung der finanziellen Aspekte, die Ihnen bei der Planung und Beratung für Ihre Maßnahmen nützlich sein wird.
-              <br />
+                Hier finden Sie eine detaillierte Aufschlüsselung der Investitionskosten für Sanierungsmaßnahmen sowie
+                Technologiewechsel, der energetischen Aufwendungen und Einsparungen durch Brennstoff- und Betriebskosten sowie
+                der für Sie relevanten Zuschüsse über den Betrachtungszeitraum von 15 Jahren. Die angegebene Summe zeigt, welchen
+                Betrag Sie nach Abzug der Einsparungen selbst aufbringen müssten.</p>
               <br />
               <div class="tabs-container">
                 {# 1) Radio-Buttons + Labels #}
@@ -99,77 +90,61 @@
                 <div class="tabs-content">
                   {% for scenario in scenarios %}
                     <div class="tab-content {{ scenario.id }}">
-                      {{ scenario.investment_table|safe }}
-                      {{ scenario.subsidies_table|safe }}
+                      <div class="foldable-wrapper">
+                        {{ scenario.investment_table|safe }}
+                        {{ scenario.subsidies_table|safe }}
+                        {{ scenario.savings_table|safe }}
+                      </div>
                       {{ scenario.total_cost_table|safe }}
+                      {{ scenario.total_cost_15_years_table|safe }}
                     </div>
                   {% endfor %}
                 </div>
                 <br />
-                Die aufgeführten Kosten enthalten auch jene, die über den betrachteten Zeitraum sowieso angefallen wären - die <span class="maintenance">Instandhaltungskosten</span>.
-                Denn um Ihr Gebäude instand zu halten, sind in jedem Fall Aufwendungen - z.B. für Reüeraturen und Wartungsarbeiten - nötig.
-                Wenn Sie also in absehbarer Zeit ohnehin mit solchen Kosten rechnen, kann sich eine <span class="renovation">Sanierung</span> umso mehr lohnen.
-                <div id="investment_chart" class="chart_big"></div>
-                Ihre jährlichen Energiekosten für <span class="electricity">Strom</span> und <span class="heating">Heizung & Warmwasser</span> und Ihr Einsparpotenzial:
+                <p>Ihre jährlichen Energiekosten für <span class="electricity">Strom</span> und <span class="heating">Heizung & Warmwasser</span> und Ihr Einsparpotenzial:</p>
                 <br />
                 <br />
-                <strong>placeholder for chart "Energiekosten pro Jahr in €"</strong>
+                <strong>Energiekosten in € pro Jahr</strong>
+                <div id="energycost_chart" class="chart_big"></div>
                 <br />
                 <br />
-              </div>
-            </div>
           </div>
         </div>
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="panelsStayOpen-headingThree">
-              <button class="accordion-button collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#panelsStayOpen-collapseThree"
-                      aria-expanded="false"
-                      aria-controls="panelsStayOpen-collapseThree">
+        <div class="tab-content" id="tab-emission">
+          <!-- Emissionen-Inhalt -->
+          <h2 class="accordion-header" id="panelsStayOpen-headingThree">
                 Emissionen
-                <span id="emission_chart" class="chart_small"></span>
-              </button>
-            </h2>
-            <div id="panelsStayOpen-collapseThree"
-                 class="accordion-collapse collapse"
-                 aria-labelledby="panelsStayOpen-headingThree">
-              <div class="accordion-body">
-                Je nach eingesetzter Heizung und Sanierungsmaßnahmen fallen unterschiedlich hohe CO<sub>2</sub>-Emissionen an.
-                <br />
-                <br />
-                Für jede Tonne emittiertes CO<sub>2</sub> fallen seit 2021 Kosten an.
-                Diese Kosten werden steigen und einen maßgeblichen Teil der laufenden Energiekosten darstellen:
-                <div id="co2_chart" class="chart_big"></div>
-                <div class="saving_forest">
-                  Sehr gut, die Maßnahmen in deinen
-                  <br />
-                  Szenarien helfen, <span class="saving_emission">Emissionen zu vermeiden.</span>
-                  <object class="plant_in_hand"
-                          type="image/svg+xml"
-                          data="/static/images/svg/plant_in_hand.svg"></object>
-                  <br />
-                  <br />
-                  Zur Einordnung:
-                  <br />
-                  <br />
-                  <span class="hectare">{{ hectare_scenario1 }} Hektar</span> zusätzlicher Wald wäre nötig, um die Einsparungen in <span class="scenario1">Szenario 1</span> zu erreichen.
-                  <br />
-                  <br />
-                  <span class="hectare">{{ hectare_scenario2 }} Hektar</span> zusätzlicher Wald wäre nötig, um die Einsparungen in <span class="scenario2">Szenario 2</span> zu erreichen.
-                </div>
-              </div>
-            </div>
-          </div>
+          </h2>
+          <p>Je nach eingesetzter Heizung und Sanierungsmaßnahmen fallen unterschiedlich hohe CO<sub>2</sub>-Emissionen an.</p>
+          <br />
+          <p>Für jede Tonne emittiertes CO<sub>2</sub> fallen seit 2021 Kosten an.
+          Diese Kosten werden steigen und einen maßgeblichen Teil der laufenden Energiekosten darstellen:</p>
+          <strong>CO2-Kosten in € pro Jahr</strong>
+          <div id="co2_chart" class="chart_big"></div>
+          <div class="saving_forest">
+            Sehr gut, die Maßnahmen in deinen
+            <br />
+            Szenarien helfen, <span class="saving_emission">Emissionen zu vermeiden.</span>
+            <object class="plant_in_hand"
+                    type="image/svg+xml"
+                    data="/static/images/svg/plant_in_hand.svg"></object>
+            <br />
+            <br />
+            Zur Einordnung:
+            <br />
+            <br />
+            <span class="hectare">{{ hectare_scenario1 }} Hektar</span> zusätzlicher Wald wäre nötig, um die Einsparungen in <span class="scenario1">Szenario 1</span> zu erreichen.
+            <br />
+            <br />
+            <span class="hectare">{{ hectare_scenario2 }} Hektar</span> zusätzlicher Wald wäre nötig, um die Einsparungen in <span class="scenario2">Szenario 2</span> zu erreichen.
         </div>
       </div>
-    </div>
-    <div class="help" id="flow-instance-boxes">
+      <div class="help" id="flow-instance-boxes">
         {% for box in scenario_boxes %}
           <c-layouts.renovation :box="box"></c-layouts.renovation>
         {% endfor %}
       </div>
+    </div>
 {% endblock content %}
 
 {% block javascript %}
@@ -182,5 +157,8 @@
   {{ emission_chart_data|json_script:"emission_chart_data" }}
   {{ heating_chart_data|json_script:"heating_chart_data" }}
   {{ investment_chart_data|json_script:"investment_chart_data" }}
+  {{ financial_expense_chart_data_future|json_script:"financial_expense_chart_data_future" }}
+  {{ financial_expense_chart_data_now|json_script:"financial_expense_chart_data_now" }}
+  {{ energycost_chart_data|json_script:"energycost_chart_data" }}
   {{ co2_chart_data|json_script:"co2_chart_data" }}
 {% endblock inline_javascript %}
