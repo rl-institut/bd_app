@@ -23,20 +23,20 @@
         "max_value": 2024
       }
   },
-  "HotwaterHeatingSolarAreaForm": {
+  "HeatingYearForm": {
+    "heating_system_construction_year": {
+      "min_value": 1900,
+      "max_value": 2024
+    }
+  },
+  "HeatingSolarAreaForm": {
     "solar_thermal_area": {
         "min_value": 1,
         "max_value": 1000
       }
   },
-  "RoofInclinationForm": {
-    "roof_inclination": {
-      "min_value": 5,
-      "max_value": 85
-    }
-  },
-  "HeatingYearForm": {
-    "heating_system_construction_year": {
+  "HotwaterSupplyForm": {
+    "hotwater_year": {
       "min_value": 1900,
       "max_value": 2024
     }
@@ -46,6 +46,12 @@
         "min_value": 50,
         "max_value": 10000
       }
+  },
+  "RoofInclinationForm": {
+    "roof_inclination": {
+      "min_value": 1,
+      "max_value": 60
+    }
   },
   "PVSystemCapacityForm": {
     "pv_capacity": {

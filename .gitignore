@@ -327,10 +327,8 @@ dump.rdb
 
 ### Project template
 building_dialouge_webapp/media/
-building_dialouge_webapp/data/
-
-# scripts
-scripts/
+building_dialouge_webapp/data/profiles/
+building_dialouge_webapp/data/renovations/
 
 .pytest_cache/
 .ipython/

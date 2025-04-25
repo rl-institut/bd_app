@@ -1,5 +1,21 @@
 
-.PHONY : update_vendor_assets
+.PHONY : update_vendor_assets, compile_dependencies, load_data
+
+DJANGO_READ_DOT_ENV_FILE=True
+export
+
+load_data:
+	python manage.py shell --command="from building_dialouge_webapp import setup; setup.load_profiles()"
+
+DJANGO_READ_DOT_ENV_FILE=True
+export
+
+celery:
+	redis-server --port 6379 & celery -A config.celery_app worker -l INFO
+
+update_dependencies:
+	uv pip compile -q requirements/local.in -o requirements/local.txt
+	uv pip compile -q requirements/production.in -o requirements/production.txt
 
 update_vendor_assets:
 	# Note: call this command from the same folder your Makefile is located

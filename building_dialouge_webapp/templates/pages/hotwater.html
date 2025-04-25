@@ -1,0 +1,46 @@
+{% extends "base_footer_button.html" %}
+
+{% block content %}
+  <section class="position-relative h-100 flex-grow-1 pb-5">
+    <div class="step-title">
+      <div class="step-container">
+        <div class="main">
+          <h1>Warmwasser</h1>
+          <div class="info-box">
+            <p>In diesem Abschnitt erfassen wir, wie die Warmwasserbereitung in Ihrem Gebäude erfolgt und ob ein Wärmespeicher vorhanden ist. Diese Informationen sind wichtig, um den aktuellen Warmwasserbedarf Ihres Gebäudes besser einzuschätzen.</p>
+            <p>Tragen Sie bitte die Ihnen bekannten Werte ein. Falls Sie keine genauen Angaben haben, genügt auch eine Schätzung.</p>
+          </div>
+        </div>
+      </div>
+      <div class="help"></div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="hotwater_supply"
+          hx-post=""
+          hx-trigger="change"
+          hx-swap="show:bottom"
+          hx-include="this"
+          class="main">{{ hotwater_supply.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div class="step-question">
+      <div class="step-container">
+        <div id="heating_storage_exists"
+             hx-post=""
+             hx-trigger="change"
+             hx-swap="show:bottom"
+             hx-include="this"
+             class="main">{{ heating_storage_exists.content | safe }}
+             </div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div id="heating_storage_capacity"
+      hx-post=""
+      hx-trigger="keyup change delay:1000ms"
+      hx-swap="show:bottom"
+      hx-include="this">{{ heating_storage_capacity.content | safe }}</div>
+  </section>
+{% endblock content %}

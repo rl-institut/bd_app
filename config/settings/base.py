@@ -8,6 +8,7 @@ import environ
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # building_dialouge_webapp/
 APPS_DIR = BASE_DIR / "building_dialouge_webapp"
+DATA_DIR = APPS_DIR / "data"
 env = environ.Env()
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
@@ -80,6 +81,7 @@ THIRD_PARTY_APPS = [
     "django_celery_beat",
     "django_cotton",
     "django_htmx",
+    "django_oemof",
 ]
 
 LOCAL_APPS = [

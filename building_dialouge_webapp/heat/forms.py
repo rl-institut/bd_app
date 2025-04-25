@@ -43,17 +43,14 @@ class HouseTypeSelect(RadioSelect):
     template_name = "forms/energy_source.html"
 
     INFOS = {
-        "single_family": "Ein Einfamilienhaus ist ein Wohngebäude, das für die Nutzung durch "
-        "eine einzige Familie bzw. einen einzigen Haushalt vorgesehen ist. Ein Haus gilt auch "
-        "dann als Einfamilienhaus, wenn es zwei Wohneinheiten enthält und eine davon eine "
-        "Einliegerwohnung ist, also von untergeordnete Bedeutung ist (Beispiel: Ferienwohnung).",
-        "apartment_building": "Ein Mehrfamilienhaus ist ein Wohngebäude, das mehrere separate Wohneinheiten enthält."
-        "Jede Wohneinheit wird von verschiedenen Familien oder Haushalten bewohnt. Auch Zweifamilienhäuser zählen zu "
-        "Mehrfamilienhäusern.",
-        "terraced_house": "Ein Reihenhaus ist ein Einfamilienhaus, das in einer Reihe identischer "
-        "oder ähnlicher Häuser direkt aneinandergebaut ist. Es teilt sich mindestens eine Seitenwand "
-        "mit dem Nachbarhaus und bietet eine kosteneffiziente Wohnlösung mit eigenem Eingang und "
-        "oft einem kleinen Garten.",
+        "single_family": "Ein Einfamilienhaus ist ein Wohngebäude mit einer Wohneinheit, das von einer "
+        "Familie oder einem Haushalt bewohnt wird. Einliegerwohnungen, wie z.B. Ferienwohnungen, zählen "
+        "als Sonderfall mit zwei Wohneinheiten dazu.",
+        "apartment_building": "Ein Mehrfamilienhaus ist ein Wohngebäude mit mehreren Wohneinheiten, in denen "
+        "verschiedene Familien oder Haushalte getrennt voneinander wohnen.",
+        "terraced_house": "Ein Reihenhaus ist ein Einfamilienhaus in geschlossener Bauweise, das direkt an "
+        "benachbarte, ähnliche oder identische Einfamilienhäuser grenzt und mit ihnen eine oder zwei Seitenwände "
+        "teilt. Es bietet eine kosteneffiziente Wohnlösung mit eigenem Eingang und oft einem kleinen Garten.",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
@@ -115,24 +112,16 @@ class BuildingTypeProtectionForm(ValidationForm):
 
 
 class InsulationForm(ValidationForm):
-    roof_insulation_year = forms.IntegerField(
-        label="Dach: Jahr",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        required=False,
-    )
-    upper_storey_ceiling_insulation_year = forms.IntegerField(
-        label="Obere Geschossdecke: Jahr",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        required=False,
-    )
-    cellar_insulation_year = forms.IntegerField(
-        label="Keller: Jahr",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        required=False,
-    )
-    facade_insulation_year = forms.IntegerField(
-        label="Fassade: Jahr",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    insulation_choices = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("roof_insulation_year", "Dach"),
+            ("upper_storey_ceiling_insulation_year", "Oberste Geschossdecke"),
+            ("cellar_insulation_year", "Kellerdecke"),
+            ("facade_insulation_year", "Fassade"),
+            ("window_insulation_year", "Fenster"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
         required=False,
     )
 
@@ -153,25 +142,19 @@ class EnergySourceSelect(RadioSelect):
     template_name = "forms/energy_source.html"
 
     INFOS = {
-        "gas": "Fossiler Brennstoff, der häufig zur effizienten und sauberen Wärmeerzeugung in "
-        "Heizkesseln verwendet wird.",
-        "oil": "Flüssiger fossiler Brennstoff, der in speziellen Kesseln verbrannt wird, "
-        "um Wärme für Gebäude zu erzeugen, und bietet eine hohe Energiedichte.",
-        "district_heating": "Wird durch ein zentrales Heizkraftwerk erzeugt und über isolierte "
-        "Rohrleitungen direkt zu Gebäuden transportiert, was effiziente und umweltfreundliche "
-        "Beheizung ermöglicht.",
-        "liquid_gas": "Ein unter Druck verflüssigtes Gasgemisch, das in Tanks gespeichert wird "
-        "und eine flexible Heizlösung für Gebiete ohne Erdgasanschluss bietet.",
-        "wood_pellets": "Verdichtete Holzabfälle, die als umweltfreundlicher Brennstoff für "
-        "Pelletöfen und -kessel genutzt werden, um Wärme zu erzeugen.",
-        "geothermal_pump": "Sie nutzt die konstante Erdwärme unter der Oberfläche, um Gebäude "
-        "effizient und umweltfreundlich zu heizen und zu kühlen.",
-        "air_heat_pump": "Sie entzieht der Außenluft Wärme, um Gebäude zu beheizen, und sind eine "
-        "effiziente Heizoption bei milden Klimabedingungen.",
-        "groundwater": "Nutzt die Wärmeenergie aus Grundwasser oder einem Solekreislauf, um "
-        "besonders effizient Wärme zu erzeugen.",
-        "heating_rod": "Elektrisches Heizelement, das direkt in Wasserboilern oder Heizkörpern "
-        "eingesetzt wird, um Wasser schnell zu erhitzen oder zusätzliche Wärme zu liefern.",
+        "gas": "Fossiler Brennstoff, der häufig zur Wärmeerzeugung in Heizkesseln verwendet wird.",
+        "oil": "Flüssiger fossiler Brennstoff, der in Kesseln verbrannt wird, um Wärme einer hohen "
+        "Energiedichte zu bereitzustellen.",
+        "district_heating": "Wärme, die in einem zentralen Heizkraftwerk erzeugt und über gedämmte "
+        "Rohrleitungen zum Gebäude transportiert wird.",
+        "liquid_gas": "Unter Druck verflüssigtes Gasgemisch, das in Tanks gelagert wird und eine "
+        "flexible Heizlösung für Gebiete ohne Erdgasanschluss bietet.",
+        "wood_pellets": "Verdichtete Holzabfälle als Brennstoff für Pelletöfen und Pelletkessel",
+        "air_heat_pump": "Entzieht der Umgebungsluft Wärme, um das Gebäude zu beheizen",
+        "groundwater": "Entzieht dem Grundwasser oder einem Oberflächengewässer Wärme, um das Gebäude zu beheizen",
+        "geothermal_pump": "Entzieht dem Erdreich Wärme, um das Gebäude zu beheizen",
+        "heating_rod": "Elektrisches Heizelement, das in Wasserboilern oder Heizkörpern zur "
+        "Wärmeerzeugung eingesetzt wird",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
@@ -189,16 +172,36 @@ class HeatingSourceForm(ValidationForm):
             ("district_heating", "Fernwärme"),
             ("liquid_gas", "Flüssiggas"),
             ("wood_pellets", "Holzpellets"),
-            ("geothermal_pump", "Erdwärmepumpe"),
             ("air_heat_pump", "Luftwärmepumpe"),
-            ("groundwater", "Grundwasser- oder Solewärmepumpe"),
+            ("groundwater", "Grundwasser- oder Oberflächengewässerwärmepumpe"),
+            ("geothermal_pump", "Erdwärmepumpe"),
             ("heating_rod", "Heizstab"),
         ],
         widget=EnergySourceSelect(),
     )
 
 
-class HotwaterHeatingSolarExistsForm(ValidationForm):
+class HeatingYearForm(ValidationForm):
+    heating_system_construction_year = forms.IntegerField(
+        label="Baujahr Heizung",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+
+        building_construction_year = data.get("construction_year", None)
+        if building_construction_year:
+            field = self.fields["heating_system_construction_year"]
+            field.validators = [v for v in field.validators if not isinstance(v, MinValueValidator)]
+            field.widget.attrs.update(
+                {"min": building_construction_year},
+            )
+            field.validators.append(MinValueValidator(building_construction_year))
+
+
+class HeatingSolarExistsForm(ValidationForm):
     solar_thermal_exists = forms.ChoiceField(
         label="Solarthermieanlage vorhanden?",
         choices=[
@@ -209,18 +212,51 @@ class HotwaterHeatingSolarExistsForm(ValidationForm):
     )
 
 
-class HotwaterHeatingSolarKnownForm(ValidationForm):
-    solar_thermal_area_known = forms.ChoiceField(
-        label="Kollektorfläche bekannt?",
-        choices=[("known", "Ja"), ("unknown", "Unbekannt")],
+class HeatingSolarAreaForm(ValidationForm):
+    solar_thermal_area = forms.FloatField(
+        label="Kollektorfläche in m²",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+
+class HotwaterSupplyForm(ValidationForm):
+    hotwater_year = forms.IntegerField(
+        label="Baujahr",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+    hotwater_supply = forms.ChoiceField(
+        label="Wird das Warmwasser mittels Durchlauferhitzer erwärmt?",
+        choices=[("instantaneous_water_heater", "Ja"), ("combined", "Nein")],
+        widget=forms.RadioSelect,
+    )
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+
+        building_construction_year = data.get("construction_year", None)
+        if building_construction_year:
+            field = self.fields["hotwater_year"]
+            field.validators = [v for v in field.validators if not isinstance(v, MinValueValidator)]
+            field.widget.attrs.update(
+                {"min": building_construction_year},
+            )
+            field.validators.append(MinValueValidator(building_construction_year))
+
+
+class HeatingStorageExistsForm(ValidationForm):
+    heating_storage_exists = forms.ChoiceField(
+        label="Wärmespeicher vorhanden?",
+        choices=[("exists", "Ja"), ("doesnt_exist", "Nein")],
         widget=forms.RadioSelect,
     )
 
 
-class HotwaterHeatingSolarAreaForm(ValidationForm):
-    solar_thermal_area = forms.FloatField(
-        label="Kollektorfläche in m²",
+class HeatingStorageCapacityForm(ValidationForm):
+    heating_storage_capacity = forms.IntegerField(
+        label="Wärmespeicher Fassungsvermögen in l",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+        template_name="forms/heating-storage-capacity.html",
     )
 
 
@@ -228,7 +264,7 @@ class RoofTypeSelect(RadioSelect):
     template_name = "forms/energy_source.html"
 
     INFOS = {
-        "exists": "Ein Flachdach ist ein Dach mit einer sehr geringen Neigung, das fast waagerecht verläuft.",
+        "exists": "Besitzt ihr Gebäude ein Flachdach?",
     }
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
@@ -239,7 +275,7 @@ class RoofTypeSelect(RadioSelect):
 
 class RoofTypeForm(forms.Form):
     flat_roof = forms.ChoiceField(
-        label="Besitzt ihr Gebäude ein Flachdach?",
+        label="Flachdach",
         choices=[
             ("exists", "Ja"),
             ("doesnt_exist", "Nein"),
@@ -250,7 +286,7 @@ class RoofTypeForm(forms.Form):
 
 class RoofOrientationForm(ValidationForm):
     roof_orientation = forms.ChoiceField(
-        label="In welcher Richtung ist ihr Dach ausgerichtet?",
+        label="Dachausrichtung",
         choices=[
             ("n", "N"),
             ("ne", "NO"),
@@ -280,62 +316,10 @@ class RoofInclinationForm(ValidationForm):
     )
 
 
-class HeatingYearForm(ValidationForm):
-    heating_system_construction_year = forms.IntegerField(
-        label="Baujahr Heizung",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        required=False,
-    )
-
-    def validate_with_session(self):
-        data = self.request.session.get("django_htmx_flow", {})
-
-        building_construction_year = data.get("construction_year", None)
-        if building_construction_year:
-            field = self.fields["heating_system_construction_year"]
-            field.validators = [v for v in field.validators if not isinstance(v, MinValueValidator)]
-            field.widget.attrs.update(
-                {"min": building_construction_year},
-            )
-            field.validators.append(MinValueValidator(building_construction_year))
-
-
-class HeatingStorageExistsForm(ValidationForm):
-    heating_storage_exists = forms.ChoiceField(
-        label="Wärmespeicher vorhanden?",
-        choices=[("exists", "Ja"), ("doesnt_exist", "Nein")],
-        widget=forms.RadioSelect,
-    )
-
-
-class HeatingStorageKnownForm(ValidationForm):
-    heating_storage_capacity_known = forms.ChoiceField(
-        label="Fassungsvermögen des Wärmespeichers bekannt?",
-        choices=[("known", "Ja"), ("unknown", "Unbekannt")],
-        widget=forms.RadioSelect,
-    )
-
-
-class HeatingStorageCapacityForm(ValidationForm):
-    heating_storage_capacity = forms.IntegerField(
-        label="Wärmespeicher Fassungsvermögen in l",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
-        template_name="forms/heating-storage-capacity.html",
-    )
-
-
 class PVSystemForm(ValidationForm):
     pv_exists = forms.ChoiceField(
         label="PV-Anlage vorhanden?",
         choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
-        widget=forms.RadioSelect,
-    )
-
-
-class PVSystemCapacityKnownForm(ValidationForm):
-    pv_capacity_known = forms.ChoiceField(
-        label="Leistung bekannt?",
-        choices=[("known", "Ja"), ("unknown", "Unbekannt")],
         widget=forms.RadioSelect,
     )
 
@@ -437,9 +421,9 @@ class RenovationHeatPumpForm(ValidationForm):
     heat_pump_type = forms.ChoiceField(
         label="Wärmepumpentyp",
         choices=[
-            ("geothermal_pump", "Erdwärmepumpe"),
             ("air_heat_pump", "Luftwärmepumpe"),
-            ("groundwater", "Grundwasser- oder Solewärmepumpe"),
+            ("groundwater", "Wasserwärmepumpe"),
+            ("geothermal_pump", "Erdwärmepumpe"),
         ],
         widget=forms.RadioSelect,
     )
@@ -458,12 +442,29 @@ class RenovationHeatPumpForm(ValidationForm):
 
 
 class RenovationRequestForm(ValidationForm):
-    facade_renovation = forms.BooleanField(
-        label="Fassade dämmen",
+    facade_renovation_choice = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("facade_renovation", "Fassade:"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
         required=False,
     )
-    roof_renovation = forms.BooleanField(
-        label="Dach",
+    facade_renovation_details = forms.ChoiceField(
+        label="",
+        choices=[
+            ("facade_insulate_renovation", "Fassade dämmen"),
+            ("facade_glaster_renovation", "Fassade verputzen"),
+        ],
+        widget=forms.RadioSelect,
+        required=False,
+    )
+    roof_renovation_choice = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("roof_renovation", "Dach:"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
         required=False,
     )
     roof_renovation_details = forms.ChoiceField(
@@ -475,16 +476,28 @@ class RenovationRequestForm(ValidationForm):
         widget=forms.RadioSelect,
         required=False,
     )
-    window_renovation = forms.BooleanField(
-        label="Fenster austauschen",
+    window_renovation_choice = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("window_renovation", "Fenster austauschen"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
         required=False,
     )
-    cellar_renovation = forms.BooleanField(
-        label="Kellerdeckendämmung",
+    cellar_renovation_choice = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("cellar_renovation", "Kellerdeckendämmung"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
         required=False,
     )
-    entrance_renovation = forms.BooleanField(
-        label="Eingangstür erneuern",
+    upper_storey_ceiling_renovation_choice = forms.MultipleChoiceField(
+        label="",
+        choices=[
+            ("upper_storey_ceiling_renovation", "Oberste Geschossdecke erneuern"),
+        ],
+        widget=forms.CheckboxSelectMultiple,
         required=False,
     )
     renovation_input_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
@@ -496,8 +509,18 @@ class RenovationRequestForm(ValidationForm):
         cleaned_data = super().clean()
         errors = {}
 
-        if cleaned_data.get("roof_renovation") and not cleaned_data.get("roof_renovation_details"):
+        # Autofill if one suboption was chosen
+        if cleaned_data.get("roof_renovation_details"):
+            cleaned_data["roof_renovation_choice"] = ["roof_renovation"]
+        if cleaned_data.get("facade_renovation_details"):
+            cleaned_data["facade_renovation_choice"] = ["facade_renovation"]
+
+        # Return an error if no suboptin was chosen yet
+        if cleaned_data.get("roof_renovation_choice") and not cleaned_data.get("roof_renovation_details"):
             errors["roof_renovation_details"] = "Bitte eine Spezifikation fürs Dach sanieren auswählen."
+
+        if cleaned_data.get("facade_renovation_choice") and not cleaned_data.get("facade_renovation_details"):
+            errors["facade_renovation_details"] = "Bitte eine Spezifikation fürs Fassade sanieren auswählen."
 
         if errors:
             raise forms.ValidationError(errors)

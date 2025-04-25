@@ -1,7 +1,5 @@
 {% extends "base_footer_button.html" %}
 
-{% load static %}
-
 {% block content %}
   <section class="position-relative h-100 flex-grow-1 pb-5">
     <div class="step-title">
@@ -9,43 +7,15 @@
         <div class="main">
           <h1>Dach</h1>
           <div class="info-box">
-            <p>Hier geben Sie an, um welche Art von Dach es sich bei Ihrem Gebäude handelt.
-              Wir fragen nach, ob es sich um ein Flachdach oder ein geneigtes Dach handelt.
-              Nur bei geneigten Dächern folgen weitere Abfragen zu Ausrichtung und Neigung. Diese Information ist wichtig,
-              um das Solarpotential Ihres Daches zu bewerten.</p>
-            <p>Tragen Sie die entsprechenden Werte ein. Falls Ihnen keine genauen Angaben vorliegen, genügt eine Schätzung.</p>
+            <p>Geben Sie an, ob Ihr Gebäude ein Flachdach oder ein Steildach hat. Ein Flachdach hat eine sehr geringe Neigung und verläuft nahezu waagerecht. Nur bei geneigten Dächern fragen wir zusätzlich nach Ausrichtung und Neigung, da diese Angaben für die Bewertung des Solarpotenzials wichtig sind.
+Tragen Sie die entsprechenden Werte ein. Falls Ihnen keine genauen Angaben vorliegen, reicht eine Schätzung aus.</p>
           </div>
         </div>
       </div>
       <div class="help"></div>
     </div>
     <div id="flat_roof" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this">{{ flat_roof.content | safe }}</div>
-    <div class="step-question">
-<div class="step-container compass-container">
-
-  <div class="svg-wrapper">
-      <svg class="compass-svg" width="300px" height="300px" viewBox="0 0 1200 1200" xmlns="http://www.w3.org/2000/svg">
-        <path d="m1152.4 600-331.45-110.48 55.266-165.74-165.74 55.266-110.48-331.5-110.48 331.5-165.74-55.266 55.219 165.74-331.4 110.48 331.45 110.48-55.266 165.74 165.74-55.219 110.48 331.45 110.48-331.45 165.74 55.219-55.266-165.74zm-804.19-258.32 138.37 46.125-23.062 69.188zm380.95 122.63-124.55 124.55v-498.19l98.531 295.69zm7.3125 278.72 115.31 115.31-138.37-46.125zm77.203-39.844-77.953 25.969-124.6-124.5h498.19zm-1.4531-216.61-69.188-23.062 115.31-115.31zm-425.86 10.219 77.953-25.969 124.5 124.55h-498.19zm1.4531 216.61 69.188 23.062-115.31 115.31zm107.53 95.906-24.516-73.594 124.5-124.55v498.19l-98.531-295.69z"/>
-      </svg>
-
-      <div id="roof_orientation_buttons"
-           hx-post="{% url 'roof_orientation_buttons' %}"
-           hx-trigger="change from:input[name='flat_roof]"
-           hx-swap="innerHTML"
-           hx-include="this">
-          {% for radio in form.roof_orientation %}
-            <div class="radio-position {{ radio.choice_value }}">
-              {{ radio.tag }}
-            </div>
-          {% endfor %}
-      </div>
-  </div>
-
-  <div class="help"></div>
-</div>
-
-
-    </div>
+    <div id="roof_orientation" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this">{{ roof_orientation.content | safe }}</div>
     <div class="step-question">
       <div class="step-container">
         <div id="roof_inclination_known"
@@ -57,16 +27,10 @@
         <div class="help"></div>
       </div>
     </div>
-    <div class="step-question">
-      <div class="step-container">
         <div id="roof_inclination"
           hx-post=""
           hx-trigger="keyup change delay:1000ms"
           hx-swap="show:bottom"
-          hx-include="this"
-          class="main">{{ roof_inclination.content | safe }}</div>
-        <div class="help"></div>
-      </div>
-    </div>
+          hx-include="this">{{ roof_inclination.content | safe }}</div>
   </section>
 {% endblock content %}

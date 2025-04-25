@@ -1,4 +1,4 @@
-import heat.settings as heat_settings
+from . import settings as heat_settings
 
 
 class SidebarNavigationMixin:
@@ -66,15 +66,15 @@ class SidebarNavigationMixin:
                 "object": views.IntroInventory,
                 "url": "heat:intro_inventory",
                 "steps": [
-                    {"name": "Gebäudeart", "object": flows.BuildingTypeFlow, "url": "heat:building_type"},
+                    {"name": "Gebäude", "object": flows.BuildingTypeFlow, "url": "heat:building_type"},
                     {"name": "Dämmmaßnahmen", "object": flows.InsulationFlow, "url": "heat:insulation"},
                     {
-                        "name": "Heizung & Warmwasser",
-                        "object": flows.HotwaterHeatingFlow,
-                        "url": "heat:hotwater_heating",
+                        "name": "Heizung",
+                        "object": flows.HeatingFlow,
+                        "url": "heat:heating",
                     },
+                    {"name": "Warmwasser", "object": flows.HotwaterFlow, "url": "heat:hotwater"},
                     {"name": "Dach", "object": flows.RoofFlow, "url": "heat:roof"},
-                    {"name": "Heizung", "object": flows.HeatingFlow, "url": "heat:heating"},
                     {"name": "PV-Anlage", "object": flows.PVSystemFlow, "url": "heat:pv_system"},
                 ],
             },

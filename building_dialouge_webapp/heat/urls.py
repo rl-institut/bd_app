@@ -14,10 +14,9 @@ urlpatterns = [
     path("building_type/", flows.BuildingTypeFlow.as_view(), name="building_type"),
     path("dead_end_monument/", views.DeadEndMonumentProtection.as_view(), name="dead_end_monument_protection"),
     path("insulation", flows.InsulationFlow.as_view(), name="insulation"),
-    path("hotwater_heating/", flows.HotwaterHeatingFlow.as_view(), name="hotwater_heating"),
+    path("hotwater_heating/", flows.HeatingFlow.as_view(), name="heating"),
+    path("heating/", flows.HotwaterFlow.as_view(), name="hotwater"),
     path("roof/", flows.RoofFlow.as_view(), name="roof"),
-    path("roof_orientation_buttons/", views.roof_orientation_buttons, name="roof_orientation_buttons"),
-    path("heating/", flows.HeatingFlow.as_view(), name="heating"),
     path("pv_system/", flows.PVSystemFlow.as_view(), name="pv_system"),
     # step 2 renovation request
     path("intro_renovation/", views.IntroRenovation.as_view(), name="intro_renovation"),
@@ -32,4 +31,5 @@ urlpatterns = [
     path("next_steps/", views.NextSteps.as_view(), name="next_steps"),
     # htmx redirected views
     path("delete_flow/", views.delete_flow, name="delete_flow"),
+    path("dev/session/", views.show_session),
 ]

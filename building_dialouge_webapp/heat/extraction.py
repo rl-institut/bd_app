@@ -1,14 +1,9 @@
-from pathlib import Path
-
 import pandas as pd
-
-# define the paths
-DATA_PATH = Path(Path(__file__).parent)
-# should be something like: DATA_PATH = '/home/miria/git_repos/bd_app/building_dialouge_webapp/heat'
+from django.conf import settings
 
 
 def full_path(filename):
-    return Path(DATA_PATH) / "data/data_raw" / filename
+    return settings.DATA_DIR / "profiles" / f"hourly_{filename}"
 
 
 cop_air_path = full_path("profile_cop_air_raw.csv")
@@ -18,6 +13,7 @@ cop_brine_path = full_path("profile_cop_brine_raw.csv")
 hotwater_pp_path = full_path("profile_hotwater_raw.csv")
 
 load_path = full_path("profile_load_raw.csv")
+heat_path = full_path("profile_heat_raw.csv")
 
 pv_path = full_path("profile_PV_raw.csv")
 
@@ -229,3 +225,8 @@ def solarthermal(type_sth: str, type_temp: int, elev_angle: int, direc_angle: in
 
     # extract desired column as timeseries and return it
     return df_sth[column_name]
+
+
+def heat() -> pd.Series:
+    """Read-in heat profile."""
+    return pd.read_csv(heat_path)["profile_heat"]
