@@ -1,33 +1,31 @@
-/* Container for SVG + Buttons */
-.compass-container {
-  position: relative;
-  width: 300px; height: 300px;
-  margin: 1rem auto;
+$radius: 7rem;
+
+@mixin pos($deg) {
+  transform: translate(-50%, -50%) rotate($deg) translate(0, -$radius) rotate(-$deg);
 }
 
-/* make SVG fill the container */
-.compass-svg {
-  width: 100%; height: 100%; display: block;
+.compass-group        { position: relative; width: 16rem; height: 16rem; margin: 2rem auto; }
+.compass-svg          { width: 100%; height: 100%; fill: #cfcfcf; position: relative; z-index: 1; }
+
+.compass-option       { position: absolute; top: 50%; left: 50%; z-index: 2; }
+
+.compass-option--n  { @include pos(  0deg); }
+.compass-option--ne { @include pos( 45deg); }
+.compass-option--e  { @include pos( 90deg); }
+.compass-option--se { @include pos(135deg); }
+.compass-option--s  { @include pos(180deg); }
+.compass-option--sw { @include pos(225deg); }
+.compass-option--w  { @include pos(270deg); }
+.compass-option--nw { @include pos(315deg); }
+
+/* visible radio */
+.compass-option input[type="radio"] {
+  width: 1.1rem;
+  height: 1.1rem;
 }
 
-/* position each label around the compass */
-.radio-position {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  display: flex; align-items: center; gap: .25rem;
-}
+/* text beside radio */
+.compass-side-label   { margin-left: .4rem; font-weight: 600; cursor: pointer; }
 
-/* compass-point coordinates */
-.radio-position.n  { top: 5%;  left: 50%; }
-.radio-position.ne { top: 18%; left: 82%; }
-.radio-position.e  { top: 50%; left: 95%; }
-.radio-position.se { top: 82%; left: 82%; }
-.radio-position.s  { top: 95%; left: 50%; }
-.radio-position.sw { top: 82%; left: 18%; }
-.radio-position.w  { top: 50%; left:  5%; }
-.radio-position.nw { top: 18%; left: 18%; }
-
-/* enlarge the radio for touch targets */
-.radio-position input[type="radio"] {
-  transform: scale(1.2);
-}
+/* highlight */
+.compass-option input[type="radio"]:checked + .compass-side-label { color: #007bff; }

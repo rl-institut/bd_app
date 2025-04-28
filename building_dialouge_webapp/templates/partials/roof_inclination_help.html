@@ -1,4 +1,12 @@
-<form id="inclinationKnownForm">
-  {% csrf_token %}
-  {{ form.roof_inclination_known }}  {# oder manuell rendern wie oben #}
-</form>
+<div class="step-question">
+  <div class="step-container">
+    <div class="main">
+      {{ form }}
+      {% csrf_token %}
+      <div class="info-text">
+        <p>Die Dachneigung beschreibt den Winkel, in dem die Dachfläche zur Horizontalen geneigt ist, und wird in Grad (°) angegeben. In der Solarthermie beeinflusst sie die Effizienz der Solarkollektoren, da sie den Einfallswinkel des Sonnenlichts bestimmt.
+<b><a href="https://http.cat/status/404" target="_blank" rel="noopener noreferrer">(So berechne ich die Dachneigung)</a></b></p>
+      </div>
+    </div>
+  </div>
+</div>

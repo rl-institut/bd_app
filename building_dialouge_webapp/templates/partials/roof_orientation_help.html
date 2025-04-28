@@ -1,27 +1,11 @@
-{% csrf_token %}
-
-<div class="compass-container">
-  {# –– Compass SVG –– #}
-  <svg class="compass-svg" width="300" height="300" viewBox="0 0 1200 1200"
-       xmlns="http://www.w3.org/2000/svg">
-    <path d="m1152.4 600-331.45-110.48 55.266-165.74-165.74 55.266-110.48-331.5-110.48 331.5-165.74-55.266 55.219 165.74-331.4 110.48 331.45 110.48-55.266 165.74 165.74-55.219 110.48 331.45 110.48-331.45 165.74 55.219-55.266-165.74zm-804.19-258.32 138.37 46.125-23.062 69.188zm380.95 122.63-124.55 124.55v-498.19l98.531 295.69zm7.3125 278.72 115.31 115.31-138.37-46.125zm77.203-39.844-77.953 25.969-124.6-124.5h498.19zm-1.4531-216.61-69.188-23.062 115.31-115.31zm-425.86 10.219 77.953-25.969 124.5 124.55h-498.19zm1.4531 216.61 69.188 23.062-115.31 115.31zm107.53 95.906-24.516-73.594 124.5-124.55v498.19l-98.531-295.69z"/>
-  </svg>
-
-  {# –– Buttons positioned absolutely –– #}
-  {% for value,label in form.fields.roof_orientation.choices %}
-    <label class="radio-position {{ value }}">
-      <input
-        type="radio"
-        name="roof_orientation"
-        value="{{ value }}"
-        required
-        hx-post="{% url 'heat:roof' %}"
-        hx-trigger="change"
-        hx-target="#roof_inclination_known"
-        hx-swap="innerHTML"
-        hx-include="this"
-      >
-      <span class="radio-label">{{ label }}</span>
-    </label>
-  {% endfor %}
+<div class="step-question">
+  <div class="step-container">
+    <div class="main">
+      {{ form }}
+      {% csrf_token %}
+      <div class="info-text">
+        <p>Wählen Sie die Himmelsrichtung, in die Ihr Dach überwiegend zeigt: Norden (N), Nordosten (NO), Osten (O), Südosten (SO), Süden (S), Südwesten (SW), Westen (W) oder Nordwesten (NW).</p>
+      </div>
+    </div>
+  </div>
 </div>
