@@ -1,49 +1,73 @@
-body {
-  color: #545f71;
-}
-.energy_efficiency {
-  margin-left: 20px;
-  width: 60%;
-}
+.results {
+  .info-box {
+    background-color: $grey-050;
+    font-size: $font-size-sm;
+    color: $grey-500;
+    padding: 1rem;
+    margin-top: 1rem;
+    border-radius: $border-radius;
+  }
 
-// generel Tabs on results Page (Consumption, Cost and Emission)
-.result-tabs{
-  .tab-header{
+  // generel Tabs on results Page (Consumption, Cost and Emission)
+  .result-tabs {
+    .tab-header {
+      display: inline-flex;
+      background-color: $grey-100;
+      border-radius: 100px;
+      overflow: hidden;
+      margin-top: 4rem;
+      margin-bottom: 4rem;
+    }
+
     .tab-button {
-      color: #9ca3af;
-      font-weight: 600;
-      padding: 0.5rem 1rem;
-      border-bottom: 2px solid transparent;
-      background: none;
+      padding: 0.5rem 2rem;
+      background-color: $grey-100;
+      color: $grey-800;
+      border: none;
+      font-size: 1rem;
+      font-weight: 700;
+      min-width: 12rem;
       cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
 
-      &.active {
-        color: #111827;
-        border-color: #9ca3af;
+      &:hover {
+        background-color: $green-500;
       }
 
       &:focus {
         outline: none;
       }
+
+      &.active {
+        background-color: $green-400;
+      }
+
+      &:not(:last-child) {
+        margin-right: -1px;
+      }
     }
-  }
 
-  .tab-content {
-    display: none;
-    width: 70%;
-    margin-right: 20%;
-    margin-top: 1rem; // mt-4
-    border: 5px solid #e3e3e3;
-    border-top: none;
-    color: #545f71;
+    .tab-content {
+      display: none;
+      width: 70%;
+      margin-right: 20%;
+      margin-top: 1rem; // mt-4
+      border: 5px solid #e3e3e3;
+      border-top: none;
+      color: #545f71;
 
 
-    &.active {
-      display: block;
+      &.active {
+        display: block;
+      }
     }
   }
 }
 
+.energy_efficiency {
+  margin-left: 20px;
+  width: 60%;
+}
 
 .accordion {
   width: 50%;
