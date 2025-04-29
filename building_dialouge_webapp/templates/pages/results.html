@@ -18,37 +18,42 @@
         <p> Wählen Sie eine Kategorie aus, um weitere Details zu Energieverbrauch, Kosten oder CO₂-Einsparungen zu erhalten.</p>
       </div>
       <div class="result-tabs">
-        <div class="tab-header">
-          <button class="tab-button active" data-tab="tab-consumption">Verbrauch</button>
-          <button class="tab-button" data-tab="tab-cost">Kosten</button>
-          <button class="tab-button" data-tab="tab-emission">Emissionen</button>
+        <div>
+          <div class="tab-header">
+            <button class="tab-button active" data-tab="tab-consumption">Verbrauch</button>
+            <button class="tab-button" data-tab="tab-cost">Kosten</button>
+            <button class="tab-button" data-tab="tab-emission">Emissionen</button>
+          </div>
         </div>
         <div class="tab-content active" id="tab-consumption">
           <!-- Verbrauch-Inhalt -->
           <h2 class="accordion-header" id="panelsStayOpen-headingOne">
               Verbrauch
           </h2>
-          <p>
+          <p class="results__text">
             Hier sehen Sie Ihren aktuellen Endenergiebedarf für Raumwärme und Warmwasser im Vergleich zu den
             von Ihnen erstellten Sanierungsszenarien.
             Die Berechnung des heutigen Bedarfs basiert auf Ihren Angaben und der Zuordnung Ihres Gebäudes zu einem von
             rund 665.000 standardisierten Gebäudetypen. So können Sie einschätzen, wie sich verschiedene Maßnahmen auf
             den Energiebedarf auswirken würden.
           </p>
-          <strong>Heizenergieverbrauch in kWh/(m²*a) (Endenergie)</strong>
-          <object class="energy_efficiency"
-                      type="image/svg+xml"
-                      data="/static/images/svg/energy_consumption_index_workshop.svg"></object>
-          <p>Der Energieverbrauch Ihres Gebäudes hängt von der verbauten Heizung ab und unterliegt saisonalen Schwankungen:</p>
-          <br />
-          <strong>Heizlastprofil in kWh/Monat</strong>
-          <div id="heating_chart" class="chart_big"></div>
-          <p>
+          <h3>Heizenergieverbrauch in kWh/(m²*a) (Endenergie)</h3>
+          <div class="results__content">
+            <object class="energy_efficiency"
+            type="image/svg+xml"
+            data="/static/images/svg/energy_consumption_index_workshop.svg"></object>
+          </div>
+          <p class="results__text">Der Energieverbrauch Ihres Gebäudes hängt von der verbauten Heizung ab und unterliegt saisonalen Schwankungen:</p>
+          <h3>Heizlastprofil in kWh/Monat</h3>
+          <div class="results__content">
+            <div id="heating_chart" class="chart_big"></div>
+          </div>
+          <p class="results__text">
             In dieser Übersicht sehen Sie, wie sich die von Ihnen im Szenario gewählten Sanierungsmaßnahmen und Technologiewechsel
             auf den Energieverbrauch Ihres Gebäudes auswirken. Für jede Maßnahme wird die prozentuale Veränderung im
             Energieverbrauch in % angegeben, sodass Sie den Effekt einzelner Maßnahme einfacher nachvollziehen können.
           </p>
-          <strong>Energetische Einsparung in %:</strong>
+          <h3>Energetische Einsparung in %:</h3>
           {{ consumption_table_html|safe }}
         </div>
         <div class="tab-content" id="tab-cost">

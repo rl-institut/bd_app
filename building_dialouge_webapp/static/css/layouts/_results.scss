@@ -10,6 +10,14 @@
 
   // generel Tabs on results Page (Consumption, Cost and Emission)
   .result-tabs {
+    max-width: 60rem;
+
+    div:has(.tab-header) {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
+
     .tab-header {
       display: inline-flex;
       background-color: $grey-100;
@@ -49,18 +57,36 @@
 
     .tab-content {
       display: none;
-      width: 70%;
-      margin-right: 20%;
-      margin-top: 1rem; // mt-4
-      border: 5px solid #e3e3e3;
       border-top: none;
-      color: #545f71;
-
 
       &.active {
         display: block;
       }
     }
+  }
+
+  h2 {
+    font-size: $font-size-xl;
+    font-weight: 700;
+  }
+
+  h3 {
+    font-size: $font-size-md;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  &__text {
+    padding-top: 2rem;
+    font-size: $font-size-md;
+    color: $grey-500;
+    padding-bottom: 1rem;
   }
 }
 
@@ -324,19 +350,19 @@ table.consumption_table td.no-entry {
     display: none;
 }
 
+.tab-content table th,
+.tab-content table td{
+  width: 25%;
+  text-align: right;
+  vertical-align: middle;
+}
+
 .tab-content table th:first-child,
 .tab-content table td:first-child {
-  width: 80%;
+  width: 50%;
   text-align: left;
   vertical-align: top;
   word-wrap: break-word;
-}
-
-.tab-content table th:last-child,
-.tab-content table td:last-child {
-  width: 20%;
-  text-align: right;
-  vertical-align: middle;
 }
 
 #tab_scenario1:checked ~ .tabs-content .tab_scenario1 {
