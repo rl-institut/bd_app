@@ -69,6 +69,9 @@ class BuildingTypeForm(ValidationForm):
         ],
         widget=HouseTypeSelect(),
     )
+
+
+class BuildingDetailsForm(ValidationForm):
     construction_year = forms.IntegerField(
         label="Baujahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),

@@ -16,10 +16,21 @@
       <div class="help"></div>
     </div>
     <div id="building_type" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this">{{ building_type.content | safe }}</div>
-        <div id="monument_protection"
+    <div class="step-question">
+      <div class="step-container">
+        <div id="building_details"
           hx-post=""
-          hx-trigger="change"
+          hx-trigger="keyup change delay:1000ms"
           hx-swap="show:bottom"
-          hx-include="this">{{ monument_protection.content | safe }}</div>
+          hx-include="this"
+          class="main">{{ building_details.content | safe }}</div>
+        <div class="help"></div>
+      </div>
+    </div>
+    <div id="monument_protection"
+      hx-post=""
+      hx-trigger="change"
+      hx-swap="show:bottom"
+      hx-include="this">{{ monument_protection.content | safe }}</div>
   </section>
 {% endblock content %}

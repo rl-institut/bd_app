@@ -600,6 +600,14 @@ class BuildingTypeFlow(SidebarNavigationMixin, Flow):
             form_class=forms.BuildingTypeForm,
             template_name="partials/building_type_help.html",
         ).transition(
+            Next("building_details"),
+        )
+
+        self.building_details = FormState(
+            self,
+            target="building_details",
+            form_class=forms.BuildingDetailsForm,
+        ).transition(
             Next("monument_protection"),
         )
 
