@@ -262,19 +262,6 @@ class HeatingStorageCapacityForm(ValidationForm):
     )
 
 
-class RoofTypeSelect(RadioSelect):
-    template_name = "forms/energy_source.html"
-
-    INFOS = {
-        "exists": "Besitzt ihr Gebäude ein Flachdach?",
-    }
-
-    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
-        option = super().create_option(name, value, label, selected, index, subindex, attrs)
-        option["info"] = self.INFOS.get(value, "")
-        return option
-
-
 class RoofTypeForm(forms.Form):
     flat_roof = forms.ChoiceField(
         label="Flachdach",
@@ -282,7 +269,7 @@ class RoofTypeForm(forms.Form):
             ("exists", "Ja"),
             ("doesnt_exist", "Nein"),
         ],
-        widget=RoofTypeSelect(),
+        widget=forms.RadioSelect,
     )
 
 
