@@ -1,7 +1,45 @@
+{# templates/partials/roof_orientation_help.html #}
 <div class="step-question">
   <div class="step-container">
     <div class="main">
-      {{ form }}
+
+      {# Manuelles Rendering der Compass-Radios #}
+      <fieldset>
+        <legend>{{ form.roof_orientation.label }}</legend>
+
+        <div class="compass-group">
+
+          <!-- zentrale Kompass-SVG -->
+          <svg class="compass-svg" viewBox="0 0 1200 1200" aria-hidden="true">
+             <path d="m1152.4 600-331.45-110.48 55.266-165.74-165.74 55.266-110.48-331.5-110.48 331.5-165.74-55.266 55.219 165.74-331.4 110.48 331.45 110.48-55.266 165.74 165.74-55.219 110.48 331.45 110.48-331.45 165.74 55.219-55.266-165.74zm-804.19-258.32 138.37 46.125-23.062 69.188zm380.95 122.63-124.55 124.55v-498.19l98.531 295.69zm7.3125 278.72 115.31 115.31-138.37-46.125zm77.203-39.844-77.953 25.969-124.6-124.5h498.19zm-1.4531-216.61-69.188-23.062 115.31-115.31zm-425.86 10.219 77.953-25.969 124.5 124.55h-498.19zm1.4531 216.61 69.188 23.062-115.31 115.31zm107.53 95.906-24.516-73.594 124.5-124.55v498.19l-98.531-295.69z"/>
+          </svg>
+
+          {# loop über die Choices des BoundField #}
+          {% for value, label in form.roof_orientation.field.choices %}
+            {# ID bauen: id_<fieldname>_<index> #}
+            {% with
+                 base="id_"|add:form.roof_orientation.html_name|add:"_"
+                 idx=forloop.counter0 %}
+              {% with html_id=base|add:idx %}
+                <div class="compass-option compass-option--{{ value }}">
+                  <input
+                    type="radio"
+                    name="{{ form.roof_orientation.html_name }}"
+                    id="{{ html_id }}"
+                    value="{{ value }}"
+                    {% if form.roof_orientation.value == value %}checked{% endif %}
+                  />
+                  <label class="compass-side-label" for="{{ html_id }}">
+                    {{ label }}
+                  </label>
+                </div>
+              {% endwith %}
+            {% endwith %}
+          {% endfor %}
+
+        </div>
+      </fieldset>
+
       {% csrf_token %}
       <div class="info-text">
         <p>Wählen Sie die Himmelsrichtung, in die Ihr Dach überwiegend zeigt: Norden (N), Nordosten (NO), Osten (O), Südosten (SO), Süden (S), Südwesten (SW), Westen (W) oder Nordwesten (NW).</p>
