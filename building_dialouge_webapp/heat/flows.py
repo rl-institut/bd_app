@@ -693,7 +693,7 @@ class HeatingFlow(SidebarNavigationMixin, Flow):
             self,
             target="solar_thermal_exists",
             form_class=forms.HeatingSolarExistsForm,
-            template_name="partials/hotwater_heating_solar_help.html",
+            template_name="partials/heating_solar_help.html",
         ).transition(
             Switch("solar_thermal_exists").case("doesnt_exist", "stop").default("solar_thermal_area"),
         )
