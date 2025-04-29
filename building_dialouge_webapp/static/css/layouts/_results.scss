@@ -260,6 +260,17 @@ table.summary_table th {
   color: #000;
 }
 
+table.consumption_table thead {
+  .scenario1 span,
+  .scenario3 span {
+    color: $body-color;
+  }
+
+  .scenario2 span {
+    color: #fff;
+  }
+}
+
 .scenario1 {
   background-color: #1b9e77;
   color: #fff;
@@ -420,6 +431,7 @@ table.consumption_table td.no-entry {
   border-radius: 100px;
   text-align: center;
   font-size: $font-size-sm;
+  font-weight: 600;
 }
 
 .tabs-container .tab-1 {
@@ -488,7 +500,7 @@ table.consumption_table td.no-entry {
   display: inline-block;
   position: relative;
   z-index: 100;
-  background-color: #007bff;
+  background-color: $grey-600;
   color: white;
   border-radius: 50%;
   width: 20px;
@@ -501,17 +513,20 @@ table.consumption_table td.no-entry {
 
   /* Style for the tooltip on hover */
   &:hover::after {
-    content: attr(data-tooltip); /* Get the tooltip text from the data-tooltip attribute */
+    content: attr(data-tooltip);
     position: absolute;
-    background-color: #333;
+    display: inline-block;
+    width: 20rem;
+    white-space: normal;
+    overflow-wrap: break-word;
+    background-color: $grey-800;
     color: #fff;
-    padding: 5px;
+    padding: 0.5rem 1rem;
     border-radius: 4px;
     font-size: 12px;
-    top: 100%; /* Place the tooltip below the icon */
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
-    white-space: nowrap;
     z-index: 10;
-  }
+  }  
 }
