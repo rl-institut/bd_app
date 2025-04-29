@@ -7,7 +7,7 @@ $radius: 8.5rem;
 .compass-group        { position: relative; width: 16rem; height: 16rem; margin: 5rem auto; }
 .compass-svg          { width: 100%; height: 100%; fill: #cfcfcf; position: relative; z-index: 1; }
 
-.compass-option       { position: absolute; top: 48.5%; left: 52%; transform: translate(-50%, -50%);
+.compass-option       { position: absolute; top: 48.5%; left: 52%; transform: translate(-50%, -50%);z-index: 2;
 .compass-side-label {
 position: absolute;
 font-weight: 600;
