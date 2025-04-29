@@ -317,7 +317,6 @@ class PVSystemCapacityForm(ValidationForm):
     pv_capacity = forms.IntegerField(
         label="Nennleistung in kWp",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        template_name="forms/pv-capacity.html",
     )
 
 
