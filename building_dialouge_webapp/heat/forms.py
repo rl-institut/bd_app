@@ -450,13 +450,13 @@ class RenovationRequestForm(ValidationForm):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
-    facade_renovation_details = forms.ChoiceField(
+    facade_renovation_details = forms.MultipleChoiceField(
         label="",
         choices=[
             ("facade_insulate_renovation", "Fassade dämmen"),
             ("facade_glaster_renovation", "Fassade verputzen"),
         ],
-        widget=forms.RadioSelect,
+        widget=forms.CheckboxSelectMultiple,
         required=False,
     )
     roof_renovation_choice = forms.MultipleChoiceField(
@@ -467,13 +467,13 @@ class RenovationRequestForm(ValidationForm):
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
-    roof_renovation_details = forms.ChoiceField(
+    roof_renovation_details = forms.MultipleChoiceField(
         label="",
         choices=[
             ("cover", "Dach decken"),
             ("expand", "Dach ausbauen"),
         ],
-        widget=forms.RadioSelect,
+        widget=forms.CheckboxSelectMultiple,
         required=False,
     )
     window_renovation_choice = forms.MultipleChoiceField(
