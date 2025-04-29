@@ -259,7 +259,6 @@ class HeatingStorageCapacityForm(ValidationForm):
     heating_storage_capacity = forms.IntegerField(
         label="Wärmespeicher Fassungsvermögen in l",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        template_name="forms/heating-storage-capacity.html",
     )
 
 
