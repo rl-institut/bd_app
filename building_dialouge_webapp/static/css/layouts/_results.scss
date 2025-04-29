@@ -1,49 +1,163 @@
-body {
-  color: #545f71;
-}
-.energy_efficiency {
-  margin-left: 20px;
-  width: 60%;
-}
+.results {
+  .info-box {
+    background-color: $grey-050;
+    font-size: $font-size-sm;
+    color: $grey-500;
+    padding: 1rem;
+    margin-top: 1rem;
+    border-radius: $border-radius;
+  }
 
-// generel Tabs on results Page (Consumption, Cost and Emission)
-.result-tabs{
-  .tab-header{
+  // generel Tabs on results Page (Consumption, Cost and Emission)
+  .result-tabs {
+    max-width: 60rem;
+
+    div:has(> .tab-header) {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
+
+    .tab-header {
+      display: inline-flex;
+      background-color: $grey-100;
+      border-radius: 100px;
+      overflow: hidden;
+      margin-top: 4rem;
+      margin-bottom: 4rem;
+    }
+
     .tab-button {
-      color: #9ca3af;
-      font-weight: 600;
-      padding: 0.5rem 1rem;
-      border-bottom: 2px solid transparent;
-      background: none;
+      padding: 0.5rem 2rem;
+      background-color: $grey-100;
+      color: $grey-800;
+      border: none;
+      font-size: 1rem;
+      font-weight: 700;
+      min-width: 12rem;
       cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
 
-      &.active {
-        color: #111827;
-        border-color: #9ca3af;
+      &:hover {
+        background-color: $green-500;
       }
 
       &:focus {
         outline: none;
       }
+
+      &.active {
+        background-color: $green-400;
+      }
+
+      &:not(:last-child) {
+        margin-right: -1px;
+      }
+    }
+
+    .tab-content {
+      display: none;
+      border-top: none;
+
+      &.active {
+        display: block;
+      }
     }
   }
 
-  .tab-content {
-    display: none;
-    width: 70%;
-    margin-right: 20%;
-    margin-top: 1rem; // mt-4
-    border: 5px solid #e3e3e3;
-    border-top: none;
-    color: #545f71;
+  h2 {
+    font-size: $font-size-xl;
+    font-weight: 700;
+  }
 
+  h3 {
+    font-size: $font-size-md;
+    font-weight: 700;
+    text-align: center;
+  }
 
-    &.active {
-      display: block;
+  &__content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  &__text {
+    padding-top: 2rem;
+    font-size: $font-size-md;
+    color: $grey-500;
+    padding-bottom: 1rem;
+  }
+
+  div:has(> .results__cost-buttons) {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  &__cost-buttons {
+    display: inline-flex;
+    background-color: $grey-100;
+    border-radius: 100px;
+    overflow: hidden;
+  
+    button {
+      padding: 0.25rem 1rem;
+      background-color: $grey-200;
+      color: $body-color;
+      border: none;
+      font-size: $font-size-sm;
+      font-weight: 700;
+      min-width: 8rem;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+
+      &:hover {
+        background-color: $grey-800;
+        color: #fff;
+      }
+  
+      &:focus {
+        outline: none;
+      }
+  
+      &.active {
+        background-color: $body-color;
+        color: #fff;
+      }
+  
+      &:not(:last-child) {
+        margin-right: -1px;
+      }
+    }
+  }
+
+  &__scenarios {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+
+    .tabs-content {
+      padding-bottom: 4rem;
+    }
+  }
+
+  &__values {
+    display: flex;
+    justify-content: space-around;
+    gap: 2rem;
+
+    & > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
   }
 }
 
+.energy_efficiency {
+  margin-left: 20px;
+  width: 60%;
+}
 
 .accordion {
   width: 50%;
@@ -146,19 +260,31 @@ table.summary_table th {
   color: #000;
 }
 
+table.consumption_table thead {
+  .scenario1 span,
+  .scenario3 span {
+    color: $body-color;
+  }
+
+  .scenario2 span {
+    color: #fff;
+  }
+}
+
 .scenario1 {
   background-color: #1b9e77;
   color: #fff;
-  padding: 5px;
+  padding: 0.25rem 0.5rem;
+  font-weight: 600;
+  text-align: center;
 }
 
 .scenario2 {
   background-color: #7570b3;
   color: #fff;
-  padding: 5px;
-}
-
-table.consumption_table td {
+  padding: 0.25rem 0.5rem;
+  font-weight: 600;
+  text-align: center;
 }
 
 table.consumption_table td.no-entry {
@@ -192,8 +318,8 @@ table.consumption_table td.no-entry {
 .scenario1{
   &.summary_table th {
     background-color: #1b9e77;
-    color: #fff;
-    padding: 5px;
+    color: $body-color;
+    padding: 0.5rem 1rem;
   }
 }
 
@@ -201,15 +327,15 @@ table.consumption_table td.no-entry {
   &.summary_table th{
     background-color: #7570b3;
     color: #fff;
-    padding: 5px;
+    padding: 0.5rem 1rem;
   }
 }
 
 .scenario3 {
   &.summary_table th{
     background-color: #ff9900;
-    color: #fff;
-    padding: 5px;
+    color: $body-color;
+    padding: 0.5rem 1rem;
   }
 }
 
@@ -230,39 +356,65 @@ table.consumption_table td.no-entry {
   }
 
 .electricity {
-  background-color: #b3de69;
   font-weight: bold;
-  padding: 5px;
-  }
+  padding: 0;
+  text-decoration-line: underline;
+  text-decoration-color: #b3de69;
+  text-decoration-thickness: 4px;
+}
 
 .heating {
-  background-color: #fb8072;
   font-weight: bold;
-  padding: 5px;
-  }
+  padding: 0;
+  text-decoration-line: underline;
+  text-decoration-color: #fb8072;
+  text-decoration-thickness: 4px;
+}
 
 .saving_forest {
-  background-color: #f9f9f9;
-  padding: 10px;
-}
+  background-color: $grey-050;
+  padding: 2rem;
 
-.saving_emission {
-  background-color: #00604e;
-  color: #fff;
-  padding: 5px;
-}
+  .saving_emission {
+    display: inline-block;
+    text-align: center;
+    font-weight: 700;
+    background-color: #c1e2dc;
+    color: #00604e;
+    padding: 0.25rem 0.5rem;
+    margin-top: 0.25rem;
+  }
 
-.hectare {
-  font-weight: bold;
-  font-size: 18px;
-}
+  .plant_in_hand {
+    height: 2rem;
+    margin-bottom: 1rem;
+  }
 
-.plant_in_hand {
-  position: relative;
-  height: 40px;
-  margin-left: 80px;
-  margin-bottom: 20px;
-  z-index: 10;
+  p {
+    font-size: $font-size-sm;
+    color: $grey-500;
+
+    &.important {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: $body-color;
+      font-size: $font-size-lg;
+    }
+  }
+
+  .hectare {
+    font-weight: bold;
+    font-size: $font-size-lg;
+    color: $body-color;
+    margin-top: 0.5rem;
+  }
+
+  .helper {
+    font-size: $font-size-sm;
+    color: $grey-500;
+    text-align: center;
+  }
 }
 
 .tabs-container input[type="radio"] {
@@ -270,12 +422,16 @@ table.consumption_table td.no-entry {
 }
 
 .tabs-container .tab-label {
-    display: inline-block;
-    margin-right: 10px;
-    padding: 10px 20px;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 5px;
+  display: inline-block;
+  margin-right: 0.5rem;
+  padding: 0.25rem 1rem;
+  color: #fff;
+  min-width: 8rem;
+  cursor: pointer;
+  border-radius: 100px;
+  text-align: center;
+  font-size: $font-size-sm;
+  font-weight: 600;
 }
 
 .tabs-container .tab-1 {
@@ -300,19 +456,19 @@ table.consumption_table td.no-entry {
     display: none;
 }
 
+.tab-content table th,
+.tab-content table td{
+  width: 25%;
+  text-align: right;
+  vertical-align: middle;
+}
+
 .tab-content table th:first-child,
 .tab-content table td:first-child {
-  width: 80%;
+  width: 50%;
   text-align: left;
   vertical-align: top;
   word-wrap: break-word;
-}
-
-.tab-content table th:last-child,
-.tab-content table td:last-child {
-  width: 20%;
-  text-align: right;
-  vertical-align: middle;
 }
 
 #tab_scenario1:checked ~ .tabs-content .tab_scenario1 {
@@ -344,7 +500,7 @@ table.consumption_table td.no-entry {
   display: inline-block;
   position: relative;
   z-index: 100;
-  background-color: #007bff;
+  background-color: $grey-600;
   color: white;
   border-radius: 50%;
   width: 20px;
@@ -357,17 +513,20 @@ table.consumption_table td.no-entry {
 
   /* Style for the tooltip on hover */
   &:hover::after {
-    content: attr(data-tooltip); /* Get the tooltip text from the data-tooltip attribute */
+    content: attr(data-tooltip);
     position: absolute;
-    background-color: #333;
+    display: inline-block;
+    width: 20rem;
+    white-space: normal;
+    overflow-wrap: break-word;
+    background-color: $grey-800;
     color: #fff;
-    padding: 5px;
+    padding: 0.5rem 1rem;
     border-radius: 4px;
     font-size: 12px;
-    top: 100%; /* Place the tooltip below the icon */
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
-    white-space: nowrap;
     z-index: 10;
-  }
+  }  
 }
