@@ -340,7 +340,6 @@ class PVSystemBatteryCapacityForm(ValidationForm):
     battery_capacity = forms.IntegerField(
         label="Speicherkapazität in kWh",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        template_name="forms/pv-battery-capacity.html",
     )
 
 
