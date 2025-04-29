@@ -1,13 +1,68 @@
-$radius: 7rem;
+$radius: 8.5rem;
 
 @mixin pos($deg) {
   transform: translate(-50%, -50%) rotate($deg) translate(0, -$radius) rotate(-$deg);
 }
 
-.compass-group        { position: relative; width: 16rem; height: 16rem; margin: 2rem auto; }
+.compass-group        { position: relative; width: 16rem; height: 16rem; margin: 5rem auto; }
 .compass-svg          { width: 100%; height: 100%; fill: #cfcfcf; position: relative; z-index: 1; }
 
-.compass-option       { position: absolute; top: 50%; left: 50%; z-index: 2; }
+.compass-option       { position: absolute; top: 48.5%; left: 52%; transform: translate(-50%, -50%);
+.compass-side-label {
+position: absolute;
+font-weight: 600;
+cursor: pointer;
+}
+}
+.compass-option--n .compass-side-label {
+  bottom: 100%;
+  transform: translateX(-50%);
+  margin-bottom: 0.4rem;
+}
+.compass-option--ne .compass-side-label {
+  bottom: 100%;
+  left: 20%;
+  transform: translate(0.2rem, -0.2rem);
+}
+.compass-option--e .compass-side-label {
+  top: 50%;
+  left: 90%;
+  transform: translateY(-50%);
+  margin-left: 0.4rem;
+}
+
+.compass-option--se .compass-side-label {
+  top: 90%;
+  left: 20%;
+  transform: translate(0.2rem, 0.2rem);
+  margin-top: 0.4rem;
+}
+
+.compass-option--s .compass-side-label {
+  top: 100%;
+  transform: translateX(-50%);
+  margin-top: 0.4rem;
+}
+
+.compass-option--sw .compass-side-label {
+  top: 100%;
+  right: 20%;
+  transform: translate(-0.2rem, 0.2rem);
+}
+
+.compass-option--w .compass-side-label {
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%);
+  margin-right: 0.4rem;
+}
+
+.compass-option--nw .compass-side-label {
+  bottom: 100%;
+  right: 20%;
+  transform: translate(-0.2rem, -0.2rem);
+}
+
 
 .compass-option--n  { @include pos(  0deg); }
 .compass-option--ne { @include pos( 45deg); }
@@ -25,7 +80,12 @@ $radius: 7rem;
 }
 
 /* text beside radio */
-.compass-side-label   { margin-left: .4rem; font-weight: 600; cursor: pointer; }
+.compass-side-label   {
+  margin-left: .4rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 
 /* highlight */
 .compass-option input[type="radio"]:checked + .compass-side-label { color: #007bff; }

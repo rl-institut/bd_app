@@ -1,17 +1,35 @@
+{# templates/forms/compass.html #}
+<pre>DEBUG choices: {{ widget.choices }}</pre>
 <div class="compass-group">
 
+  <!-- central compass rose -->
   <svg class="compass-svg" viewBox="0 0 1200 1200" aria-hidden="true">
     <path d="m1152.4 600-331.45-110.48 55.266-165.74-165.74 55.266-110.48-331.5-110.48 331.5-165.74-55.266 55.219 165.74-331.4 110.48 331.45 110.48-55.266 165.74 165.74-55.219 110.48 331.45 110.48-331.45 165.74 55.219-55.266-165.74zm-804.19-258.32 138.37 46.125-23.062 69.188zm380.95 122.63-124.55 124.55v-498.19l98.531 295.69zm7.3125 278.72 115.31 115.31-138.37-46.125zm77.203-39.844-77.953 25.969-124.6-124.5h498.19zm-1.4531-216.61-69.188-23.062 115.31-115.31zm-425.86 10.219 77.953-25.969 124.5 124.55h-498.19zm1.4531 216.61 69.188 23.062-115.31 115.31zm107.53 95.906-24.516-73.594 124.5-124.55v498.19l-98.531-295.69z"/>
   </svg>
 
-  {% for _g, opts, _idx in widget.optgroups %}
-    {% for o in opts %}
-      <div class="compass-option compass-option--{{ o.value }}">
-        {{ o.tag }}  {# now guaranteed to be <input> #}
-        <label class="compass-side-label" for="{{ o.attrs.id }}">
-          {{ o.label }}
+  {# manually render each radio + label #}
+  {% with base_id="id_"|add:widget.name %}
+    {% for idx in widget.choices|length|make_list %}{% comment %} just to get a loop from 0..7 {% endcomment %}
+    {% endfor %}
+  {% endwith %}
+
+  {# Actually: loop over choices with forloop.counter0 #}
+  {% with base_id="id_"|add:widget.name %}
+    {% for value,label in widget.choices %}
+      <div class="compass-option compass-option--{{ value }}">
+        <input
+          type="radio"
+          name="{{ widget.name }}"
+          id="{{ base_id }}_{{ forloop.counter0 }}"
+          value="{{ value }}"
+          {% if value|stringformat:"s" == widget.value %}checked{% endif %}
+        />
+        <label class="compass-side-label"
+               for="{{ base_id }}_{{ forloop.counter0 }}">
+          {{ label }}
         </label>
       </div>
     {% endfor %}
-  {% endfor %}
+  {% endwith %}
+
 </div>

@@ -286,7 +286,6 @@ class RoofTypeForm(forms.Form):
 
 class CompassRadioSelect(forms.RadioSelect):
     template_name = "forms/compass.html"
-    option_template_name = "forms/compass_radio_option.html"
 
 
 class RoofOrientationForm(ValidationForm):
