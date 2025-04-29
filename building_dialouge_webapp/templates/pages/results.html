@@ -150,14 +150,18 @@
                 <span class="helper">zusätzlicher Wald wäre nötig, um die Einsparungen zu erreichen.</span>
               </div>
             </div>
+          </div>
         </div>
       </div>
-      <div class="help" id="flow-instance-boxes">
-        {% for box in scenario_boxes %}
-          <c-layouts.renovation :box="box"></c-layouts.renovation>
-        {% endfor %}
-      </div>
     </div>
+
+    <div class="help" id="flow-instance-boxes">
+      {% for box in scenario_boxes %}
+        <c-layouts.renovation :box="box"></c-layouts.renovation>
+      {% endfor %}
+    </div>
+  </div>
+
 {% endblock content %}
 
 {% block javascript %}
