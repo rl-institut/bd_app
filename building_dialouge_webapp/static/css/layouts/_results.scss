@@ -12,7 +12,7 @@
   .result-tabs {
     max-width: 60rem;
 
-    div:has(.tab-header) {
+    div:has(> .tab-header) {
       display: flex;
       flex-direction: row;
       justify-content: center;
@@ -87,6 +87,58 @@
     font-size: $font-size-md;
     color: $grey-500;
     padding-bottom: 1rem;
+  }
+
+  div:has(> .results__cost-buttons) {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  &__cost-buttons {
+    display: inline-flex;
+    background-color: $grey-100;
+    border-radius: 100px;
+    overflow: hidden;
+  
+    button {
+      padding: 0.25rem 1rem;
+      background-color: $grey-200;
+      color: $body-color;
+      border: none;
+      font-size: $font-size-sm;
+      font-weight: 700;
+      min-width: 8rem;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+
+      &:hover {
+        background-color: $grey-800;
+        color: #fff;
+      }
+  
+      &:focus {
+        outline: none;
+      }
+  
+      &.active {
+        background-color: $body-color;
+        color: #fff;
+      }
+  
+      &:not(:last-child) {
+        margin-right: -1px;
+      }
+    }
+  }
+
+  &__scenarios {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+
+    .tabs-content {
+      padding-bottom: 4rem;
+    }
   }
 }
 
@@ -242,8 +294,8 @@ table.consumption_table td.no-entry {
 .scenario1{
   &.summary_table th {
     background-color: #1b9e77;
-    color: #fff;
-    padding: 5px;
+    color: $body-color;
+    padding: 0.5rem 1rem;
   }
 }
 
@@ -251,15 +303,15 @@ table.consumption_table td.no-entry {
   &.summary_table th{
     background-color: #7570b3;
     color: #fff;
-    padding: 5px;
+    padding: 0.5rem 1rem;
   }
 }
 
 .scenario3 {
   &.summary_table th{
     background-color: #ff9900;
-    color: #fff;
-    padding: 5px;
+    color: $body-color;
+    padding: 0.5rem 1rem;
   }
 }
 
@@ -280,16 +332,20 @@ table.consumption_table td.no-entry {
   }
 
 .electricity {
-  background-color: #b3de69;
   font-weight: bold;
-  padding: 5px;
-  }
+  padding: 0;
+  text-decoration-line: underline;
+  text-decoration-color: #b3de69;
+  text-decoration-thickness: 4px;
+}
 
 .heating {
-  background-color: #fb8072;
   font-weight: bold;
-  padding: 5px;
-  }
+  padding: 0;
+  text-decoration-line: underline;
+  text-decoration-color: #fb8072;
+  text-decoration-thickness: 4px;
+}
 
 .saving_forest {
   background-color: #f9f9f9;
@@ -320,12 +376,15 @@ table.consumption_table td.no-entry {
 }
 
 .tabs-container .tab-label {
-    display: inline-block;
-    margin-right: 10px;
-    padding: 10px 20px;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 5px;
+  display: inline-block;
+  margin-right: 0.5rem;
+  padding: 0.25rem 1rem;
+  color: #fff;
+  min-width: 8rem;
+  cursor: pointer;
+  border-radius: 100px;
+  text-align: center;
+  font-size: $font-size-sm;
 }
 
 .tabs-container .tab-1 {

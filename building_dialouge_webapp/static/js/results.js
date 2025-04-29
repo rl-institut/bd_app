@@ -19,13 +19,24 @@ const optionsFuture = JSON.parse(document.getElementById("financial_expense_char
 
 function updateEnergyCostChart(period) {
   if (period === 'now') {
-    createChart("financial_expense_chart", optionsNow);  // true = replace all options
+    createChart("financial_expense_chart", optionsNow);
   } else if (period === 'future') {
     createChart("financial_expense_chart", optionsFuture);
   }
-}
-window.updateEnergyCostChart = updateEnergyCostChart;
 
+  document
+    .querySelectorAll('.results__cost-buttons button')
+    .forEach(btn => {
+      const handler = btn.getAttribute('onclick') || '';
+      if (handler.includes(`'${period}'`)) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+}
+
+window.updateEnergyCostChart = updateEnergyCostChart;
 
 // activate and deactivate the tabs (consumption, cost, emission)
 document.addEventListener("DOMContentLoaded", function () {

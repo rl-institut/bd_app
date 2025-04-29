@@ -59,28 +59,29 @@
         <div class="tab-content" id="tab-cost">
           <!-- Kosten-Inhalt -->
           <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-                Kosten
+            Kosten
           </h2>
-          <p>
+          <p class="results__text">
             Hier sehen Sie die Gesamtkosten für jedes Ihrer gewählten Szenarien über unterschiedliche Zeiträume.
             In dieser Wirtschaftlichkeitsbetrachtung fließen Investitions-, Betriebs-, Wartungs- und Brennstoffkosten ein –
             sowohl zum heutigen Zeitpunkt als auch über einen Betrachtungszeitraum von 15 Jahren. So sehen Sie, welchen finanziellen
             Aufwand ein Heizszenario heute und über einen längeren Betrachtungszeitraum verursacht.
             <span class="info-icon" data-tooltip="Nur über einen längeren Zeitraum können langfristige Einsparungen oder Ausgaben durch Sanierung und Technologiewechsel berücksichtigt werden. Auf diese Weise lässt sich der Wert Ihrer Investition für Sie besser einschätzen.">I</span></p>
-              <br />
               <div>
-                <button onclick="updateEnergyCostChart('future')">In 15 Jahren</button>
-                <button onclick="updateEnergyCostChart('now')">Heute</button>
+                <div class="results__cost-buttons">
+                  <button onclick="updateEnergyCostChart('future')" class="active">In 15 Jahren</button>
+                  <button onclick="updateEnergyCostChart('now')">Heute</button>
+                </div>
               </div>
-              <div id="financial_expense_chart" class="chart_big"></div>
-              <br />
-              <p>
+              <div class="results__content">
+                <div id="financial_expense_chart" class="chart_big"></div>
+              </div>
+              <p class="results__text">
                 Hier finden Sie eine detaillierte Aufschlüsselung der Investitionskosten für Sanierungsmaßnahmen sowie
                 Technologiewechsel, der energetischen Aufwendungen und Einsparungen durch Brennstoff- und Betriebskosten sowie
                 der für Sie relevanten Zuschüsse über den Betrachtungszeitraum von 15 Jahren. Die angegebene Summe zeigt, welchen
                 Betrag Sie nach Abzug der Einsparungen selbst aufbringen müssten.</p>
-              <br />
-              <div class="tabs-container">
+              <div class="tabs-container results__scenarios">
                 {# 1) Radio-Buttons + Labels #}
                 {% for scenario in scenarios %}
                   <input type="radio"
@@ -104,14 +105,11 @@
                     </div>
                   {% endfor %}
                 </div>
-                <br />
-                <p>Ihre jährlichen Energiekosten für <span class="electricity">Strom</span> und <span class="heating">Heizung & Warmwasser</span> und Ihr Einsparpotenzial:</p>
-                <br />
-                <br />
-                <strong>Energiekosten in € pro Jahr</strong>
-                <div id="energycost_chart" class="chart_big"></div>
-                <br />
-                <br />
+                <p class="results__text">Ihre jährlichen Energiekosten für <span class="electricity">Strom</span> und <span class="heating">Heizung & Warmwasser</span> und Ihr Einsparpotenzial:</p>
+                <h3>Energiekosten in € pro Jahr</h3>
+                <div class="results__content">
+                  <div id="energycost_chart" class="chart_big"></div>
+                </div>
           </div>
         </div>
         <div class="tab-content" id="tab-emission">
