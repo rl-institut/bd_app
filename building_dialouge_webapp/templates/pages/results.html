@@ -117,28 +117,39 @@
           <h2 class="accordion-header" id="panelsStayOpen-headingThree">
                 Emissionen
           </h2>
-          <p>Je nach eingesetzter Heizung und Sanierungsmaßnahmen fallen unterschiedlich hohe CO<sub>2</sub>-Emissionen an.</p>
-          <br />
-          <p>Für jede Tonne emittiertes CO<sub>2</sub> fallen seit 2021 Kosten an.
-          Diese Kosten werden steigen und einen maßgeblichen Teil der laufenden Energiekosten darstellen:</p>
-          <strong>CO2-Kosten in € pro Jahr</strong>
-          <div id="co2_chart" class="chart_big"></div>
+          <p class="results__text">
+            Je nach eingesetzter Heizung und Sanierungsmaßnahmen fallen unterschiedlich hohe CO<sub>2</sub>-Emissionen an.
+            <br />
+            Für jede Tonne emittiertes CO<sub>2</sub> fallen seit 2021 Kosten an. Diese Kosten werden steigen und einen maßgeblichen Teil der laufenden Energiekosten darstellen:
+          </p>
+          <h3>CO2-Kosten in € pro Jahr</h3>
+          <div class="results__content">
+            <div id="co2_chart" class="chart_big"></div>
+          </div>
           <div class="saving_forest">
-            Sehr gut, die Maßnahmen in deinen
-            <br />
-            Szenarien helfen, <span class="saving_emission">Emissionen zu vermeiden.</span>
-            <object class="plant_in_hand"
-                    type="image/svg+xml"
-                    data="/static/images/svg/plant_in_hand.svg"></object>
-            <br />
-            <br />
-            Zur Einordnung:
-            <br />
-            <br />
-            <span class="hectare">{{ hectare_scenario1 }} Hektar</span> zusätzlicher Wald wäre nötig, um die Einsparungen in <span class="scenario1">Szenario 1</span> zu erreichen.
-            <br />
-            <br />
-            <span class="hectare">{{ hectare_scenario2 }} Hektar</span> zusätzlicher Wald wäre nötig, um die Einsparungen in <span class="scenario2">Szenario 2</span> zu erreichen.
+            <p class="important">
+              <span>
+                Sehr gut, die Maßnahmen in deinen Szenarien helfen,
+              </span>
+              <span class="saving_emission">Emissionen zu vermeiden.</span>
+            </p>
+            <div class="results__content">
+              <object class="plant_in_hand"
+              type="image/svg+xml"
+              data="/static/images/svg/plant_in_hand.svg"></object>
+            </div>
+            <div class="results__values">
+              <div>
+                <span class="scenario1">Szenario 1</span>
+                <span class="hectare">{{ hectare_scenario1 }} Hektar</span>
+                <span class="helper">zusätzlicher Wald wäre nötig, um die Einsparungen zu erreichen.</span>
+              </div>
+              <div>
+                <span class="scenario2">Szenario 2</span>
+                <span class="hectare">{{ hectare_scenario2 }} Hektar</span>
+                <span class="helper">zusätzlicher Wald wäre nötig, um die Einsparungen zu erreichen.</span>
+              </div>
+            </div>
         </div>
       </div>
       <div class="help" id="flow-instance-boxes">

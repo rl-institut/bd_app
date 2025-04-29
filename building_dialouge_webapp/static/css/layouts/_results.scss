@@ -140,6 +140,18 @@
       padding-bottom: 4rem;
     }
   }
+
+  &__values {
+    display: flex;
+    justify-content: space-around;
+    gap: 2rem;
+
+    & > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
 }
 
 .energy_efficiency {
@@ -251,16 +263,17 @@ table.summary_table th {
 .scenario1 {
   background-color: #1b9e77;
   color: #fff;
-  padding: 5px;
+  padding: 0.25rem 0.5rem;
+  font-weight: 600;
+  text-align: center;
 }
 
 .scenario2 {
   background-color: #7570b3;
   color: #fff;
-  padding: 5px;
-}
-
-table.consumption_table td {
+  padding: 0.25rem 0.5rem;
+  font-weight: 600;
+  text-align: center;
 }
 
 table.consumption_table td.no-entry {
@@ -348,27 +361,49 @@ table.consumption_table td.no-entry {
 }
 
 .saving_forest {
-  background-color: #f9f9f9;
-  padding: 10px;
-}
+  background-color: $grey-050;
+  padding: 2rem;
 
-.saving_emission {
-  background-color: #00604e;
-  color: #fff;
-  padding: 5px;
-}
+  .saving_emission {
+    display: inline-block;
+    text-align: center;
+    font-weight: 700;
+    background-color: #c1e2dc;
+    color: #00604e;
+    padding: 0.25rem 0.5rem;
+    margin-top: 0.25rem;
+  }
 
-.hectare {
-  font-weight: bold;
-  font-size: 18px;
-}
+  .plant_in_hand {
+    height: 2rem;
+    margin-bottom: 1rem;
+  }
 
-.plant_in_hand {
-  position: relative;
-  height: 40px;
-  margin-left: 80px;
-  margin-bottom: 20px;
-  z-index: 10;
+  p {
+    font-size: $font-size-sm;
+    color: $grey-500;
+
+    &.important {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: $body-color;
+      font-size: $font-size-lg;
+    }
+  }
+
+  .hectare {
+    font-weight: bold;
+    font-size: $font-size-lg;
+    color: $body-color;
+    margin-top: 0.5rem;
+  }
+
+  .helper {
+    font-size: $font-size-sm;
+    color: $grey-500;
+    text-align: center;
+  }
 }
 
 .tabs-container input[type="radio"] {
