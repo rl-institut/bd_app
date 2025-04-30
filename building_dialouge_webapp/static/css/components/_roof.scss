@@ -73,11 +73,6 @@ cursor: pointer;
 .compass-option--w  { @include pos(270deg); }
 .compass-option--nw { @include pos(315deg); }
 
-/* visible radio */
-.compass-option input[type="radio"] {
-  width: 1.1rem;
-  height: 1.1rem;
-}
 
 /* text beside radio */
 .compass-side-label   {
@@ -85,7 +80,6 @@ cursor: pointer;
   font-weight: 600;
   cursor: pointer;
 }
-
 
 /* highlight */
 .compass-option input[type="radio"]:checked + .compass-side-label { color: #007bff; }
