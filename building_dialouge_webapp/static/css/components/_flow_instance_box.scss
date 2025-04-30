@@ -15,6 +15,7 @@
   @media screen and (min-width: $breakpoint-2xl) {
     max-width: 32rem;
     padding: 1.5rem;
+    padding-top: 7rem;
   }
 
   @media screen and (min-width: $breakpoint-3xl) {
@@ -22,9 +23,13 @@
   }
 }
 
+.results + #flow-instance-boxes {
+  padding: 28rem 0 0;
+}
+
 // Styling for individual scenario boxes
-$heating-bg: #FEF2F2;
-$renovation-bg: #F0FDFA;
+$heating-bg: #fff7ed;
+$renovation-bg: #fff7ed;
 $text-dark: #374151;
 $text-muted: #64748b;
 
@@ -111,7 +116,7 @@ $text-muted: #64748b;
 
   .flow-instance-box-text-heating ul li {
     background: $heating-bg;
-    color: #7b2525;
+    color: #78350f;
 
     svg {
       height: 24px !important;
@@ -119,13 +124,13 @@ $text-muted: #64748b;
     }
 
     svg path {
-      stroke: #903939;
+      stroke: #78350f;
     }
   }
 
   .flow-instance-box-text-renovation ul li {
     background: $renovation-bg;
-    color: #1b6a68;
+    color: #78350f;
 
     svg {
       height: 24px !important;
@@ -133,7 +138,7 @@ $text-muted: #64748b;
     }
 
     svg path {
-      stroke: #377b7a;
+      stroke: #78350f;
     }
   }
 }
