@@ -4,6 +4,9 @@
     <div class="main">
       <fieldset>
         <legend>{{ form.roof_orientation.label }}</legend>
+        <div class="info-text">
+          <p>Wählen Sie die Himmelsrichtung, in die Ihr Dach überwiegend zeigt: Norden (N), Nordosten (NO), Osten (O), Südosten (SO), Süden (S), Südwesten (SW), Westen (W) oder Nordwesten (NW).</p>
+        </div>
 
         <div class="compass-group">
 
@@ -31,9 +34,6 @@
   </div>
 </fieldset>
       {% csrf_token %}
-      <div class="info-text">
-        <p>Wählen Sie die Himmelsrichtung, in die Ihr Dach überwiegend zeigt: Norden (N), Nordosten (NO), Osten (O), Südosten (SO), Süden (S), Südwesten (SW), Westen (W) oder Nordwesten (NW).</p>
-      </div>
     </div>
   </div>
 </div>

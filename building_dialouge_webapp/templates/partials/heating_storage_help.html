@@ -1,7 +1,19 @@
 <div class="step-question">
   <div class="step-container">
     <div class="main">
-      {{ form }}
+      {% for field in form %}
+          <div class="fieldWrapper">
+              {{ field.errors }}
+              {{ field.label_tag }}
+              <div class="info-text">
+                <p>Das Fassungsvermögen eines Wärmespeichers hängt von der Größe des Gebäudes und dem individuellen Wärmebedarf ab, wobei gängige Größen zwischen 300 und 1.000 Litern liegen, um ausreichend Warmwasser und Heizenergie bereitstellen zu können.</p>
+              </div>
+              {{ field }}
+              {% if field.help_text %}
+              <p class="help">{{ field.help_text|safe }}</p>
+              {% endif %}
+          </div>
+      {% endfor %}
       {% csrf_token %}
     </div>
   </div>

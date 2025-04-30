@@ -1,7 +1,19 @@
 <div class="step-question">
   <div class="step-container">
     <div class="main">
-      {{ form }}
+      {% for field in form %}
+          <div class="fieldWrapper">
+              {{ field.errors }}
+              {{ field.label_tag }}
+              <div class="info-text">
+                <p>Die Leistung Ihrer PV-Batterie finden Sie in den Kaufunterlagen, dem Anlagenzertifikat, auf dem Display des Batteriesystems, im Benutzerhandbuch oder über ein Online-Portal oder eine App des Anbieters.</p>
+              </div>
+              {{ field }}
+              {% if field.help_text %}
+              <p class="help">{{ field.help_text|safe }}</p>
+              {% endif %}
+          </div>
+      {% endfor %}
       {% csrf_token %}
     </div>
   </div>
