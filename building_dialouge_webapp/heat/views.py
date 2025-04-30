@@ -455,9 +455,11 @@ class Results(SidebarNavigationMixin, TemplateView):
             investment_table = tables.InvestmentTable(scenario_data).to_html(f"{scenario_name} summary_table")
             subsidies_table = tables.SubsidiesTable(scenario_data).to_html(f"{scenario_name} summary_table")
             savings_table = tables.EnergySavingsTable(scenario_data).to_html(f"{scenario_name} summary_table")
-            total_cost_table = tables.TotalCostTable(scenario_data).to_html(f"{scenario_name} summary_table")
+            total_cost_table = tables.TotalCostTable(scenario_data).to_html(
+                f"{scenario_name} summary_table summary_table_highlight_last_row",
+            )
             total_cost_15_years_table = tables.TotalCost15YearsTable(scenario_data).to_html(
-                f"{scenario_name} summary_table",
+                f"{scenario_name} summary_table summary_table_highlight_last_row",
             )
 
             scenario_list.append(
