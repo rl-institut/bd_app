@@ -1,0 +1,14 @@
+<ul>
+  {% for _group, opts, _idx in widget.optgroups %}
+    {% for o in opts %}
+      <li>
+        value="{{ o.value }}",
+        label="{{ o.label }}",
+        choice_label="{{ o.choice_label }}",
+        name="{{ o.name }}",
+        id="{{ o.attrs.id }}",
+        tag_html="{{ o.tag|safe }}"
+      </li>
+    {% endfor %}
+  {% endfor %}
+</ul>
