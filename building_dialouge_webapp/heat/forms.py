@@ -40,7 +40,7 @@ class ValidationForm(forms.Form):
 
 
 class HouseTypeSelect(RadioSelect):
-    template_name = "forms/energy_source.html"
+    template_name = "widgets/building_type.html"
 
     INFOS = {
         "single_family": "Ein Einfamilienhaus ist ein Wohngebäude mit einer Wohneinheit, das von einer "
@@ -139,7 +139,7 @@ class InsulationForm(ValidationForm):
 
 
 class EnergySourceSelect(RadioSelect):
-    template_name = "forms/energy_source.html"
+    template_name = "widgets/radio_info.html"
 
     INFOS = {
         "gas": "Fossiler Brennstoff, der häufig zur Wärmeerzeugung in Heizkesseln verwendet wird.",
@@ -261,7 +261,7 @@ class HeatingStorageCapacityForm(ValidationForm):
 
 
 class RoofTypeSelect(RadioSelect):
-    template_name = "forms/energy_source.html"
+    template_name = "widgets/radio_info.html"
 
     INFOS = {
         "exists": "Besitzt ihr Gebäude ein Flachdach?",
