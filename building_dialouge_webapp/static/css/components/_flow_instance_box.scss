@@ -15,11 +15,16 @@
   @media screen and (min-width: $breakpoint-2xl) {
     max-width: 32rem;
     padding: 1.5rem;
+    padding-top: 7rem;
   }
 
   @media screen and (min-width: $breakpoint-3xl) {
     max-width: 40rem;
   }
+}
+
+.results + #flow-instance-boxes {
+  padding: 28rem 0 0;
 }
 
 // Styling for individual scenario boxes
