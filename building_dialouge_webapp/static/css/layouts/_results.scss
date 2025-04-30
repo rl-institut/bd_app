@@ -107,7 +107,7 @@
     background-color: $grey-100;
     border-radius: 100px;
     overflow: hidden;
-  
+
     button {
       padding: 0.25rem 1rem;
       background-color: $grey-200;
@@ -123,16 +123,16 @@
         background-color: $grey-800;
         color: #fff;
       }
-  
+
       &:focus {
         outline: none;
       }
-  
+
       &.active {
         background-color: $body-color;
         color: #fff;
       }
-  
+
       &:not(:last-child) {
         margin-right: -1px;
       }
@@ -346,7 +346,7 @@ table.consumption_table td.no-entry {
   }
 }
 
-.summary_table tr:last-child td {
+.summary_table_highlight_last_row tr:last-child td {
   font-weight: bold;
   }
 
@@ -535,5 +535,5 @@ table.consumption_table td.no-entry {
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
-  }  
+  }
 }
