@@ -1,4 +1,11 @@
 .results {
+  padding-right: 3rem;
+  padding-bottom: 4rem;
+
+  @media screen and (min-width: $breakpoint-3xl) {
+    min-width: 48rem;
+  }
+
   .info-box {
     background-color: $grey-050;
     font-size: $font-size-sm;
