@@ -69,6 +69,9 @@ class BuildingTypeForm(ValidationForm):
         ],
         widget=HouseTypeSelect(),
     )
+
+
+class BuildingDetailsForm(ValidationForm):
     construction_year = forms.IntegerField(
         label="Baujahr",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
@@ -256,21 +259,7 @@ class HeatingStorageCapacityForm(ValidationForm):
     heating_storage_capacity = forms.IntegerField(
         label="Wärmespeicher Fassungsvermögen in l",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        template_name="forms/heating-storage-capacity.html",
     )
-
-
-class RoofTypeSelect(RadioSelect):
-    template_name = "forms/energy_source.html"
-
-    INFOS = {
-        "exists": "Besitzt ihr Gebäude ein Flachdach?",
-    }
-
-    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
-        option = super().create_option(name, value, label, selected, index, subindex, attrs)
-        option["info"] = self.INFOS.get(value, "")
-        return option
 
 
 class RoofTypeForm(forms.Form):
@@ -280,7 +269,7 @@ class RoofTypeForm(forms.Form):
             ("exists", "Ja"),
             ("doesnt_exist", "Nein"),
         ],
-        widget=RoofTypeSelect(),
+        widget=forms.RadioSelect,
     )
 
 
@@ -332,7 +321,6 @@ class PVSystemCapacityForm(ValidationForm):
     pv_capacity = forms.IntegerField(
         label="Nennleistung in kWp",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        template_name="forms/pv-capacity.html",
     )
 
 
@@ -356,7 +344,6 @@ class PVSystemBatteryCapacityForm(ValidationForm):
     battery_capacity = forms.IntegerField(
         label="Speicherkapazität in kWh",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
-        template_name="forms/pv-battery-capacity.html",
     )
 
 

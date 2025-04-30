@@ -1,0 +1,27 @@
+<div class="step-question">
+  <div class="step-container">
+    <div class="main">
+      {% for field in form %}
+          <div class="fieldWrapper">
+              {{ field.errors }}
+              {{ field.label_tag }}
+              <div class="info-text">
+                <p>Eine Solarthermie-Anlage wandelt Sonnenlicht mithilfe von Kollektoren (Flach- oder
+                  Vakuumröhrenkollektoren) in Wärme um. Diese wird über eine Trägerflüssigkeit weitergeleitet und für
+                  Warmwasser oder zur Heizungsunterstützung genutzt. <span class="info-icon" data-tooltip="Woran erkenne ich eine Solarthermie-Anlage? -
+                  Dunkle Kollektoren auf dem Dach, schmaler und weniger glänzend als Solarmodule -
+                  Zusätzliche Wärmespeicher mit Solaranschlüssen im Heizungsraum -
+                  Hinweise in den Heizungsunterlagen oder Auskunft von Hausverwaltung/Installateur.
+                Falls Sie unsicher sind, werfen Sie einen Blick aufs Dach oder in den Heizraum, oft geben diese
+              Merkmale erste Hinweise.">I</span></p>
+              </div>
+              {{ field }}
+              {% if field.help_text %}
+              <p class="help">{{ field.help_text|safe }}</p>
+              {% endif %}
+          </div>
+      {% endfor %}
+      {% csrf_token %}
+    </div>
+  </div>
+</div>
