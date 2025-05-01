@@ -372,7 +372,7 @@ class Results(SidebarNavigationMixin, TemplateView):
                 "insulate_water_distribution": -3,
                 "pv_battery": "nicht ausgewählt",
                 "renovate_roof": -35,
-                "replace_windows": -18,
+                "replace_windows": -16,
                 "insulate_basement_ceiling": "nicht ausgewählt",
             },
             "scenario2": {
@@ -392,13 +392,13 @@ class Results(SidebarNavigationMixin, TemplateView):
         summary_data = {
             "scenario1": {
                 "investments": {
-                    "wood_chip_heating": 21500,
+                    "wood_chip_heating": 18000,
                     "hydraulic_balancing": 1000,
                     "change_circuit_pump": 1000,
                     "insulate_heat_distribution": 3000,
                     "insulate_water_distribution": 500,
                     "renovate_roof": 64500,
-                    "replace_windows": 8000,
+                    "replace_windows": 21500,
                 },
                 "subsidies": {
                     "heating_basic_subsidy": 7500,
