@@ -15,13 +15,13 @@ async-timeout==5.0.1
     # via redis
 billiard==4.2.1
     # via celery
-celery==5.5.1
+celery==5.5.2
     # via
     #   -r requirements/base.in
     #   django-celery-beat
     #   django-oemof
     #   flower
-certifi==2025.1.31
+certifi==2025.4.26
     # via
     #   requests
     #   sentry-sdk
@@ -29,7 +29,7 @@ cffi==1.17.1
     # via
     #   argon2-cffi-bindings
     #   cryptography
-charset-normalizer==3.4.1
+charset-normalizer==3.4.2
     # via requests
 click==8.1.8
     # via
@@ -47,9 +47,9 @@ crispy-bootstrap5==2025.4
     # via -r requirements/base.in
 cron-descriptor==1.4.5
     # via django-celery-beat
-cryptography==44.0.2
+cryptography==44.0.3
     # via fido2
-django==5.1.8
+django==5.2.1
     # via
     #   -r requirements/base.in
     #   crispy-bootstrap5
@@ -64,25 +64,25 @@ django==5.1.8
     #   django-redis
     #   django-timezone-field
     #   djangorestframework
-django-allauth==65.7.0
+django-allauth==65.8.0
     # via -r requirements/base.in
 django-anymail==13.0
     # via -r requirements/production.in
 django-appconf==1.1.0
     # via django-compressor
-django-celery-beat==2.7.0
+django-celery-beat==2.8.0
     # via -r requirements/base.in
 django-compressor==1.6
     # via
     #   -r requirements/base.in
     #   django-libsass
-django-cotton==2.0.3
+django-cotton==2.1.1
     # via -r requirements/base.in
 django-crispy-forms==2.4
     # via
     #   -r requirements/base.in
     #   crispy-bootstrap5
-django-environ==0.10.0
+django-environ==0.12.0
     # via
     #   -r requirements/base.in
     #   django-oemof
@@ -92,7 +92,7 @@ django-libsass==0.9
     # via -r requirements/base.in
 django-model-utils==5.0.0
     # via -r requirements/base.in
-django-oemof==0.20.0
+django-oemof==0.21.0
     # via -r requirements/base.in
 django-redis==5.4.0
     # via -r requirements/base.in
@@ -108,11 +108,11 @@ gunicorn==23.0.0
     # via -r requirements/production.in
 hiredis==3.1.0
     # via -r requirements/base.in
-humanize==4.12.2
+humanize==4.12.3
     # via flower
 idna==3.10
     # via requests
-kombu==5.5.2
+kombu==5.5.3
     # via celery
 libsass==0.23.0
     # via django-libsass
@@ -120,7 +120,7 @@ numpy==1.26.4
     # via
     #   django-oemof
     #   pandas
-packaging==24.2
+packaging==25.0
     # via gunicorn
 pandas==2.2.3
     # via
@@ -130,11 +130,11 @@ pillow==11.2.1
     # via -r requirements/base.in
 prometheus-client==0.21.1
     # via flower
-prompt-toolkit==3.0.50
+prompt-toolkit==3.0.51
     # via click-repl
-psycopg==3.2.6
+psycopg==3.2.7
     # via -r requirements/production.in
-psycopg-c==3.2.6
+psycopg-c==3.2.7
     # via psycopg
 psycopg2-binary==2.9.10
     # via django-oemof
@@ -155,17 +155,17 @@ pytz==2025.2
     #   pandas
 pyyaml==6.0.2
     # via -r requirements/base.in
-qrcode==8.1
+qrcode==8.2
     # via django-allauth
 rcssmin==1.2.1
     # via -r requirements/base.in
-redis==5.2.1
+redis==6.0.0
     # via
     #   -r requirements/base.in
     #   django-redis
 requests==2.32.3
     # via django-anymail
-sentry-sdk==2.26.0
+sentry-sdk==2.27.0
     # via -r requirements/production.in
 six==1.17.0
     # via python-dateutil
