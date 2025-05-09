@@ -208,8 +208,8 @@ class HeatingSolarExistsForm(ValidationForm):
     solar_thermal_exists = forms.ChoiceField(
         label="Solarthermieanlage vorhanden?",
         choices=[
-            ("exist", "Ja"),
-            ("doesnt_exist", "Nein"),
+            (True, "Ja"),
+            (False, "Nein"),
         ],
         widget=forms.RadioSelect,
     )
@@ -312,7 +312,7 @@ class RoofInclinationForm(ValidationForm):
 class PVSystemForm(ValidationForm):
     pv_exists = forms.ChoiceField(
         label="PV-Anlage vorhanden?",
-        choices=[(True, "Ja"), ("doesnt_exist", "Nein")],
+        choices=[(True, "Ja"), (False, "Nein")],
         widget=forms.RadioSelect,
     )
 
@@ -327,7 +327,7 @@ class PVSystemCapacityForm(ValidationForm):
 class PVSystemBatteryExistsForm(ValidationForm):
     battery_exists = forms.ChoiceField(
         label="Batterie vorhanden?",
-        choices=[("exists", "Ja"), ("doesnt_exist", "Nein")],
+        choices=[("True", "Ja"), ("False", "Nein")],
         widget=forms.RadioSelect,
     )
 

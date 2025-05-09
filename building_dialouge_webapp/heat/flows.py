@@ -695,7 +695,7 @@ class HeatingFlow(SidebarNavigationMixin, Flow):
             form_class=forms.HeatingSolarExistsForm,
             template_name="partials/heating_solar_help.html",
         ).transition(
-            Switch("solar_thermal_exists").case("doesnt_exist", "stop").default("solar_thermal_area"),
+            Switch("solar_thermal_exists").case("False", "stop").default("solar_thermal_area"),
         )
 
         self.solar_thermal_area = FormState(
@@ -820,7 +820,7 @@ class PVSystemFlow(SidebarNavigationMixin, Flow):
             target="pv_system",
             form_class=forms.PVSystemForm,
         ).transition(
-            Switch("pv_exists").case("doesnt_exist", "stop").default("pv_capacity"),
+            Switch("pv_exists").case("False", "stop").default("pv_capacity"),
         )
 
         self.pv_capacity = FormState(
@@ -837,7 +837,7 @@ class PVSystemFlow(SidebarNavigationMixin, Flow):
             target="pv_system_battery_exists",
             form_class=forms.PVSystemBatteryExistsForm,
         ).transition(
-            Switch("battery_exists").case("doesnt_exist", "stop").default("pv_battery_capacity_known"),
+            Switch("battery_exists").case("False", "stop").default("pv_battery_capacity_known"),
         )
 
         self.pv_battery_capacity_known = FormState(

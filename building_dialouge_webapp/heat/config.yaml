@@ -1,4 +1,6 @@
-# Config file for building dialouge
+# Config file for building dialogue
+
+hooks_updated: "2025-05-09 11:10:00"
 
 hotwater_energy_consumption_per_person: 0.8 # in MWh / person
 
