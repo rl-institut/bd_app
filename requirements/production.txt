@@ -92,7 +92,7 @@ django-libsass==0.9
     # via -r requirements/base.in
 django-model-utils==5.0.0
     # via -r requirements/base.in
-django-oemof==0.21.0
+django-oemof==0.21.1
     # via -r requirements/base.in
 django-redis==5.4.0
     # via -r requirements/base.in
