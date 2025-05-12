@@ -381,6 +381,14 @@ def set_up_conversion_technologies(
                 "expandable": True,
                 "capacity_cost": settings.get_ep_cost(technology),
             }
+    # Bivalent system HP + Oil/Gas
+    # Set lowest capacity for secondary heating
+    if "oil_heating" in parameters["flow_data"]["scenario-secondary_heating"]:
+        parameters["oeprom"]["conversion_boiler"] = {
+            "expandable": True,
+            "capacity_cost": settings.get_ep_cost("oil_heating", 10),
+            "capacity_potential": 10,
+        }
     return parameters
 
 

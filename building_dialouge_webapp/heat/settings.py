@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 import pandas as pd
@@ -38,17 +40,23 @@ def map_elevation(angle: int) -> int:
     return round(angle / 10) * 10
 
 
-def get_ep_cost(technology: str) -> float:
+def get_ep_cost(technology: str, capacity: int | None = None) -> float:
     """
-    Mean values are used for capacity costs and OPEX within simulation.
+    Return annualized capacity costs plus OPEX for a given capacity.
 
+    If no capacity is given, mean values are used for capacity costs.
     "Real" costs are calculated in postprocessing, using optimized capacity.
     """
-    avg_capex = COSTS_TECHNOLOGIES.loc[technology, "capex_kW"].sum() / len(
-        COSTS_TECHNOLOGIES.loc[technology, "capex_kW"],
-    )
-    annuity = economics.annuity(avg_capex, CONFIG["lifetime"], CONFIG["wacc"] / 100)
-    avg_opex = COSTS_TECHNOLOGIES.loc[technology, "opex_kW_annual"].sum() / len(
-        COSTS_TECHNOLOGIES.loc[technology, "opex_kW_annual"],
-    )
-    return annuity + avg_opex
+    if capacity is None:
+        capex = COSTS_TECHNOLOGIES.loc[technology, "capex_kW"].sum() / len(
+            COSTS_TECHNOLOGIES.loc[technology, "capex_kW"],
+        )
+        opex = COSTS_TECHNOLOGIES.loc[technology, "opex_kW_annual"].sum() / len(
+            COSTS_TECHNOLOGIES.loc[technology, "opex_kW_annual"],
+        )
+    else:
+        capex = COSTS_TECHNOLOGIES.loc[technology, ("capex_kW", str(capacity))]
+        opex = COSTS_TECHNOLOGIES.loc[technology, ("opex_kW_annual", str(capacity))]
+
+    annuity = economics.annuity(capex, CONFIG["lifetime"], CONFIG["wacc"] / 100)
+    return annuity + opex
