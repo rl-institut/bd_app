@@ -6,6 +6,9 @@ init_django(installed_apps=["building_dialouge_webapp.heat"])
 from django_oemof import hooks  # noqa: E402
 from django_oemof import simulation  # noqa: E402
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
 RENOVATION_SCENARIO = "scenario1"
 PARAMETERS = {
     "renovation_scenario": RENOVATION_SCENARIO,
@@ -21,7 +24,7 @@ PARAMETERS = {
         "facade_insulation_year": 1988,
         "insulation_done": "True",
         "energy_source": "gas",
-        "solar_thermal_exists": "doesnt_exist",
+        "solar_thermal_exists": "False",
         "hotwater_heating_done": "True",
         "flat_roof": "doesnt_exist",
         "roof_orientation": "se",
@@ -29,11 +32,11 @@ PARAMETERS = {
         "roof_inclination": 50,
         "roof_done": "True",
         "heating_system_construction_year": 1988,
-        "heating_storage_exists": "exists",
+        "heating_storage_exists": "True",
         "heating_storage_capacity_known": "known",
         "heating_storage_capacity": 100,
         "heating_done": "True",
-        "pv_exists": "doesnt_exist",
+        "pv_exists": "False",
         "scenario1-primary_heating": "heat_pump",
         "subsidy": ["sub1", "sub2", "sub3", "sub4", "sub5", "sub6"],
         "subsidy_hidden": "",
@@ -52,7 +55,7 @@ PARAMETERS = {
         "scenario1-entrance_renovation": False,
         "scenario1-renovation_input_hidden": "",
         "scenario1-renovation_request_done": "True",
-        "v": "True",
+        "v": "f",
     },
 }
 
@@ -64,4 +67,4 @@ parameters = hooks.apply_hooks(
 )
 simulation_id = simulation.simulate_scenario(scenario="oeprom", parameters=parameters)
 lg_msg = f"Simulation ID: {simulation_id}"
-logging.info(lg_msg)
+logger.info(lg_msg)

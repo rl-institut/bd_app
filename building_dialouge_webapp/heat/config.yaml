@@ -1,6 +1,6 @@
 # Config file for building dialogue
 
-hooks_updated: "2025-05-09 11:10:00"
+hooks_updated: "2025-05-12 09:30:00"
 
 hotwater_energy_consumption_per_person: 0.8 # in MWh / person
 
@@ -28,6 +28,12 @@ flow_temperature:
   radiators: 75  # in °
   floorheating: 40  # in °
 
+
+# COSTS
+lifetime: 20  # in years
+wacc: 12  # in %
+
+# PV and SOLAR
 roof_usage: 0.5
 roof_usage_pv_share: 0.5
 
@@ -36,5 +42,6 @@ sth_density: 12  # in m² / kWp
 
 sth_area_per_person: 1  # in m² / Person; needed to set fix capacity for STH electricity load
 
-battery_c_rate: 0.5  # in kW / kWh
-battery_storage_capacity_per_pv_capacity: 50  # in kWh / kWp; needed to couple battery to PV in optimization
+# BATTERY
+battery_c_rate: 0.7  # in kW / kWh
+battery_storage_capacity_per_pv_capacity: 1  # in kWh / kWp; needed to couple battery to PV in optimization

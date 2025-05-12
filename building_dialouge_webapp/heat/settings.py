@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 import yaml
+from oemof.tools import economics
 
 APP_DIR = Path(__file__).parent
 DATA_DIR = APP_DIR.parent / "data"
@@ -37,10 +38,17 @@ def map_elevation(angle: int) -> int:
     return round(angle / 10) * 10
 
 
-def get_capacity_cost(technology: str) -> float:
+def get_ep_cost(technology: str) -> float:
     """
-    Mean values are used for capacity costs (including OPEX for one year) within simulation.
+    Mean values are used for capacity costs and OPEX within simulation.
 
     "Real" costs are calculated in postprocessing, using optimized capacity.
     """
-    return round(COSTS_TECHNOLOGIES.loc[technology].sum() / 5, 2)
+    avg_capex = COSTS_TECHNOLOGIES.loc[technology, "capex_kW"].sum() / len(
+        COSTS_TECHNOLOGIES.loc[technology, "capex_kW"],
+    )
+    annuity = economics.annuity(avg_capex, CONFIG["lifetime"], CONFIG["wacc"] / 100)
+    avg_opex = COSTS_TECHNOLOGIES.loc[technology, "opex_kW_annual"].sum() / len(
+        COSTS_TECHNOLOGIES.loc[technology, "opex_kW_annual"],
+    )
+    return annuity + avg_opex

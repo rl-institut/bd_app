@@ -202,8 +202,8 @@ def set_up_volatiles(  # noqa: C901
     request: HttpRequest,
 ) -> dict:
     """Set up PV and solar-thermal profiles and capacities."""
-    parameters["oeprom"]["volatile_PV"] = {"capacity_cost": settings.get_capacity_cost("volatile_PV")}
-    parameters["oeprom"]["volatile_STH"] = {"capacity_cost": settings.get_capacity_cost("volatile_STH")}
+    parameters["oeprom"]["volatile_PV"] = {"capacity_cost": settings.get_ep_cost("volatile_PV")}
+    parameters["oeprom"]["volatile_STH"] = {"capacity_cost": settings.get_ep_cost("volatile_STH")}
     parameters["oeprom"]["load_STH"] = {}
 
     if parameters["flow_data"]["pv_exists"] == "True" or "pv" in parameters["flow_data"]["scenario-secondary_heating"]:
@@ -317,7 +317,7 @@ def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> d
         parameters["oeprom"]["conversion_heatpump_air"] = {
             "expandable": True,
             "efficiency": heatpump_air_cop,
-            "capacity_cost": settings.get_capacity_cost("air_heat_pump"),
+            "capacity_cost": settings.get_ep_cost("air_heat_pump"),
         }
 
     if (
@@ -333,7 +333,7 @@ def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> d
         parameters["oeprom"]["conversion_heatpump_water"] = {
             "expandable": True,
             "efficiency": heatpump_water_cop,
-            "capacity_cost": settings.get_capacity_cost("geothermal_pump"),
+            "capacity_cost": settings.get_ep_cost("geothermal_pump"),
         }
 
     if (
@@ -349,7 +349,7 @@ def set_up_heatpumps(scenario: str, parameters: dict, request: HttpRequest) -> d
         parameters["oeprom"]["conversion_heatpump_brine"] = {
             "expandable": True,
             "efficiency": heatpump_brine_cop,
-            "capacity_cost": settings.get_capacity_cost("groundwater"),
+            "capacity_cost": settings.get_ep_cost("groundwater"),
         }
 
     return parameters
@@ -379,7 +379,7 @@ def set_up_conversion_technologies(
         if parameters["flow_data"]["scenario-primary_heating"] == technology:
             parameters["oeprom"][oemof_technology] = {
                 "expandable": True,
-                "capacity_cost": settings.get_capacity_cost(technology),
+                "capacity_cost": settings.get_ep_cost(technology),
             }
     return parameters
 
@@ -402,7 +402,7 @@ def set_up_storages(scenario: str, parameters: dict, request: HttpRequest) -> di
     # Always optimize heat storage
     parameters["oeprom"]["storage_heat"] = {
         "expandable": True,
-        "capacity_cost": settings.get_capacity_cost("storage_heat"),
+        "capacity_cost": settings.get_ep_cost("storage_heat"),
     }
 
     # Set up battery
@@ -412,7 +412,7 @@ def set_up_storages(scenario: str, parameters: dict, request: HttpRequest) -> di
         parameters["oeprom"]["storage_lion"] = {
             "storage_capacity": storage_capacity,
             "capacity": storage_capacity * settings.CONFIG["battery_c_rate"],
-            "capacity_cost": settings.get_capacity_cost("storage_lion"),
+            "capacity_cost": settings.get_ep_cost("storage_lion"),
         }
     elif parameters["flow_data"]["pv_exists"] == "True":
         storage_capacity = (
@@ -421,13 +421,13 @@ def set_up_storages(scenario: str, parameters: dict, request: HttpRequest) -> di
         parameters["oeprom"]["storage_lion"] = {
             "storage_capacity": storage_capacity,
             "capacity": storage_capacity * settings.CONFIG["battery_c_rate"],
-            "capacity_cost": settings.get_capacity_cost("storage_lion"),
+            "capacity_cost": settings.get_ep_cost("storage_lion"),
         }
     elif "pv" in parameters["flow_data"]["scenario-secondary_heating"]:
         parameters["oeprom"]["storage_lion"] = {
             "expandable": True,
             "invest_relation_input_capacity": settings.CONFIG["battery_c_rate"],
-            "capacity_cost": settings.get_capacity_cost("storage_lion"),
+            "capacity_cost": settings.get_ep_cost("storage_lion"),
         }
 
     return parameters
