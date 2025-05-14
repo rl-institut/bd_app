@@ -448,6 +448,7 @@ class Results(SidebarNavigationMixin, TemplateView):
                 },
             },
         }
+        energy_consumption = [160.0, 20.0]
 
         scenario_list = []
         for i, (scenario_name, scenario_data) in enumerate(summary_data.items(), start=1):
@@ -467,6 +468,7 @@ class Results(SidebarNavigationMixin, TemplateView):
                     "index": i,
                     "id": scenario_id,
                     "label": f"Szenario {i}",
+                    "energy_consumption": energy_consumption[i - 1],
                     "investment_table": investment_table,
                     "subsidies_table": subsidies_table,
                     "savings_table": savings_table,
