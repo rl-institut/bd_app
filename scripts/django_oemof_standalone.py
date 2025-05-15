@@ -1,4 +1,5 @@
 import logging
+import time
 
 from django_oemof.standalone import init_django
 
@@ -23,6 +24,13 @@ PARAMETERS = {
         "cellar_insulation_year": 1955,
         "facade_insulation_year": 1988,
         "insulation_done": "True",
+        "insulation_choices": [
+            "roof_insulation_year",
+            "upper_storey_ceiling_insulation_year",
+            "cellar_insulation_year",
+            "facade_insulation_year",
+            "window_insulation_year",
+        ],
         "energy_source": "gas",
         "solar_thermal_exists": "False",
         "hotwater_heating_done": "True",
@@ -49,12 +57,17 @@ PARAMETERS = {
         "scenario1-secondary_heating_hidden": "none",
         "scenario1-facade_renovation": False,
         "scenario1-roof_renovation": False,
-        "scenario1-roof_renovation_details": "",
         "scenario1-window_renovation": False,
         "scenario1-cellar_renovation": False,
         "scenario1-entrance_renovation": False,
         "scenario1-renovation_input_hidden": "",
         "scenario1-renovation_request_done": "True",
+        "scenario1-facade_renovation_choice": ["facade_renovation"],
+        "scenario1-facade_renovation_details": ["facade_insulate_renovation", "facade_glaster_renovation"],
+        "scenario1-roof_renovation_choice": ["roof_renovation"],
+        "scenario1-roof_renovation_details": ["cover", "expand"],
+        "scenario1-window_renovation_choice": ["window_renovation"],
+        "scenario1-cellar_renovation_choice": ["cellar_renovation"],
         "v": "f",
     },
 }
@@ -65,6 +78,9 @@ parameters = hooks.apply_hooks(
     data=PARAMETERS,
     request=None,
 )
+start = time.time()
 simulation_id = simulation.simulate_scenario(scenario="oeprom", parameters=parameters)
+lg_msg = f"Simulation Time: {time.time() - start}"
+logger.info(lg_msg)
 lg_msg = f"Simulation ID: {simulation_id}"
 logger.info(lg_msg)

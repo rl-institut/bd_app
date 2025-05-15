@@ -1,5 +1,6 @@
 import inspect
 import json
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -141,16 +142,61 @@ def init_roof(scenario: str, parameters: dict, request: HttpRequest) -> dict:
 
 def init_renovation_data(scenario: str, parameters: dict, request: HttpRequest) -> dict:
     """Get renovation data from KfW based on flow data."""
-    # Get cluster ID from KfW clustering
-    # TODO: Get cluster ID from lookup table. Currently hardcoded.
-    # https://github.com/rl-institut/bd_app/issues/90
-    cluster_id = 1
 
-    with (settings.DATA_DIR / "renovations" / f"{cluster_id}.json").open(
+    # Create mapping from session data to renovation data using following lookups
+    #
+    #     _house_type,
+    #     yearofconstruction,
+    #     insulationretrofitted_facade_year
+    #     insulationretrofitted_lowercompletion_year
+    #     insulationretrofitted_roof_year
+    #     insulationretrofitted_upperceiling_year
+    #     heatingsystem_energycarrier
+    #     heatingsystem_yearlastretrofithvac
+    #     dhw_year
+    #     Windows_GlazingReplacedYear
+    #     considermeasurefacadeglaster
+    #     considermeasurefacadeinsulate
+    #     considermeasurefloor
+    #     considermeasureroof
+    #     considermeasureroof_replacementofcladding
+    #     considermeasurewindow
+    #
+    entries = [
+        settings.CONFIG["building_type"][parameters["flow_data"]["building_type"]],
+        parameters["tabula_data"]["yearofconstruction"],
+        1 if "facade_insulation_year" in parameters["flow_data"]["insulation_choices"] else 0,
+        1 if "upper_storey_ceiling_insulation_year" in parameters["flow_data"]["insulation_choices"] else 0,
+        1 if "roof_insulation_year" in parameters["flow_data"]["insulation_choices"] else 0,
+        1 if "cellar_insulation_year" in parameters["flow_data"]["insulation_choices"] else 0,
+        parameters["flow_data"]["energy_source"],
+        1995 if parameters["flow_data"]["heating_system_construction_year"] >= 1995 else 1979,  # noqa: PLR2004
+        1 if parameters["flow_data"]["hotwater_supply"] == "instantaneous_water_heater" else 0,
+        1 if "window_insulation_year" in parameters["flow_data"]["insulation_choices"] else 0,
+        1 if "facade_glaster_renovation" in parameters["flow_data"]["scenario-facade_renovation_details"] else 0,
+        1 if "facade_insulate_renovation" in parameters["flow_data"]["scenario-facade_renovation_details"] else 0,
+        1 if "cellar_renovation" in parameters["flow_data"]["scenario-cellar_renovation_choice"] else 0,
+        1 if "cover" in parameters["flow_data"]["scenario-roof_renovation_details"] else 0,
+        1 if "expand" in parameters["flow_data"]["scenario-roof_renovation_details"] else 0,
+        1 if "window_renovation" in parameters["flow_data"]["scenario-window_renovation_choice"] else 0,
+    ]
+    response_filename = "_".join(map(str, entries))
+    response_path = settings.DATA_DIR / "renovations" / f"{response_filename}.json"
+    if not response_path.exists():
+        warnings.warn(f"Could not find KfW response with filename '{response_filename}.json'.", stacklevel=2)
+        # Default renovation response if response is not present
+        response_path = settings.DATA_DIR / "renovations" / "SFH_1968_0_0_0_0_oil_1979_0_0_0_0_0_0_0_0.json"
+
+    with response_path.open(
         "r",
         encoding="utf-8",
     ) as f:
-        parameters["renovation_data"] = json.load(f)
+        json_raw = f.read()
+        decoder = json.JSONDecoder()
+        request_json, idx = decoder.raw_decode(json_raw)
+        response_json_raw = json_raw[idx:].lstrip()
+        response_json, _ = decoder.raw_decode(response_json_raw)
+        parameters["renovation_data"] = response_json
     return parameters
 
 
@@ -167,8 +213,8 @@ def set_up_loads(
         ).profile,
     )
     electricity_amount = (
-        parameters["renovation_data"]["energyConsumptionElectricityAsIs"]
-        - parameters["renovation_data"]["resultsMeasuresAccordingBEG"]["reductionFinalEnergyElectricity"]
+        parameters["renovation_data"]["RESULT_energyConsumptionElectricityAsIs"]
+        - parameters["renovation_data"]["RESULT_resultsMeasuresAccordingBEG"]["reductionFinalEnergyElectricity"]
     )
     hotwater_profile = pd.Series(
         models.Hotwater.objects.get(
@@ -179,8 +225,8 @@ def set_up_loads(
         parameters["flow_data"]["number_persons"] * settings.CONFIG["hotwater_energy_consumption_per_person"]
     )
     heat_amount = (
-        parameters["renovation_data"]["energyConsumptionHeatingAsIs"]
-        - parameters["renovation_data"]["resultsMeasuresAccordingBEG"]["reductionFinalEnergyHeating"]
+        parameters["renovation_data"]["RESULT_energyConsumptionHeatingAsIs"]
+        - parameters["renovation_data"]["RESULT_resultsMeasuresAccordingBEG"]["reductionFinalEnergyHeating"]
         - hotwater_amount
     )
     parameters["oeprom"].update(
