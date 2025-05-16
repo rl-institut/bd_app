@@ -447,7 +447,44 @@ class Results(SidebarNavigationMixin, TemplateView):
                     "insulate_basement_ceiling": 3600,
                 },
             },
+            "scenario3": {
+                "investments": {
+                    "air_heat_pump": 21500,
+                    "hydraulic_balancing": 1000,
+                    "change_circuit_pump": 1000,
+                    "insulate_heat_distribution": 3000,
+                    "insulate_water_distribution": 500,
+                    "pv_battery": 27500,
+                    "renovate_outer_facade": 11000,
+                    "renovate_roof": 64500,
+                    "insulate_basement_ceiling": 8000,
+                },
+                "subsidies": {
+                    "tax_advantage_subsidy": 825,
+                    "heating_basic_subsidy": 5500,
+                    "heating_income_bonus": 8500,
+                    "heating_emission_reduction_bonus": 5500,
+                    "bafa_building_envelope_subsidy": 12000,
+                },
+                "savings": {
+                    "air_heat_pump": 17000,
+                    "hydraulic_comparison": 3600,
+                    "change_circuit_pump": 900,
+                    "insulate_heat_distribution": 4400,
+                    "insulate_water_distribution": 900,
+                    "pv_battery": 22200,
+                    "renovate_outer_facade": 12400,
+                    "renovate_roof": 21300,
+                    "insulate_basement_ceiling": 3600,
+                },
+            },
         }
+        energy_consumption = [160.0, 20.0, 50.0]
+        energy_consumption_transform = []
+        for consumption_value in energy_consumption:
+            transform = 0.729722 * consumption_value - 32.1912  # approximating to scale on graphic
+            transform = f"{round(transform, 2):.2f}".replace(",", ".")  # putting "." and then going for string
+            energy_consumption_transform.append(transform)
 
         scenario_list = []
         for i, (scenario_name, scenario_data) in enumerate(summary_data.items(), start=1):
@@ -467,6 +504,8 @@ class Results(SidebarNavigationMixin, TemplateView):
                     "index": i,
                     "id": scenario_id,
                     "label": f"Szenario {i}",
+                    "energy_consumption": energy_consumption[i - 1],
+                    "transform_horizontal": energy_consumption_transform[i - 1],
                     "investment_table": investment_table,
                     "subsidies_table": subsidies_table,
                     "savings_table": savings_table,
