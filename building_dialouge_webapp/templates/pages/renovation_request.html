@@ -1,5 +1,7 @@
 {% extends "base_footer_button.html" %}
 
+{% load static %}
+
 {% block content %}
 <section class="position-relative h-100 flex-grow-1 pb-5">
   <div class="step-title">
@@ -61,3 +63,8 @@
   </div>
 </section>
 {% endblock content %}
+
+{% block javascript %}
+{{ block.super }}
+  <script defer src="{% static 'js/renovation_checkboxes.js' %}"></script>
+{% endblock javascript %}
