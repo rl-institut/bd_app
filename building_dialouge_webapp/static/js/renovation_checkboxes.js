@@ -1,5 +1,7 @@
 document.addEventListener("htmx:afterSwap", setupRenovationCheckboxLogic);
 document.addEventListener("DOMContentLoaded", setupRenovationCheckboxLogic);
+document.addEventListener("htmx:afterSwap", deleteUnusedDivs);
+document.addEventListener("DOMContentLoaded", deleteUnusedDivs);
 
 function setupRenovationCheckboxLogic() {
   document.querySelectorAll("form").forEach((form) => {
@@ -64,6 +66,22 @@ function setupRenovationCheckboxLogic() {
         );
         if (checkbox.checked && main && !main.checked) main.checked = true;
       });
+    }
+  });
+}
+
+
+function deleteUnusedDivs() {
+  const container = document.querySelector("#secondary_heating");
+  if (!container) return;
+
+  const childDivs = container.querySelectorAll("div");
+
+  childDivs.forEach((div) => {
+    if (div.innerHTML.trim() === "") {
+      div.style.display = "none";
+    } else {
+      div.style.display = ""; // reset display if content is present again
     }
   });
 }

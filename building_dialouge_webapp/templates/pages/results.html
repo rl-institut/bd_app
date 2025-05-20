@@ -165,6 +165,7 @@
 {% endblock content %}
 
 {% block javascript %}
+{{ block.super }}
   <script type="text/javascript" src="{% static 'vendors/echarts/js/echarts.min.js' %}"></script>
   <script type="module" src="{% static 'js/results.js' %}"></script>
 {% endblock javascript %}
