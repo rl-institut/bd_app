@@ -335,3 +335,4 @@ building_dialouge_webapp/data/renovations/
 .env
 .envs/*
 !.envs/.local/
+/results/
