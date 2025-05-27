@@ -362,6 +362,27 @@ class RenovationTechnologyForm(ValidationForm):
     )
 
 
+def disable_only_sth(self, data):
+    solar_thermal_exists = data.get("solar_thermal_exists", None)
+    if solar_thermal_exists == "True":
+        self.fields["secondary_heating"].disabled = True
+        self.fields["secondary_heating"].initial = ["solar"]
+
+
+def disable_sth_pv(self, data):
+    pv_exists = data.get("pv_exists", None)
+    solar_thermal_exists = data.get("solar_thermal_exists", None)
+    if solar_thermal_exists == "True" and pv_exists == "True":
+        self.fields["secondary_heating"].disabled = True
+        self.fields["secondary_heating"].initial = ["solar", "pv"]
+    elif solar_thermal_exists == "True":
+        self.fields["secondary_heating"].disabled = True
+        self.fields["secondary_heating"].initial = ["solar"]
+    elif pv_exists == "True":
+        self.fields["secondary_heating"].disabled = True
+        self.fields["secondary_heating"].initial = ["pv"]
+
+
 class RenovationSolarForm(ValidationForm):
     secondary_heating = forms.MultipleChoiceField(
         label="Zusätzliche Erzeuger",
@@ -372,6 +393,10 @@ class RenovationSolarForm(ValidationForm):
         required=False,
     )
     secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+        disable_only_sth(self, data)
 
 
 class RenovationPVSolarForm(ValidationForm):
@@ -385,6 +410,10 @@ class RenovationPVSolarForm(ValidationForm):
         required=False,
     )
     secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+        disable_sth_pv(self, data)
 
 
 class RenovationBioMassForm(ValidationForm):
@@ -406,6 +435,10 @@ class RenovationBioMassForm(ValidationForm):
         required=False,
     )
     secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+        disable_only_sth(self, data)
 
 
 class RenovationHeatPumpForm(ValidationForm):
@@ -430,6 +463,10 @@ class RenovationHeatPumpForm(ValidationForm):
         required=False,
     )
     secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
+
+    def validate_with_session(self):
+        data = self.request.session.get("django_htmx_flow", {})
+        disable_sth_pv(self, data)
 
 
 class RenovationRequestForm(ValidationForm):
