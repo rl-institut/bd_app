@@ -77,6 +77,10 @@
     max-width: 60rem;
   }
 
+  .main:empty {
+     padding:0;
+  }
+
   .help {
     background-color: $color-white;
     height: auto;
@@ -194,6 +198,10 @@ main .step-question {
     span {
       font-weight: $font-weight-bold;
     }
+  }
+
+  .help:empty {
+     padding:0;
   }
 
   .info-text {
