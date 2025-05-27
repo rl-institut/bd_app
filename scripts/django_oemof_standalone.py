@@ -76,7 +76,7 @@ parameters = hooks.apply_hooks(
     hook_type=hooks.HookType.SETUP,
     scenario="oeprom",
     data=PARAMETERS,
-    request=None,
+    additional_data=None,
 )
 start = time.time()
 simulation_id = simulation.simulate_scenario(scenario="oeprom", parameters=parameters)
