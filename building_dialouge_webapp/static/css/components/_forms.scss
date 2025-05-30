@@ -52,6 +52,12 @@ fieldset legend {
       color: $grey-800;
       font-weight: 400;
     }
+
+    &:has(> input[type="checkbox"]:disabled),
+    &:has(> input[type="radio"]:disabled) {
+      color: $grey-400;
+      font-weight: 400;
+    }
   }
 
   input[type="checkbox"],
@@ -126,6 +132,11 @@ fieldset legend {
   select:focus {
     border-color: $green-500;
     box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+  }
+
+  input[type="checkbox"]:disabled,
+  input[type="radio"]:disabled {
+    pointer-events: none;
   }
 
   select {
