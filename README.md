@@ -33,7 +33,7 @@ or for production (requires manual creation of `.envs/.production/.django`):
 
 ### Local
 
-1. Clone repo, setup virtual environment and install
+1. Clone repo, setup virtual environment and install dependencies
 
 ```shell
 git clone git@github.com:rl-institut/bd_app.git
@@ -41,7 +41,7 @@ cd bd_app
 virtualenv venv
 source venv/bin/activate
 pip install uv
-pip install -r ./requirements/local.txt
+uv pip install -r ./requirements/local.txt
 pip install git+https://github.com/oemof/oemof-tabular.git
 pip install --upgrade django-compressor
 ```
@@ -82,13 +82,18 @@ POSTGRES_DB=building_dialouge_webapp
 POSTGRES_USER=bd_user
 POSTGRES_PASSWORD=my_bd_user_pass
 
-DATABASE_URL=postgres://bd_user:GWzBcADhGhvhY0VRQvm9dD2LTMnEIplVmzNjAEkZNoF2T87leMSiRHiSReK2hlmC@localhost:5432/building_dialouge_webapp
+DATABASE_URL=postgres://bd_user:my_bd_user_pass@localhost:5432/building_dialouge_webapp
 ```
 (make sure you use the same password in `POSTGRES_PASSWORD` as in step 2)
 
 4. Activate the `.env` file
 
 Run `export DJANGO_READ_DOT_ENV=True;` - ff this fails, try `source .env`
+
+Activate pre-commit:
+```shell
+pre-commit install
+```
 
 5. Migrate and start app
 
@@ -163,13 +168,21 @@ template_name = "path_to_template/name_of_template.html"
 
         # add more States in here
 
+        self.stop = StopState(
+            self,
+            lookup="roof_done",
+            next_botton_text="Speichern",
+        ).transition(Next("end"))
         self.end = EndState(self, url="url_to_next_flow_or_view")
 ```
 
 You can use these States:
-- ```FormState(self, name="roof_type", form_class=forms.NameOfForm,)```
+- ```FormState(self, name="roof_type", form_class=forms.NameOfForm, template_name="optional_template.html",)```
+  one FormState represents one Form, the name specifies the target in the template, the form_class the corresponding Form (defined in forms.py) and template_name is optional if you want to add helptext/explanation therefore you need to create a partial (a separate html file) and add its name to the corresponding state to the ```template_name``` parameter
+- ```StopState(self, lookup="roof_done", next_botton_text="Speichern",)```
+  every Flow needs at least one StopState, lookup can have a fitting and individual name (its used for remembering if a Flow is finished), and next_botton_text can change the Text of the next button
 - ```EndState(self, url="url_to_next_flow_or_view")```
-- if you want to add helptext to a Form, create a partial (a separate html file) and add it to the corresponding state with the ```template_name``` parameter
+  every Flow needs at least one EndState, the url defines the url of the next Flow or View
 
 You can use these Transitions:
 - ```Next("name_of_the_next_state")```
@@ -195,7 +208,7 @@ use this base structure:
             </div>
         <div class="help"></div>
         </div>
-        <div id="name_attribute_of_state">{{ name_attribute_of_state.content | safe }}</div>
+        <div id="name_of_state" hx-post="" hx-trigger="change" hx-swap="show:bottom" hx-include="this">{{ name_of_state.content | safe }}</div>
     </section>
     {% endblock content %}
 ```
