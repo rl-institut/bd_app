@@ -27,7 +27,13 @@ class ValidationForm(forms.Form):
                             field.widget.attrs["max"] = value
                             field.validators.append(MaxValueValidator(value))
         if self.request:
+            self.post_init()
             self.validate_with_session()
+
+    def post_init(self):
+        """
+        Override this function in order to set initial data for all fields on form.
+        """
 
     def validate_with_session(self):
         """
@@ -362,61 +368,49 @@ class RenovationTechnologyForm(ValidationForm):
     )
 
 
-def disable_only_sth(self, data):
-    solar_thermal_exists = data.get("solar_thermal_exists", None)
-    if solar_thermal_exists == "True":
-        self.fields["secondary_heating"].disabled = True
-        self.fields["secondary_heating"].initial = ["solar"]
+class CheckboxSelectMultipleWithConditionalDisable(forms.CheckboxSelectMultiple):
+    def __init__(self, *args, prechecked=None, **kwargs):
+        self.prechecked = prechecked or []
+        super().__init__(*args, **kwargs)
+
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
+        option_dict = super().create_option(name, value, label, selected, index, subindex=subindex, attrs=attrs)
+        if option_dict["value"] in self.prechecked:
+            option_dict["attrs"]["disabled"] = "disabled"
+            option_dict["attrs"]["checked"] = "checked"
+        return option_dict
 
 
-def disable_sth_pv(self, data):
-    pv_exists = data.get("pv_exists", None)
-    solar_thermal_exists = data.get("solar_thermal_exists", None)
-    if solar_thermal_exists == "True" and pv_exists == "True":
-        self.fields["secondary_heating"].disabled = True
-        self.fields["secondary_heating"].initial = ["solar", "pv"]
-    elif solar_thermal_exists == "True":
-        self.fields["secondary_heating"].disabled = True
-        self.fields["secondary_heating"].initial = ["solar"]
-    elif pv_exists == "True":
-        self.fields["secondary_heating"].disabled = True
-        self.fields["secondary_heating"].initial = ["pv"]
+class SecondaryHeatingForm(ValidationForm):
+    def post_init(self):
+        data = self.request.session.get("django_htmx_flow", {})
+        pv_exists = data.get("pv_exists", None)
+        solar_thermal_exists = data.get("solar_thermal_exists", None)
+
+        prechecked = []
+        if solar_thermal_exists == "True":
+            prechecked.append("solar")
+        if pv_exists == "True":
+            prechecked.append("pv")
+        self.fields["secondary_heating"] = forms.MultipleChoiceField(
+            label="Zusätzliche Erzeuger",
+            choices=self.secondary_heating_choices,
+            required=False,
+            widget=CheckboxSelectMultipleWithConditionalDisable(prechecked=prechecked),
+        )
 
 
-class RenovationSolarForm(ValidationForm):
-    secondary_heating = forms.MultipleChoiceField(
-        label="Zusätzliche Erzeuger",
-        choices=[
-            ("solar", "Solarthermie"),
-        ],
-        widget=forms.CheckboxSelectMultiple,
-        required=False,
-    )
+class RenovationSolarForm(SecondaryHeatingForm):
+    secondary_heating_choices = [("solar", "Solarthermie")]
     secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
-    def validate_with_session(self):
-        data = self.request.session.get("django_htmx_flow", {})
-        disable_only_sth(self, data)
 
-
-class RenovationPVSolarForm(ValidationForm):
-    secondary_heating = forms.MultipleChoiceField(
-        label="Zusätzliche Erzeuger",
-        choices=[
-            ("pv", "PV-Anlage"),
-            ("solar", "Solarthermie"),
-        ],
-        widget=forms.CheckboxSelectMultiple,
-        required=False,
-    )
+class RenovationPVSolarForm(SecondaryHeatingForm):
+    secondary_heating_choices = [("pv", "PV-Anlage"), ("solar", "Solarthermie")]
     secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
-    def validate_with_session(self):
-        data = self.request.session.get("django_htmx_flow", {})
-        disable_sth_pv(self, data)
 
-
-class RenovationBioMassForm(ValidationForm):
+class RenovationBioMassForm(SecondaryHeatingForm):
     bio_mass_source = forms.ChoiceField(
         label="Energieträger",
         choices=[
@@ -426,36 +420,11 @@ class RenovationBioMassForm(ValidationForm):
         ],
         widget=forms.RadioSelect,
     )
-    secondary_heating = forms.MultipleChoiceField(
-        label="Zusätzliche Erzeuger",
-        choices=[
-            ("solar", "Solarthermie"),
-        ],
-        widget=forms.CheckboxSelectMultiple,
-        required=False,
-    )
+    secondary_heating_choices = [("solar", "Solarthermie")]
     secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
-    def validate_with_session(self):
-        data = self.request.session.get("django_htmx_flow", {})
-        disable_only_sth(self, data)
 
-
-class CheckboxSelectMultipleWithConditionalDisable(forms.CheckboxSelectMultiple):
-    def __init__(self, *args, **kwargs):
-        self.disabled_choices = kwargs.pop("disabled_choices", [])
-        super().__init__(*args, **kwargs)
-
-    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):  # noqa: PLR0913
-        option_dict = super().create_option(name, value, label, selected, index, subindex=subindex, attrs=attrs)
-
-        if value in self.disabled_choices:
-            option_dict["attrs"]["disabled"] = "disabled"
-
-        return option_dict
-
-
-class RenovationHeatPumpForm(ValidationForm):
+class RenovationHeatPumpForm(SecondaryHeatingForm):
     heat_pump_type = forms.ChoiceField(
         label="Wärmepumpentyp",
         choices=[
@@ -465,40 +434,13 @@ class RenovationHeatPumpForm(ValidationForm):
         ],
         widget=forms.RadioSelect,
     )
-
-    secondary_heating = forms.MultipleChoiceField(
-        label="Zusätzliche Erzeuger",
-        choices=[
-            ("oil_heating", "Effiziente Öl- und Gasheizung"),
-            ("heating_rod", "Heizstab"),
-            ("pv", "PV-Anlage"),
-            ("solar", "Solarthermie"),
-        ],
-        required=False,
-    )
-
+    secondary_heating_choices = [
+        ("oil_heating", "Effiziente Öl- und Gasheizung"),
+        ("heating_rod", "Heizstab"),
+        ("pv", "PV-Anlage"),
+        ("solar", "Solarthermie"),
+    ]
     secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
-
-    def validate_with_session(self):
-        data = self.request.session.get("django_htmx_flow", {})
-        pv_exists = data.get("pv_exists", None) == "True"
-        solar_exists = data.get("solar_thermal_exists", None) == "True"
-
-        # Determine which options to disable
-        disabled_choices = []
-        initial_values = []
-
-        if pv_exists:
-            disabled_choices.append("pv")
-            initial_values.append("pv")
-        if solar_exists:
-            disabled_choices.append("solar")
-            initial_values.append("solar")
-
-        self.fields["secondary_heating"].widget = CheckboxSelectMultipleWithConditionalDisable(
-            disabled_choices=disabled_choices,
-        )
-        self.fields["secondary_heating"].initial = initial_values
 
 
 class RenovationRequestForm(ValidationForm):
