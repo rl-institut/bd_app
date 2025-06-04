@@ -360,7 +360,7 @@ class RenovationTechnologyForm(ValidationForm):
             ("district_heating", "Fernwärme"),
             ("bio_mass", "Biomasseheizung"),
             ("heat_pump", "Wärmepumpe"),
-            ("oil_heating", "Effiziente Öl- und Gasheizung"),
+            ("oil_heating", "Effiziente Gasheizung"),
             ("heating_rod", "Heizstab"),
             ("bhkw", "BHKW"),
         ],
@@ -435,7 +435,7 @@ class RenovationHeatPumpForm(SecondaryHeatingForm):
         widget=forms.RadioSelect,
     )
     secondary_heating_choices = [
-        ("oil_heating", "Effiziente Öl- und Gasheizung"),
+        ("oil_heating", "Effiziente Gasheizung"),
         ("heating_rod", "Heizstab"),
         ("pv", "PV-Anlage"),
         ("solar", "Solarthermie"),
