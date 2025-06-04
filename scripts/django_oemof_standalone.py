@@ -45,7 +45,7 @@ PARAMETERS = {
         "financial_support_done": "True",
         "hotwater_supply": "instantaneous_water_heater",
         "scenario1-heat_pump_type": "air_heat_pump",
-        "scenario1-secondary_heating": ["pv", "oil_heating"],
+        "scenario1-secondary_heating": ["pv", "gas_heating"],
         "scenario1-secondary_heating_hidden": "none",
         "scenario1-facade_renovation": False,
         "scenario1-roof_renovation": False,
