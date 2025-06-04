@@ -371,7 +371,7 @@ def set_up_conversion_technologies(
         "wood_pellets": "conversion_pk",
         "wood_chips": "conversion_hgk",
         "firewood": "conversion_shk",
-        "oil_heating": "conversion_boiler",
+        "gas_heating": "conversion_boiler",
         "heating_rod": "conversion_ehz",
         "bhkw": "backpressure_bhkw",
     }
@@ -383,10 +383,10 @@ def set_up_conversion_technologies(
             }
     # Bivalent system HP + Oil/Gas
     # Set lowest capacity for secondary heating
-    if "oil_heating" in parameters["flow_data"]["scenario-secondary_heating"]:
+    if "gas_heating" in parameters["flow_data"]["scenario-secondary_heating"]:
         parameters["oeprom"]["conversion_boiler"] = {
             "expandable": True,
-            "capacity_cost": settings.get_ep_cost("oil_heating", 10),
+            "capacity_cost": settings.get_ep_cost("gas_heating", 10),
             "capacity_potential": 10,
         }
     return parameters
