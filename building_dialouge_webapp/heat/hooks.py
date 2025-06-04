@@ -371,7 +371,7 @@ def set_up_conversion_technologies(
         "wood_pellets": "conversion_pk",
         "wood_chips": "conversion_hgk",
         "firewood": "conversion_shk",
-        "oil_heating": "conversion_boiler",
+        "gas_heating": "conversion_boiler",
         "heating_rod": "conversion_ehz",
         "bhkw": "backpressure_bhkw",
     }
