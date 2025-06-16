@@ -362,7 +362,7 @@ class RenovationTechnologyForm(ValidationForm):
             ("heat_pump", "Wärmepumpe"),
             ("gas_heating", "Effiziente Gasheizung"),
             ("heating_rod", "Heizstab"),
-            ("bhkw", "BHKW"),
+            ("bhkw", "Blockheizkraftwerk (BHKW)"),
         ],
         widget=forms.RadioSelect,
     )
