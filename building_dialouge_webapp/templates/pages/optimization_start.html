@@ -11,10 +11,9 @@
         </h2>
       </div>
       {% if all_flows_finished %}
-        <p>Wunderbar! Die Eingabe ist abgeschlossen.</p>
-        <p>Jetzt passiert folgendes:</p>
+        <p><b>Wunderbar! Ihre Eingaben sind vollständig.</b></p>
         <p>
-            Mit Klick auf den "Starten"-Button beginnt die Simulation der Daten. Sobald die Simulation abgeschlossen ist, kann es weiter gehen zu der Seite "Ergebnisse". Bis dahin bleibt der "Weiter"-Button inaktiv.
+          Jetzt wird's spannend: Mit einem Klick auf <b>„Optimierung starten“</b> beginnt die Simulation Ihrer Szenarien. Wir berechnen für Sie den energie- und kosteneffizientesten Einsatz verschiedener Heiztechnologien in Zusammenwirkung mit den von Ihnen ausgewählten Modernisierungsmaßnahmen. Nach Abschluss der Simulation(en), können Sie über den Button <b>„Weiter“</b> zur Seite <b>„Ergebnisse“</b> gelangen. Bis dahin bleibt der Button <b>„Weiter“</b> deaktiviert.
         </p>
         <div class="d-flex justify-content-between">
           <button id="btn_optimization" class="btn btn-primary" {% if not all_flows_finished %}disabled{% endif %} onclick="startOptimization();">Starten</button>
@@ -36,6 +35,7 @@
         </div>
       {% endif %}
     </div>
+    {# TODO: Add the boxes with "Wissenswertes" here!  https://www.figma.com/design/FO5X9GisiszC709OBjHfnM/bd_Warteschlange_Optimierung?node-id=0-1&t=PYPwFqceKANzq148-1 #}
   </div>
 
   {{ scenarios | json_script:"scenarios" }}
