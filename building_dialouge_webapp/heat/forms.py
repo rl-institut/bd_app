@@ -317,7 +317,7 @@ class RoofInclinationForm(ValidationForm):
 
 class PVSystemForm(ValidationForm):
     pv_exists = forms.ChoiceField(
-        label="PV-Anlage vorhanden?",
+        label="Photovoltaik-Anlage vorhanden?",
         choices=[(True, "Ja"), (False, "Nein")],
         widget=forms.RadioSelect,
     )
@@ -406,7 +406,7 @@ class RenovationSolarForm(SecondaryHeatingForm):
 
 
 class RenovationPVSolarForm(SecondaryHeatingForm):
-    secondary_heating_choices = [("pv", "PV-Anlage"), ("solar", "Solarthermie")]
+    secondary_heating_choices = [("pv", "Photovoltaik-Anlage"), ("solar", "Solarthermie")]
     secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
 
 
@@ -437,7 +437,7 @@ class RenovationHeatPumpForm(SecondaryHeatingForm):
     secondary_heating_choices = [
         ("gas_heating", "Effiziente Gasheizung"),
         ("heating_rod", "Heizstab"),
-        ("pv", "PV-Anlage"),
+        ("pv", "Photovoltaik-Anlage"),
         ("solar", "Solarthermie"),
     ]
     secondary_heating_hidden = forms.CharField(widget=forms.HiddenInput(), required=False, initial="none")
