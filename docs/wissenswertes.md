@@ -17,7 +17,7 @@ Förderungen
 Welche Förderungen kommen für mich in Frage?
 
 
-Instandshaltungskosten
+Instandhaltungskosten
 ----------------------
 Welche Instandhaltungskosten könnten auf mich ohnehin zukommen?
 
@@ -29,7 +29,7 @@ Wann lohnt sich ein Speicher?
 Wärmepumpe
 ----------
 Welche Wärmepumpentypen gibt es?
-Welche Wärmepumpentypen kommen in Frage für mein Gebäude?
+Welche Wärmepumpentypen kommen infrage für mein Gebäude?
 
 Fernwärme
 ---------
@@ -38,11 +38,11 @@ Ist ein Fernwärmeanschluss möglich an meinem Gebäude?
 
 Photovoltaik-Anlage
 -------------------
-Wann lohnt sich eine Photovoltaik-Analge
+Wann lohnt sich eine Photovoltaik-Anlage
 
 Solarthermie-Anlage
 -------------------
-Wann lohnt sich eine Solarthermie-Analge
+Wann lohnt sich eine Solarthermie-Anlage
 
 
 Nächsten Schritte
@@ -51,7 +51,7 @@ Was sind die nächsten Schritte?
 
 Welche Beratungsangebote gibt es in meiner Region?
 Welche anderen Tools kann ich mir noch anschauen?
--> Vergleich mit anderen hilfreichen Tools
+→ Vergleich mit anderen hilfreichen Tools
 
 
 BEG und GEG
