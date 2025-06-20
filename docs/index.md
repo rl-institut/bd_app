@@ -3,5 +3,6 @@
 
 Hier findest du Informationen zu folgenden Themen:
 
-- [Wissenswertes](/docs/wissenswertes.md)
+- [Benutzung der Anwendung](/docs/usage.md)
+- [Wissenswertes zum Projekt](/docs/wissenswertes.md)
 
