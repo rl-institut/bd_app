@@ -39,9 +39,7 @@
           </p>
           <h3>Heizenergieverbrauch in kWh/(m²*a) (Endenergie)</h3>
           <div class="results__content">
-            <object class="energy_efficiency"
-            type="image/svg+xml"
-            data="/static/images/svg/energy_consumption_index_workshop.svg"></object>
+            {% include "partials/energy_consumption_index.html" %}
           </div>
           <p class="results__text">Der Energieverbrauch Ihres Gebäudes hängt von der verbauten Heizung ab und unterliegt saisonalen Schwankungen:</p>
           <h3>Heizlastprofil in kWh/Monat</h3>
