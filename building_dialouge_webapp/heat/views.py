@@ -1,6 +1,8 @@
 import inspect
 from urllib.parse import urlparse
 
+import markdown
+from django.conf import settings
 from django.http import HttpRequest
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
@@ -564,6 +566,22 @@ class NextSteps(SidebarNavigationMixin, TemplateView):
     extra_context = {
         "back_url": "heat:results",
     }
+
+
+class DocumentationView(TemplateView):
+    template_name = "docs.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        page = kwargs.get("page", "index")
+        page = page if page.endswith(".md") else f"{page}.md"
+        if not (settings.DOCS_DIR / page).exists():
+            error_msg = f"Documentation for '{page}' not found."
+            raise FileNotFoundError(error_msg)
+        with (settings.DOCS_DIR / page).open("r", encoding="utf-8") as f:
+            markdown_text = f.read()
+        context["markdown"] = markdown.markdown(markdown_text, output_format="html")
+        return context
 
 
 def show_session(request: HttpRequest) -> JsonResponse:

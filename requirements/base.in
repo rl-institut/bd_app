@@ -25,6 +25,7 @@ django-cotton
 
 pandas
 pyyaml
+markdown
 
 # Custom packages
 # ------------------------------------------------------------------------------
