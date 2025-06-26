@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block content_no_sidebar %}
+{% block content %}
   <div class="home" id="home-info">
     <div class="home__container">
       <div class="home__paragraph">
@@ -83,14 +83,7 @@
           mehr oder nicht vollständig entsprechen sollten, bleiben die übrigen Teile des Dokumentes in ihrem Inhalt und
           ihrer Gültigkeit davon unberührt.
         </p>
-        <a href="https://reiner-lemoine-institut.de"
-           target="_blank"
-           rel="noopener noreferrer">
-          <img style="max-height: 5rem"
-               src="{% static 'images/logos/Logo_RLI.png' %}"
-               alt="Logo RLI" />
-        </a>
       </div>
     </div>
   </div>
-{% endblock content_no_sidebar %}
+{% endblock content %}
