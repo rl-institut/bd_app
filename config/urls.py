@@ -14,18 +14,16 @@ urlpatterns = [
     path("reset_session/", views.reset_session),
     path("oemof/", include("django_oemof.urls")),
     path(
-        "about/",
-        TemplateView.as_view(template_name="pages/about.html"),
-        name="about",
+        "contact/",
+        TemplateView.as_view(template_name="pages/contact.html"),
+        name="contact",
     ),
-    # Django Admin, use {% url 'admin:index' %}
-    path(settings.ADMIN_URL, admin.site.urls),
-    # User management
-    path("users/", include("building_dialouge_webapp.users.urls", namespace="users")),
-    path("accounts/", include("allauth.urls")),
-    # Your stuff: custom urls includes go here
-    # ...
-    # Media files
+    path(
+        "imprint/",
+        TemplateView.as_view(template_name="pages/imprint.html"),
+        name="imprint",
+    ),
+    path("privacy/", TemplateView.as_view(template_name="pages/privacy.html"), name="privacy"),
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
 

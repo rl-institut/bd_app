@@ -59,13 +59,13 @@
                   <a class="nav-link" href="">Projektinfos<span class="visually-hidden">(aktuell)</span></a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="">Dokumentation</a>
+                  <a class="nav-link" href="{% url "heat:docs" page="index" %}">Dokumentation</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="">Quellen</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="">Kontakt</a>
+                  <a class="nav-link" href="{% url 'contact' %}">Kontakt</a>
                 </li>
               </ul>
             </div>
@@ -255,10 +255,10 @@
             <div class="container-fluid d-flex justify-content-end py-2 px-4">
               <ul>
                 <li class="ps-3">
-                  <a href="">Impressum</a>
+                  <a href="{% url "imprint" %}">Impressum</a>
                 </li>
                 <li class="ps-3">
-                  <a href="">Datenschutz</a>
+                  <a href="{% url "privacy" %}">Datenschutz</a>
                 </li>
               </ul>
             </div>

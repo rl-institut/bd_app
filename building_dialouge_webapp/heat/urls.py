@@ -31,5 +31,6 @@ urlpatterns = [
     path("next_steps/", views.NextSteps.as_view(), name="next_steps"),
     # htmx redirected views
     path("delete_flow/", views.delete_flow, name="delete_flow"),
+    path("docs/<str:page>/", views.DocumentationView.as_view(), name="docs"),
     path("dev/session/", views.show_session),
 ]

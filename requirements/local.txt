@@ -206,6 +206,8 @@ kombu==5.5.3
     # via celery
 libsass==0.23.0
     # via django-libsass
+markdown==3.8.2
+    # via -r requirements/base.in
 markupsafe==3.0.2
     # via
     #   jinja2
