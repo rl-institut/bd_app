@@ -4,7 +4,7 @@
 
 {% block main %}
   <div class="home-container">
-    <!-- Left side: PDF viewer (60%) -->
+    <!-- Left side: PDF viewer (55%) -->
     <div class="pdf-viewer-section">
       <div class="pdf-box">
         <div class="pdf-content">
@@ -13,7 +13,10 @@
               <path d="M15 18l-6-6 6-6" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
-          <canvas id="pdf-canvas" data-pdf-base-url="{% static 'documents/' %}"></canvas>
+          <div id="pdf-container" style="position: relative;">
+            <canvas id="pdf-canvas" data-pdf-base-url="{% static 'documents/' %}"></canvas>
+            <div id="text-layer" class="textLayer"></div>
+          </div>
           <button id="next-page" class="pdf-nav-btn pdf-nav-right">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
               <path d="M9 18l6-6-6-6" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -23,7 +26,7 @@
       </div>
     </div>
 
-    <!-- Right side: Content (40%) -->
+    <!-- Right side: Content (45%) -->
     <div class="content-section">
       <div class="content-wrapper">
         <h2>Ihre Sanierung - einfach erklärt</h2>
@@ -91,5 +94,6 @@
 {% block javascript %}
   {{ block.super }}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.css">
   <script src="{% static 'js/home.js' %}"></script>
 {% endblock javascript %}

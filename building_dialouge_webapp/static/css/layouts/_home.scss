@@ -1,12 +1,14 @@
 .home-container {
   display: flex;
-  height: calc(100vh - 90px); /* Adjust based on navbar and footer height */
+  height: calc(100vh - 100px); /* Adjust based on navbar and footer height */
   overflow: hidden;
+  max-height: calc(100vh - 100px);
 }
 
 .pdf-viewer-section {
-  width: 55%;
+  width: 50%;
   padding: 20px 0 0 30px;
+  margin-left: 80px;
   display: flex;
   align-items: stretch;
 }
@@ -30,10 +32,47 @@
   position: relative;
 }
 
-#pdf-canvas {
+#pdf-container {
+  position: relative;
   max-width: calc(100% - 120px);
   max-height: 100%;
+}
+
+#pdf-canvas {
+  display: block;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.textLayer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  opacity: 1;
+  line-height: 1.0;
+  pointer-events: auto;
+}
+
+.textLayer > span {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+  pointer-events: none;
+}
+
+.textLayer a {
+  color: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  text-decoration: none;
+}
+
+.textLayer a:hover {
+  background-color: rgba(255, 255, 0, 0.1);
 }
 
 .pdf-controls {
@@ -92,9 +131,10 @@
 }
 
 .content-section {
-  width: 45%;
+  width: 50%;
   padding: 30px;
   overflow-y: auto;
+  max-height: 100%;
 }
 
 .content-wrapper {

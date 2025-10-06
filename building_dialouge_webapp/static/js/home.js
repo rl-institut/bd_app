@@ -7,9 +7,10 @@ document.addEventListener('DOMContentLoaded', function() {
   let pageNum = 1;
   let pageRendering = false;
   let pageNumPending = null;
-  const scale = 1.5;
+  const scale = 1.0;
   const canvas = document.getElementById('pdf-canvas');
   const ctx = canvas.getContext('2d');
+  const textLayerDiv = document.getElementById('text-layer');
 
   // Set initial canvas size
   canvas.width = 800;
@@ -57,6 +58,11 @@ document.addEventListener('DOMContentLoaded', function() {
       canvas.height = viewport.height;
       canvas.width = viewport.width;
 
+      // Clear text layer
+      textLayerDiv.innerHTML = '';
+      textLayerDiv.style.width = canvas.width + 'px';
+      textLayerDiv.style.height = canvas.height + 'px';
+
       const renderContext = {
         canvasContext: ctx,
         viewport: viewport
@@ -64,6 +70,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
       const renderTask = page.render(renderContext);
       renderTask.promise.then(function() {
+        // Render text layer for links
+        return Promise.all([
+          page.getTextContent(),
+          page.getAnnotations()
+        ]).then(function([textContent, annotations]) {
+          // Render text layer
+          pdfjsLib.renderTextLayer({
+            textContentSource: textContent,
+            container: textLayerDiv,
+            viewport: viewport,
+            textDivs: []
+          });
+
+          // Render annotations (links)
+          annotations.forEach(function(annotation) {
+            if (annotation.subtype === 'Link' && annotation.url) {
+              const rect = viewport.convertToViewportRectangle(annotation.rect);
+              const link = document.createElement('a');
+              link.href = annotation.url;
+              link.target = '_blank';
+              link.style.position = 'absolute';
+              link.style.left = Math.min(rect[0], rect[2]) + 'px';
+              link.style.top = Math.min(rect[1], rect[3]) + 'px';
+              link.style.width = Math.abs(rect[2] - rect[0]) + 'px';
+              link.style.height = Math.abs(rect[3] - rect[1]) + 'px';
+              link.style.cursor = 'pointer';
+              textLayerDiv.appendChild(link);
+            }
+          });
+        });
+      }).then(function() {
         pageRendering = false;
         if (pageNumPending !== null) {
           renderPage(pageNumPending);
