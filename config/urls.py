@@ -1,30 +1,18 @@
 # ruff: noqa
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib import admin
 from django.urls import include
 from django.urls import path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
 
-from building_dialouge_webapp.heat import views
-
 urlpatterns = [
     path("", include("building_dialouge_webapp.heat.urls", namespace="heat")),
-    path("reset_session/", views.reset_session),
-    path("oemof/", include("django_oemof.urls")),
     path(
         "about/",
         TemplateView.as_view(template_name="pages/about.html"),
         name="about",
     ),
-    # Django Admin, use {% url 'admin:index' %}
-    path(settings.ADMIN_URL, admin.site.urls),
-    # User management
-    path("users/", include("building_dialouge_webapp.users.urls", namespace="users")),
-    path("accounts/", include("allauth.urls")),
-    # Your stuff: custom urls includes go here
-    # ...
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
