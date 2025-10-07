@@ -3,111 +3,170 @@ document.addEventListener('DOMContentLoaded', function() {
   // PDF.js configuration
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
+  const canvas = document.getElementById('pdf-canvas');
+  const ctx = canvas.getContext('2d');
+  const linkLayer = document.getElementById('link-layer');
+  const prevBtn = document.getElementById('prev-page');
+  const nextBtn = document.getElementById('next-page');
+
   let pdfDoc = null;
-  let pageNum = 1;
+  let currentPage = 1;
   let pageRendering = false;
   let pageNumPending = null;
   const scale = 1.0;
-  const canvas = document.getElementById('pdf-canvas');
-  const ctx = canvas.getContext('2d');
-  const textLayerDiv = document.getElementById('text-layer');
-
-  // Set initial canvas size
-  canvas.width = 800;
-  canvas.height = 600;
-
-  // Draw initial placeholder
-  ctx.fillStyle = '#999';
-  ctx.font = '20px Arial';
-  ctx.textAlign = 'center';
-  ctx.fillText('PDF wird geladen...', canvas.width / 2, canvas.height / 2);
 
   /**
    * Load a new PDF
    */
   function loadPDF(pdfPath) {
-    // Get the base URL from the data attribute on the canvas element
     const baseUrl = canvas.getAttribute('data-pdf-base-url');
-    const currentPdfUrl = baseUrl + pdfPath;
-    pageNum = 1;
+    const pdfUrl = baseUrl + pdfPath;
 
-    console.log('Loading PDF:', currentPdfUrl);
+    console.log('Loading PDF:', pdfUrl);
 
-    pdfjsLib.getDocument(currentPdfUrl).promise.then(function(pdfDoc_) {
-      pdfDoc = pdfDoc_;
-      renderPage(pageNum);
-      updateButtons();
+    pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+      pdfDoc = pdf;
+      currentPage = 1;
+      renderPage(currentPage);
     }).catch(function(error) {
       console.error('Error loading PDF:', error);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#999';
-      ctx.font = '20px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('PDF konnte nicht geladen werden', canvas.width / 2, canvas.height / 2);
-      ctx.fillText(pdfPath, canvas.width / 2, canvas.height / 2 + 30);
     });
   }
 
   /**
-   * Render the page
+   * Render a specific page
    */
   function renderPage(num) {
     pageRendering = true;
-    pdfDoc.getPage(num).then(function(page) {
-      const viewport = page.getViewport({scale: scale});
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
 
-      // Clear text layer
-      textLayerDiv.innerHTML = '';
-      textLayerDiv.style.width = canvas.width + 'px';
-      textLayerDiv.style.height = canvas.height + 'px';
+    pdfDoc.getPage(num).then(function(page) {
+      // Calculate the scale based on available width in pdf-content
+      const pdfContent = document.querySelector('.pdf-content');
+      const availableWidth = pdfContent.offsetWidth - 120 - 20; // minus nav buttons and padding
+      const viewport = page.getViewport({scale: 1.0});
+      const scaleToFit = (availableWidth / viewport.width) * 0.73; // 75% of available width
+      const scaledViewport = page.getViewport({scale: scaleToFit});
+
+      console.log('Available width:', availableWidth);
+      console.log('PDF viewport width:', viewport.width);
+      console.log('Scale to fit:', scaleToFit);
+      console.log('Scaled viewport:', scaledViewport.width, 'x', scaledViewport.height);
+
+      canvas.height = scaledViewport.height;
+      canvas.width = scaledViewport.width;
+
+      // Clear link layer and set exact size
+      linkLayer.innerHTML = '';
+      linkLayer.style.width = scaledViewport.width + 'px';
+      linkLayer.style.height = scaledViewport.height + 'px';
 
       const renderContext = {
         canvasContext: ctx,
-        viewport: viewport
+        viewport: scaledViewport
       };
 
       const renderTask = page.render(renderContext);
-      renderTask.promise.then(function() {
-        // Render text layer for links
-        return Promise.all([
-          page.getTextContent(),
-          page.getAnnotations()
-        ]).then(function([textContent, annotations]) {
-          // Render text layer
-          pdfjsLib.renderTextLayer({
-            textContentSource: textContent,
-            container: textLayerDiv,
-            viewport: viewport,
-            textDivs: []
-          });
 
-          // Render annotations (links)
-          annotations.forEach(function(annotation) {
-            if (annotation.subtype === 'Link' && annotation.url) {
-              const rect = viewport.convertToViewportRectangle(annotation.rect);
-              const link = document.createElement('a');
-              link.href = annotation.url;
-              link.target = '_blank';
-              link.style.position = 'absolute';
-              link.style.left = Math.min(rect[0], rect[2]) + 'px';
-              link.style.top = Math.min(rect[1], rect[3]) + 'px';
-              link.style.width = Math.abs(rect[2] - rect[0]) + 'px';
-              link.style.height = Math.abs(rect[3] - rect[1]) + 'px';
-              link.style.cursor = 'pointer';
-              textLayerDiv.appendChild(link);
-            }
-          });
-        });
-      }).then(function() {
+      renderTask.promise.then(function() {
         pageRendering = false;
         if (pageNumPending !== null) {
           renderPage(pageNumPending);
           pageNumPending = null;
         }
+
+        // Render links
+        return page.getAnnotations();
+      }).then(function(annotations) {
+
+        annotations.forEach(function(annotation) {
+          if (annotation.subtype === 'Link') {
+            console.log('Link annotation:', annotation);
+
+            const rect = scaledViewport.convertToViewportRectangle(annotation.rect);
+            const link = document.createElement('a');
+
+            // Handle external links
+            if (annotation.url) {
+              link.href = annotation.url;
+              link.target = '_blank';
+              console.log('External link:', annotation.url);
+            }
+            // Handle internal links
+            else if (annotation.dest) {
+              link.href = '#';
+              link.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Internal link clicked:', annotation.dest);
+                handleInternalLink(annotation.dest);
+              });
+              console.log('Internal link:', annotation.dest);
+            }
+            // Handle action-based links
+            else if (annotation.action) {
+              link.href = '#';
+              link.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Action link clicked:', annotation.action);
+                if (annotation.action.includes('GoTo')) {
+                  handleInternalLink(annotation.action);
+                }
+              });
+            }
+
+            // Use pixel coordinates - link layer is same size as canvas
+            const x = Math.min(rect[0], rect[2]);
+            const y = Math.min(rect[1], rect[3]);
+            const width = Math.abs(rect[2] - rect[0]);
+            const height = Math.abs(rect[3] - rect[1]);
+
+            link.style.position = 'absolute';
+            link.style.left = x + 'px';
+            link.style.top = y + 'px';
+            link.style.width = width + 'px';
+            link.style.height = height + 'px';
+            link.style.cursor = 'pointer';
+
+            console.log('Link position:', x, y, width, height);
+
+            linkLayer.appendChild(link);
+          }
+        });
+
+        updateButtons();
       });
     });
+  }
+
+  /**
+   * Handle internal PDF links
+   */
+  function handleInternalLink(dest) {
+    // If dest is already an array (explicit destination), use it directly
+    if (Array.isArray(dest)) {
+      pdfDoc.getPageIndex(dest[0]).then(function(pageIndex) {
+        const targetPage = pageIndex + 1;
+        console.log('Navigating to page:', targetPage);
+        currentPage = targetPage;
+        queueRenderPage(currentPage);
+      }).catch(function(error) {
+        console.error('Error navigating to page:', error);
+      });
+    }
+    // If dest is a string (named destination), look it up first
+    else {
+      pdfDoc.getDestination(dest).then(function(destination) {
+        if (destination) {
+          pdfDoc.getPageIndex(destination[0]).then(function(pageIndex) {
+            const targetPage = pageIndex + 1;
+            console.log('Navigating to page:', targetPage);
+            currentPage = targetPage;
+            queueRenderPage(currentPage);
+          });
+        }
+      }).catch(function(error) {
+        console.error('Error handling internal link:', error);
+      });
+    }
   }
 
   /**
@@ -122,40 +181,38 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   /**
-   * Show previous page
+   * Navigate to previous page
    */
   function onPrevPage() {
-    if (pageNum <= 1) {
+    if (currentPage <= 1) {
       return;
     }
-    pageNum--;
-    queueRenderPage(pageNum);
-    updateButtons();
+    currentPage--;
+    queueRenderPage(currentPage);
   }
 
   /**
-   * Show next page
+   * Navigate to next page
    */
   function onNextPage() {
-    if (pageNum >= pdfDoc.numPages) {
+    if (currentPage >= pdfDoc.numPages) {
       return;
     }
-    pageNum++;
-    queueRenderPage(pageNum);
-    updateButtons();
+    currentPage++;
+    queueRenderPage(currentPage);
   }
 
   /**
    * Update button states
    */
   function updateButtons() {
-    document.getElementById('prev-page').disabled = pageNum <= 1;
-    document.getElementById('next-page').disabled = pageNum >= pdfDoc.numPages;
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= pdfDoc.numPages;
   }
 
-  // Add event listeners
-  document.getElementById('prev-page').addEventListener('click', onPrevPage);
-  document.getElementById('next-page').addEventListener('click', onNextPage);
+  // Add event listeners for navigation buttons
+  prevBtn.addEventListener('click', onPrevPage);
+  nextBtn.addEventListener('click', onNextPage);
 
   /**
    * Add click handlers for PDF buttons
@@ -172,4 +229,17 @@ document.addEventListener('DOMContentLoaded', function() {
    * Load default PDF on page load
    */
   loadPDF('Guideline.pdf');
+
+  /**
+   * Re-render on window resize to keep links aligned
+   */
+  let resizeTimeout;
+  window.addEventListener('resize', function() {
+    if (pdfDoc && !pageRendering) {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(function() {
+        renderPage(currentPage);
+      }, 250);
+    }
+  });
 });

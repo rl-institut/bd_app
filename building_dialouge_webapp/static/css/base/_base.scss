@@ -16,7 +16,7 @@ html, body {
 
 main {
   flex: 1; /* This ensures that the main content grows and pushes the footer down */
-  overflow: auto; /* Allows scrolling if content overflows */
+  overflow: hidden; /* Prevents page scrolling */
 }
 
 .footer {

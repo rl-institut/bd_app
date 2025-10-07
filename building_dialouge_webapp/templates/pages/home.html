@@ -9,17 +9,17 @@
       <div class="pdf-box">
         <div class="pdf-content">
           <button id="prev-page" class="pdf-nav-btn pdf-nav-left">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-              <path d="M15 18l-6-6 6-6" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="37" viewBox="0 0 24 24">
+              <polygon points="17,6 7,12 17,18" fill="#666"/>
             </svg>
           </button>
-          <div id="pdf-container" style="position: relative;">
+          <div id="pdf-container">
             <canvas id="pdf-canvas" data-pdf-base-url="{% static 'documents/' %}"></canvas>
-            <div id="text-layer" class="textLayer"></div>
+            <div id="link-layer"></div>
           </div>
           <button id="next-page" class="pdf-nav-btn pdf-nav-right">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-              <path d="M9 18l6-6-6-6" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="37" viewBox="0 0 24 24">
+              <polygon points="7,6 17,12 7,18" fill="#666"/>
             </svg>
           </button>
         </div>
@@ -94,6 +94,5 @@
 {% block javascript %}
   {{ block.super }}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.css">
   <script src="{% static 'js/home.js' %}"></script>
 {% endblock javascript %}
