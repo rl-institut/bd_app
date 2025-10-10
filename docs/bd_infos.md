@@ -1,4 +1,4 @@
-![building dialogue logo](images/bd_logo.png)
+![building dialogue logo](/static/images/icons/building_dialogue_logo.svg)
 
 # Projektinfos
 
@@ -19,5 +19,5 @@ Das Projekt läuft von Oktober 2023 bis September 2025 und wird in Zusammenarbei
 - [Institut für ökologische Wirtschaftsforschung (IÖW)](https://www.ioew.de/projekt/building_dialogue)
 
 
-![Partner Logos](images/partner_logos.png)
-![BMWK Logo](images/BMWK_logo.png)
+![Partner Logos](/static/images/icons/partner_logos.png)
+![BMWK Logo](/static/images/icons/BMWK_logo.png)
