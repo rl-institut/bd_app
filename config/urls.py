@@ -8,11 +8,6 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path("", include("building_dialouge_webapp.heat.urls", namespace="heat")),
-    path(
-        "about/",
-        TemplateView.as_view(template_name="pages/about.html"),
-        name="about",
-    ),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
