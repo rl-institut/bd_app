@@ -1,5 +1,3 @@
-![building dialogue logo](/static/images/icons/building_dialogue_logo.svg)
-
 # Projektinfos
 
 ## building-dialogue: Gebäudeenergiewende – im Dialog mit der Gesellschaft
