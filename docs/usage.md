@@ -1,14 +1,11 @@
 
 # Benutzung der Building Dialogue Webanwendung
 
-Auf der Website des Building Dialogue Projekts können verschiedene Optionen der Wärmeversorgung eines Gebäudes 
-durchgespielt werden. Dabei können unterschiedliche Heizungssysteme und Sanierungsmaßnahmen ausgewählt werden.
-In den Ergebnissen können die Nutzenden dann die Auswirkungen der ausgewählten Optionen auf den Wärmebedarf und die entstehenden Kosten sowie CO₂-Verbräuche einsehen.
+Auf der Website des Building Dialogue Projekts können Sie Informationen zu verschiedene Optionen der Gebäudesanierung und Wärmeversorgung einsehen. Die Anwendung bietet zudem einen Überblick über rechtliche und finanzielle Rahmenbedingungen.
 
-Wir haben uns bemüht die Nutzenden so gut wie möglich durch die Anwendung zu führen.
-Im Idealfall werden die Nutzenden vom Start der Berechnung bis zu den Ergebnissen Schritt für Schritt weiter geführt.
-Über die Inhaltsangabe auf der linken Seite können die Nutzenden aber auch jederzeit zu bereits ausgefüllten Bereichen zurückspringen, 
-um Angaben zu ändern. 
+Wir haben die Anwendung so gestaltet, dass Sie sich intuitiv durch die Inhalte bewegen können. Das zentrale Informationsdokument vermittelt einen Überblick über die wichtigsten Schritte einer Sanierung. Für detailliertere Informationen stehen auf der rechten Seite die „Wissenswertes“-Dokumente zur Verfügung, die Sie mit einem Klick öffnen können. 
+
+Zusätzlich finden Sie Informationen zu den Bereichen „Projektinfos“, „Dokumentation“ und „Kontakt“ auf separaten Seiten, die Sie über die jeweiligen Buttons in der oberen rechten Ecke erreichen. Über einen Klick auf das Building-Dialogue-Logo gelangen Sie jederzeit zurück zur Startseite.
 
 Die Schritte innerhalb der Anwendung werden im Folgenden beschrieben:
 
