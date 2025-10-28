@@ -7,11 +7,11 @@ Wir haben die Anwendung so gestaltet, dass Sie sich intuitiv durch die Inhalte b
 
 Zusätzlich finden Sie Informationen zu den Bereichen „Projektinfos“, „Dokumentation“ und „Kontakt“ auf separaten Seiten, die Sie über die jeweiligen Buttons in der oberen rechten Ecke erreichen. Über einen Klick auf das Building-Dialogue-Logo gelangen Sie jederzeit zurück zur Startseite.
 
-Die Schritte innerhalb der Anwendung werden im Folgenden beschrieben:
+Die Möglichkeiten innerhalb der Anwendung werden im Folgenden beschrieben:
 
 ## Startseite
    
-Die Startseite zeigt Ihnen das Dokument "Schritt für Schritt zur energetischen Sanierung". Sie können es direkt in der Webanwendung durchblättern oder als PDF herunterladen. Die Startseite dient zu Vorstellung des Projekts und liefert erste Informationen. 
+Die Startseite zeigt Ihnen das Dokument "Schritt für Schritt zur energetischen Sanierung". Sie können es direkt in der Webanwendung durchblättern. Die Startseite dient zu Vorstellung des Projekts und liefert erste Informationen. 
 
 Über die Buttons auf der rechten Seiteleiste können Sie zusätzlich weitere Inhalte aufrufen: 
 - Das oberste Icon führt zu einem Dokument, das den Weg zur Sanierung Schritt für Schritt erklärt.
@@ -21,10 +21,15 @@ Die Startseite zeigt Ihnen das Dokument "Schritt für Schritt zur energetischen 
 
 ## Ihre Sanierung - einfach erklärt
 
-
+Dieses Dokument dient Ihnen als Leitfaden. Anhand von acht Schritten werden Sie durch den gesamten Prozess bis zur Sanierung geführt. Nachdem Sie auf das Icon geklickt haben, können Sie jede Seite in der Webanwendung mit den Pfeilen links und rechts durchblättern und sich so über jeden Schritt informieren.
 
 ## Wissenswertes
+
+
+
 ### Modernisierungsmaßnahmen
+
+
 
 ### Heizungswechsel
 
