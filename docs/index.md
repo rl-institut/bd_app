@@ -4,5 +4,4 @@
 Hier findest du Informationen zu folgenden Themen:
 
 - [Benutzung der Anwendung](/docs/usage.md)
-- [Wissenswertes zum Projekt](/docs/wissenswertes.md)
 - [Projektinformationen](/docs/bd_infos.md)
