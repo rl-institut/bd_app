@@ -30,11 +30,11 @@ Die „Wissenswertes“-Dokumente bieten zusätzliche Hintergrundinformationen z
 
 ### Modernisierungsmaßnahmen
 
-Dieses Dokument gibt Ihnen einen Überblick über typische Maßnahmen zur energetischen Modernisierung, wie zum Beispiel Dämmung, moderne Fenster oder effiziente Anlagentechnik. Jede Seite bietet eine Übersicht zu einer Maßnahme. Diese Übersichten sollen Ihnen helfen, leichter einzuschätzen, welche Schritte für Ihr Gebäude sinnvoll sind.
+Dieses Dokument gibt Ihnen einen Überblick über typische Maßnahmen zur energetischen Modernisierung, wie zum Beispiel Dämmung, moderne Fenster oder Dachausbau. Jede Seite bietet eine Übersicht zu einer Maßnahme. Diese Übersichten sollen Ihnen helfen, leichter einzuschätzen, welche Schritte für Ihr Gebäude sinnvoll sind.
 
 ### Heizungswechsel
 
-
+Dieses Dokument gibt Ihnen einen Überblick über die Möglichkeiten beim Austausch oder der Modernisierung Ihrer Heizungsanlage. Jede Seite stellt kurz eine Variante vor, z. B. Gas-, Elektro- oder Wärmepumpenheizungen, und bietet weiterführende Links, um sich detaillierter zu informieren. Auf diese Weise erhalten Sie eine bessere Orientierung, welche Heizungsoptionen zu Ihrem Gebäude passen könnten.
 
 ### Förderungen und Rechtliches
 
