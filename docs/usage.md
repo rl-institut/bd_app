@@ -26,11 +26,11 @@ Dieses Dokument dient Ihnen als Leitfaden. Anhand von acht Schritten werden Sie 
 
 ## Wissenswertes
 
-Die „Wissenswertes“-Dokumente bieten zusätzliche Hintergrundinformationen zu wichtigen Themen rund um die energetische Sanierung. Sie helfen Ihnen, einzelne Schritte oder Entscheidungen besser nachzuvollziehen und zu vergleichen.
+Die „Wissenswertes“-Dokumente bieten zusätzliche Hintergrundinformationen zu wichtigen Themen rund um die energetische Sanierung. Sie helfen Ihnen, einzelne Schritte oder Entscheidungen besser nachzuvollziehen und zu vergleichen. Wenn Sie auf das jeweilige Icon klicken, wird Ihnen das Dokument in der Webanwendung angezeigt, und Sie können darin blättern.
 
 ### Modernisierungsmaßnahmen
 
-
+Dieses Dokument gibt Ihnen einen Überblick über typische Maßnahmen zur energetischen Modernisierung, wie zum Beispiel Dämmung, moderne Fenster oder effiziente Anlagentechnik. Jede Seite bietet eine Übersicht zu einer Maßnahme. Diese Übersichten sollen Ihnen helfen, leichter einzuschätzen, welche Schritte für Ihr Gebäude sinnvoll sind.
 
 ### Heizungswechsel
 
