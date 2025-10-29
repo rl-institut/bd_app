@@ -14,6 +14,7 @@ Die Möglichkeiten innerhalb der Anwendung werden im Folgenden beschrieben:
 Die Startseite zeigt Ihnen das Dokument "Schritt für Schritt zur energetischen Sanierung". Sie können es direkt in der Webanwendung durchblättern. Die Startseite dient zu Vorstellung des Projekts und liefert erste Informationen. 
 
 Über die Buttons auf der rechten Seiteleiste können Sie zusätzlich weitere Inhalte aufrufen: 
+
 - Das oberste Icon führt zu einem Dokument, das den Weg zur Sanierung Schritt für Schritt erklärt.
 - Darunter befinden sich drei nebeneinander angeordnete Icons, die zu den jeweiligen Wissenswertes-Dokumenten führen.
 - Darunter finden Sie ein Icon zu einem weiteren Wissensdokument, das sich mit Wertschöpfung beschäftigt.
@@ -25,7 +26,7 @@ Dieses Dokument dient Ihnen als Leitfaden. Anhand von acht Schritten werden Sie 
 
 ## Wissenswertes
 
-
+Die „Wissenswertes“-Dokumente bieten zusätzliche Hintergrundinformationen zu wichtigen Themen rund um die energetische Sanierung. Sie helfen Ihnen, einzelne Schritte oder Entscheidungen besser nachzuvollziehen und zu vergleichen.
 
 ### Modernisierungsmaßnahmen
 
@@ -33,6 +34,12 @@ Dieses Dokument dient Ihnen als Leitfaden. Anhand von acht Schritten werden Sie 
 
 ### Heizungswechsel
 
+
+
 ### Förderungen und Rechtliches
 
+
+
 ### Wertschöpfung
+
+*hier noch Text einfügen*
