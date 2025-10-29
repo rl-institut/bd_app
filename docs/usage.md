@@ -38,7 +38,7 @@ Dieses Dokument gibt Ihnen einen Überblick über die Möglichkeiten beim Austau
 
 ### Förderungen und Rechtliches
 
-
+Dieses Dokument gibt Ihnen einen Überblick über Fördermöglichkeiten und rechtliche Rahmenbedingungen bei energetischen Sanierungen. Jede Seite weist auf wichtige Vorgaben hin und bietet weiterführende Links, um sich detaillierter zu informieren. So können Sie einschätzen, welche Vorgaben für Ihr Sanierungsvorhaben wichtig sind.
 
 ### Wertschöpfung
 
