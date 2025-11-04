@@ -1,3 +1,7 @@
+import logging
+
+import requests
+
 # Liste der Urls
 urls = [
     "https://deneff.org/sanierungssprint-legt-los-immer-mehr-regionen-setzen-auf-tempo-bei-der-gebaeudesanierung/",
@@ -63,3 +67,35 @@ urls = [
     "https://www.waermepumpe.de/",
     "https://www.waermepumpe.de/fachpartner/planungstools/",
 ]
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "de-DE,de;q=0.9",
+}
+
+
+def check_url(url):
+    try:
+        response = requests.get(url, headers=HEADERS, timeout=20)
+        # currently no redirecting is allowed. to do so: allow_redirects=True
+    except requests.RequestException as exc:
+        logging.warning("Request failed: %s -> %s", url, exc)
+        return False
+    else:
+        # 200 oder 2xx (Erfolgreiche Operation) akzeptieren
+        statuscode_min = 200
+        statuscode_max = 300
+        return statuscode_min <= response.status_code < statuscode_max
+
+
+def test_urls_are_working():
+    """
+    Test that checks all URLS in list urls for reachability.
+    Every status between 200 and 299 is accepted as working.
+    """
+    broken_urls = [url for url in urls if not check_url(url)]
+
+    assert not broken_urls, f"{len(broken_urls)} URLs failed:\n" + "\n".join(f"- {url}" for url in broken_urls)
