@@ -78,24 +78,70 @@ HEADERS = {
 
 
 def check_url(url):
+    """
+    Prüft, ob eine URL erreichbar ist.
+    Gibt ein Tuple zurück: (True/False, StatusCode oder Fehlertext)
+    Status-Codes: https://de.wikipedia.org/wiki/HTTP-Statuscode
+    """
     try:
         response = requests.get(url, headers=HEADERS, timeout=20)
         # currently no redirecting is allowed. to do so: allow_redirects=True
+        statuscode = response.status_code
     except requests.RequestException as exc:
         logging.warning("Request failed: %s -> %s", url, exc)
-        return False
+        # exceptions in doc https://requests.readthedocs.io/en/latest/_modules/requests/exceptions/#RequestException
+        return False, str(exc)
     else:
         # 200 oder 2xx (Erfolgreiche Operation) akzeptieren
         statuscode_min = 200
         statuscode_max = 300
-        return statuscode_min <= response.status_code < statuscode_max
+        ok = statuscode_min <= statuscode < statuscode_max
+        return ok, statuscode
 
 
+# Test-Option 1 mit pytest:
 def test_urls_are_working():
     """
     Test that checks all URLS in list urls for reachability.
     Every status between 200 and 299 is accepted as working.
-    """
-    broken_urls = [url for url in urls if not check_url(url)]
 
-    assert not broken_urls, f"{len(broken_urls)} URLs failed:\n" + "\n".join(f"- {url}" for url in broken_urls)
+    Broken URLs at the moment:
+    https://www.baunetzwissen.de/nachhaltig-bauen/fachwissen/regelwerke/
+    berechnungsgrundlagen-fuer-energiebilanzen-830569 status code: 403
+    https://www.vdpm.info/umwelt/was-ist-niedertemperatur-ready/ ; status code: 404
+    """
+    broken_urls = []
+    for url in urls:
+        ok, status = check_url(url)
+        if not ok:
+            broken_urls.append((url, status))
+
+    assert not broken_urls, f"{len(broken_urls)} URLs failed:\n" + "\n".join(
+        f"- {url} (Status: {status})" for url, status in broken_urls
+    )
+
+
+# Test-Option 2 mit Linting auskommentierten Prints:
+def main():
+    total_urls = len(urls)
+    working_count = 0
+    broken_urls = []
+
+    for url in urls:
+        ok, status = check_url(url)
+        if ok:
+            working_count += 1
+        else:
+            broken_urls.append((url, status))
+
+    print(f"{working_count}/{total_urls} URLs are working")  # noqa: T201
+    if broken_urls:
+        print("Broken URLs:")  # noqa: T201
+        for url, status in broken_urls:
+            print(f"- {url} (Status: {status})")  # noqa: T201
+    else:
+        print("All URLs are working!")  # noqa: T201
+
+
+if __name__ == "__main__":
+    main()
