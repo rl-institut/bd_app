@@ -1,45 +1,95 @@
 
-# Benutzung der Building Dialogue Webanwendung
+# Benutzung der building-dialogue Webanwendung
 
-Auf der Website des Building Dialogue Projekts können Sie Informationen zu verschiedenen Möglichkeiten der Gebäudesanierung und Wärmeversorgung einsehen. Die Anwendung bietet zudem einen Überblick über rechtliche und finanzielle Rahmenbedingungen.
+Auf der Website von *building-dialogue* finden Sie verständlich aufbereitete Informationen zu
+verschiedenen Möglichkeiten der energetischen Gebäudesanierung und Wärmeversorgung.
+Darüber hinaus erhalten Sie einen Überblick über die rechtlichen und finanziellen
+Rahmenbedingungen, die bei einer Sanierung wichtig sind.
 
-Wir haben die Anwendung so gestaltet, dass Sie sich einfach und intuitiv durch die Inhalte bewegen können. Das zentrale Informationsdokument vermittelt einen Überblick über die wichtigsten Informationen aus dem Projekt. Für detailliertere Informationen stehen auf der rechten Seite die „Wissenswertes"-Dokumente zur Verfügung, die Sie mit einem Klick öffnen können. 
+Im Informationsdokument auf der Startseite erhalten Sie einen kompakten Überblick über die
+wichtigsten Ergebnisse und Hinweise aus dem Projekt.
+Auf der rechten Seite finden Sie zusätzlich die *Wissenswertes*-Dokumente. Diese bieten
+vertiefende Informationen zu einzelnen Themen und lassen sich mit einem Klick öffnen.
 
-Zusätzlich finden Sie Informationen zu den Bereichen „Projektinfos“, „Dokumentation“ und „Kontakt“ auf separaten Seiten, die Sie über die jeweiligen Buttons in der oberen rechten Ecke erreichen. Über einen Klick auf das Building-Dialogue-Logo gelangen Sie jederzeit zurück zur Startseite.
+Über die obere rechte Ecke der Website gelangen Sie außerdem zu folgenden Bereichen:
 
-Die Möglichkeiten innerhalb der Anwendung werden im Folgenden beschrieben:
+* Projektinfos
+
+* Dokumentation
+
+* Kontakt
+
+Ein Klick auf das *building-dialogue*-Logo bringt Sie jederzeit zurück zur Startseite.
+
+Im Folgenden erklären wir Ihnen, welche Möglichkeiten die Anwendung bietet und wie Sie sie optimal
+nutzen können.
 
 ## Startseite
    
-Die Startseite zeigt Ihnen das Dokument "Schritt für Schritt zur energetischen Sanierung". Sie können es direkt in der Webanwendung durchblättern. Die Startseite dient zu Vorstellung des Projekts und liefert erste Informationen. 
+Auf der Startseite finden Sie das Dokument *Schritt für Schritt zur energetischen Sanierung*.
+Darin sind die wichtigsten Informationen zu den Themen Gebäudesanierung und Heizungstausch
+übersichtlich für Sie zusammengefasst. Sie können das Dokument direkt in der Webanwendung öffnen
+und bequem durchblättern.
 
-Über die Buttons auf der rechten Seiteleiste können Sie weitere Inhalte aufrufen: 
+Über die rechte Seitenleiste gelangen Sie zu weiteren Inhalten:
 
-- Das oberste Icon führt zu einem Dokument, das den Weg zur Sanierung Schritt für Schritt erklärt.
-- Darunter befinden sich drei nebeneinander angeordnete Icons, die zu den jeweiligen Wissenswertes-Dokumenten führen.
-- Darunter finden Sie ein Icon zu einem weiteren Wissensdokument über Wertschöpfung.
-- Ganz unten im Seitenbereich bringt Sie der Button „Startseite“ jederzeit zurück zur Startseite.
+* Ganz oben finden Sie das Dokument *Ihre Sanierung – einfach erklärt*. Es beschreibt den Weg zur Sanierung im Detail.
+* Darunter befinden sich drei Symbole, die zu den jeweiligen „Wissenswertes“-Dokumenten führen:
+
+    * Modernisierungsmöglichkeiten
+
+    * Heizungswechsel
+
+    * Förderungen und Rechtliches
+
+* Ein weiteres Symbol darunter öffnet ein zusätzliches Informationsdokument zum Thema Wertschöpfung.
+
+* Ganz unten befindet sich der Button „Startseite“ – mit ihm gelangen Sie jederzeit wieder zurück auf die Startseite.
 
 ## Ihre Sanierung - einfach erklärt
 
-Dieses Dokument dient Ihnen als Leitfaden. Anhand von acht Schritten werden Sie durch den gesamten Prozess bis zur Sanierung geführt. Nachdem Sie auf das Icon geklickt haben, können Sie jede Seite in der Webanwendung mit den Pfeilen links und rechts durchblättern und sich so über jeden Schritt informieren.
+Dieses Dokument dient Ihnen als Leitfaden.
+In acht übersichtlichen Schritten führt es Sie durch den gesamten Prozess einer energetischen
+Sanierung – von der ersten Überlegung bis zur Umsetzung.
+So erfahren Sie Schritt für Schritt, wie Sie bei Ihrer eigenen Sanierung vorgehen können.
+
+Sie können das Dokument direkt in der Webanwendung öffnen und mit den Pfeilen links und rechts
+bequem durchblättern. Alternativ lassen sich die einzelnen Seiten auch über die Buttons im Dokument
+selbst ansteuern.
 
 ## Wissenswertes
 
-Die „Wissenswertes“-Dokumente bieten zusätzliche Hintergrundinformationen zu wichtigen Themen rund um die energetische Sanierung. Sie helfen Ihnen, einzelne Schritte oder Entscheidungen besser nachzuvollziehen und zu vergleichen. Wenn Sie auf das jeweilige Icon klicken, wird Ihnen das Dokument in der Webanwendung angezeigt, und Sie können darin blättern.
+Die „Wissenswertes“-Dokumente bieten Ihnen zusätzliche Hintergrundinformationen zu wichtigen Themen
+rund um die energetische Sanierung. Sie helfen Ihnen, Entscheidungen besser nachzuvollziehen und
+verschiedene Möglichkeiten miteinander zu vergleichen.
+
+Sie gelangen zu den Dokumenten über einen Klick auf das jeweilige Symbol. Auch hier können Sie die
+Seiten mit den Pfeilen links und rechts durchblättern oder die Navigationsbuttons im Dokument
+verwenden.
 
 ### Modernisierungsmaßnahmen
 
-Dieses Dokument gibt Ihnen einen Überblick über typische Maßnahmen zur energetischen Modernisierung, wie zum Beispiel Dämmung, moderne Fenster oder Dachausbau. Jede Seite bietet eine kurze Übersicht zu einer Maßnahme. Diese Übersichten sollen Ihnen helfen, leichter einzuschätzen, welche Schritte für Ihr Gebäude sinnvoll sind.
+Dieses Dokument gibt Ihnen einen Überblick über typische Maßnahmen der energetischen
+Modernisierung, zum Beispiel Dämmung, moderne Fenster oder den Dachausbau. Jede Seite bietet eine
+kurze, verständliche Übersicht zu einer Maßnahme und enthält weiterführende Links für vertiefende
+Informationen. So können Sie leichter einschätzen, welche Schritte für Ihr Gebäude sinnvoll sind.
 
 ### Heizungswechsel
 
-Dieses Dokument gibt Ihnen einen Überblick über die Möglichkeiten beim Austausch oder der Modernisierung Ihrer Heizungsanlage. Jede Seite stellt kurz eine Variante vor, z. B. Gas-, Elektro- oder Wärmepumpenheizungen, und bietet weiterführende Links, um sich detaillierter zu informieren. Auf diese Weise erhalten Sie eine bessere Orientierung, welche Heizungsoptionen zu Ihrem Gebäude passen könnten.
+Hier erhalten Sie einen Überblick über die verschiedenen Möglichkeiten beim Austausch oder bei der
+Modernisierung Ihrer Heizungsanlage. Jede Seite stellt kurz eine Variante vor – etwa Wärmepumpen-,
+Gas- oder Elektrodirektheizungen – und verweist auf weiterführende Informationsquellen. So können
+Sie gut vergleichen, welche Heizungsart am besten zu Ihrem Gebäude passt.
 
 ### Förderungen und Rechtliches
 
-Dieses Dokument gibt Ihnen einen Überblick über Fördermöglichkeiten und rechtliche Rahmenbedingungen bei energetischen Sanierungen. Jede Seite weist auf wichtige Vorgaben hin und bietet weiterführende Links, um sich detaillierter zu informieren. So können Sie einschätzen, welche Vorgaben für Ihr Sanierungsvorhaben wichtig sind.
+Dieses Dokument informiert Sie über aktuelle Förderprogramme und die rechtlichen Rahmenbedingungen
+für energetische Sanierungen. Jede Seite nennt die wichtigsten Vorgaben und Hinweise und bietet
+Links zu offiziellen Informationsquellen. So können Sie leicht prüfen, welche Regelungen und
+Fördermöglichkeiten für Ihr Vorhaben relevant sind.
 
 ### Wertschöpfung
-
-*hier noch Text einfügen*
+Dieses Dokument zeigt, welche wirtschaftlichen Effekte durch energetische Sanierungen entstehen
+können. Es veranschaulicht, wie Investitionen in Dämmung und Heizungstausch regionale Arbeitsplätze
+und Einkommen schaffen. So erhalten Sie einen Einblick, welche Bedeutung Sanierungen auch für die
+Wertschöpfung haben können.
