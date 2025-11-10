@@ -9,7 +9,7 @@ Begleitend zu den Dialogformaten entsteht das hier vorliegende Tool **building d
 Die Erkenntnisse aus Dialogveranstaltungen werden iterativ in das Tool eingebaut.
 Mit dem Tool **building dialogue** und innovativen Dialogformaten sollen Multiplikatoren wie Energieagenturen gezielt auf Gebäudeeigentümer*innen zugehen können.
 
-Das Projekt läuft von Oktober 2023 bis September 2025 und wird in Zusammenarbeit mit folgenden Partnerinstitutionen umgesetzt:
+Das Projekt läuft von Oktober 2023 bis Dezember 2025 und wird in Zusammenarbeit mit folgenden Partnerinstitutionen umgesetzt:
 
 - [Unabhängiges Institut für Umweltfragen (UfU)](https://www.ufu.de/projekt/building-dialogue/)
 - [Deutsche Gesellschaft für Sonnenenergie Landesverband Berlin Brandenburg e.V. (DGS)](https://www.dgs.de/)
