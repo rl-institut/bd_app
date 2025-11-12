@@ -2,7 +2,7 @@ import logging
 
 import requests
 
-# Liste der Urls
+# Liste der Urls, alphabetisch sortiert
 urls = [
     "https://deneff.org/sanierungssprint-legt-los-immer-mehr-regionen-setzen-auf-tempo-bei-der-gebaeudesanierung/",
     "https://energieberatung-wissen.de/energieeffizienz-berechnen-die-wichtigsten-formeln/",
@@ -42,6 +42,7 @@ urls = [
     "https://www.dena.de/fileadmin/dena/Publikationen/PDFs/2018/2024_Modernisierungsratgeber_Energie.pdf",
     "https://www.energie-effizienz-experten.de/",
     "https://www.energiewechsel.de/KAENEF/Redaktion/DE/FAQ/GEG/faq-geg.html",
+    "https://www.gebaeudeforum.de/realisieren/heizungstechnik/nt-ready/",
     "https://www.hwk-berlin.de/downloads/broschuere-sanierung-von-kastenfenstern-eine-entscheidungshilfe-91,650.pdf",
     "https://www.ioew.de/publikation/energiewende_in_der_lausitz_regionaloekonomische_effekte_relevanter_technologien",
     "https://www.ioew.de/publikation/geschaeftsmodelle_fuer_die_waermewende_im_quartier",
@@ -53,7 +54,6 @@ urls = [
     "https://www.umweltbundesamt.de/sites/default/files/medien/479/publikationen/heizen_mit_holz_2018_web_0.pdf",
     "https://www.umweltbundesamt.de/umwelttipps-fuer-den-alltag/heizen-bauen/sanierung#hintergrund",
     "https://www.unendlich-viel-energie.de/wertschoepfungsrechner",
-    "https://www.vdpm.info/umwelt/was-ist-niedertemperatur-ready/",
     "https://www.verbraucherzentrale-rlp.de/sites/default/files/2024-07/240612_bhp_vz_keller_06.pdf",
     "https://www.verbraucherzentrale-saarland.de/pressemeldungen/energie/daemmen-der-obersten-geschossdecke-59258",
     "https://www.verbraucherzentrale.bayern/pressemeldungen/energie/dachdaemmung-schuetzt-vor-hitze-und-energieverlust-109975",
@@ -111,8 +111,7 @@ def test_urls_are_working():
 
     Broken URLs at the moment:
     https://www.baunetzwissen.de/nachhaltig-bauen/fachwissen/regelwerke/
-    berechnungsgrundlagen-fuer-energiebilanzen-830569 status code: 403
-    https://www.vdpm.info/umwelt/was-ist-niedertemperatur-ready/ ; status code: 404
+    berechnungsgrundlagen-fuer-energiebilanzen-830569 ; status code: 403
     """
     broken_urls = []
     for url in urls:
