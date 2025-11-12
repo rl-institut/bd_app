@@ -1,0 +1,120 @@
+@import '../base/variables';
+
+.imprint-page {
+  padding: 2rem 0;
+  min-height: calc(100vh - 200px);
+
+  @media screen and (min-width: $breakpoint-lg) {
+    padding: 3rem 0;
+  }
+
+  .home__container {
+    max-width: 100%;
+    padding: 0 1rem;
+    margin: 0 auto;
+
+    @media screen and (min-width: $breakpoint-md) {
+      max-width: 65rem;
+      padding: 0 2rem;
+    }
+
+    @media screen and (min-width: $breakpoint-lg) {
+      max-width: 75rem;
+    }
+
+    @media screen and (min-width: $breakpoint-xl) {
+      max-width: 85rem;
+    }
+  }
+
+  .home__paragraph {
+    font-size: $font-size-md;
+    color: $grey-600;
+    line-height: 1.7;
+
+    @media screen and (min-width: $breakpoint-lg) {
+      font-size: $font-size-lg;
+      line-height: 1.8;
+    }
+
+    .right-align-links {
+      text-align: right;
+      margin-bottom: 1.5rem;
+
+      a {
+        font-size: $font-size-sm;
+        color: $grey-600;
+        text-decoration: none;
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+          color: $body-color;
+          text-decoration: underline;
+        }
+      }
+    }
+
+    h2 {
+      font-family: 'Montserrat', 'SourceSans3', 'Roboto', sans-serif;
+      font-weight: 700;
+      color: $body-color;
+      font-size: $font-size-xl;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid $grey-200;
+
+      @media screen and (min-width: $breakpoint-lg) {
+        font-size: 2rem;
+      }
+
+      &:first-of-type,
+      &.privacy-modal__title {
+        margin-top: 0;
+      }
+    }
+
+    h3 {
+      font-family: 'Montserrat', 'SourceSans3', 'Roboto', sans-serif;
+      font-weight: 700;
+      color: $body-color;
+      font-size: $font-size-lg;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+
+      @media screen and (min-width: $breakpoint-lg) {
+        font-size: $font-size-xl;
+      }
+    }
+
+    p {
+      margin-bottom: 1.25rem;
+      line-height: 1.7;
+
+      @media screen and (min-width: $breakpoint-lg) {
+        line-height: 1.8;
+      }
+
+      strong {
+        font-weight: $font-weight-bold;
+        color: $body-color;
+      }
+
+      em {
+        font-style: italic;
+        color: $grey-700;
+      }
+    }
+
+    a {
+      color: $secondary-color;
+      text-decoration: none;
+      transition: color 0.2s ease-in-out;
+
+      &:hover {
+        color: $blue-900;
+        text-decoration: underline;
+      }
+    }
+  }
+}

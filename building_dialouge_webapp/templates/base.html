@@ -48,24 +48,22 @@
               <span class="navbar-toggler-icon"></span>
             </button>
             <a class="navbar-brand" href="{% url 'heat:home' %}">
-              <img src="/static/images/bd_logo.png" alt="building dialogue Logo">
+              <img src="/static/images/icons/building_dialogue_logo.svg" alt="building dialogue Logo">
             </a>
             <div class="dev-banner">
-              🔧 Die App ist noch im Aufbau – danke für deine Geduld!
+                🔧 Die App ist noch im Aufbau – Vielen Dank für Ihre Geduld!<br>
+                Bei Fragen wenden Sie sich bitte an info@rl-institut.de.
             </div>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                  <a class="nav-link" href="">Projektinfos<span class="visually-hidden">(aktuell)</span></a>
+                  <a class="nav-link" href="{% url 'heat:docs' page='bd_infos' %}">Projektinfos<span class="visually-hidden">(aktuell)</span></a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="">Dokumentation</a>
+                  <a class="nav-link" href="{% url 'heat:docs' page='index' %}">Dokumentation</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="">Quellen</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="">Kontakt</a>
+                  <a class="nav-link" href="{% url 'heat:contact' %}">Kontakt</a>
                 </li>
               </ul>
             </div>
@@ -85,168 +83,6 @@
           {% endfor %}
         {% endif %}
         {% block main %}
-          {% block sidebar %}
-            <div class="d-flex flex-row justify-content-between" style="min-height:100%">
-              <section class="sidebar px-4 py-3">
-                <div>
-                  <a class="btn btn-light" href="{% url 'heat:home' %}">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         width="16"
-                         height="16"
-                         fill="currentColor"
-                         class="bi bi-arrow-left"
-                         viewBox="0 0 16 16">
-                      <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
-                    </svg>
-                    Start
-                  </a>
-                </div>
-                <div class="sidebar-nav pt-4">
-                  <ul class="ps-0">
-                    {% for category in index %}
-                      <li class="sidebar-nav__category {{ category.index_state }}">
-                        <a href="{% url category.url %}"><span class="checkbox"></span>{{ category.category }}</a>
-                      </li>
-                      {% for step in category.steps %}
-                        <li class="sidebar-nav__step {{ step.index_state }}">
-                          {% if step.kwargs %}
-                            <a href="{% url step.url scenario=step.kwargs %}"><span class="checkbox"></span>{{ step.name }}</a>
-                          {% else %}
-                            <a href="{% url step.url %}"><span class="checkbox"></span>{{ step.name }}</a>
-                          {% endif %}
-                        </li>
-                      {% endfor %}
-                    {% endfor %}
-                  </ul>
-                </div>
-              </section>
-              {% block content %}
-                <section class="position-relative h-100 flex-grow-1 pb-5">
-                  <div class="step-title">
-                    <div class="step-container">
-                      <div class="main">
-                        <h1>Angaben zu Gebäude</h1>
-                      </div>
-                    </div>
-                    <div class="help"></div>
-                  </div>
-                  <div class="step-text">
-                    <div class="step-container">
-                      <div class="main">
-                        <span>Um das Potenzial Ihres Gebäudes genau einschätzen zu können, analysieren wir zuerst den aktuellen Energieverbrauch.</span>
-                      </div>
-                    </div>
-                    <div class="help"></div>
-                  </div>
-                  <form action="">
-                    <div class="step-question">
-                      <div class="step-container">
-                        <div class="main">
-                          <label for="" class="form-label">Zeitraum</label>
-                          <div class="input-unit">
-                            <input type="date" class="form-control form-control--sm" />
-                            <span class="form-text">bis</span>
-                            <input type="date" class="form-control form-control--sm" />
-                          </div>
-                        </div>
-                      </div>
-                      <div class="help"></div>
-                    </div>
-                    <div class="step-question">
-                      <div class="step-container">
-                        <div class="main">
-                          <label for="" class="form-label">Heizungsverbrauch</label>
-                          <div class="input-unit">
-                            <input type="number" class="form-control form-control--sm" />
-                            <span class="form-text">kWh</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="help"></div>
-                    </div>
-                    <div class="step-question">
-                      <div class="step-container">
-                        <div class="main">
-                          <label for="" class="form-label">Anzahl Wohneiheiten</label>
-                          <input type="number" class="form-control form-control--sm" />
-                        </div>
-                      </div>
-                      <div class="help">
-                        <span>Wohneiheiten:</span>Die Anzahl der Wohneinheiten gibt an, wie viele separate Wohnungen oder Wohnbereiche in einem Gebäude oder einer Immobilie vorhanden sind.
-                      </div>
-                    </div>
-                    <div class="step-question">
-                      <div class="step-container">
-                        <div class="main">
-                          <label for="" class="form-label">Anzahl Wohneiheiten</label>
-                          <select class="form-select form-select--md"
-                                  aria-label="Default select example">
-                            <option selected>Open this select menu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div class="help"></div>
-                    </div>
-                    <div class="step-question">
-                      <div class="step-container">
-                        <div class="main">
-                          <fieldset>
-                            <legend class="form-label">Photovoltaik-Anlage vorhanden</legend>
-                            <div class="form-check">
-                              <input class="form-check-input"
-                                     type="radio"
-                                     name="flexRadioDefault"
-                                     id="flexRadioDefault1" />
-                              <label class="form-check-label" for="flexRadioDefault1">Ja</label>
-                            </div>
-                            <div class="form-check">
-                              <input class="form-check-input"
-                                     type="radio"
-                                     name="flexRadioDefault"
-                                     id="flexRadioDefault2"
-                                     checked />
-                              <label class="form-check-label" for="flexRadioDefault2">Nein</label>
-                            </div>
-                          </fieldset>
-                        </div>
-                      </div>
-                      <div class="help"></div>
-                    </div>
-                    <div class="step-question">
-                      <div class="step-container">
-                        <div class="main">
-                          <fieldset>
-                            <legend class="form-label">Select Options</legend>
-                            <div class="form-check">
-                              <input class="form-check-input"
-                                     type="checkbox"
-                                     value=""
-                                     id="flexCheckDefault" />
-                              <label class="form-check-label" for="flexCheckDefault">Default checkbox</label>
-                            </div>
-                            <div class="form-check">
-                              <input class="form-check-input"
-                                     type="checkbox"
-                                     value=""
-                                     id="flexCheckChecked"
-                                     checked />
-                              <label class="form-check-label" for="flexCheckChecked">Checked checkbox</label>
-                            </div>
-                          </fieldset>
-                        </div>
-                      </div>
-                      <div class="help">
-                        <span>Wohneiheiten:</span>Die Anzahl der Wohneinheiten gibt an, wie viele separate Wohnungen oder Wohnbereiche in einem Gebäude oder einer Immobilie vorhanden sind.
-                      </div>
-                    </div>
-                  </form>
-                </section>
-              {% endblock content %}
-            </div>
-          {% endblock sidebar %}
         {% endblock main %}
       </main>
       <footer class="footer mt-auto">
@@ -255,10 +91,10 @@
             <div class="container-fluid d-flex justify-content-end py-2 px-4">
               <ul>
                 <li class="ps-3">
-                  <a href="">Impressum</a>
+                  <a href="{% url 'heat:imprint' %}">Impressum</a>
                 </li>
                 <li class="ps-3">
-                  <a href="">Datenschutz</a>
+                  <a href="{% url 'heat:privacy' %}">Datenschutz</a>
                 </li>
               </ul>
             </div>

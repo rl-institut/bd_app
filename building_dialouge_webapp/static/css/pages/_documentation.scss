@@ -1,0 +1,237 @@
+@import '../base/variables';
+
+.docs-page {
+  padding: 2rem 0;
+  min-height: calc(100vh - 200px);
+
+  @media screen and (min-width: $breakpoint-lg) {
+    padding: 3rem 0;
+  }
+
+  .home__container {
+    max-width: 100%;
+    padding: 0 1rem;
+    margin: 0 auto;
+
+    @media screen and (min-width: $breakpoint-md) {
+      max-width: 65rem;
+      padding: 0 2rem;
+    }
+
+    @media screen and (min-width: $breakpoint-lg) {
+      max-width: 75rem;
+    }
+
+    @media screen and (min-width: $breakpoint-xl) {
+      max-width: 85rem;
+    }
+  }
+
+  .home__paragraph {
+    font-size: $font-size-md;
+    color: $grey-600;
+    line-height: 1.7;
+
+    @media screen and (min-width: $breakpoint-lg) {
+      font-size: 1.125rem;
+      line-height: 1.8;
+    }
+
+    .right-align-links {
+      text-align: right;
+      margin-bottom: 1.5rem;
+
+      a {
+        font-size: $font-size-sm;
+        color: $grey-600;
+        text-decoration: none;
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+          color: $body-color;
+          text-decoration: underline;
+        }
+      }
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Montserrat', 'SourceSans3', 'Roboto', sans-serif;
+      font-weight: 700;
+      color: $body-color;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid $grey-200;
+      margin-top: 0;
+
+      @media screen and (min-width: $breakpoint-lg) {
+        font-size: $font-size-2xl;
+      }
+    }
+
+    h2 {
+      font-size: $font-size-lg;
+      margin-top: 2rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid $grey-200;
+
+      @media screen and (min-width: $breakpoint-lg) {
+        font-size: $font-size-xl;
+      }
+
+      &:first-of-type {
+        margin-top: 0;
+      }
+    }
+
+    h3 {
+      font-size: 1.125rem;
+
+      @media screen and (min-width: $breakpoint-lg) {
+        font-size: $font-size-lg;
+      }
+    }
+
+    h4 {
+      font-size: $font-size-md;
+
+      @media screen and (min-width: $breakpoint-lg) {
+        font-size: 1.125rem;
+      }
+    }
+
+    p {
+      margin-bottom: 1.25rem;
+      line-height: 1.7;
+
+      @media screen and (min-width: $breakpoint-lg) {
+        line-height: 1.8;
+      }
+
+      strong {
+        font-weight: $font-weight-bold;
+        color: $body-color;
+      }
+
+      em {
+        font-style: italic;
+        color: $grey-700;
+      }
+    }
+
+    ul, ol {
+      font-size: $font-size-md;
+      color: $grey-600;
+      margin-bottom: 1.25rem;
+      padding-left: 1.5rem;
+
+      @media screen and (min-width: $breakpoint-lg) {
+        font-size: 1.125rem;
+        padding-left: 2rem;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+        line-height: 1.7;
+      }
+    }
+
+    a {
+      color: $secondary-color;
+      text-decoration: none;
+      transition: color 0.2s ease-in-out;
+
+      &:hover {
+        color: $blue-900;
+        text-decoration: underline;
+      }
+    }
+
+    code {
+      background-color: $grey-100;
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.25rem;
+      font-size: 0.9em;
+      color: $grey-800;
+    }
+
+    pre {
+      background-color: $grey-100;
+      padding: 1rem;
+      border-radius: $border-radius;
+      overflow-x: auto;
+      margin-bottom: 1.25rem;
+
+      code {
+        background-color: transparent;
+        padding: 0;
+        border-radius: 0;
+      }
+    }
+
+    blockquote {
+      border-left: 4px solid $secondary-color;
+      padding-left: 1rem;
+      margin-left: 0;
+      margin-bottom: 1.25rem;
+      color: $grey-700;
+      font-style: italic;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+
+      th, td {
+        padding: 0.75rem;
+        border: 1px solid $grey-300;
+        text-align: left;
+      }
+
+      th {
+        background-color: $grey-100;
+        font-weight: $font-weight-bold;
+        color: $body-color;
+      }
+
+      td {
+        color: $grey-600;
+      }
+
+      @media screen and (max-width: $breakpoint-md) {
+        font-size: $font-size-sm;
+
+        th, td {
+          padding: 0.5rem;
+        }
+      }
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: $border-radius;
+      margin: -3rem 0 1rem 0;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid $grey-300;
+      margin: 2rem 0;
+    }
+
+    strong {
+      font-weight: $font-weight-bold;
+      color: $body-color;
+    }
+
+    em {
+      font-style: italic;
+    }
+  }
+}
