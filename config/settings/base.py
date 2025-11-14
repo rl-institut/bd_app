@@ -74,10 +74,10 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
-    # "allauth",
-    # "allauth.account",
-    # "allauth.mfa",
-    # "allauth.socialaccount",
+    "allauth",
+    "allauth.account",
+    "allauth.mfa",
+    "allauth.socialaccount",
     "django_celery_beat",
     "django_cotton",
     "django_htmx",
@@ -86,7 +86,7 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    # "building_dialouge_webapp.users",
+    "building_dialouge_webapp.users",
     "building_dialouge_webapp.heat",
     # Your stuff: custom apps go here
 ]
