@@ -103,4 +103,5 @@ RUN DATABASE_URL="" \
   DJANGO_SETTINGS_MODULE="config.settings.test" \
   python manage.py compilemessages
 
+ENTRYPOINT ["/entrypoint"]
 CMD ${STARTUP_COMMAND}
