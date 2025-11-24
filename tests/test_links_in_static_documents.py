@@ -17,6 +17,7 @@ urls = [
     "https://www.bafa.de/DE/Energie/Effiziente_Gebaeude/Foerderprogramm_im_Ueberblick/foerderprogramm_im_ueberblick_node.html",
     "https://www.bafa.de/SharedDocs/Downloads/DE/Energie/beg_merkblatt_allgemein_antragstellung.pdf?__blob=publicationFile&v=10",
     "https://www.baunetzwissen.de/nachhaltig-bauen/fachwissen/regelwerke/berechnungsgrundlagen-fuer-energiebilanzen-830569",
+    # baunetzwissen needs to be commented out for the test to work
     "https://www.bbsr-geg.bund.de/GEGPortal/DE/Home/_buehne/Beratungspflicht.html",
     "https://www.bbsr.bund.de/BBSR/DE/veroeffentlichungen/sonderveroeffentlichungen/2024/geg.html",
     "https://www.berlin.de/solarcity/solarzentrum/",
@@ -88,7 +89,7 @@ def check_url(url):
     Status-Codes: https://de.wikipedia.org/wiki/HTTP-Statuscode
     """
     try:
-        response = requests.get(url, headers=HEADERS, timeout=20)
+        response = requests.get(url, headers=HEADERS, timeout=5)
         # currently no redirecting is allowed. to do so: allow_redirects=True
         statuscode = response.status_code
     except requests.RequestException as exc:
@@ -103,7 +104,7 @@ def check_url(url):
         return ok, statuscode
 
 
-# Test-Option 1 mit pytest:
+# Test with pytest: needs approx. 20-35 seconds to run
 def test_urls_are_working():
     """
     Test that checks all URLS in list urls for reachability.
@@ -122,29 +123,3 @@ def test_urls_are_working():
     assert not broken_urls, f"{len(broken_urls)} URLs failed:\n" + "\n".join(
         f"- {url} (Status: {status})" for url, status in broken_urls
     )
-
-
-# Test-Option 2 mit Linting auskommentierten Prints:
-def main():
-    total_urls = len(urls)
-    working_count = 0
-    broken_urls = []
-
-    for url in urls:
-        ok, status = check_url(url)
-        if ok:
-            working_count += 1
-        else:
-            broken_urls.append((url, status))
-
-    print(f"{working_count}/{total_urls} URLs are working")  # noqa: T201
-    if broken_urls:
-        print("Broken URLs:")  # noqa: T201
-        for url, status in broken_urls:
-            print(f"- {url} (Status: {status})")  # noqa: T201
-    else:
-        print("All URLs are working!")  # noqa: T201
-
-
-if __name__ == "__main__":
-    main()
