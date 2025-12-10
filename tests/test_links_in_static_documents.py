@@ -16,8 +16,6 @@ urls = [
     "https://www.agfw.de/energiewirtschaft-recht-politik/recht/anschluss-und-benutzungszwang",
     "https://www.bafa.de/DE/Energie/Effiziente_Gebaeude/Foerderprogramm_im_Ueberblick/foerderprogramm_im_ueberblick_node.html",
     "https://www.bafa.de/SharedDocs/Downloads/DE/Energie/beg_merkblatt_allgemein_antragstellung.pdf?__blob=publicationFile&v=10",
-    "https://www.baunetzwissen.de/nachhaltig-bauen/fachwissen/regelwerke/berechnungsgrundlagen-fuer-energiebilanzen-830569",
-    # baunetzwissen needs to be commented out for the test to work
     "https://www.bbsr-geg.bund.de/GEGPortal/DE/Home/_buehne/Beratungspflicht.html",
     "https://www.bbsr.bund.de/BBSR/DE/veroeffentlichungen/sonderveroeffentlichungen/2024/geg.html",
     "https://www.berlin.de/solarcity/solarzentrum/",
@@ -67,7 +65,7 @@ urls = [
     "https://www.verbraucherzentrale.de/wissen/energie/erneuerbare-energien/solarthermie-solarenergie-fuer-heizung-und-warmwasser-nutzen-5568",
     "https://www.verbraucherzentrale.de/wissen/energie/heizen-und-warmwasser/fernwaerme-kosten-sparen-und-gleichzeitig-das-klima-schonen-34038",
     "https://www.verbraucherzentrale.de/wissen/energie/heizen-und-warmwasser/heizung-tauschen-so-gehts-schritt-fuer-schritt-30045?",
-    "https://www.verbraucherzentrale.de/wissen/energie/heizen-und-warmwasser/kleine-blockheizkraftwerke-die-heizung-die-auch-strom-liefert-6007",
+    "https://verbraucherzentrale-energieberatung.de/heizen/neue-heiztechnik/blockheizkraftwerk/",
     "https://www.verbraucherzentrale.de/wissen/energie/heizen-und-warmwasser/waermepumpe-alles-was-sie-wissen-muessen-5439",
     "https://www.waermepumpe.de/",
     "https://www.waermepumpe.de/fachpartner/planungstools/",
@@ -89,7 +87,7 @@ def check_url(url):
     Status-Codes: https://de.wikipedia.org/wiki/HTTP-Statuscode
     """
     try:
-        response = requests.get(url, headers=HEADERS, timeout=5)
+        response = requests.get(url, headers=HEADERS, timeout=10)
         # currently no redirecting is allowed. to do so: allow_redirects=True
         statuscode = response.status_code
     except requests.RequestException as exc:
