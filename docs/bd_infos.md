@@ -2,7 +2,7 @@
 
 ## building-dialogue: Gebäudeenergiewende – im Dialog mit der Gesellschaft
 
-**building-dialogue** ist ein Forschungsprojekt, das im Rahmen des 7. Energieforschungsprogramms des Bundesministeriums für Wirtschaft und Klimaschutz (BMWK) gefördert wird.
+**building-dialogue** ist ein Forschungsprojekt, das im Rahmen des 7. Energieforschungsprogramms des Bundesministeriums für Wirtschaft und Energie (BMWE) gefördert wird.
 Ziel des Projekts ist es, den Dialog rund um Sanierungsmaßnahmen am Gebäude zu stärken und die Akzeptanz für Gebäudesanierungen bei Eigentümer*innen zu steigern.
 Dazu werden innovative Dialogformate entwickelt, die auf Informationsvermittlung, Konsultation und Akzeptanzsteigerung abzielen.
 Begleitend zu den Dialogformaten entsteht das hier vorliegende Tool **building dialogue**.
