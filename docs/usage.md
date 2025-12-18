@@ -1,45 +1,54 @@
-
 # Benutzung der Building Dialogue Webanwendung
 
-Auf der Website des Building Dialogue Projekts können Sie Informationen zu verschiedenen Möglichkeiten der Gebäudesanierung und Wärmeversorgung einsehen. Die Anwendung bietet zudem einen Überblick über rechtliche und finanzielle Rahmenbedingungen.
+In der Building Dialogue Webanwendung können verschiedene Optionen der Wärmeversorgung eines Gebäudes 
+durchgespielt werden. Dabei können unterschiedliche Heizungssysteme und Sanierungsmaßnahmen ausgewählt werden.
+In den Ergebnissen können die Nutzenden dann die Auswirkungen der ausgewählten Optionen auf den Wärmebedarf und die entstehenden Kosten sowie CO₂-Verbräuche einsehen.
 
-Wir haben die Anwendung so gestaltet, dass Sie sich einfach und intuitiv durch die Inhalte bewegen können. Das zentrale Informationsdokument vermittelt einen Überblick über die wichtigsten Informationen aus dem Projekt. Für detailliertere Informationen stehen auf der rechten Seite die „Wissenswertes"-Dokumente zur Verfügung, die Sie mit einem Klick öffnen können. 
+Wir haben uns bemüht die Nutzenden so gut wie möglich durch die Anwendung zu führen.
+Im Idealfall werden die Nutzenden vom Start der Berechnung bis zu den Ergebnissen Schritt für Schritt weiter geführt.
+Über die Inhaltsangabe auf der linken Seite können die Nutzenden aber auch jederzeit zu bereits ausgefüllten Bereichen zurückspringen, 
+um Angaben zu ändern. 
 
-Zusätzlich finden Sie Informationen zu den Bereichen „Projektinfos“, „Dokumentation“ und „Kontakt“ auf separaten Seiten, die Sie über die jeweiligen Buttons in der oberen rechten Ecke erreichen. Über einen Klick auf das Building-Dialogue-Logo gelangen Sie jederzeit zurück zur Startseite.
-
-Die Möglichkeiten innerhalb der Anwendung werden im Folgenden beschrieben:
+Die Schritte innerhalb der Anwendung werden im Folgenden beschrieben:
 
 ## Startseite
    
-Die Startseite zeigt Ihnen das Dokument "Schritt für Schritt zur energetischen Sanierung". Sie können es direkt in der Webanwendung durchblättern. Die Startseite dient zu Vorstellung des Projekts und liefert erste Informationen. 
+Die Startseite dient zu Einordnung des Projekts und liefert erste Informationen. 
+Von hier aus kann über den Button "Starten" eine Berechnung gestartet werden. 
+Sollten in einer vorherigen Sitzung bereits Daten eingegeben worden sein, kann diese nun weitergeführt werden 
+oder eine neue Berechnung gestartet werden.
 
-Über die Buttons auf der rechten Seiteleiste können Sie weitere Inhalte aufrufen: 
+## Bestandsanalyse
 
-- Das oberste Icon führt zu einem Dokument, das den Weg zur Sanierung Schritt für Schritt erklärt.
-- Darunter befinden sich drei nebeneinander angeordnete Icons, die zu den jeweiligen Wissenswertes-Dokumenten führen.
-- Darunter finden Sie ein Icon zu einem weiteren Wissensdokument über Wertschöpfung.
-- Ganz unten im Seitenbereich bringt Sie der Button „Startseite“ jederzeit zurück zur Startseite.
+In der Bestandsanalyse wird zunächst ein Überblick über die folgenden Abschnitte zur Ermittlung des Ist-Zustands des Gebäudes gegeben, 
+sowie auf eventuell benötigte Unterlagen, zur einfacheren Bestimmung der Daten, hingewiesen.  
+Anschließend werden nacheinander in den Abschnitte "Gebäude", "Dämmmaßnahmen", "Heizung", "Warmwasser", "Dach" und "PV Anlage" Daten über das Gebäude abgefragt.
+Die benötigten Daten werden dabei Schritt für Schritt abgefragt. 
+Manche Abfragen sind dabei abhängig von vorherigen Eingaben der Nutzenden; die benötigten Eingaben können sich also je nach Berechnung ändern. 
+Nach Eingabe aller benötigten Daten innerhalb eines Abschnittes, kann der nächste Abschnitt dann über einen Klick auf den Button "Weiter" erreicht werden. 
 
-## Ihre Sanierung - einfach erklärt
+## Sanierung
 
-Dieses Dokument dient Ihnen als Leitfaden. Anhand von acht Schritten werden Sie durch den gesamten Prozess bis zur Sanierung geführt. Nachdem Sie auf das Icon geklickt haben, können Sie jede Seite in der Webanwendung mit den Pfeilen links und rechts durchblättern und sich so über jeden Schritt informieren.
+Nach der Bestandsanalyse folgt ein Abschnitt zu Sanierungsmaßnahmen. 
+Dieser Teil dient nach der Erfassung des Ist-Zustandes dafür, einen oder mehrere Sollzustände bzw. Szenarien für das Gebäude zu definieren,
+die später in einer Optimierung berechnet werden sollen.
+Dazu können in der Sanierungsübersicht bis zu drei Szenarien, 
+in denen unterschiedliche Heizungssysteme und Sanierungsmaßnahmen zum Einsatz kommen können, erstellt werden.
+Anschließend können im Abschnitt "Förderung" noch Fördermaßnahmen ausgewählten werden, die für die Berechnung in Betracht gezogen werden sollen.
 
-## Wissenswertes
+## Optimierung starten
 
-Die „Wissenswertes“-Dokumente bieten zusätzliche Hintergrundinformationen zu wichtigen Themen rund um die energetische Sanierung. Sie helfen Ihnen, einzelne Schritte oder Entscheidungen besser nachzuvollziehen und zu vergleichen. Wenn Sie auf das jeweilige Icon klicken, wird Ihnen das Dokument in der Webanwendung angezeigt, und Sie können darin blättern.
+Wenn alle Abschnitte zuvor ausgefüllt wurden, kann nun die Berechnung gestartet werden. 
+Sollten Abschnitte noch nicht oder noch nicht komplett ausgefüllt worden sein, werden die fehlenden Abschnitte hier aufgezeigt.
+Für die Berechnung fehlende Abschnitte sind außerdem zusätzlich in der Inhaltsangabe kenntlich gemacht.
+Die Berechnung der Szenarien kann einige Minuten in Anspruch nehmen. 
+Vor allem die Auswahl mehrerer Szenarien kann die Berechnungsdauer verlängern.
+Sobald die Berechnungen fertig sind, kann über den Button "Ergebnisse" zur Ergebnisdarstellung weitergeleitet werden.
 
-### Modernisierungsmaßnahmen
+## Ergebnisse
 
-Dieses Dokument gibt Ihnen einen Überblick über typische Maßnahmen zur energetischen Modernisierung, wie zum Beispiel Dämmung, moderne Fenster oder Dachausbau. Jede Seite bietet eine kurze Übersicht zu einer Maßnahme. Diese Übersichten sollen Ihnen helfen, leichter einzuschätzen, welche Schritte für Ihr Gebäude sinnvoll sind.
-
-### Heizungswechsel
-
-Dieses Dokument gibt Ihnen einen Überblick über die Möglichkeiten beim Austausch oder der Modernisierung Ihrer Heizungsanlage. Jede Seite stellt kurz eine Variante vor, z. B. Gas-, Elektro- oder Wärmepumpenheizungen, und bietet weiterführende Links, um sich detaillierter zu informieren. Auf diese Weise erhalten Sie eine bessere Orientierung, welche Heizungsoptionen zu Ihrem Gebäude passen könnten.
-
-### Förderungen und Rechtliches
-
-Dieses Dokument gibt Ihnen einen Überblick über Fördermöglichkeiten und rechtliche Rahmenbedingungen bei energetischen Sanierungen. Jede Seite weist auf wichtige Vorgaben hin und bietet weiterführende Links, um sich detaillierter zu informieren. So können Sie einschätzen, welche Vorgaben für Ihr Sanierungsvorhaben wichtig sind.
-
-### Wertschöpfung
-
-*hier noch Text einfügen*
+Hier werden die Ergebnisse der Sanierungsszenarien (bis zu drei) dargestellt.
+Die Ergebnisse sind in die Abschnitte "Verbrauch", "Kosten" und "Emissionen" gegliedert, 
+wobei die jeweiligen Ergebnisse über die Reiter angezeigt werden können.
+Die meisten Ergebnisse zeigen alle erstellten Szenarien gleichzeitig dar.
+Sollte dies einmal nicht möglich sein, kann über die entsprechenden Reiter zwischen den Ergebnissen der Szenarien gewechselt werden. 
