@@ -43,6 +43,7 @@ urls = [
     "https://www.energiewechsel.de/KAENEF/Redaktion/DE/FAQ/GEG/faq-geg.html",
     "https://www.gebaeudeforum.de/realisieren/heizungstechnik/nt-ready/",
     "https://www.hwk-berlin.de/downloads/broschuere-sanierung-von-kastenfenstern-eine-entscheidungshilfe-91,650.pdf",
+    "https://www.ifeu.de/gebaeudecheck-waermepumpe#/",
     "https://www.ioew.de/publikation/energiewende_in_der_lausitz_regionaloekonomische_effekte_relevanter_technologien",
     "https://www.ioew.de/publikation/geschaeftsmodelle_fuer_die_waermewende_im_quartier",
     "https://www.ioew.de/publikation/kommunale_waermewende_strategisch_planen",
