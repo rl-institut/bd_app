@@ -1,6 +1,8 @@
 import inspect
 from urllib.parse import urlparse
 
+import markdown
+from django.conf import settings
 from django.http import HttpRequest
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
@@ -608,3 +610,35 @@ class NextSteps(SidebarNavigationMixin, TemplateView):
 def show_session(request: HttpRequest) -> JsonResponse:
     """Show session. May be used by developers only."""
     return JsonResponse(dict(request.session))
+
+
+class ContactPage(TemplateView):
+    template_name = "pages/contact.html"
+
+
+class ImprintPage(TemplateView):
+    template_name = "pages/imprint.html"
+
+
+class PrivacyPage(TemplateView):
+    template_name = "pages/privacy.html"
+
+
+class DocumentationView(TemplateView):
+    template_name = "docs.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        page = kwargs.get("page", "index")
+        page = page if page.endswith(".md") else f"{page}.md"
+        if not (settings.DOCS_DIR / page).exists():
+            error_msg = f"Documentation for '{page}' not found."
+            raise FileNotFoundError(error_msg)
+        with (settings.DOCS_DIR / page).open("r", encoding="utf-8") as f:
+            markdown_text = f.read()
+        # Convert markdown to HTML with extensions for links
+        html_content = markdown.markdown(markdown_text, output_format="html")
+        # Add target="_blank" to external links
+        html_content = html_content.replace('<a href="http', '<a target="_blank" rel="noopener noreferrer" href="http')
+        context["markdown"] = html_content
+        return context
