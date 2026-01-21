@@ -3,10 +3,15 @@
 {% load static %}
 
 {% block main %}
-  <div class="container my-5">
-    <h1>Datenschutz</h1>
-
-    <h2>1. Datenschutz auf einen Blick</h2>
+  <div class="privacy-page home" id="home-info">
+    <div class="home__container">
+      <div class="home__paragraph">
+        <p class="right-align-links">
+          <a href="{% url 'heat:home' %}">Zurück</a>
+        </p>
+        <h2>
+          <strong>1. Datenschutz auf einen Blick</strong>
+        </h2>
         <p>
           <strong>Allgemeine Hinweise</strong>
           <br />
@@ -21,7 +26,7 @@
           <em>Wer ist verantwortlich für die Datenerfassung auf dieser Website?</em>
           <br />
           Die Datenverarbeitung auf dieser Website erfolgt durch den Websitebetreiber. Dessen Kontaktdaten können Sie
-          dem Abschnitt „Hinweis zur Verantwortlichen Stelle“ in dieser Datenschutzerklärung entnehmen.
+          dem Abschnitt „Hinweis zur Verantwortlichen Stelle" in dieser Datenschutzerklärung entnehmen.
         </p>
         <p>
           <em>Wie erfassen wir Ihre Daten?</em>
@@ -58,8 +63,7 @@
           sogenannten Analyseprogrammen.
         </p>
         <p>Detaillierte Informationen zu diesen Analyseprogrammen finden Sie in der folgenden Datenschutzerklärung.</p>
-
-    <h2>2. Allgemeine Hinweise und Pflicht­informationen</h2>
+        <h2>2. Allgemeine Hinweise und Pflicht­informationen</h2>
         <p>
           <strong>Datenschutz</strong>
           <br />
@@ -238,14 +242,13 @@
           Diese Seite nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte, wie zum
           Beispiel Bestellungen oder Anfragen, die Sie an uns als Seitenbetreiber senden, eine SSL- bzw.
           TLS-Verschlüsselung. Eine verschlüsselte Verbindung erkennen Sie daran, dass die Adresszeile des Browsers von
-          „http://“ auf „https://“ wechselt und an dem Schloss-Symbol in Ihrer Browserzeile.
+          „http://" auf „https://" wechselt und an dem Schloss-Symbol in Ihrer Browserzeile.
         </p>
         <p>
           Wenn die SSL- bzw. TLS-Verschlüsselung aktiviert ist, können die Daten, die Sie an uns übermitteln, nicht von
           Dritten mitgelesen werden.
         </p>
-
-    <h2>3. Datenerfassung auf dieser Website</h2>
+        <h2>3. Datenerfassung auf dieser Website</h2>
         <p>
           <strong>Datenschutzerklärung bei Bewerbungen</strong>
           <br />
@@ -269,7 +272,7 @@
         <p>
           <strong>Cookies</strong>
           <br />
-          Unsere Internetseiten verwenden so genannte „Cookies“. Cookies sind kleine Datenpakete und richten auf Ihrem
+          Unsere Internetseiten verwenden so genannte „Cookies". Cookies sind kleine Datenpakete und richten auf Ihrem
           Endgerät keinen Schaden an. Sie werden entweder vorübergehend für die Dauer einer Sitzung (Session-Cookies)
           oder dauerhaft (permanente Cookies) auf Ihrem Endgerät gespeichert. Session-Cookies werden nach Ende Ihres
           Besuchs automatisch gelöscht. Permanente Cookies bleiben auf Ihrem Endgerät gespeichert, bis Sie diese selbst
@@ -366,8 +369,7 @@
           B. nach abgeschlossener Bearbeitung Ihres Anliegens). Zwingende gesetzliche Bestimmungen – insbesondere
           gesetzliche Aufbewahrungsfristen – bleiben unberührt.
         </p>
-
-    <h2>4. Analyse-Tools und Werbung</h2>
+        <h2>4. Analyse-Tools und Werbung</h2>
         <p>
           <strong>Matomo</strong>
           <br />
@@ -416,5 +418,7 @@
           Wir hosten Matomo ausschließlich auf unseren eigenen Servern, sodass alle Analysedaten bei uns verbleiben und
           nicht weitergegeben werden.
         </p>
+      </div>
+    </div>
   </div>
 {% endblock main %}

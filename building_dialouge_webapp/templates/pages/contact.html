@@ -2,40 +2,40 @@
 {% load i18n %}
 
 {% block main %}
-  <div class="container my-5">
-    <h1>Kontakt</h1>
-
-    <div class="mt-4">
-      <h3>Marie-Claire Gering (Projektleitung)</h3>
-      <p>
-        <a href="mailto:Marie-Claire.Gering@rl-institut.de">Marie-Claire.Gering@rl-institut.de</a><br/>
-        +49 (0)30 1208 434 77
-      </p>
-    </div>
-
-    <div class="mt-4">
-      <h3>Mascha Richter (Bereichsleitung)</h3>
-      <p>
-        <a href="mailto:Mascha.Richter@rl-institut.de">Mascha.Richter@rl-institut.de</a><br/>
-        +49 (0)30 1208 434 25
-      </p>
-    </div>
-
-    <div class="mt-4">
-      <h3>Reiner Lemoine Institut gGmbH</h3>
-      <p>
-        Rudower Chaussee 12<br/>
-        Aufgang D<br/>
-        12489 Berlin
-      </p>
-      <p>
-        Telefon: +49 (0)30 1208 434 0<br/>
-        Fax: +49 (0)30 1208 434 99
-      </p>
-    </div>
-
-    <div class="mt-4">
-      <p>Mehr Informationen zu unseren Tools, Karten und Apps zur Energiewende finden Sie auf dem WAM-Portal des RLI unter <a href="https://wam.rl-institut.de" target="_blank" rel="noopener noreferrer">wam.rl-institut.de</a>.</p>
+  <div class="contact-page home" id="home-info">
+    <div class="home__container">
+      <div class="home__paragraph">
+        <p class="right-align-links">
+          <a href="{% url 'heat:home' %}">Zurück</a>
+        </p>
+        <h2>Kontakt</h2>
+        <div class="offcanvas-view__contact">
+          <h3>Marie-Claire Gering (Projektleitung)</h3>
+          <a href="mailto:Marie-Claire.Gering@rl-institut.de">Marie-Claire.Gering@rl-institut.de</a>
+          <p>+49 (0)30 1208 434 77</p>
+        </div>
+        <div class="offcanvas-view__contact">
+          <h3>Mascha Richter (Bereichsleitung)</h3>
+          <a href="mailto:Mascha.Richter@rl-institut.de">Mascha.Richter@rl-institut.de</a>
+          <p>+49 (0)30 1208 434 25</p>
+        </div>
+        <div class="offcanvas-view__contact">
+          <p>
+            Reiner Lemoine Institut gGmbH<br/>
+            Rudower Chaussee 12<br/>
+            Aufgang D<br/>
+            12489 Berlin
+          </p>
+          <p>
+            Telefon: +49 (0)30 1208 434 0<br/>
+            Fax: +49 (0)30 1208 434 99
+          </p>
+        </div>
+        <div class="offcanvas-view__contact">
+          <p>Mehr Informationen zu unseren Tools, Karten und Apps zur Energiewende finden Sie auf dem WAM-Portal des RLI
+            unter <a href="https://wam.rl-institut.de" target="_blank">wam.rl-institut.de</a> .</p>
+        </div>
+      </div>
     </div>
   </div>
 {% endblock main %}

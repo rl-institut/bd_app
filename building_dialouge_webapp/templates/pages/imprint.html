@@ -3,9 +3,14 @@
 {% load static %}
 
 {% block main %}
-  <div class="container my-5">
-    <h1>Impressum</h1>
-    <p>
+  <div class="imprint-page home" id="home-info">
+    <div class="home__container">
+      <div class="home__paragraph">
+        <p class="right-align-links">
+          <a href="{% url 'heat:home' %}">Zurück</a>
+        </p>
+        <h2 class="privacy-modal__title" id="imprintModalLabel">Impressum</h2>
+        <p>
           Herausgegeben von:
           <br />
           Diese Internetseite wird betrieben von der Reiner Lemoine Institut gGmbH
@@ -43,7 +48,7 @@
         </p>
         <h3>2. Verweise und Links</h3>
         <p>
-          Bei direkten oder indirekten Verweisen auf fremde Internetseiten („Links”), die außerhalb des
+          Bei direkten oder indirekten Verweisen auf fremde Internetseiten („Links"), die außerhalb des
           Verantwortungsbereiches der Autor*innen liegen, würde eine Haftungsverpflichtung ausschließlich in dem Fall in
           Kraft treten, in dem die Autor*innen von den Inhalten Kenntnis hat und es ihm technisch möglich und zumutbar
           wäre, die Nutzung im Falle rechtswidriger Inhalte zu verhindern. Die Autor*innen erklären daher ausdrücklich,
@@ -78,5 +83,7 @@
           mehr oder nicht vollständig entsprechen sollten, bleiben die übrigen Teile des Dokumentes in ihrem Inhalt und
           ihrer Gültigkeit davon unberührt.
         </p>
+      </div>
+    </div>
   </div>
 {% endblock main %}
